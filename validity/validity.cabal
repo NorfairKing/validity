@@ -1,0 +1,24 @@
+name:                validity
+version:             0.1.0.0
+synopsis:            Validity typeclass
+description:         Please see README.md
+homepage:            https://github.com/NorfairKing/validity#readme
+license:             MIT
+license-file:        LICENSE
+author:              Tom Sydney Kerckhove
+maintainer:          syd.kerckhove@gmail.com
+copyright:           Copyright: (c) 2016 Tom Sydney Kerckhove
+category:            Web
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Data.Validity
+  build-depends:       base >= 4.7 && < 5
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/NorfairKing/validity
