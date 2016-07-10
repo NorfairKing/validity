@@ -25,7 +25,7 @@ genspec
     => a
     -> Spec
 genspec proxy = do
-    let name = dataTypeName $ dataTypeOf proxy
+    let name = show $ typeOf proxy
     describe ("GenSpec for " ++ name) $ do
         arbitrarySpec proxy
         validitySpec proxy
@@ -42,7 +42,7 @@ arbitrarySpec
     => a
     -> Spec
 arbitrarySpec proxy = do
-    let name = dataTypeName $ dataTypeOf proxy
+    let name = show $ typeOf proxy
     describe ("Arbitrary " ++ name) $ do
         it ("is instantiated such that 'arbitrary' only generates valid \'"
             ++ name
@@ -70,7 +70,7 @@ validitySpec
     => a
     -> Spec
 validitySpec proxy = do
-    let name = dataTypeName $ dataTypeOf proxy
+    let name = show $ typeOf proxy
     describe "genValid" $ do
         it ("only generates valid \'" ++ name ++ "\'s") $ do
             forAll genValid $ \a ->
