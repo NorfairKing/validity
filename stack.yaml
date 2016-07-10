@@ -1,6 +1,7 @@
 resolver: lts-6.7
 packages:
 - 'validity'
+- 'genvalidity'
 extra-deps: []
 flags: {}
 extra-package-dbs: []
