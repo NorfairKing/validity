@@ -3,6 +3,7 @@ packages:
 - 'validity'
 - 'genvalidity'
 - 'genvalidity-containers'
+- 'genvalidity-hspec'
 extra-deps: []
 flags: {}
 extra-package-dbs: []

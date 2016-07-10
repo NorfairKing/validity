@@ -2,7 +2,7 @@ name:                genvalidity
 version:             0.1.0.0
 synopsis:            Testing utilities for the validity library
 description:         Please see README.md
-homepage:            https://github.com/NorfairKing/genvalidity#readme
+homepage:            https://github.com/NorfairKing/validity#readme
 license:             MIT
 license-file:        LICENSE
 author:              Tom Sydney Kerckhove
@@ -23,4 +23,4 @@ library
 
 source-repository head
   type:     git
-  location: https://github.com/NorfairKing/genvalidity
+  location: https://github.com/NorfairKing/validity

@@ -1,6 +1,6 @@
-name:                genvalidity-containers
+name:                genvalidity-hspec
 version:             0.1.0.0
-synopsis:            GenValidity support for containers
+synopsis:            Standard spec's for GenValidity instances
 description:         Please see README.md
 homepage:            https://github.com/NorfairKing/validity#readme
 license:             MIT
@@ -15,13 +15,12 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Data.GenValidity.Tree
-                     , Data.GenValidity.Containers
-  build-depends:       base      
-                     , validity       
+  exposed-modules:     Data.GenValidity.Hspec
+  build-depends:       base        
+                     , validity   
                      , genvalidity
-                     , containers       
-                     , QuickCheck      
+                     , QuickCheck
+                     , hspec                    >= 2.2 && < 2.3
   default-language:    Haskell2010
 
 source-repository head
