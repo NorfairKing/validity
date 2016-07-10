@@ -1,7 +1,9 @@
-module Data.GenValidity.Hspec where
+module Data.GenValidity.Hspec
+    ( module Data.GenValidity
+    , module Data.GenValidity.Hspec
+    ) where
 
 import           Data.GenValidity
-import           Data.Validity
 
 import           Test.Hspec
 import           Test.QuickCheck
