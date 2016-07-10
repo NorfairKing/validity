@@ -4,6 +4,8 @@ import           Data.Validity
 
 import           Test.QuickCheck
 
+import           Control.Monad   (forM)
+
 -- | A class of types for which @Validity@-related values can be generated.
 --
 -- If you also write @Arbitrary@ instances for @GenValidity@ types, it may be
