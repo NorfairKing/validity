@@ -1,3 +1,18 @@
+{-|
+
+ These are standard tests that you should add to your @hspec@ test suite
+ if you implemented @GenValidity@ instances for your own data types.
+
+ Use them like this:
+
+ > mySpec :: Spec
+ > mySpec = do
+ >     genspec (proxy :: MyType)
+ >     genspec (proxy :: MyOtherType)
+
+ HSpec will take care of the rest.
+
+ -}
 module Data.GenValidity.Hspec
     ( module Data.GenValidity
     , module Data.GenValidity.Hspec

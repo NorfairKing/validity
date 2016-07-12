@@ -17,6 +17,10 @@ instance GenValidity a => GenValidity (Tree a) where
         [ Node <$> genInvalid   <*> genUnchecked
         , Node <$> genUnchecked <*> genInvalid
         ]
+
+-- | Generate a tree of values that are generated as specified.
+--
+-- This takes the size parameter much better into account
 genTreeOf :: Gen a -> Gen (Tree a)
 genTreeOf func = sized $ \n -> -- Sized is the size of the trees.
     case n of

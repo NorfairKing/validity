@@ -20,7 +20,24 @@
 
  > instance GenValidity Prime where
  >     genUnchecked = Prime <$> arbitrary
- >     genValid = Prime <$> (oneof [pure 2, (\y -> 2 * y + 1) <$> arbitrary])
+ >     genValid = Prime <$>
+ >        (oneof
+ >          [ pure 2
+ >          , (\y -> 2 * y + 1) <$> (arbitrary `suchThat` (> 0) `suchThat` isPrime)
+ >          ])
+
+
+ Typical examples of tests involving validity could look as follows:
+
+ > it "succeeds when given valid input" $ do
+ >     forAll genValid $ \input ->
+ >         myFunction input `shouldSatisfy` isRight
+
+ > it "produces valid output when it succeeds" $ do
+ >     forAll genUnchecked $ \input ->
+ >         case myFunction input of
+ >             Nothing -> return () -- Can happen
+ >             Just output -> output `shouldSatisfy` isValid
 
  -}
 
