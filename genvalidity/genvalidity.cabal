@@ -16,7 +16,7 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Data.GenValidity
-  build-depends:       base               >= 4.7 && < 5
+  build-depends:       base               < 5
                      , validity           >= 0.1 && < 0.2
                      , QuickCheck         >= 2.8 && < 2.9
   default-language:    Haskell2010

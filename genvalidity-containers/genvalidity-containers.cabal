@@ -17,7 +17,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     Data.GenValidity.Tree
                      , Data.GenValidity.Containers
-  build-depends:       base      
+  build-depends:       base       < 5
                      , validity       
                      , genvalidity
                      , containers       

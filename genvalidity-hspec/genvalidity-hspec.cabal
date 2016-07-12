@@ -16,7 +16,7 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Data.GenValidity.Hspec
-  build-depends:       base        
+  build-depends:       base                               < 5
                      , validity   
                      , genvalidity
                      , QuickCheck
