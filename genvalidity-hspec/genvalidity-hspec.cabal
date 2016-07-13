@@ -1,5 +1,5 @@
 name:                genvalidity-hspec
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Standard spec's for GenValidity instances
 description:         Please see README.md
 homepage:            https://github.com/NorfairKing/validity#readme
