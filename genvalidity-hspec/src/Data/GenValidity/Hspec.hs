@@ -13,6 +13,7 @@
  HSpec will take care of the rest.
 
  -}
+{-# LANGUAGE MultiParamTypeClasses #-}
 module Data.GenValidity.Hspec
     ( module Data.GenValidity
     , module Data.GenValidity.Hspec
@@ -97,3 +98,115 @@ validitySpec proxy = do
                 (a `asTypeOf` proxy) `shouldNotSatisfy` isValid
 
 
+class CanFail f where
+    hasFailed :: f a -> Bool
+    resultIfSucceeded :: f a -> Maybe a
+
+instance CanFail Maybe where
+    hasFailed Nothing = True
+    hasFailed _ = False
+
+    resultIfSucceeded Nothing = Nothing
+    resultIfSucceeded (Just r) = Just r
+
+instance CanFail (Either e) where
+    hasFailed (Left _) = True
+    hasFailed _ = False
+
+    resultIfSucceeded (Left _) = Nothing
+    resultIfSucceeded (Right r) = Just r
+
+producesValidsOnGen
+    :: (Show a, Show b, Validity b)
+    => (a -> b)
+    -> Gen a
+    -> Property
+producesValidsOnGen func gen
+    = forAll gen $ \a -> func a `shouldSatisfy` isValid
+
+alwaysProducesValid
+    :: (Show a, Show b, GenValidity a, Validity b)
+    => (a -> b)
+    -> Property
+alwaysProducesValid = (`producesValidsOnGen` genUnchecked)
+
+producesValidsOnValids
+    :: (Show a, Show b, GenValidity a, Validity b)
+    => (a -> b)
+    -> Property
+producesValidsOnValids = (`producesValidsOnGen` genValid)
+
+producesValidsOnGens2
+    :: (Show a, Show b, Show c, Validity c)
+    => (a -> b -> c)
+    -> Gen a -> Gen b
+    -> Property
+producesValidsOnGens2 func gen1 gen2
+    = forAll gen1 $ \a ->
+          forAll gen2 $ \b ->
+              func a b `shouldSatisfy` isValid
+
+alwaysProducesValid2
+    :: (Show a, Show b, Show c, GenValidity a, GenValidity b, Validity c)
+    => (a -> b -> c)
+    -> Property
+alwaysProducesValid2 func
+    = producesValidsOnGens2 func genUnchecked genUnchecked
+
+producesValidsOnValids2
+    :: (Show a, Show b, Show c, GenValidity a, GenValidity b, Validity c)
+    => (a -> b -> c)
+    -> Property
+producesValidsOnValids2 func
+    = producesValidsOnGens2 func genValid genValid
+
+succeedsOnGen
+    :: (Show a, Show b, Show (f b), CanFail f)
+    => (a -> f b)
+    -> Gen a
+    -> Property
+succeedsOnGen func gen
+    = forAll gen $ \a -> func a `shouldNotSatisfy` hasFailed
+
+succeedsOnValidInput
+    :: (Show a, Show b, Show (f b), GenValidity a, CanFail f)
+    => (a -> f b)
+    -> Spec
+succeedsOnValidInput func =
+    it "succeeds if the input is valid" $
+        func `succeedsOnGen` genValid
+
+failsOnGen
+    :: (Show a, Show b, Show (f b), CanFail f)
+    => (a -> f b)
+    -> Gen a
+    -> Property
+failsOnGen func gen
+    = forAll gen $ \a -> func a `shouldSatisfy` hasFailed
+
+failsOnInvalidInput
+    :: (Show a, Show b, Show (f b), GenValidity a, CanFail f)
+    => (a -> f b)
+    -> Spec
+failsOnInvalidInput func
+    = it "fails if the input is invalid" $ do
+        func `failsOnGen` genInvalid
+
+validIfSucceedsOnGen
+    :: (Show a, Show b, Show (f b), Validity b, CanFail f)
+    => (a -> f b)
+    -> Gen a
+    -> Property
+validIfSucceedsOnGen func gen
+    = forAll gen $ \a ->
+        case resultIfSucceeded (func a) of
+            Nothing  -> return () -- Can happen
+            Just res -> res `shouldSatisfy` isValid
+
+validIfSucceeds
+  :: (Show a, Show b, Show (f b), GenValidity a, Validity b, CanFail f)
+  => (a -> f b)
+  -> Spec
+validIfSucceeds func
+    = it "produces valid output if it succeeds" $ do
+        func `validIfSucceedsOnGen` genUnchecked
