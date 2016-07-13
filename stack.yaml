@@ -1,0 +1,9 @@
+resolver: lts-6.7
+packages:
+- 'validity'
+- 'genvalidity'
+- 'genvalidity-containers'
+- 'genvalidity-hspec'
+extra-deps: []
+flags: {}
+extra-package-dbs: []

@@ -1,0 +1,28 @@
+name:                genvalidity-hspec
+version:             0.1.0.0
+synopsis:            Standard spec's for GenValidity instances
+description:         Please see README.md
+homepage:            https://github.com/NorfairKing/validity#readme
+license:             MIT
+license-file:        LICENSE
+author:              Tom Sydney Kerckhove
+maintainer:          syd.kerckhove@gmail.com
+copyright:           Copyright: (c) 2016 Tom Sydney Kerckhove
+category:            Testing
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Data.GenValidity.Hspec
+  build-depends:       base                               < 5
+                     , validity   
+                     , genvalidity
+                     , QuickCheck
+                     , hspec                    >= 2.2 && < 2.3
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/NorfairKing/validity
