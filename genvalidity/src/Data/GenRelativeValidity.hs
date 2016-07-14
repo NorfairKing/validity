@@ -9,8 +9,6 @@ import           Data.GenValidity
 
 import           Test.QuickCheck
 
-import           Control.Monad   (forM)
-
 class (GenValidity a, RelativeValidity a b) => GenRelativeValidity a b where
     genUncheckedFor :: b -> Gen a
     genUncheckedFor _ = genUnchecked
@@ -20,5 +18,3 @@ class (GenValidity a, RelativeValidity a b) => GenRelativeValidity a b where
 
     genInvalidFor :: b -> Gen a
     genInvalidFor b = genUncheckedFor b `suchThat` (not . (`isValidFor` b))
-    {-# MINIMAL #-}
-
