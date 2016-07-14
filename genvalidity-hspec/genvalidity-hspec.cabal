@@ -1,5 +1,5 @@
 name:                genvalidity-hspec
-version:             0.1.0.1
+version:             0.2.0.0
 synopsis:            Standard spec's for GenValidity instances
 description:         Please see README.md
 homepage:            https://github.com/NorfairKing/validity#readme
@@ -15,9 +15,9 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Data.GenValidity.Hspec
+  exposed-modules:     Test.Validity
   build-depends:       base                               < 5
-                     , validity   
+                     , validity                 >= 0.2 && < 0.3
                      , genvalidity
                      , QuickCheck
                      , hspec                    >= 2.2 && < 2.3
