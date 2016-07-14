@@ -5,8 +5,9 @@
 
  Let's use the example from @Data.Validity@ again: A datatype that represents
  primes.
- To implement tests for this datatype, we would have to be able primes and
- non-primes. We could do this with @(Prime <$> arbitrary) `suchThat` isValid@
+ To implement tests for this datatype, we would have to be able to generate
+ both primes and non-primes. We could do this with
+ @(Prime <$> arbitrary) `suchThat` isValid@
  but this is tedious and inefficient.
 
  The @GenValidity@ type class allows you to specify how to (efficiently)
