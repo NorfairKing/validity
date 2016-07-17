@@ -3,7 +3,10 @@ packages:
 - 'validity'
 - 'genvalidity'
 - 'genvalidity-containers'
+- 'genvalidity-text'
 - 'genvalidity-hspec'
 extra-deps: []
 flags: {}
 extra-package-dbs: []
+compiler: ghc-8.0.1
+resolver: nightly-2016-07-06
