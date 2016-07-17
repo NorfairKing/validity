@@ -22,6 +22,29 @@ library
                      , QuickCheck         >= 2.8 && < 2.9
   default-language:    Haskell2010
 
+test-suite genvalidity-test
+  type:
+    exitcode-stdio-1.0
+  default-language:
+    Haskell2010
+  hs-source-dirs:
+    test
+  main-is:
+    Spec.hs
+  other-modules:
+    Data.GenValiditySpec
+  ghc-options:
+    -threaded -rtsopts -with-rtsopts=-N
+    -Wall
+    -fno-warn-name-shadowing
+  build-depends:
+      base
+
+    , hspec
+    , QuickCheck     >= 2.8 && < 2.9
+
+    , genvalidity
+
 source-repository head
   type:     git
   location: https://github.com/NorfairKing/validity

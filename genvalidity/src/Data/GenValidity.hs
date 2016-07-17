@@ -105,33 +105,43 @@ instance GenValidity a => GenValidity [a] where
     genValid     = genListOf genValid
 
     -- | At least one invalid value in the list, the rest could be either.
-    genInvalid   = sized $ \n ->
-        case n of
-            0 -> (:[]) <$> genInvalid
-            1 -> (:[]) <$> genInvalid
-            _ -> do
-                (x, y) <- genSplit $ n - 1
-                before <- resize x $ genListOf genUnchecked
-                middle <- genInvalid
-                after  <- resize y $ genListOf genUnchecked
-                return $ before ++ [middle] ++ after
-      where
-        genSplit :: Int -> Gen (Int, Int)
-        genSplit n = elements $ [ (i, n - i) | i <- [0..n] ]
+    genInvalid   = sized $ \n -> do
+        (x, y, z) <- genSplit3 n
+        before <- resize x $ genListOf genUnchecked
+        middle <- resize y genInvalid
+        after  <- resize z $ genListOf genUnchecked
+        return $ before ++ [middle] ++ after
+
+upTo :: Int -> Gen Int
+upTo n
+    | n <= 0 = pure 0
+    | otherwise = elements [0 .. n]
+
+genSplit :: Int -> Gen (Int, Int)
+genSplit n
+    | n < 0     = pure (0, 0)
+    | otherwise = elements $ [ (i, n - i) | i <- [0..n] ]
+
+genSplit3 :: Int -> Gen (Int, Int, Int)
+genSplit3 n
+    | n < 0     = pure (0, 0, 0)
+    | otherwise = do
+    (a, z) <- genSplit n
+    (b, c) <- genSplit z
+    return (a, b, c)
+
+arbPartition :: Int -> Gen [Int]
+arbPartition k
+    | k <= 0 = pure []
+    | otherwise = do
+    first <- elements [1..k]
+    rest <- arbPartition $ k - first
+    return $ first : rest
 
 -- | A version of @listOf@ that takes size into account more accurately.
 genListOf :: Gen a -> Gen [a]
-genListOf func = sized $ \n ->
-    case n of
-        0 -> pure []
-        m -> do
-            pars <- arbPartition m
-            forM pars $ \i -> resize i func
-  where
-    arbPartition :: Int -> Gen [Int]
-    arbPartition 0 = pure []
-    arbPartition 1 = pure [1]
-    arbPartition k = do
-        first <- elements [1..k]
-        rest <- arbPartition $ k - first
-        return $ first : rest
+genListOf func = sized $ \n -> do
+    size <- upTo n
+    pars <- arbPartition size
+    forM pars $ \i -> resize i func
+
