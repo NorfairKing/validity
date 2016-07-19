@@ -87,6 +87,13 @@ class Validity a => GenValidity a where
     genInvalid = genUnchecked `suchThat` (not . isValid)
     {-# MINIMAL genUnchecked #-}
 
+instance (GenValidity a, GenValidity b) => GenValidity (a, b) where
+    genUnchecked = (,) <$> genUnchecked <*> genUnchecked
+    genValid = (,) <$> genUnchecked <*> genUnchecked
+    genInvalid = oneof
+        [ (,) <$> genInvalid <*> genUnchecked
+        , (,) <$> genUnchecked <*> genInvalid
+        ]
 
 instance GenValidity a => GenValidity (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]

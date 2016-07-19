@@ -1,5 +1,5 @@
 name:                genvalidity-containers
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            GenValidity support for containers
 description:         Please see README.md
 homepage:            https://github.com/NorfairKing/validity#readme
@@ -15,8 +15,10 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Data.GenValidity.Tree
-                     , Data.GenValidity.Containers
+  exposed-modules:   
+      Data.GenValidity.Containers
+    , Data.GenValidity.Map
+    , Data.GenValidity.Tree
   build-depends:       base       < 5
                      , validity       
                      , genvalidity
