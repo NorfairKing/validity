@@ -17,7 +17,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     Test.Validity
   build-depends:       base                               < 5
-                     , validity                 >= 0.2 && < 0.3
+                     , validity                 >= 0.3 && < 0.4
                      , genvalidity
                      , QuickCheck
                      , hspec                    >= 2.2 && < 2.3

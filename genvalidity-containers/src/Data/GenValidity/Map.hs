@@ -1,6 +1,7 @@
 module Data.GenValidity.Map where
 
 import           Data.GenValidity
+import           Data.Validity.Map ()
 
 import           Data.Map         (Map)
 import qualified Data.Map         as M
