@@ -1,4 +1,5 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Test.Validity
     ( module Data.GenValidity
     , Proxy(Proxy)
@@ -11,7 +12,9 @@ module Test.Validity
     -- * Tests for GenValidity instances
     , genValiditySpec
     , genValidityValidGeneratesValid
+    , genGeneratesValid
     , genValidityInvalidGeneratesInvalid
+    , genGeneratesInvalid
 
     -- * Tests for RelativeValidity instances
     , relativeValiditySpec
@@ -127,21 +130,37 @@ genValiditySpec proxy = do
 
 -- | @genValid@ only generates valid data
 genValidityValidGeneratesValid
-    :: (Show a, GenValidity a)
+    :: forall a. (Show a, GenValidity a)
     => Proxy a
     -> Property
 genValidityValidGeneratesValid proxy =
-    forAll genValid $ \a ->
-        (a `asProxyTypeOf` proxy) `shouldSatisfy` isValid
+    genGeneratesValid (genValid :: Gen a)
+
+-- | The given generator generates only valid data points
+genGeneratesValid
+    :: (Show a, Validity a)
+    => Gen a
+    -> Property
+genGeneratesValid gen =
+    forAll gen (`shouldSatisfy` isValid)
+
 
 -- | @genValid@ only generates invalid data
 genValidityInvalidGeneratesInvalid
-    :: (Show a, GenValidity a)
+    :: forall a. (Show a, GenValidity a)
     => Proxy a
     -> Property
 genValidityInvalidGeneratesInvalid proxy =
-    forAll genInvalid $ \a ->
-        (a `asProxyTypeOf` proxy) `shouldNotSatisfy` isValid
+    genGeneratesInvalid (genInvalid :: Gen a)
+
+-- | The given generator generates only invalid data points
+genGeneratesInvalid
+    :: (Show a, Validity a)
+    => Gen a
+    -> Property
+genGeneratesInvalid gen =
+    forAll gen (`shouldNotSatisfy` isValid)
+
 
 -- | A @Spec@ that specifies that @isValidFor@ implies @isValid@
 --
