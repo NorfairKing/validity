@@ -87,6 +87,66 @@ class Validity a => GenValidity a where
     genInvalid = genUnchecked `suchThat` (not . isValid)
     {-# MINIMAL genUnchecked #-}
 
+instance (GenValidity a, GenValidity b) => GenValidity (a, b) where
+    genUnchecked = sized $ \n -> do
+        (r, s) <- genSplit n
+        a <- resize r genUnchecked
+        b <- resize s genUnchecked
+        return (a, b)
+
+    genValid = sized $ \n -> do
+        (r, s) <- genSplit n
+        a <- resize r genValid
+        b <- resize s genValid
+        return (a, b)
+
+    genInvalid = sized $ \n -> do
+        (r, s) <- genSplit n
+        oneof
+            [ do
+                a <- resize r genUnchecked
+                b <- resize s genInvalid
+                return (a, b)
+            , do
+                a <- resize r genInvalid
+                b <- resize s genUnchecked
+                return (a, b)
+            ]
+
+instance (GenValidity a, GenValidity b, GenValidity c) => GenValidity (a, b, c) where
+    genUnchecked = sized $ \n -> do
+        (r, s, t) <- genSplit3 n
+        a <- resize r genUnchecked
+        b <- resize s genUnchecked
+        c <- resize t genUnchecked
+        return (a, b, c)
+
+    genValid = sized $ \n -> do
+        (r, s, t) <- genSplit3 n
+        a <- resize r genValid
+        b <- resize s genValid
+        c <- resize t genValid
+        return (a, b, c)
+
+    genInvalid = sized $ \n -> do
+        (r, s, t) <- genSplit3 n
+        oneof
+            [ do
+                a <- resize r genInvalid
+                b <- resize s genUnchecked
+                c <- resize t genUnchecked
+                return (a, b, c)
+            , do
+                a <- resize r genUnchecked
+                b <- resize s genInvalid
+                c <- resize t genUnchecked
+                return (a, b, c)
+            , do
+                a <- resize r genUnchecked
+                b <- resize s genUnchecked
+                c <- resize t genInvalid
+                return (a, b, c)
+            ]
 
 instance GenValidity a => GenValidity (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]

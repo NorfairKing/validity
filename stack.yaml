@@ -1,6 +1,7 @@
 resolver: lts-6.7
 packages:
 - 'validity'
+- 'validity-containers'
 - 'genvalidity'
 - 'genvalidity-containers'
 - 'genvalidity-text'
