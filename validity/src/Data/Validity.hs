@@ -28,6 +28,8 @@
 
 module Data.Validity
     ( Validity(..)
+    , constructValid
+    , constructValidUnsafe
     ) where
 
 
@@ -60,4 +62,16 @@ instance Validity a => Validity (Maybe a) where
     isValid Nothing = True
     isValid (Just a) = isValid a
 
+
+-- | Construct a valid element from an unchecked element
+constructValid :: Validity a => a -> Maybe a
+constructValid p = if isValid p then Just p else Nothing
+
+-- | Construct a valid element from an unchecked element, throwing 'error'
+-- on invalid elements.
+constructValidUnsafe :: (Show a, Validity a) => a -> a
+constructValidUnsafe p =
+    case constructValid p of
+        Nothing -> error $ show p ++ " is not valid"
+        Just p -> p
 
