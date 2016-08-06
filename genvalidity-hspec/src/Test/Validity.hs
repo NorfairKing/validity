@@ -66,6 +66,24 @@ module Test.Validity
     , inverseFunctionsIfSucceedOnGen
     , inverseFunctionsIfSucceedOnValid
     , inverseFunctionsIfSucceed
+
+    -- * Properties of relations
+
+    -- ** Reflexivity
+    , reflexivityOnGen
+    , reflexivityOnValid
+    , reflexivityOnUnchecked
+
+    -- ** Transitivity
+    , transitiveOnGens
+    , transitiveOnValid
+    , transitiveOnUnchecked
+
+    -- ** Antisymmetry
+    , antisymmetryOnGensWithEquality
+    , antisymmetryOnGensEq
+    , antisymmetryOnValid
+
     ) where
 
 import           Data.Proxy
@@ -634,6 +652,83 @@ inverseFunctionsIfSucceed
   -> Property
 inverseFunctionsIfSucceed f g
     = inverseFunctionsIfSucceedOnGen f g genUnchecked
+
+(===>) :: Bool -> Bool -> Bool
+(===>) a b = not a || b
+
+reflexivityOnGen
+  :: Show a
+  => (a -> a -> Bool)
+  -> Gen a
+  -> Property
+reflexivityOnGen func gen =
+    forAll gen $ \a ->
+        func a a
+
+reflexivityOnValid
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+reflexivityOnValid func
+    = reflexivityOnGen func genValid
+
+reflexivityOnUnchecked
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+reflexivityOnUnchecked func
+    = reflexivityOnGen func genUnchecked
+
+
+transitiveOnGens
+  :: Show a
+  => (a -> a -> Bool)
+  -> Gen (a, a, a)
+  -> Property
+transitiveOnGens func gen =
+    forAll gen $ \(a, b, c) ->
+        (func a b && func b c)
+        ===> (func a c)
+
+transitiveOnValid
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+transitiveOnValid func
+    = transitiveOnGens func genValid
+
+transitiveOnUnchecked
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+transitiveOnUnchecked func
+    = transitiveOnGens func genUnchecked
+
+antisymmetryOnGensWithEquality
+  :: Show a
+  => (a -> a -> Bool)
+  -> Gen (a, a)
+  -> (a -> a -> Bool)
+  -> Property
+antisymmetryOnGensWithEquality func gen eq =
+    forAll gen $ \(a, b) ->
+        (func a b && func b a)
+        ===> (a `eq` b)
+
+antisymmetryOnGensEq
+  :: (Show a, Eq a)
+  => (a -> a -> Bool)
+  -> Gen (a, a)
+  -> Property
+antisymmetryOnGensEq func gen
+    = antisymmetryOnGensWithEquality func gen (==)
+
+antisymmetryOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+antisymmetryOnValid func =
+    antisymmetryOnGensEq func genValid
 
 
 nameOf :: Typeable a => Proxy a -> String
