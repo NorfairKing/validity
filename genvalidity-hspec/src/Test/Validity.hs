@@ -84,6 +84,29 @@ module Test.Validity
     , antisymmetryOnGensEq
     , antisymmetryOnValid
 
+    -- * Properties of relations
+
+    -- ** Identity element
+    , leftIdentityOnGen
+    , leftIdentityOnValid
+    , leftIdentity
+    , rightIdentityOnGen
+    , rightIdentityOnValid
+    , rightIdentity
+    , identityOnGen
+    , identityOnValid
+    , identity
+
+    -- ** Associativity
+    , associativeOnGens
+    , associativeOnValids
+    , associative
+
+    -- ** Commutativity
+    , commutativeOnGens
+    , commutativeOnValids
+    , commutative
+
     ) where
 
 import           Data.Proxy
@@ -730,11 +753,131 @@ antisymmetryOnValid
 antisymmetryOnValid func =
     antisymmetryOnGensEq func genValid
 
+leftIdentityOnGen
+  :: (Show a, Eq a)
+  => (b -> a -> a)
+  -> b
+  -> Gen a
+  -> Property
+leftIdentityOnGen op b gen =
+    forAll gen $ \a ->
+        b `op` a `shouldBe` a
+
+leftIdentityOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (b -> a -> a)
+  -> b
+  -> Property
+leftIdentityOnValid op b
+    = leftIdentityOnGen op b genValid
+
+leftIdentity
+  :: (Show a, Eq a, GenValidity a)
+  => (b -> a -> a)
+  -> b
+  -> Property
+leftIdentity op b
+    = leftIdentityOnGen op b genUnchecked
+
+rightIdentityOnGen
+  :: (Show a, Eq a)
+  => (a -> b -> a)
+  -> b
+  -> Gen a
+  -> Property
+rightIdentityOnGen op b gen =
+    forAll gen $ \a ->
+        a `op` b `shouldBe` a
+
+rightIdentityOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> b -> a)
+  -> b
+  -> Property
+rightIdentityOnValid op b
+    = rightIdentityOnGen op b genValid
+
+rightIdentity
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> b -> a)
+  -> b
+  -> Property
+rightIdentity op b
+    = rightIdentityOnGen op b genUnchecked
+
+identityOnGen
+  :: (Show a, Eq a)
+  => (a -> a -> a)
+  -> a
+  -> Gen a
+  -> Property
+identityOnGen op e gen =
+    leftIdentityOnGen op e gen .&&. rightIdentityOnGen op e gen
+
+identityOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> a
+  -> Property
+identityOnValid op a
+    = identityOnGen op a genValid
+
+identity
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> a
+  -> Property
+identity op e
+    = identityOnGen op e genUnchecked
+
+associativeOnGens
+  :: (Show a, Eq a)
+  => (a -> a -> a)
+  -> Gen (a, a, a)
+  -> Property
+associativeOnGens op gen =
+    forAll gen $ \(a, b, c) ->
+        ((a `op` b) `op` c) `shouldBe` (a `op` (b `op` c))
+
+associativeOnValids
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+associativeOnValids op
+    = associativeOnGens op genValid
+
+associative
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+associative op
+    = associativeOnGens op genUnchecked
+
+commutativeOnGens
+  :: (Show a, Eq a)
+  => (a -> a -> a)
+  -> Gen (a, a)
+  -> Property
+commutativeOnGens op gen =
+    forAll gen $ \(a, b) ->
+        (a `op` b) `shouldBe` (b `op` a)
+
+commutativeOnValids
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+commutativeOnValids op
+    = commutativeOnGens op genValid
+
+commutative
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+commutative op
+    = commutativeOnGens op genUnchecked
+
 
 nameOf :: Typeable a => Proxy a -> String
 nameOf proxy =
     let (_, [ty]) = splitTyConApp $ typeOf proxy
     in show ty
-
-
-
