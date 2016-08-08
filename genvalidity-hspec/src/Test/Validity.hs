@@ -52,6 +52,15 @@ module Test.Validity
     , validIfSucceedsOnGens2
     , validIfSucceeds2
 
+    -- * Standard tests involving equivalence of functions
+
+    , equivalentOnGen
+    , equivalentOnValid
+    , equivalent
+    , equivalentOnGens2
+    , equivalentOnValids2
+    , equivalent2
+
     -- * Standard tests involving inverse functions
 
     , inverseFunctionsOnGen
@@ -552,6 +561,63 @@ validIfSucceeds2
 validIfSucceeds2 func
     = validIfSucceedsOnGens2 func genUnchecked genUnchecked
 
+equivalentOnGen
+  :: (Show a, Eq a, Show b, Eq b)
+  => (a -> b)
+  -> (a -> b)
+  -> Gen a
+  -> Property
+equivalentOnGen f g gen =
+    forAll gen $ \a ->
+        f a `shouldBe` g a
+
+equivalentOnValid
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b)
+  => (a -> b)
+  -> (a -> b)
+  -> Property
+equivalentOnValid f g
+    = equivalentOnGen f g genValid
+
+equivalent
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b)
+  => (a -> b)
+  -> (a -> b)
+  -> Property
+equivalent f g
+    = equivalentOnGen f g genUnchecked
+
+equivalentOnGens2
+  :: (Show a, Eq a,
+      Show b, Eq b,
+      Show c, Eq c)
+  => (a -> b -> c)
+  -> (a -> b -> c)
+  -> Gen (a, b)
+  -> Property
+equivalentOnGens2 f g gen =
+    forAll gen $ \(a, b) ->
+        f a b `shouldBe` g a b
+
+equivalentOnValids2
+  :: (Show a, Eq a, GenValidity a,
+      Show b, Eq b, GenValidity b,
+      Show c, Eq c)
+  => (a -> b -> c)
+  -> (a -> b -> c)
+  -> Property
+equivalentOnValids2 f g
+    = equivalentOnGens2 f g genValid
+
+equivalent2
+  :: (Show a, Eq a, GenValidity a,
+      Show b, Eq b, GenValidity b,
+      Show c, Eq c)
+  => (a -> b -> c)
+  -> (a -> b -> c)
+  -> Property
+equivalent2 f g
+    = equivalentOnGens2 f g genUnchecked
 
 inverseFunctionsOnGen
   :: (Show a, Eq a)
