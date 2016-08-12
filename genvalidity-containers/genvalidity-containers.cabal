@@ -15,13 +15,17 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Data.GenValidity.Tree
-                     , Data.GenValidity.Containers
-  build-depends:       base       < 5
-                     , validity       
-                     , genvalidity
-                     , containers       
-                     , QuickCheck      
+  exposed-modules:   
+      Data.GenValidity.Containers
+    , Data.GenValidity.Map
+    , Data.GenValidity.Tree
+  build-depends:
+      base       < 5
+    , validity       
+    , validity-containers
+    , genvalidity
+    , containers       
+    , QuickCheck      
   default-language:    Haskell2010
 
 source-repository head

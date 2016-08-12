@@ -1,6 +1,7 @@
 module Data.GenValidity.Tree where
 
 import           Data.GenValidity
+import           Data.Validity.Tree ()
 
 import           Test.QuickCheck
 

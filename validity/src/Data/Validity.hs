@@ -28,6 +28,8 @@
 
 module Data.Validity
     ( Validity(..)
+    , constructValid
+    , constructValidUnsafe
     ) where
 
 
@@ -36,17 +38,40 @@ module Data.Validity
 class Validity a where
     isValid :: a -> Bool
 
--- | Any @Foldable@ of things that can be checked for validity can be checked
--- for validity
+-- | Any tuple of things is valid if both of its elements are valid
+instance (Validity a, Validity b) => Validity (a, b) where
+    isValid (a, b) = isValid a && isValid b
+
+-- | Any tuple of things is valid if all three of its elements are valid
+instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
+    isValid (a, b, c) = isValid a && isValid b && isValid c
+
+-- | A list of things is valid if all of the things are valid.
 --
--- This includes lists, which means that the empty list is considered valid.
+-- This means that the empty list is considered valid.
 -- If the empty list should not be considered valid as part of your custom data
 -- type, make sure to write a custom @Validity instance@
---
--- This also includes @Maybe@:
+instance Validity a => Validity [a] where
+    isValid = all isValid
+
+-- | A Maybe thing is valid if the thing inside is valid or it's nothing
 -- It makes sense to assume that 'Nothing' is valid.
 -- If Nothing wasn't valid, you wouldn't have used a Maybe
 -- in the datastructure.
-instance (Validity a, Foldable t) => Validity (t a) where
-    isValid = all isValid
+instance Validity a => Validity (Maybe a) where
+    isValid Nothing = True
+    isValid (Just a) = isValid a
+
+
+-- | Construct a valid element from an unchecked element
+constructValid :: Validity a => a -> Maybe a
+constructValid p = if isValid p then Just p else Nothing
+
+-- | Construct a valid element from an unchecked element, throwing 'error'
+-- on invalid elements.
+constructValidUnsafe :: (Show a, Validity a) => a -> a
+constructValidUnsafe p =
+    case constructValid p of
+        Nothing -> error $ show p ++ " is not valid"
+        Just p -> p
 

@@ -1,4 +1,5 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Test.Validity
     ( module Data.GenValidity
     , Proxy(Proxy)
@@ -11,7 +12,9 @@ module Test.Validity
     -- * Tests for GenValidity instances
     , genValiditySpec
     , genValidityValidGeneratesValid
+    , genGeneratesValid
     , genValidityInvalidGeneratesInvalid
+    , genGeneratesInvalid
 
     -- * Tests for RelativeValidity instances
     , relativeValiditySpec
@@ -25,11 +28,15 @@ module Test.Validity
 
     -- * Standard tests involving validity
     , producesValidsOnGen
+    , producesValidsOnArbitrary
     , alwaysProducesValid
     , producesValidsOnValids
     , producesValidsOnGens2
     , alwaysProducesValid2
     , producesValidsOnValids2
+    , producesValidsOnGens3
+    , alwaysProducesValid3
+    , producesValidsOnValids3
 
     -- * Standard tests involving functions that can fail
 
@@ -39,7 +46,79 @@ module Test.Validity
     , failsOnGen
     , failsOnInvalidInput
     , validIfSucceedsOnGen
+    , validIfSucceedsOnArbitrary
     , validIfSucceeds
+    , succeedsOnGens2
+    , succeedsOnValidInput2
+    , failsOnGens2
+    , failsOnInvalidInput2
+    , validIfSucceedsOnGens2
+    , validIfSucceeds2
+
+    -- * Standard tests involving equivalence of functions
+
+    , equivalentOnGen
+    , equivalentOnValid
+    , equivalent
+    , equivalentOnGens2
+    , equivalentOnValids2
+    , equivalent2
+
+    -- * Standard tests involving inverse functions
+
+    , inverseFunctionsOnGen
+    , inverseFunctionsOnValid
+    , inverseFunctions
+    , inverseFunctionsIfFirstSucceedsOnGen
+    , inverseFunctionsIfFirstSucceedsOnValid
+    , inverseFunctionsIfFirstSucceeds
+    , inverseFunctionsIfSecondSucceedsOnGen
+    , inverseFunctionsIfSecondSucceedsOnValid
+    , inverseFunctionsIfSecondSucceeds
+    , inverseFunctionsIfSucceedOnGen
+    , inverseFunctionsIfSucceedOnValid
+    , inverseFunctionsIfSucceed
+
+    -- * Properties of relations
+
+    -- ** Reflexivity
+    , reflexivityOnGen
+    , reflexivityOnValid
+    , reflexivityOnUnchecked
+
+    -- ** Transitivity
+    , transitiveOnGens
+    , transitiveOnValid
+    , transitiveOnUnchecked
+
+    -- ** Antisymmetry
+    , antisymmetryOnGensWithEquality
+    , antisymmetryOnGensEq
+    , antisymmetryOnValid
+
+    -- * Properties of relations
+
+    -- ** Identity element
+    , leftIdentityOnGen
+    , leftIdentityOnValid
+    , leftIdentity
+    , rightIdentityOnGen
+    , rightIdentityOnValid
+    , rightIdentity
+    , identityOnGen
+    , identityOnValid
+    , identity
+
+    -- ** Associativity
+    , associativeOnGens
+    , associativeOnValids
+    , associative
+
+    -- ** Commutativity
+    , commutativeOnGens
+    , commutativeOnValids
+    , commutative
+
     ) where
 
 import           Data.Proxy
@@ -78,21 +157,19 @@ arbitrarySpec proxy = do
 
 -- | @arbitrary@ only generates valid data
 arbitraryGeneratesOnlyValid
-    :: (Show a, Validity a, Arbitrary a)
+    :: forall a. (Show a, Validity a, Arbitrary a)
     => Proxy a
     -> Property
-arbitraryGeneratesOnlyValid proxy =
-    forAll arbitrary $ \a ->
-        (a `asProxyTypeOf` proxy) `shouldSatisfy` isValid
+arbitraryGeneratesOnlyValid _ =
+    genGeneratesValid (arbitrary :: Gen a)
 
--- | @shrink@ only produces valid data
+-- | @shrink@, applied to valid data only produces valid data
 shrinkProducesOnlyValids
-    :: (Show a, Validity a, Arbitrary a)
+    :: forall a. (Show a, Validity a, Arbitrary a)
     => Proxy a
     -> Property
-shrinkProducesOnlyValids proxy =
-    forAll arbitrary $ \a ->
-        shrink (a `asProxyTypeOf` proxy) `shouldSatisfy` all isValid
+shrinkProducesOnlyValids _ =
+    genGeneratesValid (shrink <$> arbitrary :: Gen [a])
 
 
 -- | A @Spec@ that specifies that @genValid@ only generates valid data and that
@@ -121,21 +198,37 @@ genValiditySpec proxy = do
 
 -- | @genValid@ only generates valid data
 genValidityValidGeneratesValid
-    :: (Show a, GenValidity a)
+    :: forall a. (Show a, GenValidity a)
     => Proxy a
     -> Property
-genValidityValidGeneratesValid proxy =
-    forAll genValid $ \a ->
-        (a `asProxyTypeOf` proxy) `shouldSatisfy` isValid
+genValidityValidGeneratesValid _ =
+    genGeneratesValid (genValid :: Gen a)
+
+-- | The given generator generates only valid data points
+genGeneratesValid
+    :: (Show a, Validity a)
+    => Gen a
+    -> Property
+genGeneratesValid gen =
+    forAll gen (`shouldSatisfy` isValid)
+
 
 -- | @genValid@ only generates invalid data
 genValidityInvalidGeneratesInvalid
-    :: (Show a, GenValidity a)
+    :: forall a. (Show a, GenValidity a)
     => Proxy a
     -> Property
-genValidityInvalidGeneratesInvalid proxy =
-    forAll genInvalid $ \a ->
-        (a `asProxyTypeOf` proxy) `shouldNotSatisfy` isValid
+genValidityInvalidGeneratesInvalid _ =
+    genGeneratesInvalid (genInvalid :: Gen a)
+
+-- | The given generator generates only invalid data points
+genGeneratesInvalid
+    :: (Show a, Validity a)
+    => Gen a
+    -> Property
+genGeneratesInvalid gen =
+    forAll gen (`shouldNotSatisfy` isValid)
+
 
 -- | A @Spec@ that specifies that @isValidFor@ implies @isValid@
 --
@@ -294,6 +387,14 @@ producesValidsOnGen func gen
     = forAll gen $ \a -> func a `shouldSatisfy` isValid
 
 -- | The function produces valid output when the input is generated by
+-- @arbitrary@
+producesValidsOnArbitrary
+    :: (Show a, Show b, Arbitrary a, Validity b)
+    => (a -> b)
+    -> Property
+producesValidsOnArbitrary = (`producesValidsOnGen` arbitrary)
+
+-- | The function produces valid output when the input is generated by
 -- @genUnchecked@
 alwaysProducesValid
     :: (Show a, Show b, GenValidity a, Validity b)
@@ -332,6 +433,35 @@ producesValidsOnValids2
     -> Property
 producesValidsOnValids2 func
     = producesValidsOnGens2 func genValid genValid
+
+producesValidsOnGens3
+    :: (Show a, Show b, Show c, Show d, Validity d)
+    => (a -> b -> c -> d)
+    -> Gen a -> Gen b -> Gen c
+    -> Property
+producesValidsOnGens3 func gen1 gen2 gen3
+    = forAll gen1 $ \a ->
+          forAll gen2 $ \b ->
+              forAll gen3 $ \c ->
+                  func a b c `shouldSatisfy` isValid
+
+alwaysProducesValid3
+    :: (Show a, Show b, Show c, Show d,
+        GenValidity a, GenValidity b, GenValidity c,
+        Validity d)
+    => (a -> b -> c -> d)
+    -> Property
+alwaysProducesValid3 func
+    = producesValidsOnGens3 func genUnchecked genUnchecked genUnchecked
+
+producesValidsOnValids3
+    :: (Show a, Show b, Show c, Show d,
+        GenValidity a, GenValidity b, GenValidity c,
+        Validity d)
+    => (a -> b -> c -> d)
+    -> Property
+producesValidsOnValids3 func
+    = producesValidsOnGens3 func genValid genValid genValid
 
 -- | The function succeeds if the input is generated by the given generator
 succeedsOnGen
@@ -379,12 +509,470 @@ validIfSucceedsOnGen func gen
             Just res -> res `shouldSatisfy` isValid
 
 -- | The function produces output that satisfies @isValid@ if it is given input
+-- that is generated by @arbitrary@.
+validIfSucceedsOnArbitrary
+    :: (Show a, Show b, Show (f b), Arbitrary a, Validity b, CanFail f)
+    => (a -> f b)
+    -> Property
+validIfSucceedsOnArbitrary = (`validIfSucceedsOnGen` arbitrary)
+
+-- | The function produces output that satisfies @isValid@ if it is given input
 -- that is generated by @genUnchecked@.
 validIfSucceeds
-  :: (Show a, Show b, Show (f b), GenValidity a, Validity b, CanFail f)
-  => (a -> f b)
-  -> Property
+    :: (Show a, Show b, Show (f b), GenValidity a, Validity b, CanFail f)
+    => (a -> f b)
+    -> Property
 validIfSucceeds = (`validIfSucceedsOnGen` genUnchecked)
+
+
+succeedsOnGens2
+    :: (Show a, Show b, Show c, Show (f c),
+        CanFail f)
+    => (a -> b -> f c)
+    -> Gen a -> Gen b
+    -> Property
+succeedsOnGens2 func genA genB =
+    forAll genA $ \a ->
+        forAll genB $ \b ->
+            func a b `shouldNotSatisfy` hasFailed
+
+
+succeedsOnValidInput2
+    :: (Show a, Show b, Show c, Show (f c),
+        GenValidity a, GenValidity b,
+        CanFail f)
+    => (a -> b -> f c)
+    -> Property
+succeedsOnValidInput2 func
+    = succeedsOnGens2 func genValid genValid
+
+
+failsOnGens2
+    :: (Show a, Show b, Show c, Show (f c),
+        CanFail f)
+    => (a -> b -> f c)
+    -> Gen a -> Gen b
+    -> Property
+failsOnGens2 func genA genB =
+    forAll genA $ \a ->
+        forAll genB $ \b ->
+            func a b `shouldSatisfy` hasFailed
+
+
+failsOnInvalidInput2
+    :: (Show a, Show b, Show c, Show (f c),
+        GenValidity a, GenValidity b,
+        CanFail f)
+    => (a -> b -> f c)
+    -> Property
+failsOnInvalidInput2 func
+    =    failsOnGens2 func genInvalid genUnchecked
+    .&&. failsOnGens2 func genUnchecked genInvalid
+
+
+validIfSucceedsOnGens2
+    :: (Show a, Show b, Show c, Show (f c),
+        Validity c, CanFail f)
+    => (a -> b -> f c)
+    -> Gen a -> Gen b
+    -> Property
+validIfSucceedsOnGens2 func genA genB =
+    forAll genA $ \a ->
+        forAll genB $ \b ->
+            case resultIfSucceeded (func a b) of
+                Nothing  -> return () -- Can happen
+                Just res -> res `shouldSatisfy` isValid
+
+
+validIfSucceeds2
+  :: (Show a, Show b, Show c, Show (f c),
+      GenValidity a, GenValidity b,
+      Validity c, CanFail f)
+  => (a -> b -> f c)
+  -> Property
+validIfSucceeds2 func
+    = validIfSucceedsOnGens2 func genUnchecked genUnchecked
+
+equivalentOnGen
+  :: (Show a, Eq a, Show b, Eq b)
+  => (a -> b)
+  -> (a -> b)
+  -> Gen a
+  -> Property
+equivalentOnGen f g gen =
+    forAll gen $ \a ->
+        f a `shouldBe` g a
+
+equivalentOnValid
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b)
+  => (a -> b)
+  -> (a -> b)
+  -> Property
+equivalentOnValid f g
+    = equivalentOnGen f g genValid
+
+equivalent
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b)
+  => (a -> b)
+  -> (a -> b)
+  -> Property
+equivalent f g
+    = equivalentOnGen f g genUnchecked
+
+equivalentOnGens2
+  :: (Show a, Eq a,
+      Show b, Eq b,
+      Show c, Eq c)
+  => (a -> b -> c)
+  -> (a -> b -> c)
+  -> Gen (a, b)
+  -> Property
+equivalentOnGens2 f g gen =
+    forAll gen $ \(a, b) ->
+        f a b `shouldBe` g a b
+
+equivalentOnValids2
+  :: (Show a, Eq a, GenValidity a,
+      Show b, Eq b, GenValidity b,
+      Show c, Eq c)
+  => (a -> b -> c)
+  -> (a -> b -> c)
+  -> Property
+equivalentOnValids2 f g
+    = equivalentOnGens2 f g genValid
+
+equivalent2
+  :: (Show a, Eq a, GenValidity a,
+      Show b, Eq b, GenValidity b,
+      Show c, Eq c)
+  => (a -> b -> c)
+  -> (a -> b -> c)
+  -> Property
+equivalent2 f g
+    = equivalentOnGens2 f g genUnchecked
+
+inverseFunctionsOnGen
+  :: (Show a, Eq a)
+  => (a -> b)
+  -> (b -> a)
+  -> Gen a
+  -> Property
+inverseFunctionsOnGen f g gen =
+    forAll gen $ \a ->
+      g (f a) `shouldBe` a
+
+
+inverseFunctionsOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> b)
+  -> (b -> a)
+  -> Property
+inverseFunctionsOnValid f g
+    = inverseFunctionsOnGen f g genValid
+
+
+inverseFunctions
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> b)
+  -> (b -> a)
+  -> Property
+inverseFunctions f g
+    = inverseFunctionsOnGen f g genUnchecked
+
+
+inverseFunctionsIfFirstSucceedsOnGen
+  :: (Show a, Eq a, CanFail f)
+  => (a -> f b)
+  -> (b -> a)
+  -> Gen a
+  -> Property
+inverseFunctionsIfFirstSucceedsOnGen f g gen =
+    forAll gen $ \a ->
+      case resultIfSucceeded (f a) of
+          Nothing -> return () -- fine
+          Just b  -> g b `shouldBe` a
+
+
+inverseFunctionsIfFirstSucceedsOnValid
+  :: (Show a, Eq a, GenValidity a, CanFail f)
+  => (a -> f b)
+  -> (b -> a)
+  -> Property
+inverseFunctionsIfFirstSucceedsOnValid f g
+    = inverseFunctionsIfFirstSucceedsOnGen f g genValid
+
+
+inverseFunctionsIfFirstSucceeds
+  :: (Show a, Eq a, GenValidity a, CanFail f)
+  => (a -> f b)
+  -> (b -> a)
+  -> Property
+inverseFunctionsIfFirstSucceeds f g
+    = inverseFunctionsIfFirstSucceedsOnGen f g genUnchecked
+
+
+inverseFunctionsIfSecondSucceedsOnGen
+  :: (Show a, Eq a, CanFail f)
+  => (a -> b)
+  -> (b -> f a)
+  -> Gen a
+  -> Property
+inverseFunctionsIfSecondSucceedsOnGen f g gen =
+    forAll gen $ \a ->
+      case resultIfSucceeded (g (f a)) of
+          Nothing -> return () -- fine
+          Just r  -> r `shouldBe` a
+
+
+inverseFunctionsIfSecondSucceedsOnValid
+  :: (Show a, Eq a, GenValidity a, CanFail f)
+  => (a -> b)
+  -> (b -> f a)
+  -> Property
+inverseFunctionsIfSecondSucceedsOnValid f g
+    = inverseFunctionsIfSecondSucceedsOnGen f g genValid
+
+
+inverseFunctionsIfSecondSucceeds
+  :: (Show a, Eq a, GenValidity a, CanFail f)
+  => (a -> b)
+  -> (b -> f a)
+  -> Property
+inverseFunctionsIfSecondSucceeds f g
+    = inverseFunctionsIfSecondSucceedsOnGen f g genUnchecked
+
+
+inverseFunctionsIfSucceedOnGen
+  :: (Show a, Eq a, CanFail f, CanFail g)
+  => (a -> f b)
+  -> (b -> g a)
+  -> Gen a
+  -> Property
+inverseFunctionsIfSucceedOnGen f g gen =
+    forAll gen $ \a ->
+      case do fa <- resultIfSucceeded $ f a
+              resultIfSucceeded $ g fa
+          of
+          Nothing -> return () -- fine
+          Just r  -> r `shouldBe` a
+
+
+inverseFunctionsIfSucceedOnValid
+  :: (Show a, Eq a, GenValidity a, CanFail f, CanFail g)
+  => (a -> f b)
+  -> (b -> g a)
+  -> Property
+inverseFunctionsIfSucceedOnValid f g
+    = inverseFunctionsIfSucceedOnGen f g genValid
+
+
+inverseFunctionsIfSucceed
+  :: (Show a, Eq a, GenValidity a, CanFail f, CanFail g)
+  => (a -> f b)
+  -> (b -> g a)
+  -> Property
+inverseFunctionsIfSucceed f g
+    = inverseFunctionsIfSucceedOnGen f g genUnchecked
+
+(===>) :: Bool -> Bool -> Bool
+(===>) a b = not a || b
+
+reflexivityOnGen
+  :: Show a
+  => (a -> a -> Bool)
+  -> Gen a
+  -> Property
+reflexivityOnGen func gen =
+    forAll gen $ \a ->
+        func a a
+
+reflexivityOnValid
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+reflexivityOnValid func
+    = reflexivityOnGen func genValid
+
+reflexivityOnUnchecked
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+reflexivityOnUnchecked func
+    = reflexivityOnGen func genUnchecked
+
+
+transitiveOnGens
+  :: Show a
+  => (a -> a -> Bool)
+  -> Gen (a, a, a)
+  -> Property
+transitiveOnGens func gen =
+    forAll gen $ \(a, b, c) ->
+        (func a b && func b c)
+        ===> (func a c)
+
+transitiveOnValid
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+transitiveOnValid func
+    = transitiveOnGens func genValid
+
+transitiveOnUnchecked
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+transitiveOnUnchecked func
+    = transitiveOnGens func genUnchecked
+
+antisymmetryOnGensWithEquality
+  :: Show a
+  => (a -> a -> Bool)
+  -> Gen (a, a)
+  -> (a -> a -> Bool)
+  -> Property
+antisymmetryOnGensWithEquality func gen eq =
+    forAll gen $ \(a, b) ->
+        (func a b && func b a)
+        ===> (a `eq` b)
+
+antisymmetryOnGensEq
+  :: (Show a, Eq a)
+  => (a -> a -> Bool)
+  -> Gen (a, a)
+  -> Property
+antisymmetryOnGensEq func gen
+    = antisymmetryOnGensWithEquality func gen (==)
+
+antisymmetryOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+antisymmetryOnValid func =
+    antisymmetryOnGensEq func genValid
+
+leftIdentityOnGen
+  :: (Show a, Eq a)
+  => (b -> a -> a)
+  -> b
+  -> Gen a
+  -> Property
+leftIdentityOnGen op b gen =
+    forAll gen $ \a ->
+        b `op` a `shouldBe` a
+
+leftIdentityOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (b -> a -> a)
+  -> b
+  -> Property
+leftIdentityOnValid op b
+    = leftIdentityOnGen op b genValid
+
+leftIdentity
+  :: (Show a, Eq a, GenValidity a)
+  => (b -> a -> a)
+  -> b
+  -> Property
+leftIdentity op b
+    = leftIdentityOnGen op b genUnchecked
+
+rightIdentityOnGen
+  :: (Show a, Eq a)
+  => (a -> b -> a)
+  -> b
+  -> Gen a
+  -> Property
+rightIdentityOnGen op b gen =
+    forAll gen $ \a ->
+        a `op` b `shouldBe` a
+
+rightIdentityOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> b -> a)
+  -> b
+  -> Property
+rightIdentityOnValid op b
+    = rightIdentityOnGen op b genValid
+
+rightIdentity
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> b -> a)
+  -> b
+  -> Property
+rightIdentity op b
+    = rightIdentityOnGen op b genUnchecked
+
+identityOnGen
+  :: (Show a, Eq a)
+  => (a -> a -> a)
+  -> a
+  -> Gen a
+  -> Property
+identityOnGen op e gen =
+    leftIdentityOnGen op e gen .&&. rightIdentityOnGen op e gen
+
+identityOnValid
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> a
+  -> Property
+identityOnValid op a
+    = identityOnGen op a genValid
+
+identity
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> a
+  -> Property
+identity op e
+    = identityOnGen op e genUnchecked
+
+associativeOnGens
+  :: (Show a, Eq a)
+  => (a -> a -> a)
+  -> Gen (a, a, a)
+  -> Property
+associativeOnGens op gen =
+    forAll gen $ \(a, b, c) ->
+        ((a `op` b) `op` c) `shouldBe` (a `op` (b `op` c))
+
+associativeOnValids
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+associativeOnValids op
+    = associativeOnGens op genValid
+
+associative
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+associative op
+    = associativeOnGens op genUnchecked
+
+commutativeOnGens
+  :: (Show a, Eq a)
+  => (a -> a -> a)
+  -> Gen (a, a)
+  -> Property
+commutativeOnGens op gen =
+    forAll gen $ \(a, b) ->
+        (a `op` b) `shouldBe` (b `op` a)
+
+commutativeOnValids
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+commutativeOnValids op
+    = commutativeOnGens op genValid
+
+commutative
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> a)
+  -> Property
+commutative op
+    = commutativeOnGens op genUnchecked
 
 
 nameOf :: Typeable a => Proxy a -> String
