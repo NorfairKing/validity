@@ -63,6 +63,15 @@ module Test.Validity
     , equivalentOnGens2
     , equivalentOnValids2
     , equivalent2
+    , equivalentWhenFirstSucceedsOnGen
+    , equivalentWhenFirstSucceedsOnValid
+    , equivalentWhenFirstSucceeds
+    , equivalentWhenSecondSucceedsOnGen
+    , equivalentWhenSecondSucceedsOnValid
+    , equivalentWhenSecondSucceeds
+    , equivalentWhenSucceedOnGen
+    , equivalentWhenSucceedOnValid
+    , equivalentWhenSucceed
 
     -- * Standard tests involving inverse functions
 
@@ -650,6 +659,93 @@ equivalent2
   -> Property
 equivalent2 f g
     = equivalentOnGens2 f g genUnchecked
+
+equivalentWhenFirstSucceedsOnGen
+  :: (Show a, Eq a, Show b, Eq b, CanFail f)
+  => (a -> f b)
+  -> (a -> b)
+  -> Gen a
+  -> Property
+equivalentWhenFirstSucceedsOnGen f g gen =
+    forAll gen $ \a ->
+        case resultIfSucceeded (f a) of
+            Nothing -> return () -- fine
+            Just r  -> r `shouldBe` g a
+
+equivalentWhenFirstSucceedsOnValid
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+  => (a -> f b)
+  -> (a -> b)
+  -> Property
+equivalentWhenFirstSucceedsOnValid f g
+    = equivalentWhenFirstSucceedsOnGen f g genValid
+
+equivalentWhenFirstSucceeds
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+  => (a -> f b)
+  -> (a -> b)
+  -> Property
+equivalentWhenFirstSucceeds f g
+    = equivalentWhenFirstSucceedsOnGen f g genUnchecked
+
+equivalentWhenSecondSucceedsOnGen
+  :: (Show a, Eq a, Show b, Eq b, CanFail f)
+  => (a -> b)
+  -> (a -> f b)
+  -> Gen a
+  -> Property
+equivalentWhenSecondSucceedsOnGen f g gen =
+    forAll gen $ \a ->
+        case resultIfSucceeded (g a) of
+            Nothing -> return () -- fine
+            Just r  -> r `shouldBe` f a
+
+equivalentWhenSecondSucceedsOnValid
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+  => (a -> b)
+  -> (a -> f b)
+  -> Property
+equivalentWhenSecondSucceedsOnValid f g
+    = equivalentWhenSecondSucceedsOnGen f g genValid
+
+equivalentWhenSecondSucceeds
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+  => (a -> b)
+  -> (a -> f b)
+  -> Property
+equivalentWhenSecondSucceeds f g
+    = equivalentWhenSecondSucceedsOnGen f g genUnchecked
+
+equivalentWhenSucceedOnGen
+  :: (Show a, Eq a, Show b, Eq b, CanFail f)
+  => (a -> f b)
+  -> (a -> f b)
+  -> Gen a
+  -> Property
+equivalentWhenSucceedOnGen f g gen =
+    forAll gen $ \a ->
+        case do fa <- resultIfSucceeded $ f a
+                ga <- resultIfSucceeded $ g a
+                return $ (fa, ga)
+            of
+            Nothing -> return () -- fine
+            Just (fa, ga)  -> fa `shouldBe` ga
+
+equivalentWhenSucceedOnValid
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+  => (a -> f b)
+  -> (a -> f b)
+  -> Property
+equivalentWhenSucceedOnValid f g
+    = equivalentWhenSucceedOnGen f g genValid
+
+equivalentWhenSucceed
+  :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+  => (a -> f b)
+  -> (a -> f b)
+  -> Property
+equivalentWhenSucceed f g
+    = equivalentWhenSucceedOnGen f g genUnchecked
 
 inverseFunctionsOnGen
   :: (Show a, Eq a)
