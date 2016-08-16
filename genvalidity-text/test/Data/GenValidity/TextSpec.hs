@@ -3,16 +3,16 @@ module Data.GenValidity.TextSpec (spec) where
 import           Test.Hspec
 import           Test.QuickCheck
 
-import           Data.GenValidity      ()
+import           Data.GenValidity
 import           Data.GenValidity.Text
 
 import qualified Data.Text             as T
 
 spec :: Spec
 spec = do
-    describe "genUncheckedText" $ do
+    describe "genValid" $ do
         it "is always empty when resized to 0" $ do
-            forAll (resize 0 genUncheckedText) (`shouldSatisfy` T.null)
+            forAll (resize 0 genValid) (`shouldSatisfy` T.null)
 
     describe "textStartingWith" $ do
         it "is never empty" $ do
