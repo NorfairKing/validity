@@ -1,18 +1,33 @@
 module Data.GenValidity.Text where
 
 import           Data.GenValidity
+import           Data.Validity.Text ()
 
 import           Test.QuickCheck
 
-import           Data.Text        (Text)
-import qualified Data.Text        as T
+import           Control.Monad
+
+import qualified Data.Text.Array    as A
+import           Data.Text.Internal (Text(..))
+import qualified Data.Text          as T
 
 
-genUncheckedText :: Gen Text
-genUncheckedText = sized $ \n -> do
-    size <- upTo n
-    chars <- resize size $ genListOf arbitrary
-    return $ T.pack chars
+instance GenValidity Text where
+    genUnchecked = Text <$> uncheckedArray <*> arbitrary <*> arbitrary
+      where
+        uncheckedArray = sized $ \n -> do
+            size <- upTo n
+            ins <- replicateM size arbitrary
+            return $ A.run $ do
+              arr <- A.new size
+              forM_ (zip [0..] ins) $ \(ix, word) ->
+                A.unsafeWrite arr ix word
+              return arr
+
+    genValid = sized $ \n -> do
+        size <- upTo n
+        chars <- resize size $ genListOf arbitrary
+        return $ T.pack chars
 
 textStartingWith :: Char -> Gen Text
 textStartingWith c = sized $ \n ->
@@ -20,15 +35,15 @@ textStartingWith c = sized $ \n ->
         0 -> pure $ T.singleton c
         1 -> pure $ T.singleton c
         _ -> do
-            rest <- resize (n - 1) genUncheckedText
+            rest <- resize (n - 1) genValid
             return $ T.cons c rest
 
 textWith :: Gen Text -> Gen Text
 textWith gen = sized $ \n -> do
     (b, m, a) <- genSplit3 n
-    before <- resize b genUncheckedText
+    before <- resize b genValid
     middle <- resize m gen
-    after  <- resize a genUncheckedText
+    after  <- resize a genValid
     return $ T.concat [before, middle, after]
 
 textWithA :: Char -> Gen Text
@@ -41,7 +56,7 @@ textWithoutAnyOf :: [Char] -> Gen Text
 textWithoutAnyOf cs = T.pack <$> genListOf (arbitrary `suchThat` (`notElem` cs))
 
 textAllCaps :: Gen Text
-textAllCaps = T.toUpper <$> genUncheckedText
+textAllCaps = T.toUpper <$> genValid
 
 
 

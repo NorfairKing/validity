@@ -17,8 +17,10 @@ library
   exposed-modules:     Data.GenValidity.Text
   build-depends:       base       < 5
                      , validity       
+                     , validity-text
                      , genvalidity
                      , text       
+                     , array
                      , QuickCheck      
   default-language:    Haskell2010
 

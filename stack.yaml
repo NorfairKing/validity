@@ -1,6 +1,7 @@
 packages:
 - 'validity'
 - 'validity-containers'
+- 'validity-text'
 - 'genvalidity'
 - 'genvalidity-containers'
 - 'genvalidity-text'
