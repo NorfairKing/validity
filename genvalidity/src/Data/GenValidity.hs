@@ -39,7 +39,6 @@
  >         case myFunction input of
  >             Nothing -> return () -- Can happen
  >             Just output -> output `shouldSatisfy` isValid
-
  -}
 
 module Data.GenValidity

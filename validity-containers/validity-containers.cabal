@@ -18,7 +18,7 @@ library
   exposed-modules:     Data.Validity.Containers
                      , Data.Validity.Tree
                      , Data.Validity.Map
-  build-depends:       base >= 4.7 && < 5
+  build-depends:       base < 5
                      , validity
                      , containers 
   default-language:    Haskell2010
