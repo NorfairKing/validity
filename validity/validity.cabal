@@ -1,7 +1,13 @@
 name:                validity
-version:             0.3.0.1
+version:             0.3.0.2
 synopsis:            Validity typeclass
-description:         Please see README.md
+description:        
+  Note: There are companion instance packages for this library:
+  .
+  * <https://hackage.haskell.org/package/validity-text validity-text>
+  .                                                 
+  * <https://hackage.haskell.org/package/validity-containers validity-containers>
+
 homepage:            https://github.com/NorfairKing/validity#readme
 license:             MIT
 license-file:        LICENSE

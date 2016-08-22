@@ -20,7 +20,7 @@
 
  The @Validity@ typeclass allows us to specify this invariant (and enables
  testing via the @genvalidity@ libraries:
- https://hackage.haskell.org/package/genvalidity):
+ https://hackage.haskell.org/package/genvalidity ):
 
  > instance Validity Prime where
  >     isValid (Prime n) = isPrime n
