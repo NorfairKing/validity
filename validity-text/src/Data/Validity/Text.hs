@@ -5,8 +5,7 @@ import           Data.Validity
 import           Data.Text.Internal (Text(..))
 import qualified Data.Text.Array as A
 
--- | A tree of things is valid if all the things are valid and the map itself
--- is valid.
+-- | A text is valid if the internal structure is consistent.
 instance Validity Text where
     isValid (Text arr off len) =
         let c    = A.unsafeIndex arr off
