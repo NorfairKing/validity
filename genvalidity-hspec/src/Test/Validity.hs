@@ -1,5 +1,5 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ScopedTypeVariables   #-}
 module Test.Validity
     ( module Data.GenValidity
     , Proxy(Proxy)
@@ -139,11 +139,11 @@ module Test.Validity
 
     ) where
 
-import           Data.Proxy
 import           Data.Data
+import           Data.Proxy
 
-import           Data.GenValidity
 import           Data.GenRelativeValidity
+import           Data.GenValidity
 
 import           Test.Hspec
 import           Test.QuickCheck
@@ -260,7 +260,6 @@ genGeneratesInvalid gen =
 -- >     (Proxy :: Proxy MyOtherData)
 relativeValiditySpec
     :: (Typeable a, Typeable b,
-        Data a, Data b,
         Show a, Show b,
         GenValidity a, GenValidity b, GenRelativeValidity a b)
     => Proxy a
