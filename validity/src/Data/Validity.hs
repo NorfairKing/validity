@@ -35,16 +35,33 @@ module Data.Validity
 
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
+--
+-- There is just one law for this instances of this class:
+--
+-- > isValid a || isInvalid b && (not (isValid a) && (isInvalid b))
 class Validity a where
+    -- | Check whether a given value is a valid value.
     isValid :: a -> Bool
+
+    -- | Check whether a given value is an invalid value.
+    --
+    -- There is a default implementation of this function:
+    --
+    -- > isInvalid = not . isValid
+    --
+    -- It can sometimes be faster to write a custom implementation of this function
+    isInvalid :: a -> Bool
+    isInvalid = not . isValid
 
 -- | Any tuple of things is valid if both of its elements are valid
 instance (Validity a, Validity b) => Validity (a, b) where
     isValid (a, b) = isValid a && isValid b
+    isInvalid (a, b) = isInvalid a || isInvalid b
 
 -- | Any tuple of things is valid if all three of its elements are valid
 instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
     isValid (a, b, c) = isValid a && isValid b && isValid c
+    isInvalid (a, b, c) = isInvalid a || isInvalid b || isInvalid c
 
 -- | A list of things is valid if all of the things are valid.
 --
@@ -53,6 +70,7 @@ instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
 -- type, make sure to write a custom @Validity instance@
 instance Validity a => Validity [a] where
     isValid = all isValid
+    isInvalid = any isInvalid
 
 -- | A Maybe thing is valid if the thing inside is valid or it's nothing
 -- It makes sense to assume that 'Nothing' is valid.
@@ -62,6 +80,54 @@ instance Validity a => Validity (Maybe a) where
     isValid Nothing = True
     isValid (Just a) = isValid a
 
+    isInvalid Nothing = False
+    isInvalid (Just a) = isInvalid a
+
+-- | Trivially valid
+instance Validity () where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Bool where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Ordering where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Char where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Int where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Word where
+    isValid = const True
+
+-- | NOT trivially valid:
+--
+-- * NaN is not valid.
+-- * Infinite values are not valid.
+instance Validity Float where
+    isValid d
+      =  not (isNaN d)
+      && not (isInfinite d)
+
+-- | NOT trivially valid:
+--
+-- * NaN is not valid.
+-- * Infinite values are not valid.
+instance Validity Double where
+    isValid d
+      =  not (isNaN d)
+      && not (isInfinite d)
+
+-- | Trivially valid
+instance Validity Integer where
+    isValid = const True
 
 -- | Construct a valid element from an unchecked element
 constructValid :: Validity a => a -> Maybe a

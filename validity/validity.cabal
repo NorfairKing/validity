@@ -1,5 +1,5 @@
 name:                validity
-version:             0.3.0.2
+version:             0.3.0.3
 synopsis:            Validity typeclass
 description:        
   Note: There are companion instance packages for this library:
