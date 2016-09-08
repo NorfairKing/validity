@@ -167,7 +167,7 @@ validitySpec proxy = do
             validityLaws proxy
 
 validityLaws
-    :: (Typeable a, Show a, GenValidity a)
+    :: (Show a, GenValidity a)
     => Proxy a
     -> Property
 validityLaws proxy = validityLawsForGen proxy genUnchecked
