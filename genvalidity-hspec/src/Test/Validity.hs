@@ -95,32 +95,46 @@ module Test.Validity
     , inverseFunctionsOnGen
     , inverseFunctionsOnValid
     , inverseFunctions
+    , inverseFunctionsOnArbitrary
     , inverseFunctionsIfFirstSucceedsOnGen
     , inverseFunctionsIfFirstSucceedsOnValid
     , inverseFunctionsIfFirstSucceeds
+    , inverseFunctionsIfFirstSucceedsOnArbitrary
     , inverseFunctionsIfSecondSucceedsOnGen
     , inverseFunctionsIfSecondSucceedsOnValid
     , inverseFunctionsIfSecondSucceeds
+    , inverseFunctionsIfSecondSucceedsOnArbitrary
     , inverseFunctionsIfSucceedOnGen
     , inverseFunctionsIfSucceedOnValid
     , inverseFunctionsIfSucceed
+    , inverseFunctionsIfSucceedOnArbitrary
 
     -- * Properties of relations
 
     -- ** Reflexivity
     , reflexivityOnGen
     , reflexivityOnValid
-    , reflexivityOnUnchecked
+    , reflexivity
+    , reflexivityOnArbitrary
 
     -- ** Transitivity
-    , transitiveOnGens
-    , transitiveOnValid
-    , transitiveOnUnchecked
+    , transitivityOnGens
+    , transitivityOnValid
+    , transitivity
+    , transitivityOnArbitrary
 
     -- ** Antisymmetry
     , antisymmetryOnGensWithEquality
     , antisymmetryOnGensEq
     , antisymmetryOnValid
+    , antisymmetry
+    , antisymmetryOnArbitrary
+
+    -- ** Symmetry
+    , symmetryOnGens
+    , symmetryOnValid
+    , symmetry
+    , symmetryOnArbitrary
 
     -- * Properties of relations
 
@@ -139,11 +153,19 @@ module Test.Validity
     , associativeOnGens
     , associativeOnValids
     , associative
+    , associativeOnArbitrary
 
     -- ** Commutativity
     , commutativeOnGens
     , commutativeOnValids
     , commutative
+    , commutativeOnArbitrary
+
+    -- * Eq properties
+    , eqSpec
+
+    -- * Ord properties
+    , ordSpec
 
     ) where
 
@@ -965,6 +987,14 @@ inverseFunctions
 inverseFunctions f g
     = inverseFunctionsOnGen f g genUnchecked
 
+inverseFunctionsOnArbitrary
+  :: (Show a, Eq a, Arbitrary a)
+  => (a -> b)
+  -> (b -> a)
+  -> Property
+inverseFunctionsOnArbitrary f g
+    = inverseFunctionsOnGen f g arbitrary
+
 
 inverseFunctionsIfFirstSucceedsOnGen
   :: (Show a, Eq a, CanFail f)
@@ -995,6 +1025,14 @@ inverseFunctionsIfFirstSucceeds
   -> Property
 inverseFunctionsIfFirstSucceeds f g
     = inverseFunctionsIfFirstSucceedsOnGen f g genUnchecked
+
+inverseFunctionsIfFirstSucceedsOnArbitrary
+  :: (Show a, Eq a, Arbitrary a, CanFail f)
+  => (a -> f b)
+  -> (b -> a)
+  -> Property
+inverseFunctionsIfFirstSucceedsOnArbitrary f g
+    = inverseFunctionsIfFirstSucceedsOnGen f g arbitrary
 
 
 inverseFunctionsIfSecondSucceedsOnGen
@@ -1027,6 +1065,14 @@ inverseFunctionsIfSecondSucceeds
 inverseFunctionsIfSecondSucceeds f g
     = inverseFunctionsIfSecondSucceedsOnGen f g genUnchecked
 
+inverseFunctionsIfSecondSucceedsOnArbitrary
+  :: (Show a, Eq a, Arbitrary a, CanFail f)
+  => (a -> b)
+  -> (b -> f a)
+  -> Property
+inverseFunctionsIfSecondSucceedsOnArbitrary f g
+    = inverseFunctionsIfSecondSucceedsOnGen f g arbitrary
+
 
 inverseFunctionsIfSucceedOnGen
   :: (Show a, Eq a, CanFail f, CanFail g)
@@ -1051,7 +1097,6 @@ inverseFunctionsIfSucceedOnValid
 inverseFunctionsIfSucceedOnValid f g
     = inverseFunctionsIfSucceedOnGen f g genValid
 
-
 inverseFunctionsIfSucceed
   :: (Show a, Eq a, GenValidity a, CanFail f, CanFail g)
   => (a -> f b)
@@ -1060,8 +1105,13 @@ inverseFunctionsIfSucceed
 inverseFunctionsIfSucceed f g
     = inverseFunctionsIfSucceedOnGen f g genUnchecked
 
-(===>) :: Bool -> Bool -> Bool
-(===>) a b = not a || b
+inverseFunctionsIfSucceedOnArbitrary
+  :: (Show a, Eq a, Arbitrary a, CanFail f, CanFail g)
+  => (a -> f b)
+  -> (b -> g a)
+  -> Property
+inverseFunctionsIfSucceedOnArbitrary f g
+    = inverseFunctionsIfSucceedOnGen f g arbitrary
 
 reflexivityOnGen
   :: Show a
@@ -1079,37 +1129,51 @@ reflexivityOnValid
 reflexivityOnValid func
     = reflexivityOnGen func genValid
 
-reflexivityOnUnchecked
+reflexivity
   :: (Show a, GenValidity a)
   => (a -> a -> Bool)
   -> Property
-reflexivityOnUnchecked func
+reflexivity func
     = reflexivityOnGen func genUnchecked
 
+reflexivityOnArbitrary
+  :: (Show a, Arbitrary a)
+  => (a -> a -> Bool)
+  -> Property
+reflexivityOnArbitrary func
+    = reflexivityOnGen func arbitrary
 
-transitiveOnGens
+
+transitivityOnGens
   :: Show a
   => (a -> a -> Bool)
   -> Gen (a, a, a)
   -> Property
-transitiveOnGens func gen =
+transitivityOnGens func gen =
     forAll gen $ \(a, b, c) ->
         (func a b && func b c)
         ===> (func a c)
 
-transitiveOnValid
+transitivityOnValid
   :: (Show a, GenValidity a)
   => (a -> a -> Bool)
   -> Property
-transitiveOnValid func
-    = transitiveOnGens func genValid
+transitivityOnValid func
+    = transitivityOnGens func genValid
 
-transitiveOnUnchecked
+transitivity
   :: (Show a, GenValidity a)
   => (a -> a -> Bool)
   -> Property
-transitiveOnUnchecked func
-    = transitiveOnGens func genUnchecked
+transitivity func
+    = transitivityOnGens func genUnchecked
+
+transitivityOnArbitrary
+  :: (Show a, Arbitrary a)
+  => (a -> a -> Bool)
+  -> Property
+transitivityOnArbitrary func
+    = transitivityOnGens func arbitrary
 
 antisymmetryOnGensWithEquality
   :: Show a
@@ -1136,6 +1200,51 @@ antisymmetryOnValid
   -> Property
 antisymmetryOnValid func =
     antisymmetryOnGensEq func genValid
+
+antisymmetry
+  :: (Show a, Eq a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+antisymmetry func =
+    antisymmetryOnGensEq func genUnchecked
+
+antisymmetryOnArbitrary
+  :: (Show a, Eq a, Arbitrary a)
+  => (a -> a -> Bool)
+  -> Property
+antisymmetryOnArbitrary func =
+    antisymmetryOnGensEq func arbitrary
+
+symmetryOnGens
+  :: Show a
+  => (a -> a -> Bool)
+  -> Gen (a, a)
+  -> Property
+symmetryOnGens func gen =
+    forAll gen $ \(a, b) ->
+        (func a b <==> func b a)
+
+symmetryOnValid
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+symmetryOnValid func =
+    symmetryOnGens func genValid
+
+symmetry
+  :: (Show a, GenValidity a)
+  => (a -> a -> Bool)
+  -> Property
+symmetry func =
+    symmetryOnGens func genUnchecked
+
+symmetryOnArbitrary
+  :: (Show a, Arbitrary a)
+  => (a -> a -> Bool)
+  -> Property
+symmetryOnArbitrary func =
+    symmetryOnGens func arbitrary
+
 
 leftIdentityOnGen
   :: (Show a, Eq a)
@@ -1230,6 +1339,13 @@ associativeOnValids
 associativeOnValids op
     = associativeOnGens op genValid
 
+associativeOnArbitrary
+  :: (Show a, Eq a, Arbitrary a)
+  => (a -> a -> a)
+  -> Property
+associativeOnArbitrary op
+    = associativeOnGens op arbitrary
+
 associative
   :: (Show a, Eq a, GenValidity a)
   => (a -> a -> a)
@@ -1260,6 +1376,79 @@ commutative
 commutative op
     = commutativeOnGens op genUnchecked
 
+commutativeOnArbitrary
+  :: (Show a, Eq a, Arbitrary a)
+  => (a -> a -> a)
+  -> Property
+commutativeOnArbitrary op
+    = commutativeOnGens op arbitrary
+
+eqSpec
+  :: (Show a, Eq a, Typeable a, GenValidity a)
+  => Proxy a
+  -> Spec
+eqSpec proxy = do
+    let name = nameOf proxy
+        funeqstr = unwords
+          [ "(==) ::"
+          , name
+          , "->"
+          , name
+          , "-> Bool"
+          ]
+        eq = \a b -> a `asProxyTypeOf` proxy == b
+    describe ("Eq " ++ name) $ do
+        it ("is instantated such that "
+            ++ funeqstr
+            ++ " is reflexive") $
+            reflexivity eq
+
+        it ("is instantated such that "
+            ++ funeqstr
+            ++ " is symmetric") $
+            symmetry eq
+
+        it ("is instantated such that "
+            ++ funeqstr
+            ++ " is transitive") $
+            transitivity eq
+
+ordSpec
+  :: (Show a, Eq a, Ord a, Typeable a, GenValidity a)
+  => Proxy a
+  -> Spec
+ordSpec proxy = do
+    let name = nameOf proxy
+        funlestr = unwords
+          [ "(<=) ::"
+          , name
+          , "->"
+          , name
+          , "-> Ordering"
+          ]
+        cmp = \a b -> a `asProxyTypeOf` proxy <= b
+    describe ("Ord " ++ name) $ do
+        it ("is instantated such that "
+            ++ funlestr
+            ++ " is reflexive") $
+            reflexivity cmp
+
+        it ("is instantated such that "
+            ++ funlestr
+            ++ " is antisymmetric") $
+            antisymmetry cmp
+
+        it ("is instantated such that "
+            ++ funlestr
+            ++ " is transitive") $
+            transitivity cmp
+
+
+(===>) :: Bool -> Bool -> Bool
+(===>) a b = not a || b
+
+(<==>) :: Bool -> Bool -> Bool
+(<==>) a b = a ===> b && b ===> a
 
 nameOf :: Typeable a => Proxy a -> String
 nameOf proxy =
