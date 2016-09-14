@@ -5,18 +5,21 @@ module Test.Validity.Relations
     -- * Properties of relations
 
     -- ** Reflexivity
-      reflexivityOnGen
+      reflexiveOnElem
+    , reflexivityOnGen
     , reflexivityOnValid
     , reflexivity
     , reflexivityOnArbitrary
 
     -- ** Transitivity
+    , transitiveOnElems
     , transitivityOnGens
     , transitivityOnValid
     , transitivity
     , transitivityOnArbitrary
 
     -- ** Antisymmetry
+    , antisymmetricOnElemsWithEquality
     , antisymmetryOnGensWithEquality
     , antisymmetryOnGensEq
     , antisymmetryOnValid
@@ -24,6 +27,7 @@ module Test.Validity.Relations
     , antisymmetryOnArbitrary
 
     -- ** Symmetry
+    , symmetricOnElems
     , symmetryOnGens
     , symmetryOnValid
     , symmetry

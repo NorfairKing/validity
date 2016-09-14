@@ -55,6 +55,9 @@ inverseFunctions
 inverseFunctions f g
     = inverseFunctionsOnGen f g genUnchecked
 
+-- |
+-- 'id' is its own inverse function for every type:
+-- prop> inverseFunctionsOnArbitrary id (id :: Int -> Int)
 inverseFunctionsOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> b)

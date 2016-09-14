@@ -5,8 +5,6 @@ module Test.Validity.Types
     ) where
 
 -- | A class of types that are the result of functions that can fail
---
--- You should not use this class yourself.
 class CanFail f where
     hasFailed :: f a -> Bool
     resultIfSucceeded :: f a -> Maybe a

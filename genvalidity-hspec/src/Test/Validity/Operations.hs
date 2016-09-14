@@ -4,12 +4,22 @@ module Test.Validity.Operations
     ( -- * Properties of operations
 
     -- ** Identity element
-      leftIdentityOnGen
+
+    -- *** Left identity
+      leftIdentityOnElemWithEquality
+    , leftIdentityOnGenWithEquality
+    , leftIdentityOnGen
     , leftIdentityOnValid
     , leftIdentity
+
+    -- *** Right identity
+    , rightIdentityOnElemWithEquality
+    , rightIdentityOnGenWithEquality
     , rightIdentityOnGen
     , rightIdentityOnValid
     , rightIdentity
+
+    -- *** Identity
     , identityOnGen
     , identityOnValid
     , identity
