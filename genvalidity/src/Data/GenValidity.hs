@@ -1,45 +1,45 @@
 {-|
 
- @GenValidity@ exists to make tests involving @Validity@ types easier and speed
- up the generation of data for them.
+    @GenValidity@ exists to make tests involving @Validity@ types easier and speed
+    up the generation of data for them.
 
- Let's use the example from @Data.Validity@ again: A datatype that represents
- primes.
- To implement tests for this datatype, we would have to be able to generate
- both primes and non-primes. We could do this with
- @(Prime <$> arbitrary) `suchThat` isValid@
- but this is tedious and inefficient.
+    Let's use the example from @Data.Validity@ again: A datatype that represents
+    primes.
+    To implement tests for this datatype, we would have to be able to generate
+    both primes and non-primes. We could do this with
+    @(Prime <$> arbitrary) `suchThat` isValid@
+    but this is tedious and inefficient.
 
- The @GenValidity@ type class allows you to specify how to (efficiently)
- generate data of the given type to allow for easier and quicker testing.
- Just implementing @genUnchecked@ already gives you access to @genValid@ and
- @genInvalid@ but writing custom implementations of these functions may speed
- up the generation of data.
+    The @GenValidity@ type class allows you to specify how to (efficiently)
+    generate data of the given type to allow for easier and quicker testing.
+    Just implementing @genUnchecked@ already gives you access to @genValid@ and
+    @genInvalid@ but writing custom implementations of these functions may speed
+    up the generation of data.
 
- For example, to generate primes, we don't have to consider even numbers other
- than 2. A more efficient implementation could then look as follows:
+    For example, to generate primes, we don't have to consider even numbers other
+    than 2. A more efficient implementation could then look as follows:
 
- > instance GenValidity Prime where
- >     genUnchecked = Prime <$> arbitrary
- >     genValid = Prime <$>
- >        (oneof
- >          [ pure 2
- >          , (\y -> 2 * y + 1) <$> (arbitrary `suchThat` (> 0) `suchThat` isPrime)
- >          ])
+    > instance GenValidity Prime where
+    >     genUnchecked = Prime <$> arbitrary
+    >     genValid = Prime <$>
+    >        (oneof
+    >          [ pure 2
+    >          , (\y -> 2 * y + 1) <$> (arbitrary `suchThat` (> 0) `suchThat` isPrime)
+    >          ])
 
 
- Typical examples of tests involving validity could look as follows:
+    Typical examples of tests involving validity could look as follows:
 
- > it "succeeds when given valid input" $ do
- >     forAll genValid $ \input ->
- >         myFunction input `shouldSatisfy` isRight
+    > it "succeeds when given valid input" $ do
+    >     forAll genValid $ \input ->
+    >         myFunction input `shouldSatisfy` isRight
 
- > it "produces valid output when it succeeds" $ do
- >     forAll genUnchecked $ \input ->
- >         case myFunction input of
- >             Nothing -> return () -- Can happen
- >             Just output -> output `shouldSatisfy` isValid
- -}
+    > it "produces valid output when it succeeds" $ do
+    >     forAll genUnchecked $ \input ->
+    >         case myFunction input of
+    >             Nothing -> return () -- Can happen
+    >             Just output -> output `shouldSatisfy` isValid
+    -}
 
 module Data.GenValidity
     ( module Data.Validity
@@ -179,7 +179,7 @@ upTo n
 genSplit :: Int -> Gen (Int, Int)
 genSplit n
     | n < 0     = pure (0, 0)
-    | otherwise = elements $ [ (i, n - i) | i <- [0..n] ]
+    | otherwise = elements [ (i, n - i) | i <- [0..n] ]
 
 genSplit3 :: Int -> Gen (Int, Int, Int)
 genSplit3 n

@@ -20,8 +20,7 @@ instance GenValidity Text where
             ins <- replicateM size arbitrary
             return $ A.run $ do
               arr <- A.new size
-              forM_ (zip [0..] ins) $ \(ix, word) ->
-                A.unsafeWrite arr ix word
+              forM_ (zip [0..] ins) $ uncurry $ A.unsafeWrite arr
               return arr
 
     genValid = sized $ \n -> do
@@ -52,7 +51,7 @@ textWithA c = textWith $ T.singleton <$> pure c
 textWithoutAny :: Char -> Gen Text
 textWithoutAny c = textWithoutAnyOf [c]
 
-textWithoutAnyOf :: [Char] -> Gen Text
+textWithoutAnyOf :: String -> Gen Text
 textWithoutAnyOf cs = T.pack <$> genListOf (arbitrary `suchThat` (`notElem` cs))
 
 textAllCaps :: Gen Text
