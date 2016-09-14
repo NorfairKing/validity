@@ -1,4 +1,7 @@
 /src/
+*.css
+*.js
+*.html
 
 dist
 dist-*
