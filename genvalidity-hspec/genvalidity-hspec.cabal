@@ -15,7 +15,31 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Test.Validity
+  exposed-modules:
+      Test.Validity
+    , Test.Validity.Arbitrary
+    , Test.Validity.Eq
+    , Test.Validity.Ord
+    , Test.Validity.Functions
+    , Test.Validity.Functions.CanFail
+    , Test.Validity.Functions.Equivalence
+    , Test.Validity.Functions.Inverse
+    , Test.Validity.Functions.Validity
+    , Test.Validity.GenValidity
+    , Test.Validity.Operations
+    , Test.Validity.Operations.Identity
+    , Test.Validity.Operations.Associativity
+    , Test.Validity.Operations.Commutativity
+    , Test.Validity.Relations
+    , Test.Validity.Relations.Antisymmetry
+    , Test.Validity.Relations.Reflexivity
+    , Test.Validity.Relations.Symmetry
+    , Test.Validity.Relations.Transitivity
+    , Test.Validity.RelativeValidity
+    , Test.Validity.Types
+    , Test.Validity.Validity
+  other-modules:
+      Test.Validity.Utils
   build-depends:       base                               < 5
                      , validity                 >= 0.3 && < 0.4
                      , genvalidity

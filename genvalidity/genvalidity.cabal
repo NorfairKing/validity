@@ -1,7 +1,7 @@
 name:                genvalidity
 version:             0.2.0.2
 synopsis:            Testing utilities for the validity library
-description:         
+description:
   Note: There are companion instance packages for this library:
   .
   * <https://hackage.haskell.org/package/genvalidity-text genvalidity-text>

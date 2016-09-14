@@ -2,7 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 
 {-| Relative validity
- -}
+    -}
 
 module Data.RelativeValidity
     ( RelativeValidity(..)
