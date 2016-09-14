@@ -34,6 +34,15 @@ idempotent
     -> Property
 idempotent func = idempotentOnGen func genUnchecked
 
+-- |
+--
+-- 'id' is idempotent for any type:
+--
+-- prop> idempotentOnArbitrary (id :: Int -> Int)
+--
+-- 'const', given any input, is idempotent for any type as well:
+--
+-- prop> \int -> idempotentOnArbitrary (const int :: Int -> Int)
 idempotentOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> a)

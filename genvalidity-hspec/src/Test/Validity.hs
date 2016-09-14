@@ -134,18 +134,21 @@ module Test.Validity
       -- * Properties of relations
 
       -- ** Reflexivity
+    , reflexiveOnElem
     , reflexivityOnGen
     , reflexivityOnValid
     , reflexivity
     , reflexivityOnArbitrary
 
       -- ** Transitivity
+    , transitiveOnElems
     , transitivityOnGens
     , transitivityOnValid
     , transitivity
     , transitivityOnArbitrary
 
       -- ** Antisymmetry
+    , antisymmetricOnElemsWithEquality
     , antisymmetryOnGensWithEquality
     , antisymmetryOnGensEq
     , antisymmetryOnValid
@@ -153,6 +156,7 @@ module Test.Validity
     , antisymmetryOnArbitrary
 
       -- ** Symmetry
+    , symmetricOnElems
     , symmetryOnGens
     , symmetryOnValid
     , symmetry
@@ -162,12 +166,22 @@ module Test.Validity
       -- * Properties of operations
 
       -- ** Identity element
+
+      -- *** Left Identity
+    , leftIdentityOnElemWithEquality
+    , leftIdentityOnGenWithEquality
     , leftIdentityOnGen
     , leftIdentityOnValid
     , leftIdentity
+
+      -- *** Right Identity
+    , rightIdentityOnElemWithEquality
+    , rightIdentityOnGenWithEquality
     , rightIdentityOnGen
     , rightIdentityOnValid
     , rightIdentity
+
+      -- *** Identity
     , identityOnGen
     , identityOnValid
     , identity

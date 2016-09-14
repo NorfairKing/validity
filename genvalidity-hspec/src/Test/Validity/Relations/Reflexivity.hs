@@ -1,7 +1,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
 module Test.Validity.Relations.Reflexivity
-    ( reflexivityOnGen
+    ( reflexiveOnElem
+    , reflexivityOnGen
     , reflexivityOnValid
     , reflexivity
     , reflexivityOnArbitrary
@@ -11,14 +12,26 @@ import           Data.GenValidity
 
 import           Test.QuickCheck
 
+-- |
+--
+-- \[
+--   Reflexive(prec)
+--   \quad\equiv\quad
+--   \forall a: (a \prec a)
+-- \]
+reflexiveOnElem
+    :: (a -> a -> Bool) -- ^ A relation
+    -> a                -- ^ An element
+    -> Bool
+reflexiveOnElem func a = func a a
+
 reflexivityOnGen
     :: Show a
     => (a -> a -> Bool)
     -> Gen a
     -> Property
 reflexivityOnGen func gen =
-    forAll gen $ \a ->
-        func a a
+    forAll gen $ reflexiveOnElem func
 
 reflexivityOnValid
     :: (Show a, GenValidity a)
@@ -34,6 +47,9 @@ reflexivity
 reflexivity func
     = reflexivityOnGen func genUnchecked
 
+-- |
+--
+-- prop> reflexivityOnArbitrary ((==) :: Int -> Int -> Bool)
 reflexivityOnArbitrary
     :: (Show a, Arbitrary a)
     => (a -> a -> Bool)

@@ -73,5 +73,5 @@ genGeneratesInvalid
     => Gen a
     -> Property
 genGeneratesInvalid gen =
-    forAll gen (`shouldNotSatisfy` isValid)
+    forAll gen (`shouldSatisfy` isInvalid)
 

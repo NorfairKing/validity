@@ -1,13 +1,20 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
 module Test.Validity.Operations.Identity
-    ( -- ** Identity element
-      leftIdentityOnGen
+    ( -- *** Left identity
+      leftIdentityOnElemWithEquality
+    , leftIdentityOnGenWithEquality
+    , leftIdentityOnGen
     , leftIdentityOnValid
     , leftIdentity
+
+      -- *** Right identity
+    , rightIdentityOnElemWithEquality
+    , rightIdentityOnGenWithEquality
     , rightIdentityOnGen
     , rightIdentityOnValid
     , rightIdentity
+
     , identityOnGen
     , identityOnValid
     , identity
@@ -15,18 +22,40 @@ module Test.Validity.Operations.Identity
 
 import           Data.GenValidity
 
-import           Test.Hspec
 import           Test.QuickCheck
+
+-- |
+--
+-- \[
+--   LeftIdentity(\star, \doteq, b)
+--   \quad\equiv\quad
+--   \forall a: (b \star a) \doteq a
+-- \]
+leftIdentityOnElemWithEquality
+    :: (b -> a -> a)    -- ^ A binary operation
+    -> (a -> a -> Bool) -- ^ An equality
+    -> b                -- ^ A candidate left-identity
+    -> a                -- ^ An element
+    -> Bool
+leftIdentityOnElemWithEquality op eq b a = (b `op` a) `eq` a
+
+leftIdentityOnGenWithEquality
+    :: Show a
+    => (b -> a -> a)    -- ^ A binary operation
+    -> (a -> a -> Bool) -- ^ An equality
+    -> b                -- ^ A candidate left-identity
+    -> Gen a
+    -> Property
+leftIdentityOnGenWithEquality op eq b gen =
+    forAll gen $ leftIdentityOnElemWithEquality op eq b
 
 leftIdentityOnGen
     :: (Show a, Eq a)
-    => (b -> a -> a)
-    -> b
+    => (b -> a -> a) -- ^ A binary operation
+    -> b             -- ^ A candidate left-identity
     -> Gen a
     -> Property
-leftIdentityOnGen op b gen =
-    forAll gen $ \a ->
-        b `op` a `shouldBe` a
+leftIdentityOnGen op = leftIdentityOnGenWithEquality op (==)
 
 leftIdentityOnValid
     :: (Show a, Eq a, GenValidity a)
@@ -44,15 +73,38 @@ leftIdentity
 leftIdentity op b
     = leftIdentityOnGen op b genUnchecked
 
-rightIdentityOnGen
-    :: (Show a, Eq a)
-    => (a -> b -> a)
-    -> b
+-- |
+--
+-- \[
+--   RightIdentity(\star, \doteq, b)
+--   \quad\equiv\quad
+--   \forall a: (a \star b) \doteq a
+-- \]
+rightIdentityOnElemWithEquality
+    :: (a -> b -> a)    -- ^ A binary operation
+    -> (a -> a -> Bool) -- ^ An equality
+    -> b                -- ^ A candidate right-identity
+    -> a                -- ^ An element
+    -> Bool
+rightIdentityOnElemWithEquality op eq b a = (a `op` b) `eq` a
+
+rightIdentityOnGenWithEquality
+    :: Show a
+    => (a -> b -> a)    -- ^ A binary operation
+    -> (a -> a -> Bool) -- ^ An equality
+    -> b                -- ^ A candidate right-identity
     -> Gen a
     -> Property
-rightIdentityOnGen op b gen =
-    forAll gen $ \a ->
-        a `op` b `shouldBe` a
+rightIdentityOnGenWithEquality op eq b gen =
+    forAll gen $ rightIdentityOnElemWithEquality op eq b
+
+rightIdentityOnGen
+    :: (Show a, Eq a)
+    => (a -> b -> a)    -- ^ A binary operation
+    -> b                -- ^ A candidate right-identity
+    -> Gen a
+    -> Property
+rightIdentityOnGen op = rightIdentityOnGenWithEquality op (==)
 
 rightIdentityOnValid
     :: (Show a, Eq a, GenValidity a)

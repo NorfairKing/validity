@@ -1,7 +1,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
 module Test.Validity.Relations.Antisymmetry
-    ( antisymmetryOnGensWithEquality
+    ( antisymmetricOnElemsWithEquality
+    , antisymmetryOnGensWithEquality
     , antisymmetryOnGensEq
     , antisymmetryOnValid
     , antisymmetry
@@ -14,6 +15,21 @@ import           Test.QuickCheck
 
 import           Test.Validity.Utils
 
+-- |
+--
+-- \[
+--   Antisymmetric(\prec, \doteq)
+--   \quad\equiv\quad
+--   \forall a, b: ((a \prec b) \wedge (b \prec a)) \Rightarrow (a \doteq b)
+-- \]
+antisymmetricOnElemsWithEquality
+    :: (a -> a -> Bool) -- ^ A relation
+    -> (a -> a -> Bool) -- ^ An equivalence relation
+    -> a -> a           -- ^ Two elements
+    -> Bool
+antisymmetricOnElemsWithEquality func eq a b =
+    (func a b && func b a) ===> (a `eq` b)
+
 antisymmetryOnGensWithEquality
     :: Show a
     => (a -> a -> Bool)
@@ -21,9 +37,7 @@ antisymmetryOnGensWithEquality
     -> (a -> a -> Bool)
     -> Property
 antisymmetryOnGensWithEquality func gen eq =
-    forAll gen $ \(a, b) ->
-        (func a b && func b a)
-        ===> (a `eq` b)
+    forAll gen $ uncurry $ antisymmetricOnElemsWithEquality func eq
 
 antisymmetryOnGensEq
     :: (Show a, Eq a)
@@ -47,6 +61,9 @@ antisymmetry
 antisymmetry func =
     antisymmetryOnGensEq func genUnchecked
 
+-- |
+--
+-- prop> antisymmetryOnArbitrary ((<=) :: Int -> Int -> Bool)
 antisymmetryOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> a -> Bool)
