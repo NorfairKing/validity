@@ -4,39 +4,40 @@ module Test.Validity
     ( module Data.GenValidity
     , Proxy(Proxy)
 
-    -- * Tests for Validity instances
+      -- * Tests for Validity instances
     , validitySpec
 
     , validityLawsForGen
     , validityLaws
 
-    -- * Tests for Arbitrary instances involving Validity
+      -- * Tests for Arbitrary instances involving Validity
     , arbitrarySpec
     , arbitraryGeneratesOnlyValid
     , shrinkProducesOnlyValids
 
-    -- * Tests for GenValidity instances
+      -- * Tests for GenValidity instances
     , genValiditySpec
     , genValidityValidGeneratesValid
     , genGeneratesValid
     , genValidityInvalidGeneratesInvalid
     , genGeneratesInvalid
 
-    -- * Tests for RelativeValidity instances
+      -- * Tests for RelativeValidity instances
     , relativeValiditySpec
     , relativeValidityLaws
     , relativeValidityLawsForGens
     , relativeValidityImpliesValidA
     , relativeValidityImpliesValidB
 
-    -- * Tests for GenRelativeValidity instances
+      -- * Tests for GenRelativeValidity instances
     , genRelativeValiditySpec
     , genRelativeValidityValidGeneratesValid
     , genRelativeValidityInvalidGeneratesInvalid
 
-    -- * Standard tests involving functions
 
-    -- ** Standard tests involving validity
+      -- * Standard tests involving functions
+
+      -- ** Standard tests involving validity
     , producesValidsOnGen
     , producesValidsOnValids
     , producesValid
@@ -50,7 +51,7 @@ module Test.Validity
     , producesValid3
     , producesValidsOnArbitrary3
 
-    -- ** Standard tests involving functions that can fail
+      -- ** Standard tests involving functions that can fail
     , CanFail(..)
 
     , succeedsOnGen
@@ -79,7 +80,7 @@ module Test.Validity
     , validIfSucceeds2
     , validIfSucceedsOnArbitrary2
 
-    -- ** Standard tests involving equivalence of functions
+      -- ** Standard tests involving equivalence of functions
     , equivalentOnGen
     , equivalentOnValid
     , equivalent
@@ -105,7 +106,7 @@ module Test.Validity
     , equivalentWhenSucceedOnValids2
     , equivalentWhenSucceed2
 
-    -- ** Standard tests involving inverse functions
+      -- ** Standard tests involving inverse functions
     , inverseFunctionsOnGen
     , inverseFunctionsOnValid
     , inverseFunctions
@@ -123,36 +124,44 @@ module Test.Validity
     , inverseFunctionsIfSucceed
     , inverseFunctionsIfSucceedOnArbitrary
 
-    -- * Properties of relations
+      -- ** Properties involving idempotence
+    , idempotentOnGen
+    , idempotentOnValid
+    , idempotent
+    , idempotentOnArbitrary
 
-    -- ** Reflexivity
+
+      -- * Properties of relations
+
+      -- ** Reflexivity
     , reflexivityOnGen
     , reflexivityOnValid
     , reflexivity
     , reflexivityOnArbitrary
 
-    -- ** Transitivity
+      -- ** Transitivity
     , transitivityOnGens
     , transitivityOnValid
     , transitivity
     , transitivityOnArbitrary
 
-    -- ** Antisymmetry
+      -- ** Antisymmetry
     , antisymmetryOnGensWithEquality
     , antisymmetryOnGensEq
     , antisymmetryOnValid
     , antisymmetry
     , antisymmetryOnArbitrary
 
-    -- ** Symmetry
+      -- ** Symmetry
     , symmetryOnGens
     , symmetryOnValid
     , symmetry
     , symmetryOnArbitrary
 
-    -- * Properties of operations
 
-    -- ** Identity element
+      -- * Properties of operations
+
+      -- ** Identity element
     , leftIdentityOnGen
     , leftIdentityOnValid
     , leftIdentity
@@ -163,22 +172,23 @@ module Test.Validity
     , identityOnValid
     , identity
 
-    -- ** Associativity
+      -- ** Associativity
     , associativeOnGens
     , associativeOnValids
     , associative
     , associativeOnArbitrary
 
-    -- ** Commutativity
+      -- ** Commutativity
     , commutativeOnGens
     , commutativeOnValids
     , commutative
     , commutativeOnArbitrary
 
-    -- * Eq properties
+
+      -- * Eq properties
     , eqSpec
 
-    -- * Ord properties
+      -- * Ord properties
     , ordSpec
     ) where
 
