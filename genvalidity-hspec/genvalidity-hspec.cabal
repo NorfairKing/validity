@@ -23,6 +23,7 @@ library
     , Test.Validity.Functions
     , Test.Validity.Functions.CanFail
     , Test.Validity.Functions.Equivalence
+    , Test.Validity.Functions.Idempotence
     , Test.Validity.Functions.Inverse
     , Test.Validity.Functions.Validity
     , Test.Validity.GenValidity

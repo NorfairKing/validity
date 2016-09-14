@@ -17,7 +17,7 @@ module Test.Validity.Functions
     , producesValid3
     , producesValidsOnArbitrary3
 
-    -- * Standard tests involving functions that can fail
+      -- ** Standard tests involving functions that can fail
     , succeedsOnGen
     , succeedsOnValid
     , succeeds
@@ -44,8 +44,7 @@ module Test.Validity.Functions
     , validIfSucceeds2
     , validIfSucceedsOnArbitrary2
 
-    -- * Standard tests involving equivalence of functions
-
+      -- ** Standard tests involving equivalence of functions
     , equivalentOnGen
     , equivalentOnValid
     , equivalent
@@ -71,8 +70,7 @@ module Test.Validity.Functions
     , equivalentWhenSucceedOnValids2
     , equivalentWhenSucceed2
 
-    -- * Standard tests involving inverse functions
-
+      -- ** Standard tests involving inverse functions
     , inverseFunctionsOnGen
     , inverseFunctionsOnValid
     , inverseFunctions
@@ -89,10 +87,17 @@ module Test.Validity.Functions
     , inverseFunctionsIfSucceedOnValid
     , inverseFunctionsIfSucceed
     , inverseFunctionsIfSucceedOnArbitrary
+
+      -- ** Properties involving idempotence
+    , idempotentOnGen
+    , idempotentOnValid
+    , idempotent
+    , idempotentOnArbitrary
     ) where
 
-import           Test.Validity.Functions.Validity
 import           Test.Validity.Functions.CanFail
-import           Test.Validity.Functions.Inverse
 import           Test.Validity.Functions.Equivalence
+import           Test.Validity.Functions.Idempotence
+import           Test.Validity.Functions.Inverse
+import           Test.Validity.Functions.Validity
 
