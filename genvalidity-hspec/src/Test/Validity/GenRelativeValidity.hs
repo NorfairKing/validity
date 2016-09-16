@@ -82,4 +82,4 @@ genRelativeValidityInvalidGeneratesInvalid one two =
     forAll genUnchecked $ \b ->
         forAll (genInvalidFor b) $ \a ->
             (a `asProxyTypeOf` one)
-                `shouldSatisfy` (`isInvalidFor` (b `asProxyTypeOf` two))
+                `shouldNotSatisfy` (`isValidFor` (b `asProxyTypeOf` two))

@@ -4,12 +4,6 @@ module Test.Validity
     ( module Data.GenValidity
     , Proxy(Proxy)
 
-      -- * Tests for Validity instances
-    , validitySpec
-
-    , validityLawsForGen
-    , validityLaws
-
       -- * Tests for Arbitrary instances involving Validity
     , arbitrarySpec
     , arbitraryGeneratesOnlyValid
@@ -24,8 +18,6 @@ module Test.Validity
 
       -- * Tests for RelativeValidity instances
     , relativeValiditySpec
-    , relativeValidityLaws
-    , relativeValidityLawsForGens
     , relativeValidityImpliesValidA
     , relativeValidityImpliesValidB
 
@@ -219,4 +211,3 @@ import           Test.Validity.Ord
 import           Test.Validity.Relations
 import           Test.Validity.RelativeValidity
 import           Test.Validity.Types
-import           Test.Validity.Validity
