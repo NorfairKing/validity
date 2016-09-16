@@ -39,7 +39,6 @@ library
     , Test.Validity.Relations.Transitivity
     , Test.Validity.RelativeValidity
     , Test.Validity.Types
-    , Test.Validity.Validity
   other-modules:
       Test.Validity.Utils
   build-depends:       base                               < 5
