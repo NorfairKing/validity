@@ -28,11 +28,12 @@
 
 module Data.Validity
     ( Validity(..)
+    , isInvalid
     , constructValid
     , constructValidUnsafe
     ) where
 
-import Data.Maybe (fromMaybe)
+import           Data.Maybe (fromMaybe)
 
 
 -- | A class of types that have additional invariants defined upon them
@@ -40,6 +41,9 @@ import Data.Maybe (fromMaybe)
 class Validity a where
     -- | Check whether a given value is a valid value.
     isValid :: a -> Bool
+
+isInvalid :: Validity a => a -> Bool
+isInvalid = not . isValid
 
 -- | Any tuple of things is valid if both of its elements are valid
 instance (Validity a, Validity b) => Validity (a, b) where

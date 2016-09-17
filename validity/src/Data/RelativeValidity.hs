@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
 {-| Relative validity
@@ -6,6 +6,7 @@
 
 module Data.RelativeValidity
     ( RelativeValidity(..)
+    , isInvalidFor
     ) where
 
 
@@ -19,3 +20,6 @@ module Data.RelativeValidity
 -- should imply @isValid b@ for any @a@.
 class RelativeValidity a b where
     isValidFor :: a -> b -> Bool
+
+isInvalidFor :: RelativeValidity a b => a -> b -> Bool
+isInvalidFor a b = not $ isValidFor a b
