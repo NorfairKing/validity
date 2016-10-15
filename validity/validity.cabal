@@ -2,6 +2,8 @@ name:                validity
 version:             0.3.0.4
 synopsis:            Validity typeclass
 description:
+  For more info, see <https://github.com/NorfairKing/validity the readme>.
+  .
   Note: There are companion instance packages for this library:
   .
   * <https://hackage.haskell.org/package/validity-text validity-text>
