@@ -5,9 +5,11 @@ module Test.Validity.Functions.Equivalence
       equivalentOnGen
     , equivalentOnValid
     , equivalent
+    , equivalentOnArbitrary
     , equivalentOnGens2
     , equivalentOnValids2
     , equivalent2
+    , equivalentOnArbitrary2
     , equivalentWhenFirstSucceedsOnGen
     , equivalentWhenFirstSucceedsOnValid
     , equivalentWhenFirstSucceeds
@@ -61,6 +63,14 @@ equivalent
 equivalent f g
     = equivalentOnGen f g genUnchecked
 
+equivalentOnArbitrary
+    :: (Show a, Eq a, Arbitrary a, Show b, Eq b)
+    => (a -> b)
+    -> (a -> b)
+    -> Property
+equivalentOnArbitrary f g
+    = equivalentOnGen f g arbitrary
+
 equivalentOnGens2
     :: (Show a, Eq a,
         Show b, Eq b,
@@ -92,6 +102,16 @@ equivalent2
     -> Property
 equivalent2 f g
     = equivalentOnGens2 f g genUnchecked
+
+equivalentOnArbitrary2
+    :: (Show a, Eq a, Arbitrary a,
+        Show b, Eq b, Arbitrary b,
+        Show c, Eq c)
+    => (a -> b -> c)
+    -> (a -> b -> c)
+    -> Property
+equivalentOnArbitrary2 f g
+    = equivalentOnGens2 f g arbitrary
 
 equivalentWhenFirstSucceedsOnGen
     :: (Show a, Eq a, Show b, Eq b, CanFail f)

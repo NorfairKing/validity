@@ -48,9 +48,11 @@ module Test.Validity.Functions
     , equivalentOnGen
     , equivalentOnValid
     , equivalent
+    , equivalentOnArbitrary
     , equivalentOnGens2
     , equivalentOnValids2
     , equivalent2
+    , equivalentOnArbitrary2
     , equivalentWhenFirstSucceedsOnGen
     , equivalentWhenFirstSucceedsOnValid
     , equivalentWhenFirstSucceeds

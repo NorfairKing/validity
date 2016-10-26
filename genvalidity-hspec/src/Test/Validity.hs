@@ -193,13 +193,15 @@ module Test.Validity
 
       -- * Eq properties
     , eqSpec
+    , arbitraryEqSpec
 
       -- * Ord properties
     , ordSpec
+    , arbitraryOrdSpec
     ) where
 
-import           Data.GenValidity
 import           Data.Data
+import           Data.GenValidity
 
 import           Test.Validity.Arbitrary
 import           Test.Validity.Eq

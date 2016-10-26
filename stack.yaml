@@ -2,6 +2,7 @@ packages:
 - 'validity'
 - 'validity-containers'
 - 'validity-text'
+- 'validity-bytestring'
 - 'genvalidity'
 - 'genvalidity-containers'
 - 'genvalidity-text'
