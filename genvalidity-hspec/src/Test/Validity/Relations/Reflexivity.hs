@@ -15,7 +15,7 @@ import           Test.QuickCheck
 -- |
 --
 -- \[
---   Reflexive(prec)
+--   Reflexive(\prec)
 --   \quad\equiv\quad
 --   \forall a: (a \prec a)
 -- \]
