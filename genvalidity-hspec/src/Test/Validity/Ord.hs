@@ -18,33 +18,66 @@ import           Test.Validity.Functions
 import           Test.Validity.Relations
 import           Test.Validity.Utils
 
+{-# ANN module "HLint: ignore Use <=" #-}
+{-# ANN module "HLint: ignore Use >=" #-}
+
+leTypeStr :: Typeable a => Proxy a -> String
+leTypeStr proxy = unwords
+    [ "(<=) ::"
+    , name
+    , "->"
+    , name
+    , "-> Bool"
+    ]
+  where name = nameOf proxy
+
+geTypeStr :: Typeable a => Proxy a -> String
+geTypeStr proxy = unwords
+    [ "(>=) ::"
+    , name
+    , "->"
+    , name
+    , "-> Bool"
+    ]
+  where name = nameOf proxy
+
 ordSpec
     :: (Show a, Eq a, Ord a, Typeable a, GenValidity a)
     => Proxy a
     -> Spec
 ordSpec proxy = do
     let name = nameOf proxy
-        funlestr = unwords
-          [ "(<=) ::"
-          , name
-          , "->"
-          , name
-          , "-> Ordering"
-          ]
-        cmp a b = a `asProxyTypeOf` proxy <= b
+        funlestr = leTypeStr proxy
+        fungestr = geTypeStr proxy
+        cmple a b = a `asProxyTypeOf` proxy <= b
+        cmpge a b = a `asProxyTypeOf` proxy >= b
+
     describe ("Ord " ++ name) $ do
         describe funlestr $ do
             it "is reflexive" $
-                reflexivity cmp
+                reflexivity cmple
 
             it "is antisymmetric" $
-                antisymmetry cmp
+                antisymmetry cmple
 
             it "is transitive" $
-                transitivity cmp
+                transitivity cmple
 
             it "is equivalent to (\\a b -> compare a b /= GT)" $
-                equivalent2 cmp (\a b -> compare a b /= GT)
+                equivalent2 cmple (\a b -> compare a b /= GT)
+
+        describe fungestr $ do
+            it "is reflexive" $
+                reflexivity cmpge
+
+            it "is antisymmetric" $
+                antisymmetry cmpge
+
+            it "is transitive" $
+                transitivity cmpge
+
+            it "is equivalent to (\\a b -> compare a b /= LT)" $
+                equivalent2 cmpge (\a b -> compare a b /= LT)
 
 arbitraryOrdSpec
     :: (Show a, Eq a, Ord a, Typeable a, Arbitrary a)
@@ -52,24 +85,34 @@ arbitraryOrdSpec
     -> Spec
 arbitraryOrdSpec proxy = do
     let name = nameOf proxy
-        funlestr = unwords
-          [ "(<=) ::"
-          , name
-          , "->"
-          , name
-          , "-> Ordering"
-          ]
-        cmp a b = a `asProxyTypeOf` proxy <= b
+        funlestr = leTypeStr proxy
+        fungestr = geTypeStr proxy
+        cmple a b = a `asProxyTypeOf` proxy <= b
+        cmpge a b = a `asProxyTypeOf` proxy >= b
+
     describe ("Ord " ++ name) $ do
         describe funlestr $ do
             it "is reflexive" $
-                reflexivityOnArbitrary cmp
+                reflexivityOnArbitrary cmple
 
             it "is antisymmetric" $
-                antisymmetryOnArbitrary cmp
+                antisymmetryOnArbitrary cmple
 
             it "is transitive" $
-                transitivityOnArbitrary cmp
+                transitivityOnArbitrary cmple
 
             it "is equivalent to (\\a b -> compare a b /= GT)" $
-                equivalentOnArbitrary2 cmp (\a b -> compare a b /= GT)
+                equivalentOnArbitrary2 cmple (\a b -> compare a b /= GT)
+
+        describe fungestr $ do
+            it "is reflexive" $
+                reflexivityOnArbitrary cmpge
+
+            it "is antisymmetric" $
+                antisymmetryOnArbitrary cmpge
+
+            it "is transitive" $
+                transitivityOnArbitrary cmpge
+
+            it "is equivalent to (\\a b -> compare a b /= LT)" $
+                equivalentOnArbitrary2 cmpge (\a b -> compare a b /= LT)
