@@ -3,7 +3,7 @@
 module Test.Validity.Relations.Antisymmetry
     ( antisymmetricOnElemsWithEquality
     , antisymmetryOnGensWithEquality
-    , antisymmetryOnGensEq
+    , antisymmetryOnGens
     , antisymmetryOnValid
     , antisymmetry
     , antisymmetryOnArbitrary
@@ -39,12 +39,12 @@ antisymmetryOnGensWithEquality
 antisymmetryOnGensWithEquality func gen eq =
     forAll gen $ uncurry $ antisymmetricOnElemsWithEquality func eq
 
-antisymmetryOnGensEq
+antisymmetryOnGens
     :: (Show a, Eq a)
     => (a -> a -> Bool)
     -> Gen (a, a)
     -> Property
-antisymmetryOnGensEq func gen
+antisymmetryOnGens func gen
     = antisymmetryOnGensWithEquality func gen (==)
 
 antisymmetryOnValid
@@ -52,14 +52,14 @@ antisymmetryOnValid
     => (a -> a -> Bool)
     -> Property
 antisymmetryOnValid func =
-    antisymmetryOnGensEq func genValid
+    antisymmetryOnGens func genValid
 
 antisymmetry
     :: (Show a, Eq a, GenValidity a)
     => (a -> a -> Bool)
     -> Property
 antisymmetry func =
-    antisymmetryOnGensEq func genUnchecked
+    antisymmetryOnGens func genUnchecked
 
 -- |
 --
@@ -69,4 +69,4 @@ antisymmetryOnArbitrary
     => (a -> a -> Bool)
     -> Property
 antisymmetryOnArbitrary func =
-    antisymmetryOnGensEq func arbitrary
+    antisymmetryOnGens func arbitrary

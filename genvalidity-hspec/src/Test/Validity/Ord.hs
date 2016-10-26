@@ -3,7 +3,7 @@
 module Test.Validity.Ord
     ( -- * Ord properties
       ordSpec
-    , arbitraryOrdSpec
+    , ordSpecOnArbitrary
     ) where
 
 import           Data.Data
@@ -20,99 +20,94 @@ import           Test.Validity.Utils
 
 {-# ANN module "HLint: ignore Use <=" #-}
 {-# ANN module "HLint: ignore Use >=" #-}
+{-# ANN module "HLint: ignore Use <" #-}
+{-# ANN module "HLint: ignore Use >" #-}
 
 leTypeStr :: Typeable a => Proxy a -> String
-leTypeStr proxy = unwords
-    [ "(<=) ::"
-    , name
-    , "->"
-    , name
-    , "-> Bool"
-    ]
-  where name = nameOf proxy
+leTypeStr = binRelStr "<="
 
 geTypeStr :: Typeable a => Proxy a -> String
-geTypeStr proxy = unwords
-    [ "(>=) ::"
-    , name
-    , "->"
-    , name
-    , "-> Bool"
-    ]
-  where name = nameOf proxy
+geTypeStr = binRelStr ">="
+
+ltTypeStr :: Typeable a => Proxy a -> String
+ltTypeStr = binRelStr "<"
+
+gtTypeStr :: Typeable a => Proxy a -> String
+gtTypeStr = binRelStr ">"
+
+ordSpecOnArbitrary
+    :: (Show a, Ord a, Typeable a, Arbitrary a)
+    => Proxy a
+    -> Spec
+ordSpecOnArbitrary proxy = ordSpecOnGen proxy arbitrary
 
 ordSpec
-    :: (Show a, Eq a, Ord a, Typeable a, GenValidity a)
+    :: (Show a, Ord a, Typeable a, GenValidity a)
     => Proxy a
     -> Spec
-ordSpec proxy = do
+ordSpec proxy = ordSpecOnGen proxy genUnchecked
+
+ordSpecOnGen
+    :: (Show a, Eq a, Ord a, Typeable a)
+    => Proxy a
+    -> Gen a
+    -> Spec
+ordSpecOnGen proxy gen = parallel $ do
     let name = nameOf proxy
         funlestr = leTypeStr proxy
         fungestr = geTypeStr proxy
+        funltstr = ltTypeStr proxy
+        fungtstr = gtTypeStr proxy
         cmple a b = a `asProxyTypeOf` proxy <= b
         cmpge a b = a `asProxyTypeOf` proxy >= b
+        cmplt a b = a `asProxyTypeOf` proxy < b
+        cmpgt a b = a `asProxyTypeOf` proxy > b
+        gen2 = (,) <$> gen <*> gen
+        gen3 = (,,) <$> gen <*> gen <*> gen
 
     describe ("Ord " ++ name) $ do
         describe funlestr $ do
             it "is reflexive" $
-                reflexivity cmple
+                reflexivityOnGen cmple gen
 
             it "is antisymmetric" $
-                antisymmetry cmple
+                antisymmetryOnGens cmple gen2
 
             it "is transitive" $
-                transitivity cmple
+                transitivityOnGens cmple gen3
 
             it "is equivalent to (\\a b -> compare a b /= GT)" $
-                equivalent2 cmple (\a b -> compare a b /= GT)
+                equivalentOnGens2 cmple (\a b -> compare a b /= GT) gen2
 
         describe fungestr $ do
             it "is reflexive" $
-                reflexivity cmpge
+                reflexivityOnGen cmpge gen
 
             it "is antisymmetric" $
-                antisymmetry cmpge
+                antisymmetryOnGens cmpge gen2
 
             it "is transitive" $
-                transitivity cmpge
+                transitivityOnGens cmpge gen3
 
             it "is equivalent to (\\a b -> compare a b /= LT)" $
-                equivalent2 cmpge (\a b -> compare a b /= LT)
+                equivalentOnGens2 cmpge (\a b -> compare a b /= LT) gen2
 
-arbitraryOrdSpec
-    :: (Show a, Eq a, Ord a, Typeable a, Arbitrary a)
-    => Proxy a
-    -> Spec
-arbitraryOrdSpec proxy = do
-    let name = nameOf proxy
-        funlestr = leTypeStr proxy
-        fungestr = geTypeStr proxy
-        cmple a b = a `asProxyTypeOf` proxy <= b
-        cmpge a b = a `asProxyTypeOf` proxy >= b
-
-    describe ("Ord " ++ name) $ do
-        describe funlestr $ do
-            it "is reflexive" $
-                reflexivityOnArbitrary cmple
-
-            it "is antisymmetric" $
-                antisymmetryOnArbitrary cmple
+        describe funltstr $ do
+            it "is antireflexive" $
+                antireflexivityOnGen cmplt gen
 
             it "is transitive" $
-                transitivityOnArbitrary cmple
+                transitivityOnGens cmplt gen3
 
-            it "is equivalent to (\\a b -> compare a b /= GT)" $
-                equivalentOnArbitrary2 cmple (\a b -> compare a b /= GT)
+            it "is equivalent to (\\a b -> compare a b == LT)" $
+                equivalentOnGens2 cmplt (\a b -> compare a b == LT) gen2
 
-        describe fungestr $ do
-            it "is reflexive" $
-                reflexivityOnArbitrary cmpge
-
-            it "is antisymmetric" $
-                antisymmetryOnArbitrary cmpge
+        describe fungtstr $ do
+            it "is antireflexive" $
+                antireflexivityOnGen cmpgt gen
 
             it "is transitive" $
-                transitivityOnArbitrary cmpge
+                transitivityOnGens cmpgt gen3
 
-            it "is equivalent to (\\a b -> compare a b /= LT)" $
-                equivalentOnArbitrary2 cmpge (\a b -> compare a b /= LT)
+            it "is equivalent to (\\a b -> compare a b == GT)" $
+                equivalentOnGens2 cmpgt (\a b -> compare a b == GT) gen2

@@ -34,6 +34,7 @@ library
     , Test.Validity.Operations.Commutativity
     , Test.Validity.Relations
     , Test.Validity.Relations.Antisymmetry
+    , Test.Validity.Relations.Antireflexivity
     , Test.Validity.Relations.Reflexivity
     , Test.Validity.Relations.Symmetry
     , Test.Validity.Relations.Transitivity

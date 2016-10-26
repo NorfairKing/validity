@@ -21,10 +21,17 @@ module Test.Validity.Relations
     -- ** Antisymmetry
     , antisymmetricOnElemsWithEquality
     , antisymmetryOnGensWithEquality
-    , antisymmetryOnGensEq
+    , antisymmetryOnGens
     , antisymmetryOnValid
     , antisymmetry
     , antisymmetryOnArbitrary
+
+    -- ** Antireflexivity
+    , antireflexiveOnElem
+    , antireflexivityOnGen
+    , antireflexivityOnValid
+    , antireflexivity
+    , antireflexivityOnArbitrary
 
     -- ** Symmetry
     , symmetricOnElems
@@ -34,8 +41,9 @@ module Test.Validity.Relations
     , symmetryOnArbitrary
     ) where
 
-import           Test.Validity.Relations.Reflexivity
+import           Test.Validity.Relations.Antireflexivity
 import           Test.Validity.Relations.Antisymmetry
+import           Test.Validity.Relations.Reflexivity
 import           Test.Validity.Relations.Symmetry
 import           Test.Validity.Relations.Transitivity
 

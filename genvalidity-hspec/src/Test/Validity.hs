@@ -142,10 +142,17 @@ module Test.Validity
       -- ** Antisymmetry
     , antisymmetricOnElemsWithEquality
     , antisymmetryOnGensWithEquality
-    , antisymmetryOnGensEq
+    , antisymmetryOnGens
     , antisymmetryOnValid
     , antisymmetry
     , antisymmetryOnArbitrary
+
+      -- ** Antireflexivity
+    , antireflexiveOnElem
+    , antireflexivityOnGen
+    , antireflexivityOnValid
+    , antireflexivity
+    , antireflexivityOnArbitrary
 
       -- ** Symmetry
     , symmetricOnElems
@@ -193,11 +200,11 @@ module Test.Validity
 
       -- * Eq properties
     , eqSpec
-    , arbitraryEqSpec
+    , eqSpecOnArbitrary
 
       -- * Ord properties
     , ordSpec
-    , arbitraryOrdSpec
+    , ordSpecOnArbitrary
     ) where
 
 import           Data.Data
