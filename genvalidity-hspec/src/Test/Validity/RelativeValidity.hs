@@ -35,7 +35,7 @@ relativeValiditySpec
     => Proxy a
     -> Proxy b
     -> Spec
-relativeValiditySpec one two = do
+relativeValiditySpec one two = parallel $ do
     let nameOne = nameOf one
         nameTwo = nameOf two
     describe ("RelativeValidity " ++ nameOne ++ " " ++ nameTwo) $

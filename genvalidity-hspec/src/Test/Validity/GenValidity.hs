@@ -31,7 +31,7 @@ genValiditySpec
     :: (Typeable a, Show a, GenValidity a)
     => Proxy a
     -> Spec
-genValiditySpec proxy = do
+genValiditySpec proxy = parallel $ do
     let name = nameOf proxy
     describe ("GenValidity " ++ name) $ do
         describe ("genValid   :: Gen " ++ name) $

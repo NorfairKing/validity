@@ -36,7 +36,7 @@ genRelativeValiditySpec
     => Proxy a
     -> Proxy b
     -> Spec
-genRelativeValiditySpec one two = do
+genRelativeValiditySpec one two = parallel $ do
     let nameOne = nameOf one
     let nameTwo = nameOf two
     describe ("GenRelativeValidity " ++ nameOne ++ " " ++ nameTwo) $ do

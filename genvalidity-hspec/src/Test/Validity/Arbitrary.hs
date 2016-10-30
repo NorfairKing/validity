@@ -8,19 +8,17 @@ module Test.Validity.Arbitrary
     ) where
 
 import           Data.Data
-import           Data.Proxy
 
 import           Data.GenValidity
 
 import           Test.Hspec
 import           Test.QuickCheck
 
-import           Test.Validity.Utils
 import           Test.Validity.GenValidity
+import           Test.Validity.Utils
 
 -- | A @Spec@ that specifies that @arbitrary@ only generates data that
--- satisfy @isValid@ and that @shrink@ only produces data that satisfy
--- @isValid@.
+-- satisfy @isValid@
 --
 -- Example usage:
 --
@@ -31,17 +29,10 @@ arbitrarySpec
     -> Spec
 arbitrarySpec proxy = do
     let name = nameOf proxy
-    describe ("Arbitrary " ++ name) $ do
-        it ("is instantiated such that 'arbitrary' only generates valid \'"
-            ++ name
-            ++ "\'s.") $
-            arbitraryGeneratesOnlyValid proxy
-
-        it ("is instantiated such that 'shrink' only produces valid \'"
-            ++ name
-            ++ "\'s.") $
-            forAll arbitrary $ \a ->
-                shrink (a `asProxyTypeOf` proxy) `shouldSatisfy` all isValid
+    describe ("Arbitrary " ++ name) $
+        describe ("arbitrary :: Gen " ++ name) $
+            it "only generates valid values" $
+                arbitraryGeneratesOnlyValid proxy
 
 -- | @arbitrary@ only generates valid data
 arbitraryGeneratesOnlyValid

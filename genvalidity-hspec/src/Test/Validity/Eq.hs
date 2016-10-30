@@ -41,7 +41,7 @@ eqSpecOnGen
     => Proxy a
     -> Gen a
     -> Spec
-eqSpecOnGen proxy gen = do
+eqSpecOnGen proxy gen = parallel $ do
     let name = nameOf proxy
         funeqstr = eqTypeStr proxy
         funneqstr = neqTypeStr proxy
