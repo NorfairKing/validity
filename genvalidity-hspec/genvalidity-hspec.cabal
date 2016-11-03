@@ -42,11 +42,12 @@ library
     , Test.Validity.Types
   other-modules:
       Test.Validity.Utils
-  build-depends:       base                               < 5
-                     , validity                 >= 0.3 && < 0.4
-                     , genvalidity
-                     , QuickCheck
-                     , hspec                    >= 2.2 && < 2.3
+  build-depends:
+        base                               < 5
+      , validity                 >= 0.3 && < 0.4
+      , genvalidity
+      , QuickCheck
+      , hspec                    >= 2.2 && < 2.3
   default-language:    Haskell2010
 
 
