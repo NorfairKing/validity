@@ -11,6 +11,7 @@ module Test.Validity.Operations
     , leftIdentityOnGen
     , leftIdentityOnValid
     , leftIdentity
+    , leftIdentityOnArbitrary
 
     -- *** Right identity
     , rightIdentityOnElemWithEquality
@@ -18,11 +19,13 @@ module Test.Validity.Operations
     , rightIdentityOnGen
     , rightIdentityOnValid
     , rightIdentity
+    , rightIdentityOnArbitrary
 
     -- *** Identity
     , identityOnGen
     , identityOnValid
     , identity
+    , identityOnArbitrary
 
     -- ** Associativity
     , associativeOnGens
