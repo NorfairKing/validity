@@ -20,12 +20,12 @@ commutativeOnGens op gen =
     forAll gen $ \(a, b) -> (a `op` b) `shouldBe` (b `op` a)
 
 commutativeOnValids
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenValid a)
     => (a -> a -> a) -> Property
 commutativeOnValids op = commutativeOnGens op genValid
 
 commutative
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenUnchecked a)
     => (a -> a -> a) -> Property
 commutative op = commutativeOnGens op genUnchecked
 

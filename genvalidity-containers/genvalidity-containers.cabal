@@ -1,5 +1,5 @@
 name:                genvalidity-containers
-version:             0.1.0.2
+version:             0.2.0.0
 synopsis:            GenValidity support for containers
 description:         Please see README.md
 homepage:            https://github.com/NorfairKing/validity#readme
@@ -21,9 +21,9 @@ library
     , Data.GenValidity.Tree
   build-depends:
       base       < 5
-    , validity
-    , validity-containers
-    , genvalidity
+    , validity >= 0.3 && < 0.4
+    , validity-containers >= 0.1 && < 0.2
+    , genvalidity  >= 0.3 && < 0.4
     , containers
     , QuickCheck
   default-language:    Haskell2010

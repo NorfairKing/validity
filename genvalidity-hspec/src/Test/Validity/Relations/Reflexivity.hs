@@ -34,14 +34,14 @@ reflexivityOnGen func gen =
     forAll gen $ reflexiveOnElem func
 
 reflexivityOnValid
-    :: (Show a, GenValidity a)
+    :: (Show a, GenValid a)
     => (a -> a -> Bool)
     -> Property
 reflexivityOnValid func
     = reflexivityOnGen func genValid
 
 reflexivity
-    :: (Show a, GenValidity a)
+    :: (Show a, GenUnchecked a)
     => (a -> a -> Bool)
     -> Property
 reflexivity func

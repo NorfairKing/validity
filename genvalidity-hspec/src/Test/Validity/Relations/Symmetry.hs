@@ -1,5 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Test.Validity.Relations.Symmetry
     ( symmetricOnElems
     , symmetryOnGens
@@ -8,11 +9,11 @@ module Test.Validity.Relations.Symmetry
     , symmetryOnArbitrary
     ) where
 
-import           Data.GenValidity
+import Data.GenValidity
 
-import           Test.QuickCheck
+import Test.QuickCheck
 
-import           Test.Validity.Utils
+import Test.Validity.Utils
 
 -- |
 --
@@ -23,39 +24,31 @@ import           Test.Validity.Utils
 -- \]
 symmetricOnElems
     :: (a -> a -> Bool) -- ^ A relation
-    -> a -> a           -- ^ Two elements
+    -> a
+    -> a -- ^ Two elements
     -> Bool
 symmetricOnElems func a b = func a b <==> func b a
 
 symmetryOnGens
     :: Show a
-    => (a -> a -> Bool)
-    -> Gen (a, a)
-    -> Property
-symmetryOnGens func gen =
-    forAll gen $ uncurry $ symmetricOnElems func
+    => (a -> a -> Bool) -> Gen (a, a) -> Property
+symmetryOnGens func gen = forAll gen $ uncurry $ symmetricOnElems func
 
 symmetryOnValid
-    :: (Show a, GenValidity a)
-    => (a -> a -> Bool)
-    -> Property
-symmetryOnValid func =
-    symmetryOnGens func genValid
+    :: (Show a, GenValid a)
+    => (a -> a -> Bool) -> Property
+symmetryOnValid func = symmetryOnGens func genValid
 
 symmetry
-    :: (Show a, GenValidity a)
-    => (a -> a -> Bool)
-    -> Property
-symmetry func =
-    symmetryOnGens func genUnchecked
-
+    :: (Show a, GenUnchecked a)
+    => (a -> a -> Bool) -> Property
+symmetry func = symmetryOnGens func genUnchecked
 
 -- |
 --
 -- prop> symmetryOnArbitrary ((==) :: Int -> Int -> Bool)
+-- prop> symmetryOnArbitrary ((/=) :: Int -> Int -> Bool)
 symmetryOnArbitrary
     :: (Show a, Arbitrary a)
-    => (a -> a -> Bool)
-    -> Property
-symmetryOnArbitrary func =
-    symmetryOnGens func arbitrary
+    => (a -> a -> Bool) -> Property
+symmetryOnArbitrary func = symmetryOnGens func arbitrary

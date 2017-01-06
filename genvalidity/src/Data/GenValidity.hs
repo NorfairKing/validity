@@ -10,17 +10,19 @@
     @(Prime <$> arbitrary) `suchThat` isValid@
     but this is tedious and inefficient.
 
-    The @GenValidity@ type class allows you to specify how to (efficiently)
-    generate data of the given type to allow for easier and quicker testing.
-    Just implementing @genUnchecked@ already gives you access to @genValid@ and
-    @genInvalid@ but writing custom implementations of these functions may speed
-    up the generation of data.
+    The @GenValid@ type class allows you to specify how to (efficiently)
+    generate valid data of the given type to allow for easier and quicker testing.
+    Just instantiating @GenUnchecked@ already gives you access to a default instance
+    of @GenValid@ and @GenInvalid@ but writing custom implementations of these functions
+    may speed up the generation of data.
 
     For example, to generate primes, we don't have to consider even numbers other
     than 2. A more efficient implementation could then look as follows:
 
-    > instance GenValidity Prime where
+    > instance GenUnchecked Prime where
     >     genUnchecked = Prime <$> arbitrary
+
+    > instance GenValid Prime where
     >     genValid = Prime <$>
     >        (oneof
     >          [ pure 2
@@ -40,27 +42,29 @@
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
     -}
-
 module Data.GenValidity
     ( module Data.Validity
     , module Data.GenValidity
     ) where
 
-import           Data.Validity
+import Data.Validity
 
-import           Test.QuickCheck
+import Test.QuickCheck
 
-import           Control.Monad   (forM)
+import Control.Monad (forM)
 
--- | A class of types for which @Validity@-related values can be generated.
---
--- If you also write @Arbitrary@ instances for @GenValidity@ types, it may be
--- best to simply write @arbitrary = genValid@.
-class Validity a => GenValidity a where
-    -- | Generate a truly arbitrary datum, this should cover all possible
-    -- values in the type
+-- | A class of types for which truly arbitrary values can be generated.
+class Validity a =>
+      GenUnchecked a where
     genUnchecked :: Gen a
 
+-- | A class of types for which valid values can be generated.
+--
+-- If you also write @Arbitrary@ instances for @GenValid@ types, it may be
+-- best to simply write @arbitrary = genValid@.
+class (Validity a, GenUnchecked a) =>
+      GenValid a where
+    genValid :: Gen a
     -- | Generate a valid datum, this should cover all possible valid values in
     -- the type
     --
@@ -71,9 +75,12 @@ class Validity a => GenValidity a where
     -- To speed up testing, it may be a good idea to implement this yourself.
     -- If you do, make sure that it is possible to generate all possible valid
     -- data, otherwise your testing may not cover all cases.
-    genValid :: Gen a
     genValid = genUnchecked `suchThat` isValid
 
+-- | A class of types for which invalid values can be generated.
+class (Validity a, GenUnchecked a) =>
+      GenInvalid a where
+    genInvalid :: Gen a
     -- | Generate an invalid datum, this should cover all possible invalid
     -- values
     --
@@ -82,94 +89,115 @@ class Validity a => GenValidity a where
     -- To speed up testing, it may be a good idea to implement this yourself.
     -- If you do, make sure that it is possible to generate all possible
     -- invalid data, otherwise your testing may not cover all cases.
-    genInvalid :: Gen a
     genInvalid = genUnchecked `suchThat` (not . isValid)
-    {-# MINIMAL genUnchecked #-}
 
-instance (GenValidity a, GenValidity b) => GenValidity (a, b) where
-    genUnchecked = sized $ \n -> do
-        (r, s) <- genSplit n
-        a <- resize r genUnchecked
-        b <- resize s genUnchecked
-        return (a, b)
+instance (GenUnchecked a, GenUnchecked b) =>
+         GenUnchecked (a, b) where
+    genUnchecked =
+        sized $ \n -> do
+            (r, s) <- genSplit n
+            a <- resize r genUnchecked
+            b <- resize s genUnchecked
+            return (a, b)
 
-    genValid = sized $ \n -> do
-        (r, s) <- genSplit n
-        a <- resize r genValid
-        b <- resize s genValid
-        return (a, b)
+instance (GenValid a, GenValid b) =>
+         GenValid (a, b) where
+    genValid =
+        sized $ \n -> do
+            (r, s) <- genSplit n
+            a <- resize r genValid
+            b <- resize s genValid
+            return (a, b)
 
-    genInvalid = sized $ \n -> do
-        (r, s) <- genSplit n
-        oneof
-            [ do
-                a <- resize r genUnchecked
-                b <- resize s genInvalid
-                return (a, b)
-            , do
-                a <- resize r genInvalid
-                b <- resize s genUnchecked
-                return (a, b)
-            ]
+instance (GenInvalid a, GenInvalid b) =>
+         GenInvalid (a, b) where
+    genInvalid =
+        sized $ \n -> do
+            (r, s) <- genSplit n
+            oneof
+                [ do a <- resize r genUnchecked
+                     b <- resize s genInvalid
+                     return (a, b)
+                , do a <- resize r genInvalid
+                     b <- resize s genUnchecked
+                     return (a, b)
+                ]
 
-instance (GenValidity a, GenValidity b, GenValidity c) => GenValidity (a, b, c) where
-    genUnchecked = sized $ \n -> do
-        (r, s, t) <- genSplit3 n
-        a <- resize r genUnchecked
-        b <- resize s genUnchecked
-        c <- resize t genUnchecked
-        return (a, b, c)
+instance (GenUnchecked a, GenUnchecked b, GenUnchecked c) =>
+         GenUnchecked (a, b, c) where
+    genUnchecked =
+        sized $ \n -> do
+            (r, s, t) <- genSplit3 n
+            a <- resize r genUnchecked
+            b <- resize s genUnchecked
+            c <- resize t genUnchecked
+            return (a, b, c)
 
-    genValid = sized $ \n -> do
-        (r, s, t) <- genSplit3 n
-        a <- resize r genValid
-        b <- resize s genValid
-        c <- resize t genValid
-        return (a, b, c)
+instance (GenValid a, GenValid b, GenValid c) =>
+         GenValid (a, b, c) where
+    genValid =
+        sized $ \n -> do
+            (r, s, t) <- genSplit3 n
+            a <- resize r genValid
+            b <- resize s genValid
+            c <- resize t genValid
+            return (a, b, c)
 
-    genInvalid = sized $ \n -> do
-        (r, s, t) <- genSplit3 n
-        oneof
-            [ do
-                a <- resize r genInvalid
-                b <- resize s genUnchecked
-                c <- resize t genUnchecked
-                return (a, b, c)
-            , do
-                a <- resize r genUnchecked
-                b <- resize s genInvalid
-                c <- resize t genUnchecked
-                return (a, b, c)
-            , do
-                a <- resize r genUnchecked
-                b <- resize s genUnchecked
-                c <- resize t genInvalid
-                return (a, b, c)
-            ]
+instance (GenInvalid a, GenInvalid b, GenInvalid c) =>
+         GenInvalid (a, b, c) where
+    genInvalid =
+        sized $ \n -> do
+            (r, s, t) <- genSplit3 n
+            oneof
+                [ do a <- resize r genInvalid
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     return (a, b, c)
+                , do a <- resize r genUnchecked
+                     b <- resize s genInvalid
+                     c <- resize t genUnchecked
+                     return (a, b, c)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genInvalid
+                     return (a, b, c)
+                ]
 
-instance GenValidity a => GenValidity (Maybe a) where
+instance GenUnchecked a =>
+         GenUnchecked (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]
-    genValid     = oneof [pure Nothing, Just <$> genValid]
-    genInvalid   = Just <$> genInvalid
 
+instance GenValid a =>
+         GenValid (Maybe a) where
+    genValid = oneof [pure Nothing, Just <$> genValid]
+
+instance GenInvalid a =>
+         GenInvalid (Maybe a) where
+    genInvalid = Just <$> genInvalid
 
 -- | If we can generate values of a certain type, we can also generate lists of
 -- them.
 -- This instance ensures that @genValid@ generates only lists of valid data and
 -- that @genInvalid@ generates lists of data such that there is at least one
 -- value in there that does not satisfy @isValid@, the rest is unchecked.
-instance GenValidity a => GenValidity [a] where
+instance GenUnchecked a =>
+         GenUnchecked [a] where
     genUnchecked = genListOf genUnchecked
 
-    genValid     = genListOf genValid
+instance GenValid a =>
+         GenValid [a] where
+    genValid = genListOf genValid
 
-    -- | At least one invalid value in the list, the rest could be either.
-    genInvalid   = sized $ \n -> do
-        (x, y, z) <- genSplit3 n
-        before <- resize x $ genListOf genUnchecked
-        middle <- resize y genInvalid
-        after  <- resize z $ genListOf genUnchecked
-        return $ before ++ [middle] ++ after
+-- | At least one invalid value in the list, the rest could be either.
+instance GenInvalid a =>
+         GenInvalid [a] where
+    genInvalid =
+        sized $ \n -> do
+            (x, y, z) <- genSplit3 n
+            before <- resize x $ genListOf genUnchecked
+            middle <- resize y genInvalid
+            after <- resize z $ genListOf genUnchecked
+            return $ before ++ [middle] ++ after
 
 upTo :: Int -> Gen Int
 upTo n
@@ -178,29 +206,29 @@ upTo n
 
 genSplit :: Int -> Gen (Int, Int)
 genSplit n
-    | n < 0     = pure (0, 0)
-    | otherwise = elements [ (i, n - i) | i <- [0..n] ]
+    | n < 0 = pure (0, 0)
+    | otherwise = elements [(i, n - i) | i <- [0 .. n]]
 
 genSplit3 :: Int -> Gen (Int, Int, Int)
 genSplit3 n
-    | n < 0     = pure (0, 0, 0)
+    | n < 0 = pure (0, 0, 0)
     | otherwise = do
-    (a, z) <- genSplit n
-    (b, c) <- genSplit z
-    return (a, b, c)
+        (a, z) <- genSplit n
+        (b, c) <- genSplit z
+        return (a, b, c)
 
 arbPartition :: Int -> Gen [Int]
 arbPartition k
     | k <= 0 = pure []
     | otherwise = do
-    first <- elements [1..k]
-    rest <- arbPartition $ k - first
-    return $ first : rest
+        first <- elements [1 .. k]
+        rest <- arbPartition $ k - first
+        return $ first : rest
 
 -- | A version of @listOf@ that takes size into account more accurately.
 genListOf :: Gen a -> Gen [a]
-genListOf func = sized $ \n -> do
-    size <- upTo n
-    pars <- arbPartition size
-    forM pars $ \i -> resize i func
-
+genListOf func =
+    sized $ \n -> do
+        size <- upTo n
+        pars <- arbPartition size
+        forM pars $ \i -> resize i func

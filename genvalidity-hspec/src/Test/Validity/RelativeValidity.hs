@@ -1,22 +1,23 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
+-- | Tests for RelativeValidity instances
 module Test.Validity.RelativeValidity
-    ( -- * Tests for RelativeValidity instances
-      relativeValiditySpec
+    ( relativeValiditySpec
     , relativeValidityImpliesValidA
     , relativeValidityImpliesValidB
     ) where
 
-import           Data.Data
-import           Data.Proxy
+import Data.Data
+import Data.Proxy
 
-import           Data.GenRelativeValidity
-import           Data.GenValidity
+import Data.GenRelativeValidity
+import Data.GenValidity
 
-import           Test.Hspec
-import           Test.QuickCheck
+import Test.Hspec
+import Test.QuickCheck
 
-import           Test.Validity.Utils
+import Test.Validity.Utils
 
 -- | A @Spec@ that specifies that @isValidFor@ implies @isValid@
 --
@@ -29,49 +30,43 @@ import           Test.Validity.Utils
 -- >     (Proxy :: Proxy MyDataFor)
 -- >     (Proxy :: Proxy MyOtherData)
 relativeValiditySpec
-    :: (Typeable a, Typeable b,
-        Show a, Show b,
-        GenValidity a, GenValidity b, GenRelativeValidity a b)
-    => Proxy a
-    -> Proxy b
-    -> Spec
-relativeValiditySpec one two = parallel $ do
-    let nameOne = nameOf one
-        nameTwo = nameOf two
-    describe ("RelativeValidity " ++ nameOne ++ " " ++ nameTwo) $
-        describe ("isValidFor :: "
-                  ++ nameOne
-                  ++ " -> "
-                  ++ nameTwo
-                  ++ " -> Bool") $ do
-            it ("implies isValid " ++ nameOne ++ " for any " ++ nameTwo) $
-                relativeValidityImpliesValidA one two
-            it ("implies isValid " ++ nameTwo ++ " for any " ++ nameOne) $
-                relativeValidityImpliesValidB one two
+    :: ( Typeable a
+       , Typeable b
+       , Show a
+       , Show b
+       , GenUnchecked a
+       , GenUnchecked b
+       , RelativeValidity a b
+       )
+    => Proxy a -> Proxy b -> Spec
+relativeValiditySpec one two =
+    parallel $ do
+        let nameOne = nameOf one
+            nameTwo = nameOf two
+        describe ("RelativeValidity " ++ nameOne ++ " " ++ nameTwo) $
+            describe
+                ("isValidFor :: " ++ nameOne ++ " -> " ++ nameTwo ++ " -> Bool") $ do
+                it ("implies isValid " ++ nameOne ++ " for any " ++ nameTwo) $
+                    relativeValidityImpliesValidA one two
+                it ("implies isValid " ++ nameTwo ++ " for any " ++ nameOne) $
+                    relativeValidityImpliesValidB one two
 
 -- | @isValidFor a b@ implies @isValid a@ for all @b@
 relativeValidityImpliesValidA
-    :: (Show a, Show b,
-        GenValidity a, GenValidity b, RelativeValidity a b)
-    => Proxy a
-    -> Proxy b
-    -> Property
+    :: (Show a, Show b, GenUnchecked a, GenUnchecked b, RelativeValidity a b)
+    => Proxy a -> Proxy b -> Property
 relativeValidityImpliesValidA one two =
     forAll genUnchecked $ \a ->
         forAll genUnchecked $ \b ->
-            not ((a `asProxyTypeOf` one) `isValidFor` (b `asProxyTypeOf` two))
-            || isValid a
+            not ((a `asProxyTypeOf` one) `isValidFor` (b `asProxyTypeOf` two)) ||
+            isValid a
 
 -- | @isValidFor a b@ implies @isValid b@ for all @a@
 relativeValidityImpliesValidB
-    :: (Show a, Show b,
-        GenValidity a, GenValidity b, RelativeValidity a b)
-    => Proxy a
-    -> Proxy b
-    -> Property
+    :: (Show a, Show b, GenUnchecked a, GenUnchecked b, RelativeValidity a b)
+    => Proxy a -> Proxy b -> Property
 relativeValidityImpliesValidB one two =
     forAll genUnchecked $ \a ->
         forAll genUnchecked $ \b ->
-            not ((a `asProxyTypeOf` one) `isValidFor` (b `asProxyTypeOf` two))
-              || isValid b
-
+            not ((a `asProxyTypeOf` one) `isValidFor` (b `asProxyTypeOf` two)) ||
+            isValid b

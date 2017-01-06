@@ -34,14 +34,14 @@ antireflexivityOnGen func gen =
     forAll gen $ antireflexiveOnElem func
 
 antireflexivityOnValid
-    :: (Show a, GenValidity a)
+    :: (Show a, GenValid a)
     => (a -> a -> Bool)
     -> Property
 antireflexivityOnValid func
     = antireflexivityOnGen func genValid
 
 antireflexivity
-    :: (Show a, GenValidity a)
+    :: (Show a, GenUnchecked a)
     => (a -> a -> Bool)
     -> Property
 antireflexivity func

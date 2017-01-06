@@ -23,13 +23,13 @@ idempotentOnGen f gen
         f (f a) `shouldBe` f a
 
 idempotentOnValid
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenValid a)
     => (a -> a)
     -> Property
 idempotentOnValid func = idempotentOnGen func genValid
 
 idempotent
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenUnchecked a)
     => (a -> a)
     -> Property
 idempotent func = idempotentOnGen func genUnchecked

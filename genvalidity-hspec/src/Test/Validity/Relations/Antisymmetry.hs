@@ -48,14 +48,14 @@ antisymmetryOnGens func gen
     = antisymmetryOnGensWithEquality func gen (==)
 
 antisymmetryOnValid
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenValid a)
     => (a -> a -> Bool)
     -> Property
 antisymmetryOnValid func =
     antisymmetryOnGens func genValid
 
 antisymmetry
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenUnchecked a)
     => (a -> a -> Bool)
     -> Property
 antisymmetry func =

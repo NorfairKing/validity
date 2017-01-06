@@ -58,12 +58,12 @@ leftIdentityOnGen
 leftIdentityOnGen op = leftIdentityOnGenWithEquality op (==)
 
 leftIdentityOnValid
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenValid a)
     => (b -> a -> a) -> b -> Property
 leftIdentityOnValid op b = leftIdentityOnGen op b genValid
 
 leftIdentity
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenUnchecked a)
     => (b -> a -> a) -> b -> Property
 leftIdentity op b = leftIdentityOnGen op b genUnchecked
 
@@ -106,12 +106,12 @@ rightIdentityOnGen
 rightIdentityOnGen op = rightIdentityOnGenWithEquality op (==)
 
 rightIdentityOnValid
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenValid a)
     => (a -> b -> a) -> b -> Property
 rightIdentityOnValid op b = rightIdentityOnGen op b genValid
 
 rightIdentity
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenUnchecked a)
     => (a -> b -> a) -> b -> Property
 rightIdentity op b = rightIdentityOnGen op b genUnchecked
 
@@ -130,12 +130,12 @@ identityOnGen op e gen =
     leftIdentityOnGen op e gen .&&. rightIdentityOnGen op e gen
 
 identityOnValid
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenValid a)
     => (a -> a -> a) -> a -> Property
 identityOnValid op a = identityOnGen op a genValid
 
 identity
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenUnchecked a)
     => (a -> a -> a) -> a -> Property
 identity op e = identityOnGen op e genUnchecked
 
