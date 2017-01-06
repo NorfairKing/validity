@@ -10,6 +10,8 @@ module Test.Validity
     , shrinkProducesOnlyValids
       -- * Tests for GenValidity instances
     , genValiditySpec
+    , genValidSpec
+    , genInvalidSpec
     , genValidGeneratesValid
     , genGeneratesValid
     , genInvalidGeneratesInvalid

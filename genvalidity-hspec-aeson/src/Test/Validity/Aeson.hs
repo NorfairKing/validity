@@ -1,5 +1,7 @@
 module Test.Validity.Aeson
-    ( jsonSpec
+    ( jsonSpecOnGen
+    , jsonSpecOnValid
+    , jsonSpec
     , jsonSpecOnArbitrary
     , neverFailsToEncodeOnGen
     , encodeAndDecodeAreInversesOnGen
@@ -17,33 +19,41 @@ import Test.Hspec
 import Test.QuickCheck
 import Test.Validity.Utils
 
+jsonSpecOnGen
+    :: (Show a, Eq a, Typeable a, FromJSON a, ToJSON a)
+    => Proxy a -> Gen a -> String -> Spec
+jsonSpecOnGen proxy gen genname = do
+    let name = nameOf proxy
+    describe ("JSON " ++ name ++ " (" ++ genname ++ ")") $ do
+        describe ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
+            it (unwords ["never fails to encode an", genname, name]) $
+            neverFailsToEncodeOnGen proxy gen
+        describe ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
+            it
+                (unwords
+                     [ "ensures that encode and decode are inverses for"
+                     , genname
+                     , name ++ "'s"
+                     ]) $
+            encodeAndDecodeAreInversesOnGen proxy gen
+
+jsonSpecOnValid
+    :: (Show a, Eq a, Typeable a, GenValid a, FromJSON a, ToJSON a)
+    => Proxy a -> Spec
+jsonSpecOnValid proxy = do
+    jsonSpecOnGen proxy genValid "valid"
+
 jsonSpec
-    :: (Show a, Eq a, Typeable a, GenValidity a, FromJSON a, ToJSON a)
+    :: (Show a, Eq a, Typeable a, GenUnchecked a, FromJSON a, ToJSON a)
     => Proxy a -> Spec
 jsonSpec proxy = do
-    let name = nameOf proxy
-    describe ("JSON " ++ name) $
-        describe ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $ do
-            it ("never fails to encode a valid " ++ name) $
-                neverFailsToEncodeOnGen proxy genValid
-            it
-                ("ensures that encode and decode are inverses for valid " ++
-                 name ++ "'s") $
-                encodeAndDecodeAreInversesOnGen proxy genValid
+    jsonSpecOnGen proxy genUnchecked "unchecked"
 
 jsonSpecOnArbitrary
     :: (Show a, Eq a, Typeable a, Arbitrary a, FromJSON a, ToJSON a)
     => Proxy a -> Spec
 jsonSpecOnArbitrary proxy = do
-    let name = nameOf proxy
-    describe ("JSON " ++ name) $
-        describe ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $ do
-            it ("never fails to encode an arbitrary " ++ name) $
-                neverFailsToEncodeOnGen proxy arbitrary
-            it
-                ("ensures that encode and decode are inverses for arbitrary " ++
-                 name ++ "'s") $
-                encodeAndDecodeAreInversesOnGen proxy arbitrary
+    jsonSpecOnGen proxy arbitrary "arbitrary"
 
 neverFailsToEncodeOnGen
     :: (Show a, ToJSON a)
