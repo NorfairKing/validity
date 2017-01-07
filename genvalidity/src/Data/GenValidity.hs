@@ -26,7 +26,7 @@
     >     genValid = Prime <$>
     >        (oneof
     >          [ pure 2
-    >          , (\y -> 2 * y + 1) <$> (arbitrary `suchThat` (> 0) `suchThat` isPrime)
+    >          , ((\y -> 2 * abs y + 1) <$> arbitrary) `suchThat` isPrime)
     >          ])
 
 
