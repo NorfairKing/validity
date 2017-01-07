@@ -7,12 +7,18 @@
 Values of custom types usually have invariants imposed upon them.
 The `validity` package provides the `Validity` type class, which makes these invariants explicit by providing a function to check whether the invariants hold.
 
+The `validity-*` packages provides the `Validity` instances for commonly-used packages.
+
 Property testing for functions involving types with invariants often requires writing generators that are aware of the validity of the values that they generate.
 The `genvalidity` package provides a general framework to define these generators.
-The `GenValidity` type class provides functions to generate valid values, invalid values, or unchecked values.
+The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions to generate unchecked values, valid values and invalid values.
 
-Property testing of functions involving types which instantiate `Validity` and/or `GenValiditf` can generalized to highly generic function.
+The `genvalidity-*` packages provides the `Validity` instances for commonly-used packages.
+
+Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` can generalized to highly generic function.
 The `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.
+
+The `genvalidity-hspec-*` packages provide automatic property testing functions for certain commonly-used packages.
 
 ## A usage example
 
@@ -32,18 +38,22 @@ instance Validity Prime where
     isValid (Prime i) = isPrime i
 ```
 
-### GenValidity
+### GenUnchecked, GenValid and GenInvalid
 
 Define generators for valid and invalid primes:
 
 ``` Haskell
-instance GenValidity Prime where
+instance GenUnchecked Prime where
     genUnchecked = Prime <$> arbitrary
+
+instance GenValid Prime where
     genValid = Prime <$>
        (oneof
          [ pure 2
          , ((\y -> 2 * abs y + 1) <$> arbitrary) `suchThat` isPrime)
          ])
+
+instance GenInvalid Prime
 ```
 
 ### Genvalidity Hspec
@@ -197,33 +207,32 @@ Only about half of the possible values of the type `HasPrimeFactorisation` are v
 This means that when we use the `suchThat` function to build a generator of valid values, it has to retry generating a valid value more than half of the time it is used.
 This effect is much worse still for types that don't have a lot of valid values, or for which the `isValid` function is expensive to compute.
 
-This is where the `GenValidity` type class from the `genvalidity` package comes in.
+This is where the, `GenUnchecked`, `GenValid` and `GenInvalid` type classes from the `genvalidity` package comes in.
 It allows us to specify how to generate valid or invalid values of a given type that instantiates `Validity`.
 
 ``` Haskell
-genUnchecked :: GenValidity a => Gen a
-genValid :: GenValidity a => Gen a
-genInvalid :: GenValidity a => Gen a
+genUnchecked :: GenUnchecked a => Gen a
+genValid :: GenValid a => Gen a
+genInvalid :: GenInvalid a => Gen a
 ``` 
 
 A minimal instantiation only defines `genUnchecked`.
 The `genValid` and `genInvalid` are then defined using `suchThat`.
 
 ``` Haskell
-instance GenValidity HasPrimeFactorisation where
-    genValid = HasPrimeFactorisation <$> arbitrary
+instance GenUnchecked HasPrimeFactorisation where
+    genUnchecked = HasPrimeFactorisation <$> arbitrary
 ```
 
 We can now implement a faster version:
 
 ``` Haskell
-instance GenValidity HasPrimeFactorisation where
+instance GenValid HasPrimeFactorisation where
     genValid = HasPrimeFactorisation <$> arbitrary
     genValid = (HasPrimeFactorisation . (+1) . abs) <$> arbitrary
 ```
 
 The tests that we wrote earlier can now be simplified:
-
 
 ``` Haskell
 describe "primeFactorisation" $ 
@@ -236,7 +245,7 @@ describe "primeFactorisation" $
 
 ### Part 4: Generalized validity-based testing
 
-`Validity` and `GenValidity` together provide a framework that is powerful enough to abstract away most of the boiler-plate testing code into property-generating combinators.
+`Validity`, `GenUnchecked`, `GenValid` and `GenInvalid` together provide a framework that is powerful enough to abstract away most of the boiler-plate testing code into property-generating combinators.
 
 The above example test can be rewritten using the `genvalidity-hspec` package:
 
