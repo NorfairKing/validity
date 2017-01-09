@@ -1,5 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE TypeApplications   #-}
+{-# LANGUAGE AllowAmbiguousTypes   #-}
 module Test.Validity.Utils
     ( (<==>)
     , (===>)
@@ -15,13 +17,13 @@ import           Data.Data
 (<==>) :: Bool -> Bool -> Bool
 (<==>) a b = a ===> b && b ===> a
 
-nameOf :: Typeable a => Proxy a -> String
-nameOf proxy =
-    let (_, [ty]) = splitTyConApp $ typeOf proxy
+nameOf :: forall a. Typeable a => String
+nameOf =
+    let (_, [ty]) = splitTyConApp $ typeOf (Proxy @a)
     in show ty
 
-binRelStr :: Typeable a => String -> Proxy a -> String
-binRelStr op proxy = unwords
+binRelStr :: forall a. Typeable a => String -> String
+binRelStr op = unwords
     [ "(" ++ op ++ ")"
     , "::"
     , name
@@ -30,5 +32,5 @@ binRelStr op proxy = unwords
     , "->"
     , "Bool"
     ]
-  where name = nameOf proxy
+  where name = nameOf @a
 
