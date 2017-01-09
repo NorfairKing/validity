@@ -7,6 +7,7 @@ packages:
 - 'genvalidity-containers'
 - 'genvalidity-text'
 - 'genvalidity-hspec'
+- 'genvalidity-hspec-aeson'
 extra-deps: []
 flags: {}
 extra-package-dbs: []
