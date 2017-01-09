@@ -68,7 +68,7 @@ jsonSpecOnGen
        (Show a, Eq a, Typeable a, FromJSON a, ToJSON a)
     => Gen a -> String -> Spec
 jsonSpecOnGen gen genname = parallel $ do
-    let name = nameOf (Proxy @a)
+    let name = nameOf @a
     describe ("JSON " ++ name ++ " (" ++ genname ++ ")") $ do
         describe ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
             it
