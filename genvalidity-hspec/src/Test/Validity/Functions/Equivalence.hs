@@ -13,21 +13,27 @@ module Test.Validity.Functions.Equivalence
     , equivalentWhenFirstSucceedsOnGen
     , equivalentWhenFirstSucceedsOnValid
     , equivalentWhenFirstSucceeds
+    , equivalentWhenFirstSucceedsOnArbitrary
     , equivalentWhenFirstSucceedsOnGens2
     , equivalentWhenFirstSucceedsOnValids2
     , equivalentWhenFirstSucceeds2
+    , equivalentWhenFirstSucceedsOnArbitrary2
     , equivalentWhenSecondSucceedsOnGen
     , equivalentWhenSecondSucceedsOnValid
     , equivalentWhenSecondSucceeds
+    , equivalentWhenSecondSucceedsOnArbitrary
     , equivalentWhenSecondSucceedsOnGens2
     , equivalentWhenSecondSucceedsOnValids2
     , equivalentWhenSecondSucceeds2
+    , equivalentWhenSecondSucceedsOnArbitrary2
     , equivalentWhenSucceedOnGen
     , equivalentWhenSucceedOnValid
     , equivalentWhenSucceed
+    , equivalentWhenSucceedOnArbitrary
     , equivalentWhenSucceedOnGens2
     , equivalentWhenSucceedOnValids2
     , equivalentWhenSucceed2
+    , equivalentWhenSucceedOnArbitrary2
     ) where
 
 import Data.GenValidity
@@ -43,12 +49,12 @@ equivalentOnGen
 equivalentOnGen f g gen = forAll gen $ \a -> f a `shouldBe` g a
 
 equivalentOnValid
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b)
+    :: (Show a, Eq a, GenValid a, Show b, Eq b)
     => (a -> b) -> (a -> b) -> Property
 equivalentOnValid f g = equivalentOnGen f g genValid
 
 equivalent
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b)
+    :: (Show a, Eq a, GenUnchecked a, Show b, Eq b)
     => (a -> b) -> (a -> b) -> Property
 equivalent f g = equivalentOnGen f g genUnchecked
 
@@ -66,12 +72,20 @@ equivalentOnGens2
 equivalentOnGens2 f g gen = forAll gen $ \(a, b) -> f a b `shouldBe` g a b
 
 equivalentOnValids2
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, GenValidity b, Show c, Eq c)
+    :: (Show a, Eq a, GenValid a, Show b, Eq b, GenValid b, Show c, Eq c)
     => (a -> b -> c) -> (a -> b -> c) -> Property
 equivalentOnValids2 f g = equivalentOnGens2 f g genValid
 
 equivalent2
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, GenValidity b, Show c, Eq c)
+    :: ( Show a
+       , Eq a
+       , GenUnchecked a
+       , Show b
+       , Eq b
+       , GenUnchecked b
+       , Show c
+       , Eq c
+       )
     => (a -> b -> c) -> (a -> b -> c) -> Property
 equivalent2 f g = equivalentOnGens2 f g genUnchecked
 
@@ -93,13 +107,19 @@ equivalentWhenFirstSucceedsOnGen f g gen =
             Just r -> r `shouldBe` g a
 
 equivalentWhenFirstSucceedsOnValid
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+    :: (Show a, Eq a, GenValid a, Show b, Eq b, CanFail f)
     => (a -> f b) -> (a -> b) -> Property
 equivalentWhenFirstSucceedsOnValid f g =
     equivalentWhenFirstSucceedsOnGen f g genValid
 
+equivalentWhenFirstSucceedsOnArbitrary
+    :: (Show a, Eq a, Arbitrary a, Show b, Eq b, CanFail f)
+    => (a -> f b) -> (a -> b) -> Property
+equivalentWhenFirstSucceedsOnArbitrary f g =
+    equivalentWhenFirstSucceedsOnGen f g arbitrary
+
 equivalentWhenFirstSucceeds
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+    :: (Show a, Eq a, GenUnchecked a, Show b, Eq b, CanFail f)
     => (a -> f b) -> (a -> b) -> Property
 equivalentWhenFirstSucceeds f g =
     equivalentWhenFirstSucceedsOnGen f g genUnchecked
@@ -116,10 +136,10 @@ equivalentWhenFirstSucceedsOnGens2 f g gen =
 equivalentWhenFirstSucceedsOnValids2
     :: ( Show a
        , Eq a
-       , GenValidity a
+       , GenValid a
        , Show b
        , Eq b
-       , GenValidity b
+       , GenValid b
        , Show c
        , Eq c
        , CanFail f
@@ -128,13 +148,28 @@ equivalentWhenFirstSucceedsOnValids2
 equivalentWhenFirstSucceedsOnValids2 f g =
     equivalentWhenFirstSucceedsOnGens2 f g genValid
 
+equivalentWhenFirstSucceedsOnArbitrary2
+    :: ( Show a
+       , Eq a
+       , Arbitrary a
+       , Show b
+       , Eq b
+       , Arbitrary b
+       , Show c
+       , Eq c
+       , CanFail f
+       )
+    => (a -> b -> f c) -> (a -> b -> c) -> Property
+equivalentWhenFirstSucceedsOnArbitrary2 f g =
+    equivalentWhenFirstSucceedsOnGens2 f g arbitrary
+
 equivalentWhenFirstSucceeds2
     :: ( Show a
        , Eq a
-       , GenValidity a
+       , GenUnchecked a
        , Show b
        , Eq b
-       , GenValidity b
+       , GenUnchecked b
        , Show c
        , Eq c
        , CanFail f
@@ -153,13 +188,19 @@ equivalentWhenSecondSucceedsOnGen f g gen =
             Just r -> r `shouldBe` f a
 
 equivalentWhenSecondSucceedsOnValid
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+    :: (Show a, Eq a, GenValid a, Show b, Eq b, CanFail f)
     => (a -> b) -> (a -> f b) -> Property
 equivalentWhenSecondSucceedsOnValid f g =
     equivalentWhenSecondSucceedsOnGen f g genValid
 
+equivalentWhenSecondSucceedsOnArbitrary
+    :: (Show a, Eq a, Arbitrary a, Show b, Eq b, CanFail f)
+    => (a -> b) -> (a -> f b) -> Property
+equivalentWhenSecondSucceedsOnArbitrary f g =
+    equivalentWhenSecondSucceedsOnGen f g arbitrary
+
 equivalentWhenSecondSucceeds
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+    :: (Show a, Eq a, GenUnchecked a, Show b, Eq b, CanFail f)
     => (a -> b) -> (a -> f b) -> Property
 equivalentWhenSecondSucceeds f g =
     equivalentWhenSecondSucceedsOnGen f g genUnchecked
@@ -176,10 +217,10 @@ equivalentWhenSecondSucceedsOnGens2 f g gen =
 equivalentWhenSecondSucceedsOnValids2
     :: ( Show a
        , Eq a
-       , GenValidity a
+       , GenValid a
        , Show b
        , Eq b
-       , GenValidity b
+       , GenValid b
        , Show c
        , Eq c
        , CanFail f
@@ -188,13 +229,28 @@ equivalentWhenSecondSucceedsOnValids2
 equivalentWhenSecondSucceedsOnValids2 f g =
     equivalentWhenSecondSucceedsOnGens2 f g genValid
 
+equivalentWhenSecondSucceedsOnArbitrary2
+    :: ( Show a
+       , Eq a
+       , Arbitrary a
+       , Show b
+       , Eq b
+       , Arbitrary b
+       , Show c
+       , Eq c
+       , CanFail f
+       )
+    => (a -> b -> c) -> (a -> b -> f c) -> Property
+equivalentWhenSecondSucceedsOnArbitrary2 f g =
+    equivalentWhenSecondSucceedsOnGens2 f g arbitrary
+
 equivalentWhenSecondSucceeds2
     :: ( Show a
        , Eq a
-       , GenValidity a
+       , GenUnchecked a
        , Show b
        , Eq b
-       , GenValidity b
+       , GenUnchecked b
        , Show c
        , Eq c
        , CanFail f
@@ -215,14 +271,19 @@ equivalentWhenSucceedOnGen f g gen =
             Just (fa, ga) -> fa `shouldBe` ga
 
 equivalentWhenSucceedOnValid
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+    :: (Show a, Eq a, GenValid a, Show b, Eq b, CanFail f)
     => (a -> f b) -> (a -> f b) -> Property
 equivalentWhenSucceedOnValid f g = equivalentWhenSucceedOnGen f g genValid
 
 equivalentWhenSucceed
-    :: (Show a, Eq a, GenValidity a, Show b, Eq b, CanFail f)
+    :: (Show a, Eq a, GenUnchecked a, Show b, Eq b, CanFail f)
     => (a -> f b) -> (a -> f b) -> Property
 equivalentWhenSucceed f g = equivalentWhenSucceedOnGen f g genUnchecked
+
+equivalentWhenSucceedOnArbitrary
+    :: (Show a, Eq a, Arbitrary a, Show b, Eq b, CanFail f)
+    => (a -> f b) -> (a -> f b) -> Property
+equivalentWhenSucceedOnArbitrary f g = equivalentWhenSucceedOnGen f g arbitrary
 
 equivalentWhenSucceedOnGens2
     :: (Show a, Eq a, Show b, Eq b, Show c, Eq c, CanFail f)
@@ -238,10 +299,10 @@ equivalentWhenSucceedOnGens2 f g gen =
 equivalentWhenSucceedOnValids2
     :: ( Show a
        , Eq a
-       , GenValidity a
+       , GenValid a
        , Show b
        , Eq b
-       , GenValidity b
+       , GenValid b
        , Show c
        , Eq c
        , CanFail f
@@ -249,13 +310,28 @@ equivalentWhenSucceedOnValids2
     => (a -> b -> f c) -> (a -> b -> f c) -> Property
 equivalentWhenSucceedOnValids2 f g = equivalentWhenSucceedOnGens2 f g genValid
 
+equivalentWhenSucceedOnArbitrary2
+    :: ( Show a
+       , Eq a
+       , Arbitrary a
+       , Show b
+       , Eq b
+       , Arbitrary b
+       , Show c
+       , Eq c
+       , CanFail f
+       )
+    => (a -> b -> f c) -> (a -> b -> f c) -> Property
+equivalentWhenSucceedOnArbitrary2 f g =
+    equivalentWhenSucceedOnGens2 f g arbitrary
+
 equivalentWhenSucceed2
     :: ( Show a
        , Eq a
-       , GenValidity a
+       , GenUnchecked a
        , Show b
        , Eq b
-       , GenValidity b
+       , GenUnchecked b
        , Show c
        , Eq c
        , CanFail f

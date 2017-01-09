@@ -1,5 +1,5 @@
 name:                genvalidity-hspec
-version:             0.2.0.5
+version:             0.3.0.0
 synopsis:            Standard spec's for GenValidity instances
 description:         Please see README.md
 homepage:            https://github.com/NorfairKing/validity#readme
@@ -44,9 +44,9 @@ library
   build-depends:
         base                               < 5
       , validity                 >= 0.3 && < 0.4
-      , genvalidity
+      , genvalidity              >= 0.3 && < 0.4
       , QuickCheck
-      , hspec                    >= 2.2 && < 2.3
+      , hspec                    >= 2.2 && < 2.4
   default-language:    Haskell2010
 
 

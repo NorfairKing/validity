@@ -1,5 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Test.Validity.Relations.Reflexivity
     ( reflexiveOnElem
     , reflexivityOnGen
@@ -8,9 +9,9 @@ module Test.Validity.Relations.Reflexivity
     , reflexivityOnArbitrary
     ) where
 
-import           Data.GenValidity
+import Data.GenValidity
 
-import           Test.QuickCheck
+import Test.QuickCheck
 
 -- |
 --
@@ -21,38 +22,41 @@ import           Test.QuickCheck
 -- \]
 reflexiveOnElem
     :: (a -> a -> Bool) -- ^ A relation
-    -> a                -- ^ An element
+    -> a -- ^ An element
     -> Bool
 reflexiveOnElem func a = func a a
 
 reflexivityOnGen
     :: Show a
-    => (a -> a -> Bool)
-    -> Gen a
-    -> Property
-reflexivityOnGen func gen =
-    forAll gen $ reflexiveOnElem func
-
-reflexivityOnValid
-    :: (Show a, GenValidity a)
-    => (a -> a -> Bool)
-    -> Property
-reflexivityOnValid func
-    = reflexivityOnGen func genValid
-
-reflexivity
-    :: (Show a, GenValidity a)
-    => (a -> a -> Bool)
-    -> Property
-reflexivity func
-    = reflexivityOnGen func genUnchecked
+    => (a -> a -> Bool) -> Gen a -> Property
+reflexivityOnGen func gen = forAll gen $ reflexiveOnElem func
 
 -- |
 --
--- prop> reflexivityOnArbitrary ((==) :: Int -> Int -> Bool)
+-- prop> reflexivityOnValid ((<=) @Double)
+-- prop> reflexivityOnValid ((==) @Double)
+-- prop> reflexivityOnValid ((>=) @Double)
+reflexivityOnValid
+    :: (Show a, GenValid a)
+    => (a -> a -> Bool) -> Property
+reflexivityOnValid func = reflexivityOnGen func genValid
+
+-- |
+--
+-- prop> reflexivity ((<=) @Int)
+-- prop> reflexivity ((==) @Int)
+-- prop> reflexivity ((>=) @Int)
+reflexivity
+    :: (Show a, GenUnchecked a)
+    => (a -> a -> Bool) -> Property
+reflexivity func = reflexivityOnGen func genUnchecked
+
+-- |
+--
+-- prop> reflexivityOnArbitrary ((<=) @Int)
+-- prop> reflexivityOnArbitrary ((==) @Int)
+-- prop> reflexivityOnArbitrary ((>=) @Int)
 reflexivityOnArbitrary
     :: (Show a, Arbitrary a)
-    => (a -> a -> Bool)
-    -> Property
-reflexivityOnArbitrary func
-    = reflexivityOnGen func arbitrary
+    => (a -> a -> Bool) -> Property
+reflexivityOnArbitrary func = reflexivityOnGen func arbitrary

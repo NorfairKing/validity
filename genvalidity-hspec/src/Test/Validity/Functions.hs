@@ -1,10 +1,9 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
-module Test.Validity.Functions
-    ( -- * Validity tests involving functions
+{-# LANGUAGE ScopedTypeVariables #-}
 
-      -- ** Standard tests involving validity
-      producesValidsOnGen
+-- | Validity tests involving functions
+module Test.Validity.Functions
+    ( producesValidsOnGen
     , producesValidsOnValids
     , producesValid
     , producesValidsOnArbitrary
@@ -16,35 +15,26 @@ module Test.Validity.Functions
     , producesValidsOnValids3
     , producesValid3
     , producesValidsOnArbitrary3
-
-      -- ** Standard tests involving functions that can fail
     , succeedsOnGen
     , succeedsOnValid
     , succeeds
     , succeedsOnArbitrary
-
     , succeedsOnGens2
     , succeedsOnValids2
     , succeeds2
     , succeedsOnArbitrary2
-
     , failsOnGen
     , failsOnInvalid
-
     , failsOnGens2
     , failsOnInvalid2
-
     , validIfSucceedsOnGen
     , validIfSucceedsOnValid
     , validIfSucceedsOnArbitrary
     , validIfSucceeds
-
     , validIfSucceedsOnGens2
     , validIfSucceedsOnValids2
     , validIfSucceeds2
     , validIfSucceedsOnArbitrary2
-
-      -- ** Standard tests involving equivalence of functions
     , equivalentOnGen
     , equivalentOnValid
     , equivalent
@@ -56,23 +46,27 @@ module Test.Validity.Functions
     , equivalentWhenFirstSucceedsOnGen
     , equivalentWhenFirstSucceedsOnValid
     , equivalentWhenFirstSucceeds
+    , equivalentWhenFirstSucceedsOnArbitrary
     , equivalentWhenFirstSucceedsOnGens2
     , equivalentWhenFirstSucceedsOnValids2
     , equivalentWhenFirstSucceeds2
+    , equivalentWhenFirstSucceedsOnArbitrary2
     , equivalentWhenSecondSucceedsOnGen
     , equivalentWhenSecondSucceedsOnValid
     , equivalentWhenSecondSucceeds
+    , equivalentWhenSecondSucceedsOnArbitrary
     , equivalentWhenSecondSucceedsOnGens2
     , equivalentWhenSecondSucceedsOnValids2
     , equivalentWhenSecondSucceeds2
+    , equivalentWhenSecondSucceedsOnArbitrary2
     , equivalentWhenSucceedOnGen
     , equivalentWhenSucceedOnValid
     , equivalentWhenSucceed
+    , equivalentWhenSucceedOnArbitrary
     , equivalentWhenSucceedOnGens2
     , equivalentWhenSucceedOnValids2
     , equivalentWhenSucceed2
-
-      -- ** Standard tests involving inverse functions
+    , equivalentWhenSucceedOnArbitrary2
     , inverseFunctionsOnGen
     , inverseFunctionsOnValid
     , inverseFunctions
@@ -89,17 +83,14 @@ module Test.Validity.Functions
     , inverseFunctionsIfSucceedOnValid
     , inverseFunctionsIfSucceed
     , inverseFunctionsIfSucceedOnArbitrary
-
-      -- ** Properties involving idempotence
     , idempotentOnGen
     , idempotentOnValid
     , idempotent
     , idempotentOnArbitrary
     ) where
 
-import           Test.Validity.Functions.CanFail
-import           Test.Validity.Functions.Equivalence
-import           Test.Validity.Functions.Idempotence
-import           Test.Validity.Functions.Inverse
-import           Test.Validity.Functions.Validity
-
+import Test.Validity.Functions.CanFail
+import Test.Validity.Functions.Equivalence
+import Test.Validity.Functions.Idempotence
+import Test.Validity.Functions.Inverse
+import Test.Validity.Functions.Validity

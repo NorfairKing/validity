@@ -21,18 +21,23 @@ associativeOnGens op gen =
         ((a `op` b) `op` c) `shouldBe` (a `op` (b `op` c))
 
 associativeOnValids
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenValid a)
     => (a -> a -> a) -> Property
 associativeOnValids op = associativeOnGens op genValid
 
+-- |
+--
+-- prop> associative ((*) @Int)
+-- prop> associative ((+) @Int)
 associative
-    :: (Show a, Eq a, GenValidity a)
+    :: (Show a, Eq a, GenUnchecked a)
     => (a -> a -> a) -> Property
 associative op = associativeOnGens op genUnchecked
 
 -- |
 --
--- prop> associativeOnArbitrary ((+) :: Int -> Int -> Int)
+-- prop> associativeOnArbitrary ((*) @Int)
+-- prop> associativeOnArbitrary ((+) @Int)
 associativeOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> a -> a) -> Property

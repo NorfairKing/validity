@@ -19,7 +19,7 @@ library
                      , Data.Validity.Tree
                      , Data.Validity.Map
   build-depends:       base < 5
-                     , validity
+                     , validity >= 0.3 && < 0.4
                      , containers
   default-language:    Haskell2010
 
