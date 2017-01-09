@@ -19,11 +19,19 @@ commutativeOnGens
 commutativeOnGens op gen =
     forAll gen $ \(a, b) -> (a `op` b) `shouldBe` (b `op` a)
 
+-- |
+--
+-- prop> commutative ((+) @Double)
+-- prop> commutative ((*) @Double)
 commutativeOnValids
     :: (Show a, Eq a, GenValid a)
     => (a -> a -> a) -> Property
 commutativeOnValids op = commutativeOnGens op genValid
 
+-- |
+--
+-- prop> commutative ((+) @Int)
+-- prop> commutative ((*) @Int)
 commutative
     :: (Show a, Eq a, GenUnchecked a)
     => (a -> a -> a) -> Property
@@ -31,7 +39,8 @@ commutative op = commutativeOnGens op genUnchecked
 
 -- |
 --
--- prop> commutativeOnArbitrary ((+) :: Int -> Int -> Int)
+-- prop> commutativeOnArbitrary ((+) @Int)
+-- prop> commutativeOnArbitrary ((*) @Int)
 commutativeOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> a -> a) -> Property

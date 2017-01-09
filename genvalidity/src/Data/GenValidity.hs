@@ -199,6 +199,58 @@ instance GenInvalid a =>
             after <- resize z $ genListOf genUnchecked
             return $ before ++ [middle] ++ after
 
+instance GenUnchecked () where
+    genUnchecked = arbitrary
+
+instance GenValid ()
+
+instance GenUnchecked Bool where
+    genUnchecked = arbitrary
+
+instance GenValid Bool
+
+instance GenUnchecked Ordering where
+    genUnchecked = arbitrary
+
+instance GenValid Ordering
+
+instance GenUnchecked Char where
+    genUnchecked = arbitrary
+
+instance GenValid Char
+
+instance GenUnchecked Int where
+    genUnchecked = arbitrary
+
+instance GenValid Int
+
+instance GenUnchecked Word where
+    genUnchecked = arbitrary
+
+instance GenValid Word
+
+instance GenUnchecked Float where
+    genUnchecked = arbitrary
+
+instance GenValid Float where
+    genValid = arbitrary
+
+instance GenInvalid Float where
+    genInvalid = elements [read "NaN", read "Infinity"]
+
+instance GenUnchecked Double where
+    genUnchecked = arbitrary
+
+instance GenValid Double
+
+instance GenInvalid Double where
+    genInvalid = elements [read "NaN", read "Infinity"]
+
+instance GenUnchecked Integer where
+    genUnchecked = arbitrary
+
+instance GenValid Integer
+
 upTo :: Int -> Gen Int
 upTo n
     | n <= 0 = pure 0

@@ -36,11 +36,25 @@ transitivityOnGens
 transitivityOnGens func gen =
     forAll gen $ \(a, b, c) -> transitiveOnElems func a b c
 
+-- |
+--
+-- prop> transitivityOnValid ((>) @Double)
+-- prop> transitivityOnValid ((>=) @Double)
+-- prop> transitivityOnValid ((==) @Double)
+-- prop> transitivityOnValid ((<=) @Double)
+-- prop> transitivityOnValid ((<) @Double)
 transitivityOnValid
     :: (Show a, GenValid a)
     => (a -> a -> Bool) -> Property
 transitivityOnValid func = transitivityOnGens func genValid
 
+-- |
+--
+-- prop> transitivity ((>) @Int)
+-- prop> transitivity ((>=) @Int)
+-- prop> transitivity ((==) @Int)
+-- prop> transitivity ((<=) @Int)
+-- prop> transitivity ((<) @Int)
 transitivity
     :: (Show a, GenUnchecked a)
     => (a -> a -> Bool) -> Property
@@ -48,9 +62,11 @@ transitivity func = transitivityOnGens func genUnchecked
 
 -- |
 --
--- prop> transitivityOnArbitrary ((>=) :: Int -> Int -> Bool)
--- prop> transitivityOnArbitrary ((==) :: Int -> Int -> Bool)
--- prop> transitivityOnArbitrary ((<=) :: Int -> Int -> Bool)
+-- prop> transitivityOnArbitrary ((>) @Int)
+-- prop> transitivityOnArbitrary ((>=) @Int)
+-- prop> transitivityOnArbitrary ((==) @Int)
+-- prop> transitivityOnArbitrary ((<=) @Int)
+-- prop> transitivityOnArbitrary ((<) @Int)
 transitivityOnArbitrary
     :: (Show a, Arbitrary a)
     => (a -> a -> Bool) -> Property

@@ -60,6 +60,16 @@ genInvalidSpec proxy =
                 genInvalidGeneratesInvalid proxy
 
 -- | @genValid@ only generates valid data
+--
+-- prop> genValidGeneratesValid (Proxy :: Proxy ())
+-- prop> genValidGeneratesValid (Proxy :: Proxy Bool)
+-- prop> genValidGeneratesValid (Proxy :: Proxy Ordering)
+-- prop> genValidGeneratesValid (Proxy :: Proxy Char)
+-- prop> genValidGeneratesValid (Proxy :: Proxy Int)
+-- prop> genValidGeneratesValid (Proxy :: Proxy Float)
+-- prop> genValidGeneratesValid (Proxy :: Proxy Double)
+-- prop> genValidGeneratesValid (Proxy :: Proxy Integer)
+-- prop> genValidGeneratesValid (Proxy :: Proxy [Int])
 genValidGeneratesValid
     :: forall a.
        (Show a, GenValid a)
@@ -73,6 +83,10 @@ genGeneratesValid
 genGeneratesValid gen = forAll gen (`shouldSatisfy` isValid)
 
 -- | @genValid@ only generates invalid data
+--
+-- prop> genInvalidGeneratesInvalid (Proxy :: Proxy Float)
+-- prop> genInvalidGeneratesInvalid (Proxy :: Proxy Double)
+-- prop> genInvalidGeneratesInvalid (Proxy :: Proxy [Double])
 genInvalidGeneratesInvalid
     :: forall a.
        (Show a, GenInvalid a)
