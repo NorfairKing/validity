@@ -2,6 +2,9 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Standard test `Spec`s and raw `Property`s for `FromJSON` and `ToJSON` instances.
+--
+-- You will need @TypeApplications@ to use these.
 module Test.Validity.Aeson
     ( jsonSpecOnValid
     , jsonSpec
