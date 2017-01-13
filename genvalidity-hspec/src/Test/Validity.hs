@@ -4,7 +4,6 @@
 -- | To use the 'Spec' functions in this module, you will need @TypeApplications@.
 module Test.Validity
     ( module Data.GenValidity
-    , Proxy(Proxy)
       -- * Tests for Arbitrary instances involving Validity
     , arbitrarySpec
     , arbitraryGeneratesOnlyValid

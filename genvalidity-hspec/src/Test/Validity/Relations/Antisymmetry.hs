@@ -49,6 +49,10 @@ antisymmetryOnGens func gen = antisymmetryOnGensWithEquality func gen (==)
 -- prop> antisymmetryOnValid ((>=) @Double)
 -- prop> antisymmetryOnValid ((<=) @Double)
 -- prop> antisymmetryOnValid ((<) @Double)
+-- prop> antisymmetryOnValid (Data.List.isPrefixOf @Double)
+-- prop> antisymmetryOnValid (Data.List.isSuffixOf @Double)
+-- prop> antisymmetryOnValid (Data.List.isInfixOf @Double)
+-- prop> antisymmetryOnValid (Data.List.isSubsequenceOf @Double)
 antisymmetryOnValid
     :: (Show a, Eq a, GenValid a)
     => (a -> a -> Bool) -> Property
@@ -60,6 +64,10 @@ antisymmetryOnValid func = antisymmetryOnGens func genValid
 -- prop> antisymmetry ((>=) @Int)
 -- prop> antisymmetry ((<=) @Int)
 -- prop> antisymmetry ((<) @Int)
+-- prop> antisymmetry (Data.List.isPrefixOf @Int)
+-- prop> antisymmetry (Data.List.isSuffixOf @Int)
+-- prop> antisymmetry (Data.List.isInfixOf @Int)
+-- prop> antisymmetry (Data.List.isSubsequenceOf @Int)
 -- prop> antisymmetry ((\x y -> even x && odd y) :: Int -> Int -> Bool)
 antisymmetry
     :: (Show a, Eq a, GenUnchecked a)
@@ -72,6 +80,10 @@ antisymmetry func = antisymmetryOnGens func genUnchecked
 -- prop> antisymmetryOnArbitrary ((>=) @Int)
 -- prop> antisymmetryOnArbitrary ((<=) @Int)
 -- prop> antisymmetryOnArbitrary ((<) @Int)
+-- prop> antisymmetryOnArbitrary (Data.List.isPrefixOf @Int)
+-- prop> antisymmetryOnArbitrary (Data.List.isSuffixOf @Int)
+-- prop> antisymmetryOnArbitrary (Data.List.isInfixOf @Int)
+-- prop> antisymmetryOnArbitrary (Data.List.isSubsequenceOf @Int)
 -- prop> antisymmetryOnArbitrary ((\x y -> even x && odd y) :: Int -> Int -> Bool)
 antisymmetryOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
