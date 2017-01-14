@@ -9,6 +9,12 @@ import Test.Validity.Functor
 
 spec :: Spec
 spec = do
+    functorSpec @[]
+    functorSpec @Maybe
+    functorSpecOnValid @[]
+    functorSpecOnValid @Maybe
+    functorSpecOnArbitrary @[]
+    functorSpecOnArbitrary @Maybe
     functorSpecOnGens
         @[]
         @Int
