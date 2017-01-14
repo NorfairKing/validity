@@ -27,6 +27,7 @@ library
     , Test.Validity.Functions.Validity
     , Test.Validity.GenRelativeValidity
     , Test.Validity.GenValidity
+    , Test.Validity.Monoid
     , Test.Validity.Operations
     , Test.Validity.Operations.Associativity
     , Test.Validity.Operations.Commutativity
@@ -68,6 +69,7 @@ test-suite genvalidity-hspec-test
         Test.Validity.EqSpec
         Test.Validity.GenRelativeValiditySpec
         Test.Validity.GenValiditySpec
+        Test.Validity.MonoidSpec
         Test.Validity.OrdSpec
         Test.Validity.RelativeValiditySpec
     build-depends:

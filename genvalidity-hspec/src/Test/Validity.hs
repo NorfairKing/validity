@@ -199,6 +199,11 @@ module Test.Validity
     , ordSpecOnValid
     , ordSpec
     , ordSpecOnArbitrary
+      -- * Monoid properties
+    , monoidSpecOnValid
+    , monoidSpec
+    , monoidSpecOnArbitrary
+    , monoidSpecOnGen
     ) where
 
 import Data.Data
@@ -209,6 +214,7 @@ import Test.Validity.Eq
 import Test.Validity.Functions
 import Test.Validity.GenRelativeValidity
 import Test.Validity.GenValidity
+import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord
 import Test.Validity.Relations
