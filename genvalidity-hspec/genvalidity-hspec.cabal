@@ -28,6 +28,7 @@ library
     , Test.Validity.GenRelativeValidity
     , Test.Validity.GenValidity
     , Test.Validity.Monoid
+    , Test.Validity.Functor
     , Test.Validity.Operations
     , Test.Validity.Operations.Associativity
     , Test.Validity.Operations.Commutativity
@@ -67,6 +68,7 @@ test-suite genvalidity-hspec-test
     other-modules:
         Test.Validity.ArbitrarySpec
         Test.Validity.EqSpec
+        Test.Validity.FunctorSpec
         Test.Validity.GenRelativeValiditySpec
         Test.Validity.GenValiditySpec
         Test.Validity.MonoidSpec

@@ -204,6 +204,11 @@ module Test.Validity
     , monoidSpec
     , monoidSpecOnArbitrary
     , monoidSpecOnGen
+      -- * Functor properties
+    , functorSpecOnValid
+    , functorSpec
+    , functorSpecOnArbitrary
+    , functorSpecOnGens
     ) where
 
 import Data.Data
@@ -212,6 +217,7 @@ import Data.GenValidity
 import Test.Validity.Arbitrary
 import Test.Validity.Eq
 import Test.Validity.Functions
+import Test.Validity.Functor
 import Test.Validity.GenRelativeValidity
 import Test.Validity.GenValidity
 import Test.Validity.Monoid

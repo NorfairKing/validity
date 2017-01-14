@@ -1,15 +1,18 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
-{-# LANGUAGE TypeApplications   #-}
-{-# LANGUAGE AllowAmbiguousTypes   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Test.Validity.Utils
     ( (<==>)
     , (===>)
     , nameOf
+    , genDescr
     , binRelStr
     ) where
 
-import           Data.Data
+import Data.Data
 
 (===>) :: Bool -> Bool -> Bool
 (===>) a b = not a || b
@@ -17,20 +20,22 @@ import           Data.Data
 (<==>) :: Bool -> Bool -> Bool
 (<==>) a b = a ===> b && b ===> a
 
-nameOf :: forall a. Typeable a => String
-nameOf =
-    let (_, [ty]) = splitTyConApp $ typeOf (Proxy @a)
-    in show ty
+nameOf
+    :: forall a.
+       Typeable a
+    => String
+nameOf = show $ typeRep (Proxy @a)
 
-binRelStr :: forall a. Typeable a => String -> String
-binRelStr op = unwords
-    [ "(" ++ op ++ ")"
-    , "::"
-    , name
-    , "->"
-    , name
-    , "->"
-    , "Bool"
-    ]
-  where name = nameOf @a
+genDescr
+    :: forall a.
+       Typeable a
+    => String -> String
+genDescr genname = unwords ["\"" ++ genname, "::", nameOf @a ++ "\""]
 
+binRelStr
+    :: forall a.
+       Typeable a
+    => String -> String
+binRelStr op = unwords ["(" ++ op ++ ")", "::", name, "->", name, "->", "Bool"]
+  where
+    name = nameOf @a
