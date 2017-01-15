@@ -43,7 +43,7 @@ genValiditySpec = do
 --
 -- Example usage:
 --
--- > genValiditySpec @Int
+-- > genValidSpec @Int
 genValidSpec
     :: forall a.
        (Typeable a, Show a, GenValid a)
@@ -56,9 +56,14 @@ genValidSpec =
                 it ("only generates valid \'" ++ name ++ "\'s") $
                 genValidGeneratesValid @a
 
+-- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
+--
+-- Example usage:
+--
+-- > genInvalidSpec @Double
 genInvalidSpec
     :: forall a.
-       (Typeable a, Show a, GenValid a, GenInvalid a)
+       (Typeable a, Show a, GenInvalid a)
     => Spec
 genInvalidSpec =
     parallel $ do
