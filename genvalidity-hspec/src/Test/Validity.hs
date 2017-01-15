@@ -71,6 +71,11 @@ module Test.Validity
     , equivalentOnValids2
     , equivalent2
     , equivalentOnArbitrary2
+      -- **** Three arguments
+    , equivalentOnGens3
+    , equivalentOnValids3
+    , equivalent3
+    , equivalentOnArbitrary3
       -- *** First function can fail
       -- **** One argument
     , equivalentWhenFirstSucceedsOnGen
@@ -209,6 +214,11 @@ module Test.Validity
     , functorSpec
     , functorSpecOnArbitrary
     , functorSpecOnGens
+      -- * Applicative properties
+    , applicativeSpecOnValid
+    , applicativeSpec
+    , applicativeSpecOnArbitrary
+    , applicativeSpecOnGens
     ) where
 
 import Data.Data
@@ -218,6 +228,7 @@ import Test.Validity.Arbitrary
 import Test.Validity.Eq
 import Test.Validity.Functions
 import Test.Validity.Functor
+import Test.Validity.Applicative
 import Test.Validity.GenRelativeValidity
 import Test.Validity.GenValidity
 import Test.Validity.Monoid

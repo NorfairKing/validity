@@ -17,6 +17,7 @@ library
   hs-source-dirs:      src
   exposed-modules:
       Test.Validity
+    , Test.Validity.Applicative
     , Test.Validity.Arbitrary
     , Test.Validity.Eq
     , Test.Validity.Functions
@@ -25,10 +26,10 @@ library
     , Test.Validity.Functions.Idempotence
     , Test.Validity.Functions.Inverse
     , Test.Validity.Functions.Validity
+    , Test.Validity.Functor
     , Test.Validity.GenRelativeValidity
     , Test.Validity.GenValidity
     , Test.Validity.Monoid
-    , Test.Validity.Functor
     , Test.Validity.Operations
     , Test.Validity.Operations.Associativity
     , Test.Validity.Operations.Commutativity
@@ -66,14 +67,15 @@ test-suite genvalidity-hspec-test
     type: exitcode-stdio-1.0
     main-is: Spec.hs
     other-modules:
-        Test.Validity.ArbitrarySpec
-        Test.Validity.EqSpec
-        Test.Validity.FunctorSpec
-        Test.Validity.GenRelativeValiditySpec
-        Test.Validity.GenValiditySpec
-        Test.Validity.MonoidSpec
-        Test.Validity.OrdSpec
-        Test.Validity.RelativeValiditySpec
+        Test.Validity.ApplicativeSpec
+      , Test.Validity.ArbitrarySpec
+      , Test.Validity.EqSpec
+      , Test.Validity.FunctorSpec
+      , Test.Validity.GenRelativeValiditySpec
+      , Test.Validity.GenValiditySpec
+      , Test.Validity.MonoidSpec
+      , Test.Validity.OrdSpec
+      , Test.Validity.RelativeValiditySpec
     build-depends:
         base >=4.9 && <=5,
         genvalidity >= 0.3 && < 0.4,

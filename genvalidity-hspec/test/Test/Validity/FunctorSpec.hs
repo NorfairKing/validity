@@ -23,9 +23,10 @@ spec = do
         (genListOf $ pure 5)
         "list of fives"
         ((+) <$> genValid)
-        "additions"
+        "increments"
         ((*) <$> genValid)
-        "multiplications"
+        "factorisations"
+
     functorSpecOnGens
         @Maybe
         @String
@@ -34,6 +35,6 @@ spec = do
         (Just <$> pure "ABC")
         "Just an ABC"
         ((++) <$> genValid)
-        "concatenations"
+        "prepends"
         ((flip (++)) <$> genValid)
         "flipped concatenations"

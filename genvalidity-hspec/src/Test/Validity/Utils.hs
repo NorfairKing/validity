@@ -10,6 +10,7 @@ module Test.Validity.Utils
     , nameOf
     , genDescr
     , binRelStr
+    , Anon(..)
     ) where
 
 import Data.Data
@@ -39,3 +40,12 @@ binRelStr
 binRelStr op = unwords ["(" ++ op ++ ")", "::", name, "->", name, "->", "Bool"]
   where
     name = nameOf @a
+
+data Anon a =
+    Anon a
+
+instance Show (Anon a) where
+    show _ = "Anonymous"
+
+instance Functor Anon where
+    fmap f (Anon a) = Anon (f a)

@@ -67,6 +67,10 @@ module Test.Validity.Functions
     , equivalentWhenSucceedOnValids2
     , equivalentWhenSucceed2
     , equivalentWhenSucceedOnArbitrary2
+    , equivalentOnGens3
+    , equivalentOnValids3
+    , equivalent3
+    , equivalentOnArbitrary3
     , inverseFunctionsOnGen
     , inverseFunctionsOnValid
     , inverseFunctions

@@ -34,6 +34,10 @@ module Test.Validity.Functions.Equivalence
     , equivalentWhenSucceedOnValids2
     , equivalentWhenSucceed2
     , equivalentWhenSucceedOnArbitrary2
+    , equivalentOnGens3
+    , equivalentOnValids3
+    , equivalent3
+    , equivalentOnArbitrary3
     ) where
 
 import Data.GenValidity
@@ -67,7 +71,7 @@ equivalentOnArbitrary
 equivalentOnArbitrary f g = equivalentOnGen f g arbitrary
 
 equivalentOnGens2
-    :: (Show a, Eq a, Show b, Eq b, Show c, Eq c)
+    :: (Show a, Show b, Show c, Eq c)
     => (a -> b -> c) -> (a -> b -> c) -> Gen (a, b) -> Property
 equivalentOnGens2 f g gen = forAll gen $ \(a, b) -> f a b `shouldBe` g a b
 
@@ -338,3 +342,57 @@ equivalentWhenSucceed2
        )
     => (a -> b -> f c) -> (a -> b -> f c) -> Property
 equivalentWhenSucceed2 f g = equivalentWhenSucceedOnGens2 f g genUnchecked
+
+equivalentOnGens3
+    :: (Show a, Show b, Show c, Show d, Eq d)
+    => (a -> b -> c -> d) -> (a -> b -> c -> d) -> Gen (a, b, c) -> Property
+equivalentOnGens3 f g gen =
+    forAll gen $ \(a, b, c) -> f a b c `shouldBe` g a b c
+
+equivalentOnValids3
+    :: ( Show a
+       , Eq a
+       , GenValid a
+       , Show b
+       , Eq b
+       , GenValid b
+       , Show c
+       , Eq c
+       , GenValid c
+       , Show d
+       , Eq d
+       )
+    => (a -> b -> c -> d) -> (a -> b -> c -> d) -> Property
+equivalentOnValids3 f g = equivalentOnGens3 f g genValid
+
+equivalent3
+    :: ( Show a
+       , Eq a
+       , GenUnchecked a
+       , Show b
+       , Eq b
+       , GenUnchecked b
+       , Show c
+       , Eq c
+       , GenUnchecked c
+       , Show d
+       , Eq d
+       )
+    => (a -> b -> c -> d) -> (a -> b -> c -> d) -> Property
+equivalent3 f g = equivalentOnGens3 f g genUnchecked
+
+equivalentOnArbitrary3
+    :: ( Show a
+       , Eq a
+       , Arbitrary a
+       , Show b
+       , Eq b
+       , Arbitrary b
+       , Show c
+       , Eq c
+       , Arbitrary c
+       , Show d
+       , Eq d
+       )
+    => (a -> b -> c -> d) -> (a -> b -> c -> d) -> Property
+equivalentOnArbitrary3 f g = equivalentOnGens3 f g arbitrary
