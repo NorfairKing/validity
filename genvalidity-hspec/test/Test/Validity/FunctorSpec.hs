@@ -11,6 +11,8 @@ spec :: Spec
 spec = do
     functorSpec @[]
     functorSpec @Maybe
+    functorSpec @(Either Int)
+    functorSpec @((,) Int)
     functorSpecOnValid @[]
     functorSpecOnValid @Maybe
     functorSpecOnArbitrary @[]
@@ -26,7 +28,6 @@ spec = do
         "increments"
         ((*) <$> genValid)
         "scalings"
-
     functorSpecOnGens
         @Maybe
         @String

@@ -123,6 +123,18 @@ instance (GenInvalid a, GenInvalid b) =>
                      return (a, b)
                 ]
 
+instance (GenUnchecked a, GenUnchecked b) =>
+         GenUnchecked (Either a b) where
+    genUnchecked = oneof [Left <$> genUnchecked, Right <$> genUnchecked]
+
+instance (GenValid a, GenValid b) =>
+         GenValid (Either a b) where
+    genValid = oneof [Left <$> genValid, Right <$> genValid]
+
+instance (GenInvalid a, GenInvalid b) =>
+         GenInvalid (Either a b) where
+    genInvalid = oneof [Left <$> genInvalid, Right <$> genInvalid]
+
 instance (GenUnchecked a, GenUnchecked b, GenUnchecked c) =>
          GenUnchecked (a, b, c) where
     genUnchecked =
