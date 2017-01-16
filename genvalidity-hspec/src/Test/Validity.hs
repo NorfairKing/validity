@@ -219,6 +219,11 @@ module Test.Validity
     , applicativeSpec
     , applicativeSpecOnArbitrary
     , applicativeSpecOnGens
+      -- * Monad properties
+    , monadSpecOnValid
+    , monadSpec
+    , monadSpecOnArbitrary
+    , monadSpecOnGens
     ) where
 
 import Data.Data
@@ -229,6 +234,7 @@ import Test.Validity.Eq
 import Test.Validity.Functions
 import Test.Validity.Functor
 import Test.Validity.Applicative
+import Test.Validity.Monad
 import Test.Validity.GenRelativeValidity
 import Test.Validity.GenValidity
 import Test.Validity.Monoid

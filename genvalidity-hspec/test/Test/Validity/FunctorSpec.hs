@@ -25,7 +25,7 @@ spec = do
         ((+) <$> genValid)
         "increments"
         ((*) <$> genValid)
-        "factorisations"
+        "scalings"
 
     functorSpecOnGens
         @Maybe
@@ -37,4 +37,4 @@ spec = do
         ((++) <$> genValid)
         "prepends"
         ((flip (++)) <$> genValid)
-        "flipped concatenations"
+        "appends"

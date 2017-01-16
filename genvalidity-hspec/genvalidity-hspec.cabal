@@ -29,6 +29,7 @@ library
     , Test.Validity.Functor
     , Test.Validity.GenRelativeValidity
     , Test.Validity.GenValidity
+    , Test.Validity.Monad
     , Test.Validity.Monoid
     , Test.Validity.Operations
     , Test.Validity.Operations.Associativity
@@ -74,6 +75,7 @@ test-suite genvalidity-hspec-test
       , Test.Validity.GenRelativeValiditySpec
       , Test.Validity.GenValiditySpec
       , Test.Validity.MonoidSpec
+      , Test.Validity.MonadSpec
       , Test.Validity.OrdSpec
       , Test.Validity.RelativeValiditySpec
     build-depends:
