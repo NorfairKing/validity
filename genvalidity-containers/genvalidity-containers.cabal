@@ -19,6 +19,7 @@ library
       Data.GenValidity.Containers
     , Data.GenValidity.Map
     , Data.GenValidity.Tree
+    , Data.GenValidity.Sequence
     , Data.GenValidity.Set
   build-depends:
       base       < 5

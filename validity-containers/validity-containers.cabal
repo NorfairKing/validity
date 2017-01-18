@@ -18,6 +18,7 @@ library
   exposed-modules:     Data.Validity.Containers
                      , Data.Validity.Tree
                      , Data.Validity.Map
+                     , Data.Validity.Sequence
                      , Data.Validity.Set
   build-depends:       base < 5
                      , validity >= 0.3 && < 0.4
