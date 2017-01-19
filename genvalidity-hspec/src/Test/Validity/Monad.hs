@@ -25,8 +25,6 @@ import Test.Hspec
 import Test.QuickCheck
 
 import Test.Validity.Functions
-import Test.Validity.Operations
-import Test.Validity.Relations
 import Test.Validity.Utils
 
 returnTypeStr
@@ -175,7 +173,11 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
         describe (unwords [returnTypeStr @f, "and", bindTypeStr @f]) $ do
             it
                 (unwords
-                     ["satisfy the first Monad law: 'return a >>= k = k a' for", genDescr @a genaname, "and", genDescr @(a -> f b) genbfname]) $
+                     [ "satisfy the first Monad law: 'return a >>= k = k a' for"
+                     , genDescr @a genaname
+                     , "and"
+                     , genDescr @(a -> f b) genbfname
+                     ]) $
                 equivalentOnGens2
                     (\a (Anon k) -> return a >>= k)
                     (\a (Anon k) -> k a)

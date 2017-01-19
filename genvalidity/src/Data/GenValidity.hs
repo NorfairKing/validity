@@ -130,7 +130,6 @@ instance (GenValid a, GenValid b) =>
          GenValid (Either a b) where
     genValid = oneof [Left <$> genValid, Right <$> genValid]
 
-
 -- | This instance ensures that the generated tupse contains at least one invalid element. The other element is unchecked.
 instance (GenInvalid a, GenInvalid b) =>
          GenInvalid (Either a b) where

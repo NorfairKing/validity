@@ -22,7 +22,6 @@ import Test.QuickCheck
 
 import Test.Validity.Functions
 import Test.Validity.Operations
-import Test.Validity.Relations
 import Test.Validity.Utils
 
 memptyTypeStr
@@ -102,10 +101,25 @@ monoidSpecOnGen gen genname =
                 mapp = mappend @a
                 mcon = mconcat @a
             describe memptystr $
-                it (unwords ["is the identity for", mappendstr]) $
+                it
+                    (unwords
+                         [ "is the identity for"
+                         , mappendstr
+                         , "for"
+                         , genDescr @a genname
+                         ]) $
                 identityOnGen mapp mem gen
             describe mappendstr $
-                it "is an associative operation" $ associativeOnGens mapp gen3
+                it
+                    (unwords
+                         [ "is an associative operation for"
+                         , genDescr @(a, a, a) genname
+                         ]) $
+                associativeOnGens mapp gen3
             describe mconcatstr $
-                it "is equivalent to its default implementation" $
+                it
+                    (unwords
+                         [ "is equivalent to its default implementation for"
+                         , genDescr @[a] genname
+                         ]) $
                 equivalentOnGen mcon (foldr mapp mem) genl

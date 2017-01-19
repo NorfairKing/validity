@@ -39,16 +39,14 @@ genRelativeValiditySpec
        , Typeable b
        , Show a
        , Show b
-       , GenValid a
        , GenValid b
-       , RelativeValidity a b
        , GenRelativeValid a b
        , GenRelativeInvalid a b
        )
     => Spec
 genRelativeValiditySpec = do
     genRelativeValidSpec @a @b
-    genRelativeValidSpec @a @b
+    genRelativeInvalidSpec @a @b
 
 genRelativeValidSpec
     :: forall a b.

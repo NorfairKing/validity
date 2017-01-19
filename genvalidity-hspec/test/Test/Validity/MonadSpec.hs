@@ -8,8 +8,7 @@ import Data.GenValidity
 import Test.Validity.Monad
 
 spec :: Spec
-spec
- = do
+spec = do
     monadSpec @[]
     monadSpec @Maybe
     monadSpec @(Either Int)

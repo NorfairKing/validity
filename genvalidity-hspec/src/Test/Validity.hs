@@ -226,17 +226,16 @@ module Test.Validity
     , monadSpecOnGens
     ) where
 
-import Data.Data
 import Data.GenValidity
 
+import Test.Validity.Applicative
 import Test.Validity.Arbitrary
 import Test.Validity.Eq
 import Test.Validity.Functions
 import Test.Validity.Functor
-import Test.Validity.Applicative
-import Test.Validity.Monad
 import Test.Validity.GenRelativeValidity
 import Test.Validity.GenValidity
+import Test.Validity.Monad
 import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord

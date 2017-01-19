@@ -67,22 +67,28 @@ jsonSpecOnGen
     :: forall a.
        (Show a, Eq a, Typeable a, FromJSON a, ToJSON a)
     => Gen a -> String -> Spec
-jsonSpecOnGen gen genname = parallel $ do
-    let name = nameOf @a
-    describe ("JSON " ++ name ++ " (" ++ genname ++ ")") $ do
-        describe ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
-            it
-                (unwords
-                     ["never fails to encode a", "\"" ++ genname, name ++ "\""]) $
-            neverFailsToEncodeOnGen gen
-        describe ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
-            it
-                (unwords
-                     [ "ensures that encode and decode are inverses for"
-                     , "\"" ++ genname
-                     , name ++ "\"" ++ "'s"
-                     ]) $
-            encodeAndDecodeAreInversesOnGen gen
+jsonSpecOnGen gen genname =
+    parallel $ do
+        let name = nameOf @a
+        describe ("JSON " ++ name ++ " (" ++ genname ++ ")") $ do
+            describe
+                ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
+                it
+                    (unwords
+                         [ "never fails to encode a"
+                         , "\"" ++ genname
+                         , name ++ "\""
+                         ]) $
+                neverFailsToEncodeOnGen gen
+            describe
+                ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
+                it
+                    (unwords
+                         [ "ensures that encode and decode are inverses for"
+                         , "\"" ++ genname
+                         , name ++ "\"" ++ "'s"
+                         ]) $
+                encodeAndDecodeAreInversesOnGen gen
 
 -- |
 --

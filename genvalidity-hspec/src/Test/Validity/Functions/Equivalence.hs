@@ -76,20 +76,12 @@ equivalentOnGens2
 equivalentOnGens2 f g gen = forAll gen $ \(a, b) -> f a b `shouldBe` g a b
 
 equivalentOnValids2
-    :: (Show a, Eq a, GenValid a, Show b, Eq b, GenValid b, Show c, Eq c)
+    :: (Show a, GenValid a, Show b, GenValid b, Show c, Eq c)
     => (a -> b -> c) -> (a -> b -> c) -> Property
 equivalentOnValids2 f g = equivalentOnGens2 f g genValid
 
 equivalent2
-    :: ( Show a
-       , Eq a
-       , GenUnchecked a
-       , Show b
-       , Eq b
-       , GenUnchecked b
-       , Show c
-       , Eq c
-       )
+    :: (Show a, GenUnchecked a, Show b, GenUnchecked b, Show c, Eq c)
     => (a -> b -> c) -> (a -> b -> c) -> Property
 equivalent2 f g = equivalentOnGens2 f g genUnchecked
 
@@ -97,7 +89,7 @@ equivalent2 f g = equivalentOnGens2 f g genUnchecked
 --
 -- prop> equivalentOnArbitrary2 (+) ((+) :: Int -> Int -> Int)
 equivalentOnArbitrary2
-    :: (Show a, Eq a, Arbitrary a, Show b, Eq b, Arbitrary b, Show c, Eq c)
+    :: (Show a, Arbitrary a, Show b, Arbitrary b, Show c, Eq c)
     => (a -> b -> c) -> (a -> b -> c) -> Property
 equivalentOnArbitrary2 f g = equivalentOnGens2 f g arbitrary
 
@@ -351,13 +343,10 @@ equivalentOnGens3 f g gen =
 
 equivalentOnValids3
     :: ( Show a
-       , Eq a
        , GenValid a
        , Show b
-       , Eq b
        , GenValid b
        , Show c
-       , Eq c
        , GenValid c
        , Show d
        , Eq d
@@ -367,13 +356,10 @@ equivalentOnValids3 f g = equivalentOnGens3 f g genValid
 
 equivalent3
     :: ( Show a
-       , Eq a
        , GenUnchecked a
        , Show b
-       , Eq b
        , GenUnchecked b
        , Show c
-       , Eq c
        , GenUnchecked c
        , Show d
        , Eq d
@@ -383,13 +369,10 @@ equivalent3 f g = equivalentOnGens3 f g genUnchecked
 
 equivalentOnArbitrary3
     :: ( Show a
-       , Eq a
        , Arbitrary a
        , Show b
-       , Eq b
        , Arbitrary b
        , Show c
-       , Eq c
        , Arbitrary c
        , Show d
        , Eq d

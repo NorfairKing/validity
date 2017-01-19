@@ -139,9 +139,7 @@ failsOnInvalid2
        , Show c
        , Show (f c)
        , GenInvalid a
-       , GenUnchecked a
        , GenInvalid b
-       , GenUnchecked b
        , CanFail f
        )
     => (a -> b -> f c) -> Property
