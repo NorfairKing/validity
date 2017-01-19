@@ -54,8 +54,7 @@ import Test.QuickCheck
 import Control.Monad (forM)
 
 -- | A class of types for which truly arbitrary values can be generated.
-class
-      GenUnchecked a where
+class GenUnchecked a where
     genUnchecked :: Gen a
 
 -- | A class of types for which valid values can be generated.
@@ -131,6 +130,8 @@ instance (GenValid a, GenValid b) =>
          GenValid (Either a b) where
     genValid = oneof [Left <$> genValid, Right <$> genValid]
 
+
+-- | This instance ensures that the generated tupse contains at least one invalid element. The other element is unchecked.
 instance (GenInvalid a, GenInvalid b) =>
          GenInvalid (Either a b) where
     genInvalid = oneof [Left <$> genInvalid, Right <$> genInvalid]
@@ -155,6 +156,7 @@ instance (GenValid a, GenValid b, GenValid c) =>
             c <- resize t genValid
             return (a, b, c)
 
+-- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
 instance (GenInvalid a, GenInvalid b, GenInvalid c) =>
          GenInvalid (a, b, c) where
     genInvalid =
@@ -187,20 +189,18 @@ instance GenInvalid a =>
          GenInvalid (Maybe a) where
     genInvalid = Just <$> genInvalid
 
--- | If we can generate values of a certain type, we can also generate lists of
--- them.
--- This instance ensures that @genValid@ generates only lists of valid data and
--- that @genInvalid@ generates lists of data such that there is at least one
--- value in there that does not satisfy @isValid@, the rest is unchecked.
 instance GenUnchecked a =>
          GenUnchecked [a] where
     genUnchecked = genListOf genUnchecked
 
+-- | If we can generate values of a certain type, we can also generate lists of
+-- them.
 instance GenValid a =>
          GenValid [a] where
     genValid = genListOf genValid
 
--- | At least one invalid value in the list, the rest could be either.
+-- | This instance ensures that the generated list contains at least one element
+-- that satisfies 'isInvalid'. The rest is unchecked.
 instance GenInvalid a =>
          GenInvalid [a] where
     genInvalid =
@@ -247,6 +247,7 @@ instance GenUnchecked Float where
 instance GenValid Float where
     genValid = arbitrary
 
+-- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Float where
     genInvalid = elements [read "NaN", read "Infinity"]
 
@@ -255,6 +256,7 @@ instance GenUnchecked Double where
 
 instance GenValid Double
 
+-- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Double where
     genInvalid = elements [read "NaN", read "Infinity"]
 
@@ -263,16 +265,19 @@ instance GenUnchecked Integer where
 
 instance GenValid Integer
 
+-- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int
 upTo n
     | n <= 0 = pure 0
     | otherwise = elements [0 .. n]
 
+-- | 'genSplit a' generates a tuple '(b, c)' such that 'b + c' equals 'a'.
 genSplit :: Int -> Gen (Int, Int)
 genSplit n
     | n < 0 = pure (0, 0)
     | otherwise = elements [(i, n - i) | i <- [0 .. n]]
 
+-- | 'genSplit a' generates a triple '(b, c, d)' such that 'b + c + d' equals 'a'.
 genSplit3 :: Int -> Gen (Int, Int, Int)
 genSplit3 n
     | n < 0 = pure (0, 0, 0)
@@ -281,6 +286,7 @@ genSplit3 n
         (b, c) <- genSplit z
         return (a, b, c)
 
+-- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
 arbPartition :: Int -> Gen [Int]
 arbPartition k
     | k <= 0 = pure []

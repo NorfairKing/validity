@@ -36,6 +36,8 @@ relativeValiditySpec
        , Typeable b
        , Show a
        , Show b
+        , Validity a
+        , Validity b
        , GenUnchecked a
        , GenUnchecked b
        , RelativeValidity a b
@@ -56,7 +58,7 @@ relativeValiditySpec =
 -- | @isValidFor a b@ implies @isValid a@ for all @b@
 relativeValidityImpliesValidA
     :: forall a b.
-       (Show a, Show b, GenUnchecked a, GenUnchecked b, RelativeValidity a b)
+       (Show a, Show b, Validity a, GenUnchecked a, GenUnchecked b, RelativeValidity a b)
     => Property
 relativeValidityImpliesValidA =
     forAll genUnchecked $ \(a :: a) ->
@@ -65,7 +67,7 @@ relativeValidityImpliesValidA =
 -- | @isValidFor a b@ implies @isValid b@ for all @a@
 relativeValidityImpliesValidB
     :: forall a b.
-       (Show a, Show b, GenUnchecked a, GenUnchecked b, RelativeValidity a b)
+       (Show a, Show b, Validity b, GenUnchecked a, GenUnchecked b, RelativeValidity a b)
     => Property
 relativeValidityImpliesValidB =
     forAll genUnchecked $ \(a :: a) ->
