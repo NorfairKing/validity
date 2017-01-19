@@ -1,0 +1,25 @@
+name:                validity-bytestring
+version:             0.1.0.0
+synopsis:            Validity instances for bytestring
+description:         Please see README.md
+homepage:            https://github.com/NorfairKing/validity#readme
+license:             MIT
+license-file:        LICENSE
+author:              Tom Sydney Kerckhove
+maintainer:          syd.kerckhove@gmail.com
+copyright:           Copyright: (c) 2016 Tom Sydney Kerckhove
+category:            Validity
+build-type:          Simple
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Data.Validity.ByteString
+  build-depends:       base < 5
+                     , validity
+                     , bytestring
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/NorfairKing/validity

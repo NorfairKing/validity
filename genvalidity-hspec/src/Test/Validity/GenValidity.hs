@@ -1,77 +1,118 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
+-- | Tests for GenValidity instances
 module Test.Validity.GenValidity
-    ( -- * Tests for GenValidity instances
-      genValiditySpec
-    , genValidityValidGeneratesValid
+    ( genValiditySpec
+    , genValidSpec
+    , genInvalidSpec
+    , genValidGeneratesValid
     , genGeneratesValid
-    , genValidityInvalidGeneratesInvalid
+    , genInvalidGeneratesInvalid
     , genGeneratesInvalid
     ) where
 
-import           Data.Data
+import Data.Data
 
-import           Data.GenValidity
+import Data.GenValidity
 
-import           Test.Hspec
-import           Test.QuickCheck
+import Test.Hspec
+import Test.QuickCheck
 
-import           Test.Validity.Utils
+import Test.Validity.Utils
 
--- | A @Spec@ that specifies that @genValid@ only generates valid data and that
--- @genInvalid@ only generates invalid data.
+-- | A spec for properties of 'GenValid' and 'GenInvalid' instances.
 --
 -- In general it is a good idea to add this spec to your test suite if you
 -- write a custom implementation of @genValid@ or @genInvalid@.
 --
 -- Example usage:
 --
--- > genValiditySpec (Proxy :: Proxy MyData)
+-- > genValiditySpec @Int
 genValiditySpec
-    :: (Typeable a, Show a, GenValidity a)
-    => Proxy a
-    -> Spec
-genValiditySpec proxy = do
-    let name = nameOf proxy
-    describe ("GenValidity " ++ name) $ do
-        describe ("genValid   :: Gen " ++ name) $
-            it ("only generates valid \'" ++ name ++ "\'s") $
-                genValidityValidGeneratesValid proxy
+    :: forall a.
+       (Typeable a, Show a, GenValid a, GenInvalid a)
+    => Spec
+genValiditySpec = do
+    genValidSpec @a
+    genInvalidSpec @a
 
-        describe ("genInvalid :: Gen " ++ name) $
-            it ("only generates invalid \'" ++ name ++ "\'s") $
-                genValidityInvalidGeneratesInvalid proxy
+-- | A @Spec@ that specifies that @genValid@ only generates valid data.
+--
+-- Example usage:
+--
+-- > genValidSpec @Int
+genValidSpec
+    :: forall a.
+       (Typeable a, Show a, GenValid a)
+    => Spec
+genValidSpec =
+    parallel $ do
+        let name = nameOf @a
+        describe ("GenValid " ++ name) $ do
+            describe ("genValid   :: Gen " ++ name) $
+                it ("only generates valid \'" ++ name ++ "\'s") $
+                genValidGeneratesValid @a
+
+-- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
+--
+-- Example usage:
+--
+-- > genInvalidSpec @Double
+genInvalidSpec
+    :: forall a.
+       (Typeable a, Show a, GenInvalid a)
+    => Spec
+genInvalidSpec =
+    parallel $ do
+        let name = nameOf @a
+        describe ("GenInvalid " ++ name) $ do
+            describe ("genInvalid :: Gen " ++ name) $
+                it ("only generates invalid \'" ++ name ++ "\'s") $
+                genInvalidGeneratesInvalid @a
 
 -- | @genValid@ only generates valid data
-genValidityValidGeneratesValid
-    :: forall a. (Show a, GenValidity a)
-    => Proxy a
-    -> Property
-genValidityValidGeneratesValid _ =
-    genGeneratesValid (genValid :: Gen a)
+--
+-- prop> genValidGeneratesValid @()
+-- prop> genValidGeneratesValid @Bool
+-- prop> genValidGeneratesValid @Ordering
+-- prop> genValidGeneratesValid @Char
+-- prop> genValidGeneratesValid @Int
+-- prop> genValidGeneratesValid @Float
+-- prop> genValidGeneratesValid @Double
+-- prop> genValidGeneratesValid @Integer
+-- prop> genValidGeneratesValid @(Maybe Int)
+-- prop> genValidGeneratesValid @[Int]
+genValidGeneratesValid
+    :: forall a.
+       (Show a, GenValid a)
+    => Property
+genValidGeneratesValid = genGeneratesValid @a genValid
 
 -- | The given generator generates only valid data points
 genGeneratesValid
-    :: (Show a, Validity a)
-    => Gen a
-    -> Property
-genGeneratesValid gen =
-    forAll gen (`shouldSatisfy` isValid)
-
+    :: forall a.
+       (Show a, Validity a)
+    => Gen a -> Property
+genGeneratesValid gen = forAll gen (`shouldSatisfy` isValid)
 
 -- | @genValid@ only generates invalid data
-genValidityInvalidGeneratesInvalid
-    :: forall a. (Show a, GenValidity a)
-    => Proxy a
-    -> Property
-genValidityInvalidGeneratesInvalid _ =
-    genGeneratesInvalid (genInvalid :: Gen a)
+--
+-- prop> genInvalidGeneratesInvalid @Float
+-- prop> genInvalidGeneratesInvalid @Double
+-- prop> genInvalidGeneratesInvalid @(Maybe Double)
+-- prop> genInvalidGeneratesInvalid @[Double]
+genInvalidGeneratesInvalid
+    :: forall a.
+       (Show a, GenInvalid a)
+    => Property
+genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid
 
 -- | The given generator generates only invalid data points
 genGeneratesInvalid
-    :: (Show a, Validity a)
-    => Gen a
-    -> Property
-genGeneratesInvalid gen =
-    forAll gen (`shouldNotSatisfy` isValid)
-
+    :: forall a.
+       (Show a, Validity a)
+    => Gen a -> Property
+genGeneratesInvalid gen = forAll gen (`shouldNotSatisfy` isValid)

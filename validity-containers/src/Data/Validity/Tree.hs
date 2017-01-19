@@ -4,7 +4,7 @@ import           Data.Validity
 
 import           Data.Tree
 
--- | A tree of things is valid if all the things are valid
+-- | A 'Tree' of things is valid if all the things in the 'Tree' are valid.
 instance Validity a => Validity (Tree a) where
     isValid = all isValid
 

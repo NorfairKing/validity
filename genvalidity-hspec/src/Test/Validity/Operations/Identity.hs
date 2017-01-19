@@ -1,28 +1,28 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Test.Validity.Operations.Identity
-    ( -- *** Left identity
-      leftIdentityOnElemWithEquality
+    ( leftIdentityOnElemWithEquality
     , leftIdentityOnGenWithEquality
     , leftIdentityOnGen
     , leftIdentityOnValid
     , leftIdentity
-
-      -- *** Right identity
+    , leftIdentityOnArbitrary
     , rightIdentityOnElemWithEquality
     , rightIdentityOnGenWithEquality
     , rightIdentityOnGen
     , rightIdentityOnValid
     , rightIdentity
-
+    , rightIdentityOnArbitrary
     , identityOnGen
     , identityOnValid
     , identity
+    , identityOnArbitrary
     ) where
 
-import           Data.GenValidity
+import Data.GenValidity
 
-import           Test.QuickCheck
+import Test.QuickCheck
 
 -- |
 --
@@ -32,18 +32,18 @@ import           Test.QuickCheck
 --   \forall a: (b \star a) \doteq a
 -- \]
 leftIdentityOnElemWithEquality
-    :: (b -> a -> a)    -- ^ A binary operation
+    :: (b -> a -> a) -- ^ A binary operation
     -> (a -> a -> Bool) -- ^ An equality
-    -> b                -- ^ A candidate left-identity
-    -> a                -- ^ An element
+    -> b -- ^ A candidate left-identity
+    -> a -- ^ An element
     -> Bool
 leftIdentityOnElemWithEquality op eq b a = (b `op` a) `eq` a
 
 leftIdentityOnGenWithEquality
     :: Show a
-    => (b -> a -> a)    -- ^ A binary operation
+    => (b -> a -> a) -- ^ A binary operation
     -> (a -> a -> Bool) -- ^ An equality
-    -> b                -- ^ A candidate left-identity
+    -> b -- ^ A candidate left-identity
     -> Gen a
     -> Property
 leftIdentityOnGenWithEquality op eq b gen =
@@ -52,26 +52,34 @@ leftIdentityOnGenWithEquality op eq b gen =
 leftIdentityOnGen
     :: (Show a, Eq a)
     => (b -> a -> a) -- ^ A binary operation
-    -> b             -- ^ A candidate left-identity
+    -> b -- ^ A candidate left-identity
     -> Gen a
     -> Property
 leftIdentityOnGen op = leftIdentityOnGenWithEquality op (==)
 
+-- |
+--
+-- prop> leftIdentityOnValid (flip ((^) @Double @Int)) 1
 leftIdentityOnValid
-    :: (Show a, Eq a, GenValidity a)
-    => (b -> a -> a)
-    -> b
-    -> Property
-leftIdentityOnValid op b
-    = leftIdentityOnGen op b genValid
+    :: (Show a, Eq a, GenValid a)
+    => (b -> a -> a) -> b -> Property
+leftIdentityOnValid op b = leftIdentityOnGen op b genValid
 
+-- |
+--
+-- prop> leftIdentity (flip ((^) @Int @Int)) 1
 leftIdentity
-    :: (Show a, Eq a, GenValidity a)
-    => (b -> a -> a)
-    -> b
-    -> Property
-leftIdentity op b
-    = leftIdentityOnGen op b genUnchecked
+    :: (Show a, Eq a, GenUnchecked a)
+    => (b -> a -> a) -> b -> Property
+leftIdentity op b = leftIdentityOnGen op b genUnchecked
+
+-- |
+--
+-- prop> leftIdentityOnArbitrary (flip ((^) @Int @Int)) 1
+leftIdentityOnArbitrary
+    :: (Show a, Eq a, Arbitrary a)
+    => (b -> a -> a) -> b -> Property
+leftIdentityOnArbitrary op b = leftIdentityOnGen op b arbitrary
 
 -- |
 --
@@ -81,18 +89,18 @@ leftIdentity op b
 --   \forall a: (a \star b) \doteq a
 -- \]
 rightIdentityOnElemWithEquality
-    :: (a -> b -> a)    -- ^ A binary operation
+    :: (a -> b -> a) -- ^ A binary operation
     -> (a -> a -> Bool) -- ^ An equality
-    -> b                -- ^ A candidate right-identity
-    -> a                -- ^ An element
+    -> b -- ^ A candidate right-identity
+    -> a -- ^ An element
     -> Bool
 rightIdentityOnElemWithEquality op eq b a = (a `op` b) `eq` a
 
 rightIdentityOnGenWithEquality
     :: Show a
-    => (a -> b -> a)    -- ^ A binary operation
+    => (a -> b -> a) -- ^ A binary operation
     -> (a -> a -> Bool) -- ^ An equality
-    -> b                -- ^ A candidate right-identity
+    -> b -- ^ A candidate right-identity
     -> Gen a
     -> Property
 rightIdentityOnGenWithEquality op eq b gen =
@@ -100,49 +108,65 @@ rightIdentityOnGenWithEquality op eq b gen =
 
 rightIdentityOnGen
     :: (Show a, Eq a)
-    => (a -> b -> a)    -- ^ A binary operation
-    -> b                -- ^ A candidate right-identity
+    => (a -> b -> a) -- ^ A binary operation
+    -> b -- ^ A candidate right-identity
     -> Gen a
     -> Property
 rightIdentityOnGen op = rightIdentityOnGenWithEquality op (==)
 
+-- |
+--
+-- prop> rightIdentityOnValid ((^) @Double) 1
 rightIdentityOnValid
-    :: (Show a, Eq a, GenValidity a)
-    => (a -> b -> a)
-    -> b
-    -> Property
-rightIdentityOnValid op b
-    = rightIdentityOnGen op b genValid
+    :: (Show a, Eq a, GenValid a)
+    => (a -> b -> a) -> b -> Property
+rightIdentityOnValid op b = rightIdentityOnGen op b genValid
 
+-- |
+--
+-- prop> rightIdentity ((^) @Int) 1
 rightIdentity
-    :: (Show a, Eq a, GenValidity a)
-    => (a -> b -> a)
-    -> b
-    -> Property
-rightIdentity op b
-    = rightIdentityOnGen op b genUnchecked
+    :: (Show a, Eq a, GenUnchecked a)
+    => (a -> b -> a) -> b -> Property
+rightIdentity op b = rightIdentityOnGen op b genUnchecked
+
+-- |
+--
+-- prop> rightIdentityOnArbitrary ((^) @Int) 1
+rightIdentityOnArbitrary
+    :: (Show a, Eq a, Arbitrary a)
+    => (a -> b -> a) -> b -> Property
+rightIdentityOnArbitrary op b = rightIdentityOnGen op b arbitrary
 
 identityOnGen
     :: (Show a, Eq a)
-    => (a -> a -> a)
-    -> a
-    -> Gen a
-    -> Property
+    => (a -> a -> a) -> a -> Gen a -> Property
 identityOnGen op e gen =
     leftIdentityOnGen op e gen .&&. rightIdentityOnGen op e gen
 
+-- |
+--
+-- prop> identityOnValid ((*) @Double) 1
+-- prop> identityOnValid ((+) @Double) 0
 identityOnValid
-    :: (Show a, Eq a, GenValidity a)
-    => (a -> a -> a)
-    -> a
-    -> Property
-identityOnValid op a
-    = identityOnGen op a genValid
+    :: (Show a, Eq a, GenValid a)
+    => (a -> a -> a) -> a -> Property
+identityOnValid op a = identityOnGen op a genValid
 
+-- |
+--
+-- prop> identity ((*) @Int) 1
+-- prop> identity ((+) @Int) 0
 identity
-    :: (Show a, Eq a, GenValidity a)
-    => (a -> a -> a)
-    -> a
-    -> Property
-identity op e
-    = identityOnGen op e genUnchecked
+    :: (Show a, Eq a, GenUnchecked a)
+    => (a -> a -> a) -> a -> Property
+identity op e = identityOnGen op e genUnchecked
+
+-- |
+--
+-- prop> identityOnArbitrary ((*) @Int) 1
+-- prop> identityOnArbitrary ((+) @Int) 0
+identityOnArbitrary
+    :: (Show a, Eq a, Arbitrary a)
+    => (a -> a -> a) -> a -> Property
+identityOnArbitrary op a = identityOnGen op a arbitrary

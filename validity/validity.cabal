@@ -1,5 +1,5 @@
 name:                validity
-version:             0.3.0.4
+version:             0.3.1.1
 synopsis:            Validity typeclass
 description:
   For more info, see <https://github.com/NorfairKing/validity the readme>.
@@ -8,7 +8,11 @@ description:
   .
   * <https://hackage.haskell.org/package/validity-text validity-text>
   .
+  * <https://hackage.haskell.org/package/validity-path validity-path>
+  .
   * <https://hackage.haskell.org/package/validity-containers validity-containers>
+  .
+  * <https://hackage.haskell.org/package/validity-bytestring validity-bytestring>
 
 homepage:            https://github.com/NorfairKing/validity#readme
 license:             MIT
@@ -16,16 +20,15 @@ license-file:        LICENSE
 author:              Tom Sydney Kerckhove
 maintainer:          syd.kerckhove@gmail.com
 copyright:           Copyright: (c) 2016 Tom Sydney Kerckhove
-category:            Web
+category:            Validity
 build-type:          Simple
--- extra-source-files:
 cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
   exposed-modules:     Data.Validity
                      , Data.RelativeValidity
-  build-depends:       base >= 4 && < 5
+  build-depends:       base >= 4.8 && < 5
   default-language:    Haskell2010
 
 source-repository head

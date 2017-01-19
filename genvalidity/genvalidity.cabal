@@ -1,5 +1,5 @@
 name:                genvalidity
-version:             0.2.0.4
+version:             0.3.0.0
 synopsis:            Testing utilities for the validity library
 description:
   Note: There are companion instance packages for this library:
@@ -7,6 +7,8 @@ description:
   * <https://hackage.haskell.org/package/genvalidity-text genvalidity-text>
   .
   * <https://hackage.haskell.org/package/genvalidity-containers genvalidity-containers>
+  .
+  * <https://hackage.haskell.org/package/genvalidity-path genvalidity-path>
 
 homepage:            https://github.com/NorfairKing/validity#readme
 license:             MIT
