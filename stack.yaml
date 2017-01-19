@@ -2,12 +2,15 @@ packages:
 - 'validity'
 - 'validity-containers'
 - 'validity-text'
+- 'validity-path'
 - 'validity-bytestring'
 - 'genvalidity'
 - 'genvalidity-containers'
+- 'genvalidity-path'
 - 'genvalidity-text'
 - 'genvalidity-hspec'
 - 'genvalidity-hspec-aeson'
+- 'genvalidity-hspec-cereal'
 extra-deps: []
 flags: {}
 extra-package-dbs: []
