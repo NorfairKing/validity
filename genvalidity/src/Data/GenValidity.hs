@@ -54,7 +54,7 @@ import Test.QuickCheck
 import Control.Monad (forM)
 
 -- | A class of types for which truly arbitrary values can be generated.
-class Validity a =>
+class
       GenUnchecked a where
     genUnchecked :: Gen a
 
