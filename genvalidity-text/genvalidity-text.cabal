@@ -37,7 +37,7 @@ test-suite genvalidity-text-test
     build-depends:
         base -any,
         hspec -any,
-        QuickCheck >=2.8 && <2.9,
+        QuickCheck,
         genvalidity -any,
         genvalidity-text -any,
         text -any

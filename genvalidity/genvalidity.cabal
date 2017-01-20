@@ -40,7 +40,7 @@ test-suite genvalidity-test
     build-depends:
         base -any,
         hspec -any,
-        QuickCheck >=2.8 && <2.9,
+        QuickCheck,
         genvalidity -any
     default-language: Haskell2010
     hs-source-dirs: test
