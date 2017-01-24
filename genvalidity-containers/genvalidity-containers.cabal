@@ -43,7 +43,7 @@ test-suite genvalidity-containers-test
         genvalidity -any,
         genvalidity-containers -any,
         genvalidity-hspec -any,
-        hspec >=2.2 && <2.4
+        hspec >=2.2 && <2.5
     default-language: Haskell2010
     hs-source-dirs: test/
     other-modules:
