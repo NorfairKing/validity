@@ -9,7 +9,7 @@
     Suppose we were to implement a type @Prime@ that represents prime integers.
 
     If you were to completely enforce the invariant that the represented number is
-    a prime, then we could use @Numeric.Natural@ and only store the index of the
+    a prime, then we could use 'Natural' and only store the index of the
     given prime in the infinite sequence of prime numbers.
     This is very safe but also very expensive if we ever want to use the number,
     because we would have to calculcate all the prime numbers until that index.
@@ -24,6 +24,11 @@
 
     > instance Validity Prime where
     >     isValid (Prime n) = isPrime n
+
+    If certain typeclass invariants exist, you can make these explicit in the
+    validity instance as well.
+    For example, 'Fixed a' is only valid if 'a' has an 'HasResolution' instance,
+    so the correct validity instance is @HasResolution a => Validity (Fixed a)@.
     -}
 module Data.Validity
     ( Validity(..)
@@ -32,7 +37,10 @@ module Data.Validity
     , constructValidUnsafe
     ) where
 
-import Data.Maybe (fromMaybe)
+import Data.Fixed (Fixed(MkFixed), HasResolution)
+import Data.Maybe (Maybe, fromMaybe)
+import Data.Ratio (Rational, numerator, denominator)
+import GHC.Natural (Natural, isValidNatural)
 
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
@@ -119,6 +127,23 @@ instance Validity Double where
 -- | Trivially valid
 instance Validity Integer where
     isValid = const True
+
+-- | Valid according to 'isValidNatural'
+instance Validity Natural where
+    isValid = isValidNatural
+
+-- | Valid if the contained 'Integer's are valid and the denominator is
+-- strictly positive.
+instance Validity Rational where
+    isValid r =
+        isValid (numerator r) &&
+        let d = denominator r
+        in isValid d && d > 0
+
+-- | Valid according to the contained 'Integer'.
+instance HasResolution a =>
+         Validity (Fixed a) where
+    isValid (MkFixed i) = isValid i
 
 -- | Construct a valid element from an unchecked element
 constructValid

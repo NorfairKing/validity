@@ -1,5 +1,5 @@
 name: validity
-version: 0.3.1.1
+version: 0.3.1.2
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -16,6 +16,8 @@ description:
     * <https://hackage.haskell.org/package/validity-text validity-text>
     .
     * <https://hackage.haskell.org/package/validity-path validity-path>
+    .
+    * <https://hackage.haskell.org/package/validity-time validity-time>
     .
     * <https://hackage.haskell.org/package/validity-containers validity-containers>
     .
