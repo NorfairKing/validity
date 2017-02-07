@@ -125,6 +125,13 @@ instance Validity Double where
     isValid d = not (isNaN d) && not (isInfinite d)
 
 -- | Trivially valid
+--
+-- Integer is not trivially valid under the hood, but instantiating
+-- 'Validity' correctly would force validity to depend on a specific
+-- (big integer library @integer-gmp@ versus @integer-simple@).
+-- This is rather impractical so for the time being we have opted for
+-- assuming that an 'Integer' is always valid.
+-- Even though this is not technically sound, it is good enough for now.
 instance Validity Integer where
     isValid = const True
 
