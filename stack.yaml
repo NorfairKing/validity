@@ -6,6 +6,7 @@ packages:
 - 'genvalidity-hspec-cereal'
 - 'genvalidity-path'
 - 'genvalidity-text'
+- 'genvalidity-time'
 - 'validity'
 - 'validity-bytestring'
 - 'validity-containers'

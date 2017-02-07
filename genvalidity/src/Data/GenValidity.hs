@@ -42,6 +42,8 @@
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
     -}
+{-# LANGUAGE FlexibleInstances #-}
+
 module Data.GenValidity
     ( module Data.Validity
     , module Data.GenValidity
@@ -49,7 +51,10 @@ module Data.GenValidity
 
 import Data.Validity
 
-import Test.QuickCheck
+import Data.Fixed (Fixed(..), HasResolution)
+import GHC.Real (Ratio(..))
+
+import Test.QuickCheck hiding (Fixed)
 
 import Control.Monad (forM)
 
@@ -263,6 +268,21 @@ instance GenUnchecked Integer where
     genUnchecked = arbitrary
 
 instance GenValid Integer
+
+instance GenUnchecked (Ratio Integer) where
+    genUnchecked = do
+        n <- genUnchecked
+        d <- genUnchecked
+        pure $ n :% d
+
+instance GenValid (Ratio Integer)
+
+instance HasResolution a =>
+         GenUnchecked (Fixed a) where
+    genUnchecked = MkFixed <$> genUnchecked
+
+instance HasResolution a =>
+         GenValid (Fixed a)
 
 -- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int

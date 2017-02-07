@@ -39,8 +39,8 @@ module Data.Validity
 
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.Maybe (Maybe, fromMaybe)
-import Data.Ratio (Rational, numerator, denominator)
 import GHC.Natural (Natural, isValidNatural)
+import GHC.Real (Ratio(..))
 
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
@@ -135,10 +135,7 @@ instance Validity Natural where
 -- | Valid if the contained 'Integer's are valid and the denominator is
 -- strictly positive.
 instance Validity Rational where
-    isValid r =
-        isValid (numerator r) &&
-        let d = denominator r
-        in isValid d && d > 0
+    isValid (d :% n) = and [isValid n, isValid d, d > 0]
 
 -- | Valid according to the contained 'Integer'.
 instance HasResolution a =>

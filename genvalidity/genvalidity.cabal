@@ -1,5 +1,5 @@
 name: genvalidity
-version: 0.3.0.0
+version: 0.3.0.1
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -12,6 +12,8 @@ description:
     Note: There are companion instance packages for this library:
     .
     * <https://hackage.haskell.org/package/genvalidity-text genvalidity-text>
+    .
+    * <https://hackage.haskell.org/package/genvalidity-time genvalidity-time>
     .
     * <https://hackage.haskell.org/package/genvalidity-containers genvalidity-containers>
     .
