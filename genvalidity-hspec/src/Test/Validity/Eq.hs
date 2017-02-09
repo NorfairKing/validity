@@ -50,10 +50,6 @@ eqSpecOnValid = eqSpecOnGen @a genValid "valid"
 
 -- | Standard test spec for properties of Eq instances for invalid values
 --
--- Unless you want to show a failure, you probably don't want to use this
--- function. If you want to use both 'eqSpecOnValid' and 'eqSpecOnInvalid',
--- use 'eqSpec' instead.
---
 -- Example usage:
 --
 -- > eqSpecOnInvalid @Double
