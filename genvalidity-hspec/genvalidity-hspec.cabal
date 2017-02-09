@@ -79,18 +79,21 @@ test-suite genvalidity-hspec-test
         base >=4.9 && <=5,
         genvalidity >=0.3 && <0.4,
         genvalidity-hspec -any,
-        hspec
+        hspec,
+        hspec-core,
+        QuickCheck
     default-language: Haskell2010
     hs-source-dirs: test/
     other-modules:
+        Test.Validity.TestUtils
         Test.Validity.ApplicativeSpec
         Test.Validity.ArbitrarySpec
         Test.Validity.EqSpec
         Test.Validity.FunctorSpec
         Test.Validity.GenRelativeValiditySpec
         Test.Validity.GenValiditySpec
-        Test.Validity.MonoidSpec
         Test.Validity.MonadSpec
+        Test.Validity.MonoidSpec
         Test.Validity.OrdSpec
         Test.Validity.RelativeValiditySpec
     ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
