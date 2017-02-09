@@ -196,12 +196,14 @@ module Test.Validity
     , commutativeOnArbitrary
       -- * Eq properties
     , eqSpecOnValid
+    , eqSpecOnInvalid
     , eqSpec
     , eqSpecOnArbitrary
     , eqSpecOnGen
       -- * Ord properties
     , ordSpecOnGen
     , ordSpecOnValid
+    , ordSpecOnInvalid
     , ordSpec
     , ordSpecOnArbitrary
       -- * Monoid properties
