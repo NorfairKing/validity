@@ -1,4 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DefaultSignatures #-}
 
 {-|
 
@@ -39,6 +42,7 @@ module Data.Validity
 
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.Maybe (Maybe, fromMaybe)
+import GHC.Generics
 import GHC.Natural (Natural, isValidNatural)
 import GHC.Real (Ratio(..))
 
@@ -46,6 +50,9 @@ import GHC.Real (Ratio(..))
 -- that aren't enforced by the type system
 class Validity a where
     isValid :: a -> Bool -- ^ Check whether a given value is a valid value.
+    default isValid :: (Generic a, GValidity (Rep a)) =>
+        a -> Bool
+    isValid = gIsValid . from
 
 isInvalid
     :: Validity a
@@ -165,3 +172,26 @@ constructValidUnsafe
     => a -> a
 constructValidUnsafe p =
     fromMaybe (error $ show p ++ " is not valid") $ constructValid p
+
+class GValidity f where
+    gIsValid :: f a -> Bool
+
+instance GValidity U1 where
+    gIsValid U1 = True
+
+instance (GValidity a, GValidity b) =>
+         GValidity (a :*: b) where
+    gIsValid (a :*: b) = gIsValid a && gIsValid b
+
+instance (GValidity a, GValidity b) =>
+         GValidity (a :+: b) where
+    gIsValid (L1 x) = gIsValid x
+    gIsValid (R1 x) = gIsValid x
+
+instance (GValidity a) =>
+         GValidity (M1 i c a) where
+    gIsValid (M1 x) = gIsValid x
+
+instance (Validity a) =>
+         GValidity (K1 i a) where
+    gIsValid (K1 x) = isValid x
