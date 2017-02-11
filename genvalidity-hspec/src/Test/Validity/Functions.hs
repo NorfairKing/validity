@@ -35,6 +35,10 @@ module Test.Validity.Functions
     , validIfSucceedsOnValids2
     , validIfSucceeds2
     , validIfSucceedsOnArbitrary2
+    , validIfSucceedsOnGens3
+    , validIfSucceedsOnValids3
+    , validIfSucceeds3
+    , validIfSucceedsOnArbitrary3
     , equivalentOnGen
     , equivalentOnValid
     , equivalent

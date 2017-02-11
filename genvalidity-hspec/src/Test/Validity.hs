@@ -59,6 +59,10 @@ module Test.Validity
     , validIfSucceedsOnValids2
     , validIfSucceeds2
     , validIfSucceedsOnArbitrary2
+    , validIfSucceedsOnGens3
+    , validIfSucceedsOnValids3
+    , validIfSucceeds3
+    , validIfSucceedsOnArbitrary3
       -- ** Standard tests involving equivalence of functions
       -- *** Simple functions
       -- **** One argument
