@@ -43,6 +43,9 @@
     >             Just output -> output `shouldSatisfy` isValid
     -}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DefaultSignatures #-}
 
 module Data.GenValidity
     ( module Data.Validity
@@ -52,6 +55,7 @@ module Data.GenValidity
 import Data.Validity
 
 import Data.Fixed (Fixed(..), HasResolution)
+import GHC.Generics
 import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
@@ -61,6 +65,9 @@ import Control.Monad (forM)
 -- | A class of types for which truly arbitrary values can be generated.
 class GenUnchecked a where
     genUnchecked :: Gen a
+    default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
+        Gen a
+    genUnchecked = to <$> gGenUnchecked
 
 -- | A class of types for which valid values can be generated.
 --
@@ -321,3 +328,28 @@ genListOf func =
         size <- upTo n
         pars <- arbPartition size
         forM pars $ \i -> resize i func
+
+class GGenUnchecked f where
+    gGenUnchecked :: Gen (f a)
+
+instance GGenUnchecked U1 where
+    gGenUnchecked = pure U1
+
+instance (GGenUnchecked a, GGenUnchecked b) =>
+         GGenUnchecked (a :*: b) where
+    gGenUnchecked = do
+        g1 <- gGenUnchecked
+        g2 <- gGenUnchecked
+        pure $ g1 :*: g2
+
+instance (GGenUnchecked a, GGenUnchecked b) =>
+         GGenUnchecked (a :+: b) where
+    gGenUnchecked = oneof [L1 <$> gGenUnchecked, R1 <$> gGenUnchecked]
+
+instance (GGenUnchecked a) =>
+         GGenUnchecked (M1 i c a) where
+    gGenUnchecked = M1 <$> gGenUnchecked
+
+instance (GenUnchecked a) =>
+         GGenUnchecked (K1 i a) where
+    gGenUnchecked = K1 <$> genUnchecked
