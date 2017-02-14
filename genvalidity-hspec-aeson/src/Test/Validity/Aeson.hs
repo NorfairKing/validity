@@ -18,8 +18,10 @@ import Data.GenValidity
 
 import Control.DeepSeq (deepseq)
 import Control.Exception (evaluate)
+import Control.Monad
 import Data.Aeson (FromJSON, ToJSON)
 import qualified Data.Aeson as JSON
+import qualified Data.ByteString.Lazy as LB
 import Data.Typeable
 import Test.Hspec
 import Test.QuickCheck
@@ -118,4 +120,31 @@ encodeAndDecodeAreInversesOnGen
     => Gen a -> Property
 encodeAndDecodeAreInversesOnGen gen =
     forAll gen $ \(a :: a) ->
-        JSON.eitherDecode (JSON.encode a) `shouldBe` Right a
+        let encoded = JSON.encode a
+            errOrDecoded = JSON.eitherDecode encoded
+        in case errOrDecoded of
+               Left err ->
+                   expectationFailure $
+                   unlines
+                       [ "Decoding failed with error"
+                       , err
+                       , "instead of decoding to"
+                       , show a
+                       , "'encode' encoded it to the json"
+                       , show encoded
+                       , ", which is the following in [Word8]:"
+                       , show $ LB.unpack encoded
+                       ]
+               Right decoded ->
+                   unless (decoded == a) $
+                   expectationFailure $
+                   unlines
+                       [ "Decoding succeeded, but the decoded value"
+                       , show decoded
+                       , "differs from expected decoded value"
+                       , show a
+                       , "'encode' encoded it to the json"
+                       , show encoded
+                       , ", which is the following in [Word8]:"
+                       , show $ LB.unpack encoded
+                       ]
