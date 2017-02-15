@@ -132,8 +132,6 @@ encodeAndDecodeAreInversesOnGen gen =
                        , show a
                        , "'encode' encoded it to the json"
                        , show encoded
-                       , ", which is the following in [Word8]:"
-                       , show $ LB.unpack encoded
                        ]
                Right decoded ->
                    unless (decoded == a) $
@@ -145,6 +143,4 @@ encodeAndDecodeAreInversesOnGen gen =
                        , show a
                        , "'encode' encoded it to the json"
                        , show encoded
-                       , ", which is the following in [Word8]:"
-                       , show $ LB.unpack encoded
                        ]
