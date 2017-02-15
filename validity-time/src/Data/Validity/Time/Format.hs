@@ -6,7 +6,6 @@ module Data.Validity.Time.Format where
 import Data.Validity
 
 import Data.Time.Format
-import Data.Time.LocalTime
 
 import Data.Validity.Time.LocalTime ()
 

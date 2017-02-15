@@ -22,7 +22,7 @@ instance Validity UTCTime where
             [ isValid utctDay
             , isValid utctDayTime
             , diffTimeToPicoseconds utctDayTime >= 0
-            , diffTimeToPicoseconds utctDayTime < 86401 * 10 ^ 12
+            , diffTimeToPicoseconds utctDayTime < 86401 * 10 ^ (12 :: Integer)
             ]
 
 instance Validity NominalDiffTime where

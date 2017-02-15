@@ -4,14 +4,13 @@ module Data.Validity.Text where
 
 import Data.Validity
 
-import qualified Data.Text as T -- For the show instance
 import qualified Data.Text.Array as A
 import Data.Text.Internal (Text(..))
 import qualified Data.Text.Internal.Encoding.Utf16 as E
 
 -- | A text is valid if the internal structure is consistent.
 instance Validity Text where
-    isValid t@(Text arr off len) =
+    isValid (Text arr off len) =
         let c = A.unsafeIndex arr off
         in and
                [ len >= 0

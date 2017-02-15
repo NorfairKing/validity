@@ -21,7 +21,6 @@ import Control.Exception (evaluate)
 import Control.Monad
 import Data.Aeson (FromJSON, ToJSON)
 import qualified Data.Aeson as JSON
-import qualified Data.ByteString.Lazy as LB
 import Data.Typeable
 import Test.Hspec
 import Test.QuickCheck
