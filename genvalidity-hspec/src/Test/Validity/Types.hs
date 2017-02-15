@@ -1,5 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Test.Validity.Types
     ( CanFail(..)
     ) where
@@ -12,14 +13,11 @@ class CanFail f where
 instance CanFail Maybe where
     hasFailed Nothing = True
     hasFailed _ = False
-
     resultIfSucceeded Nothing = Nothing
     resultIfSucceeded (Just r) = Just r
 
 instance CanFail (Either e) where
     hasFailed (Left _) = True
     hasFailed _ = False
-
     resultIfSucceeded (Left _) = Nothing
     resultIfSucceeded (Right r) = Just r
-

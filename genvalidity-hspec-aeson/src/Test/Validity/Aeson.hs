@@ -18,6 +18,7 @@ import Data.GenValidity
 
 import Control.DeepSeq (deepseq)
 import Control.Exception (evaluate)
+import Control.Monad
 import Data.Aeson (FromJSON, ToJSON)
 import qualified Data.Aeson as JSON
 import Data.Typeable
@@ -67,22 +68,28 @@ jsonSpecOnGen
     :: forall a.
        (Show a, Eq a, Typeable a, FromJSON a, ToJSON a)
     => Gen a -> String -> Spec
-jsonSpecOnGen gen genname = parallel $ do
-    let name = nameOf @a
-    describe ("JSON " ++ name ++ " (" ++ genname ++ ")") $ do
-        describe ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
-            it
-                (unwords
-                     ["never fails to encode a", "\"" ++ genname, name ++ "\""]) $
-            neverFailsToEncodeOnGen gen
-        describe ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
-            it
-                (unwords
-                     [ "ensures that encode and decode are inverses for"
-                     , "\"" ++ genname
-                     , name ++ "\"" ++ "'s"
-                     ]) $
-            encodeAndDecodeAreInversesOnGen gen
+jsonSpecOnGen gen genname =
+    parallel $ do
+        let name = nameOf @a
+        describe ("JSON " ++ name ++ " (" ++ genname ++ ")") $ do
+            describe
+                ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
+                it
+                    (unwords
+                         [ "never fails to encode a"
+                         , "\"" ++ genname
+                         , name ++ "\""
+                         ]) $
+                neverFailsToEncodeOnGen gen
+            describe
+                ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
+                it
+                    (unwords
+                         [ "ensures that encode and decode are inverses for"
+                         , "\"" ++ genname
+                         , name ++ "\"" ++ "'s"
+                         ]) $
+                encodeAndDecodeAreInversesOnGen gen
 
 -- |
 --
@@ -112,4 +119,27 @@ encodeAndDecodeAreInversesOnGen
     => Gen a -> Property
 encodeAndDecodeAreInversesOnGen gen =
     forAll gen $ \(a :: a) ->
-        JSON.eitherDecode (JSON.encode a) `shouldBe` Right a
+        let encoded = JSON.encode a
+            errOrDecoded = JSON.eitherDecode encoded
+        in case errOrDecoded of
+               Left err ->
+                   expectationFailure $
+                   unlines
+                       [ "Decoding failed with error"
+                       , err
+                       , "instead of decoding to"
+                       , show a
+                       , "'encode' encoded it to the json"
+                       , show encoded
+                       ]
+               Right decoded ->
+                   unless (decoded == a) $
+                   expectationFailure $
+                   unlines
+                       [ "Decoding succeeded, but the decoded value"
+                       , show decoded
+                       , "differs from expected decoded value"
+                       , show a
+                       , "'encode' encoded it to the json"
+                       , show encoded
+                       ]

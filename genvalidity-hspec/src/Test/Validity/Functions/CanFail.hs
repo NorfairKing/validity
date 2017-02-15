@@ -22,6 +22,10 @@ module Test.Validity.Functions.CanFail
     , validIfSucceedsOnValids2
     , validIfSucceeds2
     , validIfSucceedsOnArbitrary2
+    , validIfSucceedsOnGens3
+    , validIfSucceedsOnValids3
+    , validIfSucceeds3
+    , validIfSucceedsOnArbitrary3
     ) where
 
 import Data.GenValidity
@@ -139,9 +143,7 @@ failsOnInvalid2
        , Show c
        , Show (f c)
        , GenInvalid a
-       , GenUnchecked a
        , GenInvalid b
-       , GenUnchecked b
        , CanFail f
        )
     => (a -> b -> f c) -> Property
@@ -196,3 +198,57 @@ validIfSucceedsOnArbitrary2
        )
     => (a -> b -> f c) -> Property
 validIfSucceedsOnArbitrary2 func = validIfSucceedsOnGens2 func arbitrary
+
+validIfSucceedsOnGens3
+    :: (Show a, Show b, Show c, Show d, Show (f d), Validity d, CanFail f)
+    => (a -> b -> c -> f d) -> Gen (a, b, c) -> Property
+validIfSucceedsOnGens3 func gen =
+    forAll gen $ \(a, b, c) ->
+        case resultIfSucceeded (func a b c) of
+            Nothing -> return () -- Can happen
+            Just res -> res `shouldSatisfy` isValid
+
+validIfSucceedsOnValids3
+    :: ( Show a
+       , Show b
+       , Show c
+       , Show d
+       , Show (f d)
+       , GenValid a
+       , GenValid b
+       , GenValid c
+       , Validity d
+       , CanFail f
+       )
+    => (a -> b -> c -> f d) -> Property
+validIfSucceedsOnValids3 func = validIfSucceedsOnGens3 func genValid
+
+validIfSucceeds3
+    :: ( Show a
+       , Show b
+       , Show c
+       , Show d
+       , Show (f d)
+       , GenUnchecked a
+       , GenUnchecked b
+       , GenUnchecked c
+       , Validity d
+       , CanFail f
+       )
+    => (a -> b -> c -> f d) -> Property
+validIfSucceeds3 func = validIfSucceedsOnGens3 func genUnchecked
+
+validIfSucceedsOnArbitrary3
+    :: ( Show a
+       , Show b
+       , Show c
+       , Show d
+       , Show (f d)
+       , Arbitrary a
+       , Arbitrary b
+       , Arbitrary c
+       , Validity d
+       , CanFail f
+       )
+    => (a -> b -> c -> f d) -> Property
+validIfSucceedsOnArbitrary3 func = validIfSucceedsOnGens3 func arbitrary

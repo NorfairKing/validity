@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module Data.GenValidity.Tree where
 
 import Data.GenValidity
@@ -18,8 +20,7 @@ instance GenValid a =>
 -- | There should be at least one invalid element, either it's here or it's
 -- further down the tree.
 instance (GenUnchecked a, GenInvalid a) =>
-         GenInvalid (Tree a)
-                              where
+         GenInvalid (Tree a) where
     genInvalid =
         sized $ \n -> do
             size <- upTo n

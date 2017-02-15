@@ -59,6 +59,10 @@ module Test.Validity
     , validIfSucceedsOnValids2
     , validIfSucceeds2
     , validIfSucceedsOnArbitrary2
+    , validIfSucceedsOnGens3
+    , validIfSucceedsOnValids3
+    , validIfSucceeds3
+    , validIfSucceedsOnArbitrary3
       -- ** Standard tests involving equivalence of functions
       -- *** Simple functions
       -- **** One argument
@@ -196,12 +200,14 @@ module Test.Validity
     , commutativeOnArbitrary
       -- * Eq properties
     , eqSpecOnValid
+    , eqSpecOnInvalid
     , eqSpec
     , eqSpecOnArbitrary
     , eqSpecOnGen
       -- * Ord properties
     , ordSpecOnGen
     , ordSpecOnValid
+    , ordSpecOnInvalid
     , ordSpec
     , ordSpecOnArbitrary
       -- * Monoid properties
@@ -226,17 +232,16 @@ module Test.Validity
     , monadSpecOnGens
     ) where
 
-import Data.Data
 import Data.GenValidity
 
+import Test.Validity.Applicative
 import Test.Validity.Arbitrary
 import Test.Validity.Eq
 import Test.Validity.Functions
 import Test.Validity.Functor
-import Test.Validity.Applicative
-import Test.Validity.Monad
 import Test.Validity.GenRelativeValidity
 import Test.Validity.GenValidity
+import Test.Validity.Monad
 import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord

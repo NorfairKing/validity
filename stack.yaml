@@ -1,17 +1,20 @@
 packages:
-- 'validity'
-- 'validity-containers'
-- 'validity-text'
-- 'validity-path'
-- 'validity-bytestring'
 - 'genvalidity'
 - 'genvalidity-containers'
-- 'genvalidity-path'
-- 'genvalidity-text'
 - 'genvalidity-hspec'
 - 'genvalidity-hspec-aeson'
 - 'genvalidity-hspec-cereal'
-extra-deps: []
+- 'genvalidity-path'
+- 'genvalidity-text'
+- 'genvalidity-time'
+- 'validity'
+- 'validity-bytestring'
+- 'validity-containers'
+- 'validity-path'
+- 'validity-text'
+- 'validity-time'
+extra-deps:
+- aeson-1.1.0.0
 flags: {}
 extra-package-dbs: []
-resolver: lts-7.14
+resolver: lts-7.19

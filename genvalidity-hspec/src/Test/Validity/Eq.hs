@@ -8,6 +8,7 @@
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.Eq
     ( eqSpecOnValid
+    , eqSpecOnInvalid
     , eqSpec
     , eqSpecOnArbitrary
     , eqSpecOnGen
@@ -46,6 +47,17 @@ eqSpecOnValid
        (Show a, Eq a, Typeable a, GenValid a)
     => Spec
 eqSpecOnValid = eqSpecOnGen @a genValid "valid"
+
+-- | Standard test spec for properties of Eq instances for invalid values
+--
+-- Example usage:
+--
+-- > eqSpecOnInvalid @Double
+eqSpecOnInvalid
+    :: forall a.
+       (Show a, Eq a, Typeable a, GenInvalid a)
+    => Spec
+eqSpecOnInvalid = eqSpecOnGen @a genInvalid "invalid"
 
 -- | Standard test spec for properties of Eq instances for unchecked values
 --

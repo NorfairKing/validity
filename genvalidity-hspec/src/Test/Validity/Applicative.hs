@@ -22,8 +22,6 @@ import Test.Hspec
 import Test.QuickCheck
 
 import Test.Validity.Functions
-import Test.Validity.Operations
-import Test.Validity.Relations
 import Test.Validity.Utils
 
 pureTypeStr

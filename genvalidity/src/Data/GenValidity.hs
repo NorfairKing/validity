@@ -42,6 +42,12 @@
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
     -}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DefaultSignatures #-}
+{-# OPTIONS_GHC -Wno-redundant-constraints #-}
+
 module Data.GenValidity
     ( module Data.Validity
     , module Data.GenValidity
@@ -49,13 +55,20 @@ module Data.GenValidity
 
 import Data.Validity
 
-import Test.QuickCheck
+import Data.Fixed (Fixed(..), HasResolution)
+import GHC.Generics
+import GHC.Real (Ratio(..))
+
+import Test.QuickCheck hiding (Fixed)
 
 import Control.Monad (forM)
 
 -- | A class of types for which truly arbitrary values can be generated.
 class GenUnchecked a where
     genUnchecked :: Gen a
+    default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
+        Gen a
+    genUnchecked = to <$> gGenUnchecked
 
 -- | A class of types for which valid values can be generated.
 --
@@ -129,7 +142,6 @@ instance (GenUnchecked a, GenUnchecked b) =>
 instance (GenValid a, GenValid b) =>
          GenValid (Either a b) where
     genValid = oneof [Left <$> genValid, Right <$> genValid]
-
 
 -- | This instance ensures that the generated tupse contains at least one invalid element. The other element is unchecked.
 instance (GenInvalid a, GenInvalid b) =>
@@ -265,6 +277,21 @@ instance GenUnchecked Integer where
 
 instance GenValid Integer
 
+instance GenUnchecked (Ratio Integer) where
+    genUnchecked = do
+        n <- genUnchecked
+        d <- genUnchecked
+        pure $ n :% d
+
+instance GenValid (Ratio Integer)
+
+instance HasResolution a =>
+         GenUnchecked (Fixed a) where
+    genUnchecked = MkFixed <$> genUnchecked
+
+instance HasResolution a =>
+         GenValid (Fixed a)
+
 -- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int
 upTo n
@@ -302,3 +329,28 @@ genListOf func =
         size <- upTo n
         pars <- arbPartition size
         forM pars $ \i -> resize i func
+
+class GGenUnchecked f where
+    gGenUnchecked :: Gen (f a)
+
+instance GGenUnchecked U1 where
+    gGenUnchecked = pure U1
+
+instance (GGenUnchecked a, GGenUnchecked b) =>
+         GGenUnchecked (a :*: b) where
+    gGenUnchecked = do
+        g1 <- gGenUnchecked
+        g2 <- gGenUnchecked
+        pure $ g1 :*: g2
+
+instance (GGenUnchecked a, GGenUnchecked b) =>
+         GGenUnchecked (a :+: b) where
+    gGenUnchecked = oneof [L1 <$> gGenUnchecked, R1 <$> gGenUnchecked]
+
+instance (GGenUnchecked a) =>
+         GGenUnchecked (M1 i c a) where
+    gGenUnchecked = M1 <$> gGenUnchecked
+
+instance (GenUnchecked a) =>
+         GGenUnchecked (K1 i a) where
+    gGenUnchecked = K1 <$> genUnchecked

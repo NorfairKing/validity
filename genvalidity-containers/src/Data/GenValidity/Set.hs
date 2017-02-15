@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module Data.GenValidity.Set where
 
 import Data.GenValidity

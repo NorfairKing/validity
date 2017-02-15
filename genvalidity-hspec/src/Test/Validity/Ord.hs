@@ -9,6 +9,7 @@
 module Test.Validity.Ord
     ( ordSpecOnGen
     , ordSpecOnValid
+    , ordSpecOnInvalid
     , ordSpec
     , ordSpecOnArbitrary
     ) where
@@ -63,9 +64,20 @@ gtTypeStr = binRelStr @a ">"
 -- > ordSpecOnValid @Double
 ordSpecOnValid
     :: forall a.
-       (Show a, Ord a, Typeable a, Arbitrary a)
+       (Show a, Ord a, Typeable a, GenValid a)
     => Spec
-ordSpecOnValid = ordSpecOnGen @a arbitrary "unchecked"
+ordSpecOnValid = ordSpecOnGen @a genUnchecked "unchecked"
+
+-- | Standard test spec for properties of Ord instances for invalid values
+--
+-- Example usage:
+--
+-- > ordSpecOnInvalid @Double
+ordSpecOnInvalid
+    :: forall a.
+       (Show a, Ord a, Typeable a, GenInvalid a)
+    => Spec
+ordSpecOnInvalid = ordSpecOnGen @a genInvalid "invalid"
 
 -- | Standard test spec for properties of Ord instances for unchecked values
 --

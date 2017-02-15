@@ -1,14 +1,12 @@
-{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
 {-| Relative validity
     -}
-
 module Data.RelativeValidity
     ( RelativeValidity(..)
     , isInvalidFor
     ) where
-
 
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
@@ -21,5 +19,7 @@ module Data.RelativeValidity
 class RelativeValidity a b where
     isValidFor :: a -> b -> Bool
 
-isInvalidFor :: RelativeValidity a b => a -> b -> Bool
+isInvalidFor
+    :: RelativeValidity a b
+    => a -> b -> Bool
 isInvalidFor a b = not $ isValidFor a b

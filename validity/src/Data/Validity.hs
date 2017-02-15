@@ -1,4 +1,8 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DefaultSignatures #-}
+{-# OPTIONS_GHC -Wno-redundant-constraints #-}
 
 {-|
 
@@ -9,7 +13,7 @@
     Suppose we were to implement a type @Prime@ that represents prime integers.
 
     If you were to completely enforce the invariant that the represented number is
-    a prime, then we could use @Numeric.Natural@ and only store the index of the
+    a prime, then we could use 'Natural' and only store the index of the
     given prime in the infinite sequence of prime numbers.
     This is very safe but also very expensive if we ever want to use the number,
     because we would have to calculcate all the prime numbers until that index.
@@ -24,6 +28,11 @@
 
     > instance Validity Prime where
     >     isValid (Prime n) = isPrime n
+
+    If certain typeclass invariants exist, you can make these explicit in the
+    validity instance as well.
+    For example, 'Fixed a' is only valid if 'a' has an 'HasResolution' instance,
+    so the correct validity instance is @HasResolution a => Validity (Fixed a)@.
     -}
 module Data.Validity
     ( Validity(..)
@@ -32,12 +41,19 @@ module Data.Validity
     , constructValidUnsafe
     ) where
 
-import Data.Maybe (fromMaybe)
+import Data.Fixed (Fixed(MkFixed), HasResolution)
+import Data.Maybe (Maybe, fromMaybe)
+import GHC.Generics
+import GHC.Natural (Natural, isValidNatural)
+import GHC.Real (Ratio(..))
 
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
 class Validity a where
     isValid :: a -> Bool -- ^ Check whether a given value is a valid value.
+    default isValid :: (Generic a, GValidity (Rep a)) =>
+        a -> Bool
+    isValid = gIsValid . from
 
 isInvalid
     :: Validity a
@@ -117,8 +133,29 @@ instance Validity Double where
     isValid d = not (isNaN d) && not (isInfinite d)
 
 -- | Trivially valid
+--
+-- Integer is not trivially valid under the hood, but instantiating
+-- 'Validity' correctly would force validity to depend on a specific
+-- (big integer library @integer-gmp@ versus @integer-simple@).
+-- This is rather impractical so for the time being we have opted for
+-- assuming that an 'Integer' is always valid.
+-- Even though this is not technically sound, it is good enough for now.
 instance Validity Integer where
     isValid = const True
+
+-- | Valid according to 'isValidNatural'
+instance Validity Natural where
+    isValid = isValidNatural
+
+-- | Valid if the contained 'Integer's are valid and the denominator is
+-- strictly positive.
+instance Validity Rational where
+    isValid (d :% n) = and [isValid n, isValid d, d > 0]
+
+-- | Valid according to the contained 'Integer'.
+instance HasResolution a =>
+         Validity (Fixed a) where
+    isValid (MkFixed i) = isValid i
 
 -- | Construct a valid element from an unchecked element
 constructValid
@@ -136,3 +173,26 @@ constructValidUnsafe
     => a -> a
 constructValidUnsafe p =
     fromMaybe (error $ show p ++ " is not valid") $ constructValid p
+
+class GValidity f where
+    gIsValid :: f a -> Bool
+
+instance GValidity U1 where
+    gIsValid U1 = True
+
+instance (GValidity a, GValidity b) =>
+         GValidity (a :*: b) where
+    gIsValid (a :*: b) = gIsValid a && gIsValid b
+
+instance (GValidity a, GValidity b) =>
+         GValidity (a :+: b) where
+    gIsValid (L1 x) = gIsValid x
+    gIsValid (R1 x) = gIsValid x
+
+instance (GValidity a) =>
+         GValidity (M1 i c a) where
+    gIsValid (M1 x) = gIsValid x
+
+instance (Validity a) =>
+         GValidity (K1 i a) where
+    gIsValid (K1 x) = isValid x
