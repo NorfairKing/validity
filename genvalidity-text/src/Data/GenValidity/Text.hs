@@ -14,17 +14,19 @@ import qualified Data.Text.Array as A
 import Data.Text.Internal (Text(..))
 
 instance GenUnchecked Text where
-    genUnchecked = Text <$> uncheckedArray <*> arbitrary <*> arbitrary
-      where
-        uncheckedArray =
-            sized $ \n -> do
-                size <- upTo n
-                ins <- replicateM size arbitrary
-                return $
-                    A.run $ do
-                        arr <- A.new size
-                        forM_ (zip [0 ..] ins) $ uncurry $ A.unsafeWrite arr
-                        return arr
+    genUnchecked =
+        sized $ \n -> do
+            size <- upTo n
+            arr <-
+                do ins <- replicateM size arbitrary
+                   return $
+                       A.run $ do
+                           arr <- A.new size
+                           forM_ (zip [0 ..] ins) $ uncurry $ A.unsafeWrite arr
+                           return arr
+            off <- upTo $ max 0 (size - 1)
+            let len = size - off
+            pure $ Text arr off len
 
 instance GenValid Text where
     genValid =
