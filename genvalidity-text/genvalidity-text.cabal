@@ -1,5 +1,5 @@
 name: genvalidity-text
-version: 0.3.0.0
+version: 0.3.1.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -23,7 +23,7 @@ library
     build-depends:
         base <5,
         validity -any,
-        validity-text -any,
+        validity-text >= 0.1.2,
         genvalidity -any,
         text -any,
         array -any,

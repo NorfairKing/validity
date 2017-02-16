@@ -2,6 +2,11 @@ module Data.GenValidity.TextSpec
     ( spec
     ) where
 
+import Control.Monad
+import Data.List
+import Data.Word
+import Text.Printf
+
 import Test.Hspec
 import Test.QuickCheck
 
@@ -9,12 +14,39 @@ import Data.GenValidity
 import Data.GenValidity.Text
 
 import qualified Data.Text as T
+import qualified Data.Text.Array as A
+import Data.Text.Internal (Text(Text))
+
+showTextDebug :: Text -> String
+showTextDebug t@(Text arr off len) =
+    unlines
+        [ unwords [show t, "is invalid"]
+        , unwords
+              [ "arr:   "
+              , intercalate "," $
+                map (printf "%4d" :: Word16 -> String) $ A.toList arr off len
+              ]
+        , unwords
+              [ "hexarr:"
+              , intercalate "," $
+                map (printf "%4x" :: Word16 -> String) $ A.toList arr off len
+              ]
+        , unwords ["off:      ", show off]
+        , unwords ["len:      ", show len]
+        ]
 
 spec :: Spec
 spec = do
     describe "genValid" $ do
         it "is always empty when resized to 0" $ do
             forAll (resize 0 genValid) (`shouldSatisfy` T.null)
+        it "generates valid text" $
+            forAll (genValid :: Gen Text) $ \t ->
+                unless (isValid t) $ expectationFailure $ showTextDebug t
+    describe "genUnchecked `suchThat` isValid" $
+        it "generates valid text" $
+        forAll ((genUnchecked :: Gen Text) `suchThat` isValid) $ \t ->
+            unless (isValid t) $ expectationFailure $ showTextDebug t
     describe "textStartingWith" $ do
         it "is never empty" $ do
             forAll arbitrary $ \c ->
