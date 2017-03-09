@@ -32,9 +32,11 @@ library
     build-depends:
         base <5,
         validity >=0.3 && <0.4,
-        QuickCheck >=2.8 && <2.10
+        QuickCheck >=2.7 && <2.10
     default-language: Haskell2010
     hs-source-dirs: src
+    if impl(ghc >= 8.0.0)
+        ghc-options: -Wno-redundant-constraints
 
 test-suite genvalidity-test
     type: exitcode-stdio-1.0

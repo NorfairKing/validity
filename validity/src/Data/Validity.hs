@@ -1,8 +1,8 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE DefaultSignatures #-}
-{-# OPTIONS_GHC -Wno-redundant-constraints #-}
 
 {-|
 
@@ -43,8 +43,11 @@ module Data.Validity
 
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.Maybe (Maybe, fromMaybe)
+import Data.Word (Word)
 import GHC.Generics
+#if MIN_VERSION_base(4,8,0)
 import GHC.Natural (Natural, isValidNatural)
+#endif
 import GHC.Real (Ratio(..))
 
 -- | A class of types that have additional invariants defined upon them
@@ -164,9 +167,13 @@ instance Validity Double where
 instance Validity Integer where
     isValid = const True
 
+#if MIN_VERSION_base(4,8,0)
 -- | Valid according to 'isValidNatural'
+--
+-- Only available with @base >= 4.8@.
 instance Validity Natural where
     isValid = isValidNatural
+#endif
 
 -- | Valid if the contained 'Integer's are valid and the denominator is
 -- strictly positive.

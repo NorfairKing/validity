@@ -46,7 +46,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
-{-# OPTIONS_GHC -Wno-redundant-constraints #-}
 
 module Data.GenValidity
     ( module Data.Validity
@@ -56,11 +55,13 @@ module Data.GenValidity
 import Data.Validity
 
 import Data.Fixed (Fixed(..), HasResolution)
+import Data.Word (Word)
 import GHC.Generics
 import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
+import Control.Applicative ((<$>), pure)
 import Control.Monad (forM)
 
 -- | A class of types for which truly arbitrary values can be generated.
