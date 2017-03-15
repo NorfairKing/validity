@@ -21,8 +21,8 @@ commutativeOnGens op gen =
 
 -- |
 --
--- prop> commutative ((+) @Double)
--- prop> commutative ((*) @Double)
+-- prop> commutative ((+) :: Double -> Double -> Double)
+-- prop> commutative ((*) :: Double -> Double -> Double)
 commutativeOnValids
     :: (Show a, Eq a, GenValid a)
     => (a -> a -> a) -> Property
@@ -30,8 +30,8 @@ commutativeOnValids op = commutativeOnGens op genValid
 
 -- |
 --
--- prop> commutative ((+) @Int)
--- prop> commutative ((*) @Int)
+-- prop> commutative ((+) :: Int -> Int -> Int)
+-- prop> commutative ((*) :: Int -> Int -> Int)
 commutative
     :: (Show a, Eq a, GenUnchecked a)
     => (a -> a -> a) -> Property
@@ -39,8 +39,8 @@ commutative op = commutativeOnGens op genUnchecked
 
 -- |
 --
--- prop> commutativeOnArbitrary ((+) @Int)
--- prop> commutativeOnArbitrary ((*) @Int)
+-- prop> commutativeOnArbitrary ((+) :: Int -> Int -> Int)
+-- prop> commutativeOnArbitrary ((*) :: Int -> Int -> Int)
 commutativeOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> a -> a) -> Property

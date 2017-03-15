@@ -33,9 +33,9 @@ antireflexivityOnGen func gen = forAll gen $ antireflexiveOnElem func
 
 -- |
 --
--- prop> antireflexivityOnValid ((<) @Double)
--- prop> antireflexivityOnValid ((/=) @Double)
--- prop> antireflexivityOnValid ((>) @Double)
+-- prop> antireflexivityOnValid ((<) :: Double -> Double -> Bool)
+-- prop> antireflexivityOnValid ((/=) :: Double -> Double -> Bool)
+-- prop> antireflexivityOnValid ((>) :: Double -> Double -> Bool)
 antireflexivityOnValid
     :: (Show a, GenValid a)
     => (a -> a -> Bool) -> Property
@@ -43,9 +43,9 @@ antireflexivityOnValid func = antireflexivityOnGen func genValid
 
 -- |
 --
--- prop> antireflexivity ((<) @Int)
--- prop> antireflexivity ((/=) @Int)
--- prop> antireflexivity ((>) @Int)
+-- prop> antireflexivity ((<) :: Int -> Int -> Bool)
+-- prop> antireflexivity ((/=) :: Int -> Int -> Bool)
+-- prop> antireflexivity ((>) :: Int -> Int -> Bool)
 antireflexivity
     :: (Show a, GenUnchecked a)
     => (a -> a -> Bool) -> Property
@@ -53,9 +53,9 @@ antireflexivity func = antireflexivityOnGen func genUnchecked
 
 -- |
 --
--- prop> antireflexivityOnArbitrary ((<) @Int)
--- prop> antireflexivityOnArbitrary ((/=) @Int)
--- prop> antireflexivityOnArbitrary ((>) @Int)
+-- prop> antireflexivityOnArbitrary ((<) :: Int -> Int -> Bool)
+-- prop> antireflexivityOnArbitrary ((/=) :: Int -> Int -> Bool)
+-- prop> antireflexivityOnArbitrary ((>) :: Int -> Int -> Bool)
 antireflexivityOnArbitrary
     :: (Show a, Arbitrary a)
     => (a -> a -> Bool) -> Property

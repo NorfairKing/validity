@@ -38,15 +38,14 @@ transitivityOnGens func gen =
 
 -- |
 --
--- prop> transitivityOnValid ((>) @Double)
--- prop> transitivityOnValid ((>=) @Double)
--- prop> transitivityOnValid ((==) @Double)
--- prop> transitivityOnValid ((<=) @Double)
--- prop> transitivityOnValid ((<) @Double)
--- prop> transitivityOnValid (Data.List.isPrefixOf @Double)
--- prop> transitivityOnValid (Data.List.isSuffixOf @Double)
--- prop> transitivityOnValid (Data.List.isInfixOf @Double)
--- prop> transitivityOnValid (Data.List.isSubsequenceOf @Double)
+-- prop> transitivityOnValid ((>) :: Double -> Double -> Bool)
+-- prop> transitivityOnValid ((>=) :: Double -> Double -> Bool)
+-- prop> transitivityOnValid ((==) :: Double -> Double -> Bool)
+-- prop> transitivityOnValid ((<=) :: Double -> Double -> Bool)
+-- prop> transitivityOnValid ((<) :: Double -> Double -> Bool)
+-- prop> transitivityOnValid (Data.List.isPrefixOf :: [Double] -> [Double] -> Bool)
+-- prop> transitivityOnValid (Data.List.isSuffixOf :: [Double] -> [Double] -> Bool)
+-- prop> transitivityOnValid (Data.List.isInfixOf :: [Double] -> [Double] -> Bool)
 transitivityOnValid
     :: (Show a, GenValid a)
     => (a -> a -> Bool) -> Property
@@ -54,15 +53,14 @@ transitivityOnValid func = transitivityOnGens func genValid
 
 -- |
 --
--- prop> transitivity ((>) @Int)
--- prop> transitivity ((>=) @Int)
--- prop> transitivity ((==) @Int)
--- prop> transitivity ((<=) @Int)
--- prop> transitivity ((<) @Int)
--- prop> transitivity (Data.List.isPrefixOf @Int)
--- prop> transitivity (Data.List.isSuffixOf @Int)
--- prop> transitivity (Data.List.isInfixOf @Int)
--- prop> transitivity (Data.List.isSubsequenceOf @Int)
+-- prop> transitivity ((>) :: Int -> Int -> Bool)
+-- prop> transitivity ((>=) :: Int -> Int -> Bool)
+-- prop> transitivity ((==) :: Int -> Int -> Bool)
+-- prop> transitivity ((<=) :: Int -> Int -> Bool)
+-- prop> transitivity ((<) :: Int -> Int -> Bool)
+-- prop> transitivity (Data.List.isPrefixOf :: [Int] -> [Int] -> Bool)
+-- prop> transitivity (Data.List.isSuffixOf :: [Int] -> [Int] -> Bool)
+-- prop> transitivity (Data.List.isInfixOf :: [Int] -> [Int] -> Bool)
 transitivity
     :: (Show a, GenUnchecked a)
     => (a -> a -> Bool) -> Property
@@ -70,15 +68,14 @@ transitivity func = transitivityOnGens func genUnchecked
 
 -- |
 --
--- prop> transitivityOnArbitrary ((>) @Int)
--- prop> transitivityOnArbitrary ((>=) @Int)
--- prop> transitivityOnArbitrary ((==) @Int)
--- prop> transitivityOnArbitrary ((<=) @Int)
--- prop> transitivityOnArbitrary ((<) @Int)
--- prop> transitivityOnArbitrary (Data.List.isPrefixOf @Int)
--- prop> transitivityOnArbitrary (Data.List.isSuffixOf @Int)
--- prop> transitivityOnArbitrary (Data.List.isInfixOf @Int)
--- prop> transitivityOnArbitrary (Data.List.isSubsequenceOf @Int)
+-- prop> transitivityOnArbitrary ((>) :: Int -> Int -> Bool)
+-- prop> transitivityOnArbitrary ((>=) :: Int -> Int -> Bool)
+-- prop> transitivityOnArbitrary ((==) :: Int -> Int -> Bool)
+-- prop> transitivityOnArbitrary ((<=) :: Int -> Int -> Bool)
+-- prop> transitivityOnArbitrary ((<) :: Int -> Int -> Bool)
+-- prop> transitivityOnArbitrary (Data.List.isPrefixOf :: [Int] -> [Int] -> Bool)
+-- prop> transitivityOnArbitrary (Data.List.isSuffixOf :: [Int] -> [Int] -> Bool)
+-- prop> transitivityOnArbitrary (Data.List.isInfixOf :: [Int] -> [Int] -> Bool)
 transitivityOnArbitrary
     :: (Show a, Arbitrary a)
     => (a -> a -> Bool) -> Property

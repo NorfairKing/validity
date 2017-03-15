@@ -36,8 +36,8 @@ symmetryOnGens func gen = forAll gen $ uncurry $ symmetricOnElems func
 
 -- |
 --
--- prop> symmetryOnValid ((==) @Double)
--- prop> symmetryOnValid ((/=) @Double)
+-- prop> symmetryOnValid ((==) :: Double -> Double -> Bool)
+-- prop> symmetryOnValid ((/=) :: Double -> Double -> Bool)
 symmetryOnValid
     :: (Show a, GenValid a)
     => (a -> a -> Bool) -> Property
@@ -45,8 +45,8 @@ symmetryOnValid func = symmetryOnGens func genValid
 
 -- |
 --
--- prop> symmetry ((==) @Int)
--- prop> symmetry ((/=) @Int)
+-- prop> symmetry ((==) :: Int -> Int -> Bool)
+-- prop> symmetry ((/=) :: Int -> Int -> Bool)
 symmetry
     :: (Show a, GenUnchecked a)
     => (a -> a -> Bool) -> Property
@@ -54,8 +54,8 @@ symmetry func = symmetryOnGens func genUnchecked
 
 -- |
 --
--- prop> symmetryOnArbitrary ((==) @Int)
--- prop> symmetryOnArbitrary ((/=) @Int)
+-- prop> symmetryOnArbitrary ((==) :: Int -> Int -> Bool)
+-- prop> symmetryOnArbitrary ((/=) :: Int -> Int -> Bool)
 symmetryOnArbitrary
     :: (Show a, Arbitrary a)
     => (a -> a -> Bool) -> Property

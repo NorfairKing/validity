@@ -52,34 +52,10 @@ test-suite genvalidity-property-doctests
     main-is: DocTest.hs
     build-depends:
         base -any,
-        doctest >=0.11 && <0.12,
-        genvalidity-property -any
+        doctest >=0.9 && <0.12,
+        genvalidity-property -any,
+        directory >= 1.2 && < 1.3,
+        filepath >= 1.3 && < 1.4
     default-language: Haskell2010
     hs-source-dirs: test
     ghc-options: -threaded
-
-test-suite genvalidity-hspec-test
-    type: exitcode-stdio-1.0
-    main-is: Spec.hs
-    build-depends:
-        base >=4.9 && <=5,
-        genvalidity >=0.3 && <0.4,
-        genvalidity-property -any,
-        hspec,
-        hspec-core,
-        QuickCheck
-    default-language: Haskell2010
-    hs-source-dirs: test/
-    other-modules:
-        Test.Validity.TestUtils
-        Test.Validity.ApplicativeSpec
-        Test.Validity.ArbitrarySpec
-        Test.Validity.EqSpec
-        Test.Validity.FunctorSpec
-        Test.Validity.GenRelativeValiditySpec
-        Test.Validity.GenValiditySpec
-        Test.Validity.MonadSpec
-        Test.Validity.MonoidSpec
-        Test.Validity.OrdSpec
-        Test.Validity.RelativeValiditySpec
-    ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
