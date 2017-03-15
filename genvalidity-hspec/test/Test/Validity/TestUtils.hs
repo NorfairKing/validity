@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE CPP #-}
 
 module Test.Validity.TestUtils where
 
@@ -26,10 +27,19 @@ failsBecause s st = mapSpecTree go st
               \ps runner callback -> do
                   let conf = defaultConfig {configFormatter = Just silent}
                   r <- hspecWithResult conf $ fromSpecList [sp]
+#if MIN_VERSION_hspec_core(2,4,0)
+                  pure $ Right $
+                      if summaryExamples r > 0 && summaryFailures r > 0
+                          then Success
+                          else
+                            Failure Nothing $ Reason "Should have failed but didn't."
+#else
                   pure $
                       if summaryExamples r > 0 && summaryFailures r > 0
                           then Success
-                          else Fail Nothing "Should have failed but didn't."
+                          else
+                            Fail Nothing "Should have failed but didn't."
+#endif
         }
 
 shouldFail :: Property -> Property

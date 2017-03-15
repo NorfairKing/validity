@@ -14,8 +14,4 @@ packages:
 - 'validity-path'
 - 'validity-text'
 - 'validity-time'
-extra-deps:
-- aeson-1.1.0.0
-flags: {}
-extra-package-dbs: []
-resolver: lts-7.19
+resolver: lts-7.20
