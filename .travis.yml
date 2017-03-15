@@ -48,10 +48,6 @@ matrix:
     compiler: ": #stack GHC-7.8.4"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: ARGS=""
-    compiler: ": #stack default"
-    addons: {apt: {packages: [libgmp-dev]}}
-
   # Nightly builds are allowed to fail
   - env: ARGS="--resolver nightly"
     compiler: ": #stack nightly"
