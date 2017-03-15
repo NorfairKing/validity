@@ -1,6 +1,5 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 -- | Tests for GenValidity instances
@@ -30,4 +29,4 @@ genGeneratesInvalid
     :: forall a.
        (Show a, Validity a)
     => Gen a -> Property
-genGeneratesInvalid gen = forAll gen (`shouldNotSatisfy` isValid)
+genGeneratesInvalid gen = forAll gen (`shouldSatisfy` isInvalid)
