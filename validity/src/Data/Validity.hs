@@ -43,7 +43,7 @@ module Data.Validity
 
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.Maybe (Maybe, fromMaybe)
-import Data.Word (Word)
+import Data.Word (Word, Word8, Word16)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural (Natural, isValidNatural)
@@ -142,6 +142,14 @@ instance Validity Int where
 instance Validity Word where
     isValid = const True
 
+-- | Trivially valid
+instance Validity Word8 where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Word16 where
+    isValid = const True
+
 -- | NOT trivially valid:
 --
 -- * NaN is not valid.
@@ -166,7 +174,6 @@ instance Validity Double where
 -- Even though this is not technically sound, it is good enough for now.
 instance Validity Integer where
     isValid = const True
-
 #if MIN_VERSION_base(4,8,0)
 -- | Valid according to 'isValidNatural'
 --
@@ -174,7 +181,6 @@ instance Validity Integer where
 instance Validity Natural where
     isValid = isValidNatural
 #endif
-
 -- | Valid if the contained 'Integer's are valid and the denominator is
 -- strictly positive.
 instance Validity Rational where
