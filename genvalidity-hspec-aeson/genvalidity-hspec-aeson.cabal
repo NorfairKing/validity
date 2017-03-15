@@ -22,7 +22,7 @@ library
         Test.Validity.Aeson
     build-depends:
         base >=4.9 && <=5,
-        genvalidity-hspec >=0.3 && <0.4,
+        genvalidity-hspec >=0.3 && <0.5,
         genvalidity >=0.3 && <0.4,
         hspec,
         aeson >=0.11 && <1.2,
