@@ -36,7 +36,7 @@ library
         Test.Validity.RelativeValidity
         Test.Validity.Utils
     build-depends:
-        base <5,
+        base >= 4.9 && <5,
         validity >=0.3 && <0.4,
         genvalidity >=0.3 && <0.4,
         QuickCheck -any,
