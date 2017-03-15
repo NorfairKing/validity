@@ -16,7 +16,8 @@ The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions 
 The `genvalidity-*` packages provides the `Validity` instances for commonly-used packages.
 
 Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` can generalized to highly generic function.
-The `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.
+The `genvalidity-property` and `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.
+The `genvalidity-hspec` uses `TypeApplications` as a central part of its UI, but `genvalidity-property` does not require it.
 
 The `genvalidity-hspec-*` packages provide automatic property testing functions for certain commonly-used packages.
 
