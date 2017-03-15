@@ -1,22 +1,11 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
--- | To use the 'Spec' functions in this module, you will need @TypeApplications@.
-module Test.Validity
+module Test.Validity.Property
     ( module Data.GenValidity
-      -- * Tests for Arbitrary instances involving Validity
-    , arbitraryGeneratesOnlyValid
       -- * Tests for GenValidity instances
-    , genValidGeneratesValid
     , genGeneratesValid
-    , genInvalidGeneratesInvalid
     , genGeneratesInvalid
-      -- * Tests for RelativeValidity instances
-    , relativeValidityImpliesValidA
-    , relativeValidityImpliesValidB
-      -- * Tests for GenRelativeValidity instances
-    , genRelativeValidGeneratesValid
-    , genRelativeInvalidGeneratesInvalid
       -- * Standard tests involving functions
       -- ** Standard tests involving validity
     , producesValidsOnGen
@@ -196,11 +185,8 @@ module Test.Validity
 
 import Data.GenValidity
 
-import Test.Validity.Arbitrary
 import Test.Validity.Functions
-import Test.Validity.GenRelativeValidity
-import Test.Validity.GenValidity
+import Test.Validity.GenValidity.Property
 import Test.Validity.Operations
 import Test.Validity.Relations
-import Test.Validity.RelativeValidity
 import Test.Validity.Types

@@ -27,37 +27,21 @@ library
         Test.Validity.Applicative
         Test.Validity.Arbitrary
         Test.Validity.Eq
-        Test.Validity.Functions
-        Test.Validity.Functions.CanFail
-        Test.Validity.Functions.Equivalence
-        Test.Validity.Functions.Idempotence
-        Test.Validity.Functions.Inverse
-        Test.Validity.Functions.Validity
         Test.Validity.Functor
         Test.Validity.GenRelativeValidity
         Test.Validity.GenValidity
         Test.Validity.Monad
         Test.Validity.Monoid
-        Test.Validity.Operations
-        Test.Validity.Operations.Associativity
-        Test.Validity.Operations.Commutativity
-        Test.Validity.Operations.Identity
         Test.Validity.Ord
-        Test.Validity.Relations
-        Test.Validity.Relations.Antireflexivity
-        Test.Validity.Relations.Antisymmetry
-        Test.Validity.Relations.Reflexivity
-        Test.Validity.Relations.Symmetry
-        Test.Validity.Relations.Transitivity
         Test.Validity.RelativeValidity
-        Test.Validity.Types
         Test.Validity.Utils
     build-depends:
         base <5,
         validity >=0.3 && <0.4,
         genvalidity >=0.3 && <0.4,
         QuickCheck -any,
-        hspec >=2.2 && <2.5
+        hspec >=2.2 && <2.5,
+        genvalidity-property >= 0.0 && < 0.1
     default-language: Haskell2010
     hs-source-dirs: src
 

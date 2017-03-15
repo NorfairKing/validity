@@ -13,7 +13,7 @@ import Data.GenValidity
 
 import Test.QuickCheck
 
-import Test.Validity.Utils
+import Test.Validity.Property.Utils
 
 -- |
 --
