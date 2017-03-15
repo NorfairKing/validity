@@ -21,6 +21,7 @@ import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
 
+import Test.Validity.GenValidity.Property
 import Test.Validity.Utils
 
 -- | A spec for properties of 'GenValid' and 'GenInvalid' instances.
@@ -91,13 +92,6 @@ genValidGeneratesValid
     => Property
 genValidGeneratesValid = genGeneratesValid @a genValid
 
--- | The given generator generates only valid data points
-genGeneratesValid
-    :: forall a.
-       (Show a, Validity a)
-    => Gen a -> Property
-genGeneratesValid gen = forAll gen (`shouldSatisfy` isValid)
-
 -- | @genValid@ only generates invalid data
 --
 -- prop> genInvalidGeneratesInvalid @Float
@@ -109,10 +103,3 @@ genInvalidGeneratesInvalid
        (Show a, GenInvalid a)
     => Property
 genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid
-
--- | The given generator generates only invalid data points
-genGeneratesInvalid
-    :: forall a.
-       (Show a, Validity a)
-    => Gen a -> Property
-genGeneratesInvalid gen = forAll gen (`shouldNotSatisfy` isValid)

@@ -59,7 +59,7 @@ leftIdentityOnGen op = leftIdentityOnGenWithEquality op (==)
 
 -- |
 --
--- prop> leftIdentityOnValid (flip ((^) @Double @Int)) 1
+-- prop> leftIdentityOnValid (flip ((^) :: Double -> Int -> Double)) 1
 leftIdentityOnValid
     :: (Show a, Eq a, GenValid a)
     => (b -> a -> a) -> b -> Property
@@ -67,7 +67,7 @@ leftIdentityOnValid op b = leftIdentityOnGen op b genValid
 
 -- |
 --
--- prop> leftIdentity (flip ((^) @Int @Int)) 1
+-- prop> leftIdentity (flip ((^) :: Int -> Int -> Int)) 1
 leftIdentity
     :: (Show a, Eq a, GenUnchecked a)
     => (b -> a -> a) -> b -> Property
@@ -75,7 +75,7 @@ leftIdentity op b = leftIdentityOnGen op b genUnchecked
 
 -- |
 --
--- prop> leftIdentityOnArbitrary (flip ((^) @Int @Int)) 1
+-- prop> leftIdentityOnArbitrary (flip ((^) :: Int -> Int -> Int)) 1
 leftIdentityOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (b -> a -> a) -> b -> Property
@@ -116,7 +116,7 @@ rightIdentityOnGen op = rightIdentityOnGenWithEquality op (==)
 
 -- |
 --
--- prop> rightIdentityOnValid ((^) @Double) 1
+-- prop> rightIdentityOnValid ((^) :: Double -> Int -> Double) 1
 rightIdentityOnValid
     :: (Show a, Eq a, GenValid a)
     => (a -> b -> a) -> b -> Property
@@ -124,7 +124,7 @@ rightIdentityOnValid op b = rightIdentityOnGen op b genValid
 
 -- |
 --
--- prop> rightIdentity ((^) @Int) 1
+-- prop> rightIdentity ((^) :: Int -> Int -> Int) 1
 rightIdentity
     :: (Show a, Eq a, GenUnchecked a)
     => (a -> b -> a) -> b -> Property
@@ -132,7 +132,7 @@ rightIdentity op b = rightIdentityOnGen op b genUnchecked
 
 -- |
 --
--- prop> rightIdentityOnArbitrary ((^) @Int) 1
+-- prop> rightIdentityOnArbitrary ((^) :: Int -> Int -> Int) 1
 rightIdentityOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> b -> a) -> b -> Property
@@ -146,8 +146,8 @@ identityOnGen op e gen =
 
 -- |
 --
--- prop> identityOnValid ((*) @Double) 1
--- prop> identityOnValid ((+) @Double) 0
+-- prop> identityOnValid ((*) :: Double -> Double -> Double) 1
+-- prop> identityOnValid ((+) :: Double -> Double -> Double) 0
 identityOnValid
     :: (Show a, Eq a, GenValid a)
     => (a -> a -> a) -> a -> Property
@@ -155,8 +155,8 @@ identityOnValid op a = identityOnGen op a genValid
 
 -- |
 --
--- prop> identity ((*) @Int) 1
--- prop> identity ((+) @Int) 0
+-- prop> identity ((*) :: Int -> Int -> Int) 1
+-- prop> identity ((+) :: Int -> Int -> Int) 0
 identity
     :: (Show a, Eq a, GenUnchecked a)
     => (a -> a -> a) -> a -> Property
@@ -164,8 +164,8 @@ identity op e = identityOnGen op e genUnchecked
 
 -- |
 --
--- prop> identityOnArbitrary ((*) @Int) 1
--- prop> identityOnArbitrary ((+) @Int) 0
+-- prop> identityOnArbitrary ((*) :: Int -> Int -> Int) 1
+-- prop> identityOnArbitrary ((+) :: Int -> Int -> Int) 0
 identityOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> a -> a) -> a -> Property

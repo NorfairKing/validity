@@ -1,28 +1,11 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
--- | To use the 'Spec' functions in this module, you will need @TypeApplications@.
-module Test.Validity
+module Test.Validity.Property
     ( module Data.GenValidity
-      -- * Tests for Arbitrary instances involving Validity
-    , arbitrarySpec
-    , arbitraryGeneratesOnlyValid
       -- * Tests for GenValidity instances
-    , genValiditySpec
-    , genValidSpec
-    , genInvalidSpec
-    , genValidGeneratesValid
     , genGeneratesValid
-    , genInvalidGeneratesInvalid
     , genGeneratesInvalid
-      -- * Tests for RelativeValidity instances
-    , relativeValiditySpec
-    , relativeValidityImpliesValidA
-    , relativeValidityImpliesValidB
-      -- * Tests for GenRelativeValidity instances
-    , genRelativeValiditySpec
-    , genRelativeValidGeneratesValid
-    , genRelativeInvalidGeneratesInvalid
       -- * Standard tests involving functions
       -- ** Standard tests involving validity
     , producesValidsOnGen
@@ -198,54 +181,12 @@ module Test.Validity
     , commutativeOnValids
     , commutative
     , commutativeOnArbitrary
-      -- * Eq properties
-    , eqSpecOnValid
-    , eqSpecOnInvalid
-    , eqSpec
-    , eqSpecOnArbitrary
-    , eqSpecOnGen
-      -- * Ord properties
-    , ordSpecOnGen
-    , ordSpecOnValid
-    , ordSpecOnInvalid
-    , ordSpec
-    , ordSpecOnArbitrary
-      -- * Monoid properties
-    , monoidSpecOnValid
-    , monoidSpec
-    , monoidSpecOnArbitrary
-    , monoidSpecOnGen
-      -- * Functor properties
-    , functorSpecOnValid
-    , functorSpec
-    , functorSpecOnArbitrary
-    , functorSpecOnGens
-      -- * Applicative properties
-    , applicativeSpecOnValid
-    , applicativeSpec
-    , applicativeSpecOnArbitrary
-    , applicativeSpecOnGens
-      -- * Monad properties
-    , monadSpecOnValid
-    , monadSpec
-    , monadSpecOnArbitrary
-    , monadSpecOnGens
     ) where
 
 import Data.GenValidity
 
-import Test.Validity.Applicative
-import Test.Validity.Property
-import Test.Validity.Arbitrary
-import Test.Validity.Eq
 import Test.Validity.Functions
-import Test.Validity.Functor
-import Test.Validity.GenRelativeValidity
-import Test.Validity.GenValidity
-import Test.Validity.Monad
-import Test.Validity.Monoid
+import Test.Validity.GenValidity.Property
 import Test.Validity.Operations
-import Test.Validity.Ord
 import Test.Validity.Relations
-import Test.Validity.RelativeValidity
 import Test.Validity.Types
