@@ -1,0 +1,4 @@
+packages:
+- 'genvalidity'
+- 'validity'
+resolver: lts-3.22
