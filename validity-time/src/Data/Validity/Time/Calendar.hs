@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.Validity.Time.Calendar where
 

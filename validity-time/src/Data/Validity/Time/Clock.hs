@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Data.Validity.Time.Clock where
@@ -12,17 +12,17 @@ import Data.Validity.Time.Calendar ()
 instance Validity UniversalTime where
     isValid (ModJulianDate i) = isValid i
 
--- | Valid according to the validity of the result of 'diffTimeToPicoseconds'
+-- | Trivially valid
 instance Validity DiffTime where
-    isValid = isValid . diffTimeToPicoseconds
+    isValid = const True
 
 instance Validity UTCTime where
     isValid UTCTime {..} =
         and
             [ isValid utctDay
             , isValid utctDayTime
-            , diffTimeToPicoseconds utctDayTime >= 0
-            , diffTimeToPicoseconds utctDayTime < 86401 * 10 ^ (12 :: Integer)
+            , utctDayTime >= 0
+            , utctDayTime < 86401
             ]
 
 instance Validity NominalDiffTime where

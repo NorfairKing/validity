@@ -2,4 +2,8 @@ packages:
 - 'genvalidity'
 - 'genvalidity-property'
 - 'validity'
+- 'validity-bytestring'
+- 'validity-containers'
+- 'validity-text'
+- 'validity-time'
 resolver: lts-2.22

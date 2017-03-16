@@ -1,4 +1,5 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE CPP #-}
 
 module Data.Validity.Text where
 
@@ -14,7 +15,9 @@ import qualified Data.Text.Encoding as E
 import qualified Data.Text.Encoding.Error as E
 import Data.Text.Internal (Text(..))
 import qualified Data.Text.Unsafe as U
-
+#if !MIN_VERSION_base(4,8,0)
+import Data.Monoid (mconcat)
+#endif
 -- | A text is valid if the internal structure is consistent.
 instance Validity Text where
     isValid t@(Text arr off len) =

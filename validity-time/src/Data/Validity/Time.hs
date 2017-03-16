@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
-{-# OPTIONS_GHC -Wno-dodgy-exports #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
 
 module Data.Validity.Time
     ( module X

@@ -1,4 +1,10 @@
 packages:
 - 'genvalidity'
+- 'genvalidity-property'
 - 'validity'
+- 'validity-bytestring'
+- 'validity-containers'
+- 'validity-text'
+- 'validity-time'
+- 'validity-path'
 resolver: lts-3.22
