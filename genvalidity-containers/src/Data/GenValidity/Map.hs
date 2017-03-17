@@ -1,7 +1,11 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE CPP #-}
 
 module Data.GenValidity.Map where
-
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative (pure)
+import Data.Functor ((<$>))
+#endif
 import Data.GenValidity
 import Data.Validity.Map ()
 import Test.QuickCheck

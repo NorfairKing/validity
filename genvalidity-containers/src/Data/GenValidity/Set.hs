@@ -1,6 +1,12 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE CPP #-}
 
 module Data.GenValidity.Set where
+
+#if !MIN_VERSION_base(4,8,0)
+import Data.Functor ((<$>))
+#endif
+
 
 import Data.GenValidity
 import Data.Validity.Set ()
