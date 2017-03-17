@@ -1,7 +1,7 @@
 packages:
 - 'genvalidity'
-- 'genvalidity-containers'
 - 'genvalidity-bytestring'
+- 'genvalidity-containers'
 - 'genvalidity-hspec'
 - 'genvalidity-hspec-aeson'
 - 'genvalidity-hspec-cereal'

@@ -1,5 +1,6 @@
 packages:
 - 'genvalidity'
+- 'genvalidity-bytestring'
 - 'genvalidity-containers'
 - 'genvalidity-hspec'
 - 'genvalidity-hspec-aeson'

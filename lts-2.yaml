@@ -1,6 +1,9 @@
 packages:
 - 'genvalidity'
+- 'genvalidity-bytestring'
 - 'genvalidity-property'
+- 'genvalidity-text'
+- 'genvalidity-time'
 - 'validity'
 - 'validity-bytestring'
 - 'validity-containers'

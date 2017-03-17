@@ -1,4 +1,5 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE CPP #-}
 
 module Data.GenValidity.Text where
 
@@ -8,7 +9,10 @@ import Data.Validity.Text ()
 import Test.QuickCheck
 
 import Control.Monad
-
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative (pure)
+import Data.Functor ((<$>))
+#endif
 import qualified Data.Text as T
 import qualified Data.Text.Array as A
 import Data.Text.Internal (Text(..))

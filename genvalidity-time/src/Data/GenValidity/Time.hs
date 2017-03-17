@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-dodgy-exports #-}
+{-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
 
 module Data.GenValidity.Time
     ( module X

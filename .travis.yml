@@ -1,41 +1,54 @@
-sudo: false
 language: c
+sudo: false
 
 cache:
   directories:
-  - $HOME/.ghc
-  - $HOME/.cabal
   - $HOME/.stack
 
 matrix:
   include:
-  - env: ARGS="--stack-yaml lts-8.yaml"
-    compiler: ": #stack GHC-8.0.2"
+  - env: 
+      - RESOLVER_FLAG="--stack-yaml lts-8.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS=""
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: ARGS="--stack-yaml lts-7.yaml"
-    compiler: ": #stack GHC-8.0.1"
+  - env: 
+      - RESOLVER_FLAG="--stack-yaml lts-7.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS=""
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: ARGS="--stack-yaml lts-6.yaml"
-    compiler: ": #stack GHC-7.10.3"
+  - env: 
+      - RESOLVER_FLAG="--stack-yaml lts-6.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time genvalidity genvalidity-property"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: ARGS="--stack-yaml lts-3.yaml"
-    compiler: ": #stack GHC-7.10.2"
+  - env: 
+      - RESOLVER_FLAG="--stack-yaml lts-3.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time genvalidity genvalidity-property"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: ARGS="--stack-yaml lts-2.yaml"
-    compiler: ": #stack GHC-7.8.4"
+  - env: 
+      - RESOLVER_FLAG="--stack-yaml lts-2.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time genvalidity genvalidity-property"
     addons: {apt: {packages: [libgmp-dev]}}
 
   # Nightly builds are allowed to fail
-  - env: ARGS="--resolver nightly"
-    compiler: ": #stack nightly"
+  - env: 
+      - RESOLVER_FLAG="--resolver nightly"
+      - BUILD_PKGS=""
+      - TEST_PKGS=""
     addons: {apt: {packages: [libgmp-dev]}}
 
   allow_failures:
-  - env: ARGS="--resolver nightly"
+    - env:
+      - RESOLVER_FLAG="--resolver nightly"
+      - BUILD_PKGS=""
+      - TEST_PKGS=""
 
 before_install:
   - mkdir -p ~/.local/bin
@@ -44,12 +57,11 @@ before_install:
   - chmod a+x ~/.local/bin/stack
 
 install:
-- stack +RTS -N2 -RTS setup
-- stack +RTS -N2 -RTS build --only-snapshot
-- stack +RTS -N2 -RTS install hindent
-- stack +RTS -N2 -RTS install cabal-install
+- stack +RTS -N2 -RTS setup $RESOLVER_FLAG
+- stack +RTS -N2 -RTS build --only-snapshot $RESOLVER_FLAG
 
 script:
 - git --version
 - stack --version
-- stack --no-terminal $ARGS test --bench --no-run-benchmarks --haddock --no-haddock-deps
+- stack --no-terminal $RESOLVER_FLAG build --haddock $BUILD_PKGS
+- stack --no-terminal $RESOLVER_FLAG test $TEST_PKGS
