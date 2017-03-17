@@ -1,8 +1,11 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE CPP #-}
 
 module Data.GenValidity.Path where
-
+#if !MIN_VERSION_base(4,8,0)
+import Data.Functor ((<$>))
+#endif
 import Data.GenValidity
 import Data.Validity.Path ()
 

@@ -3,11 +3,15 @@ packages:
 - 'genvalidity-bytestring'
 - 'genvalidity-containers'
 - 'genvalidity-property'
+- 'genvalidity-path'
 - 'genvalidity-text'
 - 'genvalidity-time'
 - 'validity'
 - 'validity-bytestring'
 - 'validity-containers'
+- 'validity-path'
 - 'validity-text'
 - 'validity-time'
+extra-deps:
+- path-0.5.13
 resolver: lts-2.22
