@@ -4,6 +4,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 -- | Tests for GenValidity instances
+--
+-- You will need @TypeApplications@ to use these.
 module Test.Validity.GenValidity
     ( genValiditySpec
     , genValidSpec

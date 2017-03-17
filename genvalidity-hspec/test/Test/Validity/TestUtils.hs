@@ -1,6 +1,9 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE CPP #-}
 
+-- | Utilities to define your own validity-based 'Property's
+--
+-- You will need @TypeApplications@ to use these.
 module Test.Validity.TestUtils where
 
 import Test.Hspec

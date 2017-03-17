@@ -4,6 +4,8 @@
 {-# LANGUAGE TypeApplications #-}
 
 -- | Tests for Arbitrary instances involving Validity
+--
+-- You will need @TypeApplications@ to use these.
 module Test.Validity.Arbitrary
     ( arbitrarySpec
     , arbitraryGeneratesOnlyValid

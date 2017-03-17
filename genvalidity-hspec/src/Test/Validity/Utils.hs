@@ -4,6 +4,9 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Utilities for defining your own validity 'Spec's
+--
+-- You will need @TypeApplications@ to use these.
 module Test.Validity.Utils
     ( (<==>)
     , (===>)
