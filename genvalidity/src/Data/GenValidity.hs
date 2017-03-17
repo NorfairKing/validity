@@ -55,7 +55,7 @@ module Data.GenValidity
 import Data.Validity
 
 import Data.Fixed (Fixed(..), HasResolution)
-import Data.Word (Word)
+import Data.Word (Word, Word8, Word16)
 import GHC.Generics
 import GHC.Real (Ratio(..))
 
@@ -253,6 +253,16 @@ instance GenUnchecked Word where
     genUnchecked = arbitrary
 
 instance GenValid Word
+
+instance GenUnchecked Word8 where
+    genUnchecked = arbitrary
+
+instance GenValid Word8
+
+instance GenUnchecked Word16 where
+    genUnchecked = arbitrary
+
+instance GenValid Word16
 
 instance GenUnchecked Float where
     genUnchecked = arbitrary

@@ -1,5 +1,5 @@
 name: genvalidity-path
-version: 0.1.0.0
+version: 0.1.0.1
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -21,7 +21,7 @@ library
     exposed-modules:
         Data.GenValidity.Path
     build-depends:
-        base <5,
+        base >= 4.7 && <5,
         validity-path >=0.1 && <0.2,
         genvalidity >=0.3 && <0.4,
         path >=0.5 && <0.6

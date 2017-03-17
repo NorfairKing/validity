@@ -1,10 +1,12 @@
 packages:
 - 'genvalidity'
 - 'genvalidity-containers'
+- 'genvalidity-bytestring'
 - 'genvalidity-hspec'
 - 'genvalidity-hspec-aeson'
 - 'genvalidity-hspec-cereal'
 - 'genvalidity-path'
+- 'genvalidity-property'
 - 'genvalidity-text'
 - 'genvalidity-time'
 - 'validity'
@@ -13,8 +15,4 @@ packages:
 - 'validity-path'
 - 'validity-text'
 - 'validity-time'
-extra-deps:
-- aeson-1.1.0.0
-flags: {}
-extra-package-dbs: []
-resolver: lts-7.19
+resolver: lts-8.5

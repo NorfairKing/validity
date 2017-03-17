@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.Validity.Set where
 
@@ -11,4 +11,4 @@ import qualified Data.Set as S
 -- is valid.
 instance (Ord v, Validity v) =>
          Validity (Set v) where
-    isValid s = S.valid s && all isValid s
+    isValid s = S.valid s && all isValid (S.toList s)

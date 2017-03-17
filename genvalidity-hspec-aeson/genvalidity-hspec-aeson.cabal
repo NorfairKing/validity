@@ -1,5 +1,5 @@
 name: genvalidity-hspec-aeson
-version: 0.0.1.0
+version: 0.0.1.1
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -22,7 +22,7 @@ library
         Test.Validity.Aeson
     build-depends:
         base >=4.9 && <=5,
-        genvalidity-hspec >=0.3 && <0.4,
+        genvalidity-hspec >=0.3 && <0.5,
         genvalidity >=0.3 && <0.4,
         hspec,
         aeson >=0.11 && <1.2,
@@ -47,7 +47,7 @@ test-suite genvalidity-hspec-aeson-test
     type: exitcode-stdio-1.0
     main-is: Spec.hs
     build-depends:
-        base >=4.9 && <=5,
+        base -any,
         genvalidity >=0.3 && <0.4,
         genvalidity-hspec-aeson -any,
         hspec,

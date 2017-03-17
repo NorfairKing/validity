@@ -1,0 +1,18 @@
+packages:
+- 'genvalidity'
+- 'genvalidity-bytestring'
+- 'genvalidity-containers'
+- 'genvalidity-hspec'
+- 'genvalidity-hspec-aeson'
+- 'genvalidity-hspec-cereal'
+- 'genvalidity-path'
+- 'genvalidity-property'
+- 'genvalidity-text'
+- 'genvalidity-time'
+- 'validity'
+- 'validity-bytestring'
+- 'validity-containers'
+- 'validity-path'
+- 'validity-text'
+- 'validity-time'
+resolver: lts-7.20

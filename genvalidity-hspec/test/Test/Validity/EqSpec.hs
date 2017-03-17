@@ -1,5 +1,8 @@
 {-# LANGUAGE TypeApplications #-}
 
+-- | Standard 'Spec's for 'Eq' instances.
+--
+-- You will need @TypeApplications@ to use these.
 module Test.Validity.EqSpec where
 
 import Test.Hspec

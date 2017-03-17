@@ -43,7 +43,7 @@ module Data.Validity
 
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.Maybe (Maybe, fromMaybe)
-import Data.Word (Word)
+import Data.Word (Word, Word8, Word16)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural (Natural, isValidNatural)
@@ -52,8 +52,29 @@ import GHC.Real (Ratio(..))
 
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
+--
+-- 'isValid' should be an underapproximation of actual validity.
+--
+-- This means that if 'isValid' is not a perfect representation of actual
+-- validity, for safety reasons, it should never return 'True' for invalid
+-- values, but it may return 'False' for valid values.
+--
+-- For example:
+--
+-- > isValid = const False
+--
+-- is a valid implementation for any type, because it never returns 'True'
+-- for invalid values.
+--
+-- > isValid (Even i) = i == 2
+--
+-- is a valid implementation for @newtype Even = Even Int@, but
+--
+-- > isValid (Even i) = even i || i == 1
+--
+-- is not because it returns 'True' for an invalid value: '1'.
 class Validity a where
-    isValid :: a -> Bool -- ^ Check whether a given value is a valid value.
+    isValid :: a -> Bool
     default isValid :: (Generic a, GValidity (Rep a)) =>
         a -> Bool
     isValid = gIsValid . from
@@ -121,6 +142,14 @@ instance Validity Int where
 instance Validity Word where
     isValid = const True
 
+-- | Trivially valid
+instance Validity Word8 where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Word16 where
+    isValid = const True
+
 -- | NOT trivially valid:
 --
 -- * NaN is not valid.
@@ -145,7 +174,6 @@ instance Validity Double where
 -- Even though this is not technically sound, it is good enough for now.
 instance Validity Integer where
     isValid = const True
-
 #if MIN_VERSION_base(4,8,0)
 -- | Valid according to 'isValidNatural'
 --
@@ -153,7 +181,6 @@ instance Validity Integer where
 instance Validity Natural where
     isValid = isValidNatural
 #endif
-
 -- | Valid if the contained 'Integer's are valid and the denominator is
 -- strictly positive.
 instance Validity Rational where

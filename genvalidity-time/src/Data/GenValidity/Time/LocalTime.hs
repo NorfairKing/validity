@@ -1,7 +1,11 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE CPP #-}
 
 module Data.GenValidity.Time.LocalTime where
-
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative ((<*>))
+import Data.Functor ((<$>))
+#endif
 import Data.GenValidity
 import Data.GenValidity.Time.Calendar ()
 import Data.Time.LocalTime

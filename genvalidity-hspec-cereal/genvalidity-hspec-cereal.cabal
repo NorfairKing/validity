@@ -1,5 +1,5 @@
 name: genvalidity-hspec-cereal
-version: 0.0.0.0
+version: 0.0.0.1
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -22,7 +22,7 @@ library
         Test.Validity.Cereal
     build-depends:
         base >=4.9 && <=5,
-        genvalidity-hspec >=0.3 && <0.4,
+        genvalidity-hspec >=0.3 && <0.5,
         genvalidity >=0.3 && <0.4,
         hspec,
         cereal >=0.5 && <0.6,
@@ -46,7 +46,7 @@ test-suite genvalidity-hspec-cereal-test
     type: exitcode-stdio-1.0
     main-is: Spec.hs
     build-depends:
-        base >=4.9 && <=5,
+        base -any,
         genvalidity >=0.3 && <0.4,
         genvalidity-hspec-cereal -any,
         hspec

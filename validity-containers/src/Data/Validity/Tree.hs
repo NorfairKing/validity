@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.Validity.Tree where
 
@@ -9,4 +9,4 @@ import Data.Tree
 -- | A 'Tree' of things is valid if all the things in the 'Tree' are valid.
 instance Validity a =>
          Validity (Tree a) where
-    isValid = all isValid
+    isValid (Node rl sf) = isValid rl && isValid sf

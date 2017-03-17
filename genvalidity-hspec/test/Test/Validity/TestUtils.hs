@@ -1,5 +1,9 @@
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE CPP #-}
 
+-- | Utilities to define your own validity-based 'Property's
+--
+-- You will need @TypeApplications@ to use these.
 module Test.Validity.TestUtils where
 
 import Test.Hspec
@@ -26,12 +30,21 @@ failsBecause s st = mapSpecTree go st
               \ps runner callback -> do
                   let conf = defaultConfig {configFormatter = Just silent}
                   r <- hspecWithResult conf $ fromSpecList [sp]
-                  pure $
-                      if summaryExamples r > 0 && summaryFailures r > 0
-                          then Success
-                          else Fail Nothing "Should have failed but didn't."
+                  let succesful = summaryExamples r > 0 && summaryFailures r > 0
+                  pure $ produceResult succesful
         }
-
+#if MIN_VERSION_hspec_core(2,4,0)
+produceResult succesful =
+    Right $
+    if succesful
+        then Success
+        else Failure Nothing $ Reason "Should have failed but didn't."
+#else
+produceResult succesful =
+    if succesful
+        then Success
+        else Fail Nothing "Should have failed but didn't."
+#endif
 shouldFail :: Property -> Property
 shouldFail =
     mapResult $ \res ->
