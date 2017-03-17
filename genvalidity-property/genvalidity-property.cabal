@@ -39,7 +39,7 @@ library
         Test.Validity.Types
         Test.Validity.Property.Utils
     build-depends:
-        base <5,
+        base >=4.7 && <5,
         validity >=0.3 && <0.4,
         genvalidity >=0.3 && <0.4,
         QuickCheck -any,

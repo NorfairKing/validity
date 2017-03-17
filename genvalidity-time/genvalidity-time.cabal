@@ -25,7 +25,7 @@ library
         Data.GenValidity.Time.Format
         Data.GenValidity.Time.LocalTime
     build-depends:
-        base <5,
+        base >=4.7 && <5,
         validity-time >=0.0 && <0.1,
         genvalidity >=0.3.0.1 && <0.4,
         time

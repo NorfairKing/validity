@@ -60,7 +60,7 @@ test-suite genvalidity-hspec-test
     type: exitcode-stdio-1.0
     main-is: Spec.hs
     build-depends:
-        base >=4.9 && <=5,
+        base -any,
         genvalidity >=0.3 && <0.4,
         genvalidity-hspec -any,
         hspec,

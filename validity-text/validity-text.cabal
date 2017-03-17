@@ -21,7 +21,7 @@ library
     exposed-modules:
         Data.Validity.Text
     build-depends:
-        base <5,
+        base >= 4.7 && <5,
         validity -any,
         text -any,
         bytestring -any

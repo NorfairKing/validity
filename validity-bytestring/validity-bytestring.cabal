@@ -21,7 +21,7 @@ library
     exposed-modules:
         Data.Validity.ByteString
     build-depends:
-        base <5,
+        base >= 4.7 && <5,
         validity -any,
         bytestring -any
     default-language: Haskell2010
