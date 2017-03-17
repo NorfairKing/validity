@@ -1,4 +1,5 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE CPP #-}
 
 module Data.GenValidity.ByteString where
 
@@ -8,6 +9,9 @@ import Data.Validity.ByteString ()
 import Test.QuickCheck
 
 import Control.Monad
+#if !MIN_VERSION_base(4,8,0)
+import Data.Functor ((<$>))
+#endif
 
 import qualified Data.ByteString as SB
 import Data.ByteString (ByteString)
