@@ -4,8 +4,8 @@ module Data.Validity.Sequence where
 
 import Data.Validity
 
-import Data.Sequence (Seq)
 import Data.Foldable (toList)
+import Data.Sequence (Seq)
 
 -- | A 'Seq'uence of things is valid if all the elements are valid.
 instance Validity v =>

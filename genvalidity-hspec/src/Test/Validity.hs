@@ -235,7 +235,6 @@ module Test.Validity
 import Data.GenValidity
 
 import Test.Validity.Applicative
-import Test.Validity.Property
 import Test.Validity.Arbitrary
 import Test.Validity.Eq
 import Test.Validity.Functions
@@ -246,6 +245,7 @@ import Test.Validity.Monad
 import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord
+import Test.Validity.Property
 import Test.Validity.Relations
 import Test.Validity.RelativeValidity
 import Test.Validity.Types

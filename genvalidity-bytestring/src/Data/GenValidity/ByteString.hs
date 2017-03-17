@@ -12,7 +12,6 @@ import Control.Monad
 #if !MIN_VERSION_base(4,8,0)
 import Data.Functor ((<$>))
 #endif
-
 import qualified Data.ByteString as SB
 import Data.ByteString (ByteString)
 
