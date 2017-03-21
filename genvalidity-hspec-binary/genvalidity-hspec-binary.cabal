@@ -1,40 +1,57 @@
 name:                genvalidity-hspec-binary
-version:             0.1.0.0
--- synopsis:
--- description:
-homepage:            https://github.com/githubuser/genvalidity-hspec-binary#readme
-license:             BSD3
+version:             0.0.0.0
+-- synopsis:         Genvalidity specs for "Data.Binary"
+-- description:      This code will create genvalidity specs for the binary serialization library "Data.Binary", as found on https://hackage.haskell.org/package/binary.
+homepage:            https://github.com/NorfairKing/validity
+license:             MIT
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2017 Author name here
-category:            Web
+author:              Nick Van den Broeck
+maintainer:          syd.kerckhove@gmail.com
+copyright:           2017 Tom Sydney Kerckhove
+category:            Testing
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
-  hs-source-dirs:      src
-  exposed-modules:     Lib
-  build-depends:       base >= 4.7 && < 5
-  default-language:    Haskell2010
+    exposed-modules:
+        Test.Validity.Binary
+    build-depends:
+        base >=4.9 && <=5,
+        genvalidity-hspec >=0.3 && <0.5,
+        genvalidity >=0.3 && <0.4,
+        hspec,
+        binary >=0.5 && <0.9,
+        QuickCheck,
+        deepseq >=1.4 && <1.5
+    default-language: Haskell2010
+    hs-source-dirs: src/
+    ghc-options: -Wall
 
-executable genvalidity-hspec-binary-exe
-  hs-source-dirs:      app
-  main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
-                     , genvalidity-hspec-binary
-  default-language:    Haskell2010
+test-suite genvalidity-hspec-binary-doctests
+    type: exitcode-stdio-1.0
+    main-is: DocTest.hs
+    build-depends:
+        base -any,
+        doctest >=0.11 && <0.12,
+        genvalidity-hspec-binary -any
+    default-language: Haskell2010
+    hs-source-dirs: test
+    ghc-options: -threaded
 
 test-suite genvalidity-hspec-binary-test
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             Spec.hs
-  build-depends:       base
-                     , genvalidity-hspec-binary
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
-  default-language:    Haskell2010
+    type: exitcode-stdio-1.0
+    main-is: Spec.hs
+    build-depends:
+        base -any,
+        genvalidity >=0.3 && <0.4,
+        genvalidity-hspec-binary -any,
+        hspec
+    default-language: Haskell2010
+    hs-source-dirs: test/
+    other-modules:
+        Test.Validity.BinarySpec
+    ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
 
 source-repository head
   type:     git

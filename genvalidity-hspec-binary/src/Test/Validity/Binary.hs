@@ -116,4 +116,6 @@ encodeAndDecodeAreInversesOnGen
     => Gen a -> Property
 encodeAndDecodeAreInversesOnGen gen =
     forAll gen $ \(a :: a) ->
-        Binary.decode (Binary.encode a) `shouldBe` Right a
+        case Binary.decodeOrFail (Binary.encode a) of
+            Right (_, _, b) -> a `shouldBe` b
+            Left (_, _, _) -> expectationFailure "decode of encode is not identity"
