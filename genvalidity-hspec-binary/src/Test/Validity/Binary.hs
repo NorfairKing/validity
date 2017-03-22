@@ -30,9 +30,8 @@ import Test.Validity.Utils
 -- Example usage:
 --
 -- > BinarySpecOnValid @Double
-binarySpecOnValid
-    :: forall a.
-       (Show a, Eq a, Typeable a, GenValid a, Binary a)
+binarySpecOnValid ::
+       forall a. (Show a, Eq a, Typeable a, GenValid a, Binary a)
     => Spec
 binarySpecOnValid = binarySpecOnGen (genValid @a) "valid"
 
@@ -41,9 +40,8 @@ binarySpecOnValid = binarySpecOnGen (genValid @a) "valid"
 -- Example usage:
 --
 -- > binarySpec @Int
-binarySpec
-    :: forall a.
-       (Show a, Eq a, Typeable a, GenUnchecked a, Binary a)
+binarySpec ::
+       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, Binary a)
     => Spec
 binarySpec = binarySpecOnGen (genUnchecked @a) "unchecked"
 
@@ -52,9 +50,8 @@ binarySpec = binarySpecOnGen (genUnchecked @a) "unchecked"
 -- Example usage:
 --
 -- > binarySpecOnArbitrary @Int
-binarySpecOnArbitrary
-    :: forall a.
-       (Show a, Eq a, Typeable a, Arbitrary a, Binary a)
+binarySpecOnArbitrary ::
+       forall a. (Show a, Eq a, Typeable a, Arbitrary a, Binary a)
     => Spec
 binarySpecOnArbitrary = binarySpecOnGen (arbitrary @a) "arbitrary"
 
@@ -63,15 +60,17 @@ binarySpecOnArbitrary = binarySpecOnGen (arbitrary @a) "arbitrary"
 -- Example usage:
 --
 -- > binarySpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
-binarySpecOnGen
-    :: forall a.
-       (Show a, Eq a, Typeable a, Binary a)
-    => Gen a -> String -> Spec
+binarySpecOnGen ::
+       forall a. (Show a, Eq a, Typeable a, Binary a)
+    => Gen a
+    -> String
+    -> Spec
 binarySpecOnGen gen genname =
     parallel $ do
         let name = nameOf @a
         describe ("Binary " ++ name ++ " (" ++ genname ++ ")") $ do
-            describe ("encode :: " ++ name ++ " -> Data.ByteString.ByteString") $
+            describe
+                ("encode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
                 it
                     (unwords
                          [ "never fails to encode a"
@@ -79,7 +78,8 @@ binarySpecOnGen gen genname =
                          , name ++ "\""
                          ]) $
                 neverFailsToEncodeOnGen gen
-            describe ("decode :: " ++ name ++ " -> Data.ByteString.ByteString") $
+            describe
+                ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
                 it
                     (unwords
                          [ "ensures that encode and decode are inverses for"
@@ -96,9 +96,7 @@ binarySpecOnGen gen genname =
 -- prop> neverFailsToEncodeOnGen @Int arbitrary
 -- prop> neverFailsToEncodeOnGen @Int genUnchecked
 -- prop> neverFailsToEncodeOnGen @Int genValid
-neverFailsToEncodeOnGen
-    :: (Show a, Binary a)
-    => Gen a -> Property
+neverFailsToEncodeOnGen :: (Show a, Binary a) => Gen a -> Property
 neverFailsToEncodeOnGen gen =
     forAll gen $ \(a :: a) ->
         evaluate (deepseq (Binary.encode a) ()) `shouldReturn` ()
@@ -111,11 +109,11 @@ neverFailsToEncodeOnGen gen =
 -- prop> encodeAndDecodeAreInversesOnGen @Int arbitrary
 -- prop> encodeAndDecodeAreInversesOnGen @Int genUnchecked
 -- prop> encodeAndDecodeAreInversesOnGen @Int genValid
-encodeAndDecodeAreInversesOnGen
-    :: (Show a, Eq a, Binary a)
-    => Gen a -> Property
+encodeAndDecodeAreInversesOnGen :: (Show a, Eq a, Binary a) => Gen a -> Property
 encodeAndDecodeAreInversesOnGen gen =
     forAll gen $ \(a :: a) ->
         case Binary.decodeOrFail (Binary.encode a) of
             Right (_, _, b) -> a `shouldBe` b
-            Left (_, _, _) -> expectationFailure "decode of encode is not identity"
+            Left (_, _, s) ->
+                expectationFailure $
+                unwords ["decode of encode is not identity:", s]
