@@ -5,6 +5,7 @@ packages:
 - 'genvalidity-hspec'
 - 'genvalidity-hspec-aeson'
 - 'genvalidity-hspec-cereal'
+- 'genvalidity-hspec-binary'
 - 'genvalidity-path'
 - 'genvalidity-property'
 - 'genvalidity-text'
