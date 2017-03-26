@@ -20,6 +20,7 @@ import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
 
+import Test.Validity.Property.Utils
 import Test.Validity.Utils
 
 -- | A @Spec@ that specifies that @isValidFor@ implies @isValid@
@@ -30,8 +31,8 @@ import Test.Validity.Utils
 -- Example usage:
 --
 -- > relativeValiditySpec @MyDataFor @MyOtherData
-relativeValiditySpec
-    :: forall a b.
+relativeValiditySpec ::
+       forall a b.
        ( Typeable a
        , Typeable b
        , Show a
@@ -56,8 +57,8 @@ relativeValiditySpec =
                     relativeValidityImpliesValidB @a @b
 
 -- | @isValidFor a b@ implies @isValid a@ for all @b@
-relativeValidityImpliesValidA
-    :: forall a b.
+relativeValidityImpliesValidA ::
+       forall a b.
        ( Show a
        , Show b
        , Validity a
@@ -71,8 +72,8 @@ relativeValidityImpliesValidA =
         forAll genUnchecked $ \(b :: b) -> (a `isValidFor` b) ===> isValid a
 
 -- | @isValidFor a b@ implies @isValid b@ for all @a@
-relativeValidityImpliesValidB
-    :: forall a b.
+relativeValidityImpliesValidB ::
+       forall a b.
        ( Show a
        , Show b
        , Validity b

@@ -9,9 +9,7 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.Utils
-    ( (<==>)
-    , (===>)
-    , nameOf
+    ( nameOf
     , genDescr
     , binRelStr
     , shouldFail
@@ -60,6 +58,10 @@ instance Show (Anon a) where
 instance Functor Anon where
     fmap f (Anon a) = Anon (f a)
 
+-- | Asserts that a given 'Spec' tree fails _somewhere_.
+--
+-- It also shows the given string when reporting that the tree unexpectedly
+-- succeeded.
 failsBecause :: String -> SpecWith () -> SpecWith ()
 failsBecause s st = mapSpecTree go st
   where
@@ -96,4 +98,3 @@ shouldFail =
         { reason = unwords ["Should have failed:", reason res]
         , expect = not $ expect res
         }
-
