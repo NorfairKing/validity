@@ -21,10 +21,6 @@ import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
 
-
-
-
-
 -- | Standard test spec for properties of Hashable instances for valid values
 --
 -- Example usage:
@@ -102,9 +98,4 @@ hashableSpecOnGen gen genname =
                             when (a1 == a2)
                             let hash = hashWithInt int
                             in hash a1 `shouldBe` hash a2
-
-
-
-
-
 
