@@ -15,6 +15,9 @@ module Test.Validity.Hashable
     ) where
 
 import Data.Data
+import Data.Hashable
+import Control.Monad
+import Test.Validity.Utils
 
 import Data.GenValidity
 
@@ -81,21 +84,20 @@ hashableSpecOnGen gen genname =
                             ["hashWithSalt :: Int ->"
                             , name
                             , "-> Int"])
-            -- This is literally just the string
-            -- "hashWithSalt :: Int -> a -> Int" for the specific a
+            -- == "hashWithSalt :: Int -> a -> Int" for the specific a
             gen2 = (,) <$> gen <*> gen
-            gen3 = (,,) <$> gen <*> gen <*> gen
         describe ("Hashable " ++ name) $ do
             describe hashablestr $ do
                 it
                     (unwords
-                         [ "is equivalent to (\\a b -> not $ a == b) for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
+                         [ "satisfies (a == b) => (hashWithSalt n a) =="
+                         ,"(hashWithSalt n b), for every n and for"
+                         , genname
+                         , name
                          ]) $
-                    forall gen $ \(a1, a2) ->
-                        forall arbitrary $ \int ->
-                            when (a1 == a2)
-                            let hash = hashWithInt int
-                            in hash a1 `shouldBe` hash a2
+                    forAll gen2 $ \(a1, a2) ->
+                        forAll arbitrary $ \int ->
+                            when (a1 == a2) $
+                                let hash = hashWithSalt int
+                                in hash a1 `shouldBe` hash a2
 
