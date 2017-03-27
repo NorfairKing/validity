@@ -23,7 +23,6 @@ import Data.Data
 import Test.Hspec
 
 import Data.GenValidity
--- import Test.Validity
 
 import Test.Hspec.Core.Formatters
 import Test.Hspec.Core.Runner

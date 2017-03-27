@@ -1,7 +1,7 @@
 name:                genvalidity-hspec-hashable
 version:             0.0.0.0
--- synopsis:         Standard spec's for Hashable instances
--- description:      Standard spec's for Hashable instances
+synopsis:            Standard spec's for Hashable instances
+description:         Standard spec's for Hashable instances
 homepage:            https://github.com/NorfairKing/validity
 license:             MIT
 license-file:        LICENSE

@@ -1,7 +1,7 @@
 name:                genvalidity-hspec-binary
 version:             0.0.0.0
--- synopsis:         Genvalidity specs for "Data.Binary"
--- description:      This code will create genvalidity specs for the binary serialization library "Data.Binary", as found on https://hackage.haskell.org/package/binary.
+synopsis:         Genvalidity specs for "Data.Binary"
+description:      This code will create genvalidity specs for the binary serialization library "Data.Binary", as found on https://hackage.haskell.org/package/binary.
 homepage:            https://github.com/NorfairKing/validity
 license:             MIT
 license-file:        LICENSE

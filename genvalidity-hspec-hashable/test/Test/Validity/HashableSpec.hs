@@ -41,14 +41,10 @@ instance Hashable HashTrue where
 instance Validity HashTrue where
     isValid _ = True
 
+instance GenValid HashTrue
+
 instance GenUnchecked HashTrue where
-    genUnchecked = HashTrue <$> arbitrary -- Since Int is an Arbitrary instance
-
-instance GenValid HashTrue where
-    genValid = HashTrue <$> arbitrary
-
--- instance Typeable HashTrue where
---     typeRep# (HashTrue int) = typeRep# int
+    genUnchecked = HashTrue <$> arbitrary
 
 newtype HashFalse = HashFalse Int
 
@@ -68,17 +64,12 @@ instance Hashable HashFalse where
                                 where int = 1 + (a `mod` hM)
                                       expo = 1 + (n `mod` hM)
 
-instance GenValid HashFalse where
-    genValid = HashFalse <$> arbitrary
-
 instance Validity HashFalse where
     isValid _ = True
 
+instance GenValid HashFalse
+
 instance GenUnchecked HashFalse where
-    genUnchecked = HashFalse <$> arbitrary -- Since Int is an Arbitrary instance
-
--- instance Typeable HashFalse where
---     typeRep# (HashFalse int) = typeRep# int
-
+    genUnchecked = HashFalse <$> arbitrary
 
 

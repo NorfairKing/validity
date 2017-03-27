@@ -77,15 +77,21 @@ hashableSpecOnGen
     :: forall a.
        (Show a, Eq a, Typeable a, Hashable a)
     => Gen a -> String -> Spec
-hashableSpecOnGen gen genname =
-    parallel $ do
+hashableSpecOnGen gen genname = checkGen gen2 genname
+                                    where gen2 = (,) <$> gen <*> gen
+
+checkGen
+    :: forall a.
+       (Show a, Eq a, Typeable a, Hashable a)
+    => Gen (a, a) -> String -> Spec
+-- The given generator should be documented to generate equal values
+-- (by ==) most of the time.
+checkGen gen genname = parallel $ do
         let name = nameOf @a
             hashablestr = (unwords
                             ["hashWithSalt :: Int ->"
                             , name
                             , "-> Int"])
-            -- == "hashWithSalt :: Int -> a -> Int" for the specific a
-            gen2 = (,) <$> gen <*> gen
         describe ("Hashable " ++ name) $ do
             describe hashablestr $ do
                 it
@@ -95,9 +101,12 @@ hashableSpecOnGen gen genname =
                          , genname
                          , name
                          ]) $
-                    forAll gen2 $ \(a1, a2) ->
+                    forAll gen $ \(a1, a2) ->
                         forAll arbitrary $ \int ->
                             when (a1 == a2) $
                                 let hash = hashWithSalt int
                                 in hash a1 `shouldBe` hash a2
+
+
+
 
