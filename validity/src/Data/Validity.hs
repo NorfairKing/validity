@@ -53,6 +53,8 @@ import GHC.Real (Ratio(..))
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
 --
+-- === Semantics for 'isValid'
+--
 -- 'isValid' should be an underapproximation of actual validity.
 --
 -- This means that if 'isValid' is not a perfect representation of actual
@@ -73,31 +75,46 @@ import GHC.Real (Ratio(..))
 -- > isValid (Even i) = even i || i == 1
 --
 -- is not because it returns 'True' for an invalid value: '1'.
+--
+-- === Automatic instances with 'Generic'
+--
+-- An instance of this class can be made automatically if the type in question
+-- has a 'Generic' instance. This instance will try to use 'isValid' to
+-- on all structural sub-parts of the value that is being checked for validity.
+--
+-- Example:
+--
+-- > {-# LANGUAGE DeriveGeneric #-}
+-- >
+-- > data MyType = MyType Double String
+-- >     deriving (Show, Eq, Generic)
+-- >
+-- > instance Validity MyType
+--
+-- generates something like:
+--
+-- > instance Validity MyType where
+-- >     isValid (MyType d s) = isValid d && isValid s
 class Validity a where
     isValid :: a -> Bool
     default isValid :: (Generic a, GValidity (Rep a)) =>
         a -> Bool
     isValid = gIsValid . from
 
-isInvalid
-    :: Validity a
-    => a -> Bool
+isInvalid :: Validity a => a -> Bool
 isInvalid = not . isValid
 
 -- | Any tuple of things is valid if both of its elements are valid
-instance (Validity a, Validity b) =>
-         Validity (a, b) where
+instance (Validity a, Validity b) => Validity (a, b) where
     isValid (a, b) = isValid a && isValid b
 
 -- | Any Either of things is valid if the contents are valid in either of the cases.
-instance (Validity a, Validity b) =>
-         Validity (Either a b) where
+instance (Validity a, Validity b) => Validity (Either a b) where
     isValid (Left a) = isValid a
     isValid (Right b) = isValid b
 
 -- | Any tuple of things is valid if all three of its elements are valid
-instance (Validity a, Validity b, Validity c) =>
-         Validity (a, b, c) where
+instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
     isValid (a, b, c) = isValid a && isValid b && isValid c
 
 -- | A list of things is valid if all of the things are valid.
@@ -105,16 +122,14 @@ instance (Validity a, Validity b, Validity c) =>
 -- This means that the empty list is considered valid.
 -- If the empty list should not be considered valid as part of your custom data
 -- type, make sure to write a custom @Validity instance@
-instance Validity a =>
-         Validity [a] where
+instance Validity a => Validity [a] where
     isValid = all isValid
 
 -- | A Maybe thing is valid if the thing inside is valid or it's nothing
 -- It makes sense to assume that 'Nothing' is valid.
 -- If Nothing wasn't valid, you wouldn't have used a Maybe
 -- in the datastructure.
-instance Validity a =>
-         Validity (Maybe a) where
+instance Validity a => Validity (Maybe a) where
     isValid Nothing = True
     isValid (Just a) = isValid a
 
@@ -187,14 +202,11 @@ instance Validity Rational where
     isValid (d :% n) = and [isValid n, isValid d, d > 0]
 
 -- | Valid according to the contained 'Integer'.
-instance HasResolution a =>
-         Validity (Fixed a) where
+instance HasResolution a => Validity (Fixed a) where
     isValid (MkFixed i) = isValid i
 
 -- | Construct a valid element from an unchecked element
-constructValid
-    :: Validity a
-    => a -> Maybe a
+constructValid :: Validity a => a -> Maybe a
 constructValid p =
     if isValid p
         then Just p
@@ -202,9 +214,7 @@ constructValid p =
 
 -- | Construct a valid element from an unchecked element, throwing 'error'
 -- on invalid elements.
-constructValidUnsafe
-    :: (Show a, Validity a)
-    => a -> a
+constructValidUnsafe :: (Show a, Validity a) => a -> a
 constructValidUnsafe p =
     fromMaybe (error $ show p ++ " is not valid") $ constructValid p
 
@@ -214,19 +224,15 @@ class GValidity f where
 instance GValidity U1 where
     gIsValid U1 = True
 
-instance (GValidity a, GValidity b) =>
-         GValidity (a :*: b) where
+instance (GValidity a, GValidity b) => GValidity (a :*: b) where
     gIsValid (a :*: b) = gIsValid a && gIsValid b
 
-instance (GValidity a, GValidity b) =>
-         GValidity (a :+: b) where
+instance (GValidity a, GValidity b) => GValidity (a :+: b) where
     gIsValid (L1 x) = gIsValid x
     gIsValid (R1 x) = gIsValid x
 
-instance (GValidity a) =>
-         GValidity (M1 i c a) where
+instance (GValidity a) => GValidity (M1 i c a) where
     gIsValid (M1 x) = gIsValid x
 
-instance (Validity a) =>
-         GValidity (K1 i a) where
+instance (Validity a) => GValidity (K1 i a) where
     gIsValid (K1 x) = isValid x
