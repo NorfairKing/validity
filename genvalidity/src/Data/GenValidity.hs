@@ -65,6 +65,25 @@ import Control.Applicative ((<$>), pure)
 import Control.Monad (forM)
 
 -- | A class of types for which truly arbitrary values can be generated.
+--
+-- === Automatic instances with 'Generic'
+-- An instance of this class can be made automatically if the type in question
+-- has a 'Generic' instance. This instance will try to use 'genUnchecked' to
+-- generate all structural sub-parts of the value that is being generated.
+--
+-- Example:
+--
+-- > {-# LANGUAGE DeriveGeneric #-}
+-- >
+-- > data MyType = MyType Double String
+-- >     deriving (Show, Eq, Generic)
+-- >
+-- > instance GenUnchecked MyType
+--
+-- generates something like:
+--
+-- > instance GenUnchecked MyType where
+-- >     genUnchecked = MyType <$> genUnchecked <*> genUnchecked
 class GenUnchecked a where
     genUnchecked :: Gen a
     default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
@@ -104,8 +123,7 @@ class (Validity a, GenUnchecked a) =>
     -- invalid data, otherwise your testing may not cover all cases.
     genInvalid = genUnchecked `suchThat` (not . isValid)
 
-instance (GenUnchecked a, GenUnchecked b) =>
-         GenUnchecked (a, b) where
+instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (a, b) where
     genUnchecked =
         sized $ \n -> do
             (r, s) <- genSplit n
@@ -113,8 +131,7 @@ instance (GenUnchecked a, GenUnchecked b) =>
             b <- resize s genUnchecked
             return (a, b)
 
-instance (GenValid a, GenValid b) =>
-         GenValid (a, b) where
+instance (GenValid a, GenValid b) => GenValid (a, b) where
     genValid =
         sized $ \n -> do
             (r, s) <- genSplit n
@@ -122,8 +139,7 @@ instance (GenValid a, GenValid b) =>
             b <- resize s genValid
             return (a, b)
 
-instance (GenInvalid a, GenInvalid b) =>
-         GenInvalid (a, b) where
+instance (GenInvalid a, GenInvalid b) => GenInvalid (a, b) where
     genInvalid =
         sized $ \n -> do
             (r, s) <- genSplit n
@@ -136,17 +152,14 @@ instance (GenInvalid a, GenInvalid b) =>
                      return (a, b)
                 ]
 
-instance (GenUnchecked a, GenUnchecked b) =>
-         GenUnchecked (Either a b) where
+instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (Either a b) where
     genUnchecked = oneof [Left <$> genUnchecked, Right <$> genUnchecked]
 
-instance (GenValid a, GenValid b) =>
-         GenValid (Either a b) where
+instance (GenValid a, GenValid b) => GenValid (Either a b) where
     genValid = oneof [Left <$> genValid, Right <$> genValid]
 
 -- | This instance ensures that the generated tupse contains at least one invalid element. The other element is unchecked.
-instance (GenInvalid a, GenInvalid b) =>
-         GenInvalid (Either a b) where
+instance (GenInvalid a, GenInvalid b) => GenInvalid (Either a b) where
     genInvalid = oneof [Left <$> genInvalid, Right <$> genInvalid]
 
 instance (GenUnchecked a, GenUnchecked b, GenUnchecked c) =>
@@ -159,8 +172,7 @@ instance (GenUnchecked a, GenUnchecked b, GenUnchecked c) =>
             c <- resize t genUnchecked
             return (a, b, c)
 
-instance (GenValid a, GenValid b, GenValid c) =>
-         GenValid (a, b, c) where
+instance (GenValid a, GenValid b, GenValid c) => GenValid (a, b, c) where
     genValid =
         sized $ \n -> do
             (r, s, t) <- genSplit3 n
@@ -190,32 +202,26 @@ instance (GenInvalid a, GenInvalid b, GenInvalid c) =>
                      return (a, b, c)
                 ]
 
-instance GenUnchecked a =>
-         GenUnchecked (Maybe a) where
+instance GenUnchecked a => GenUnchecked (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]
 
-instance GenValid a =>
-         GenValid (Maybe a) where
+instance GenValid a => GenValid (Maybe a) where
     genValid = oneof [pure Nothing, Just <$> genValid]
 
-instance GenInvalid a =>
-         GenInvalid (Maybe a) where
+instance GenInvalid a => GenInvalid (Maybe a) where
     genInvalid = Just <$> genInvalid
 
-instance GenUnchecked a =>
-         GenUnchecked [a] where
+instance GenUnchecked a => GenUnchecked [a] where
     genUnchecked = genListOf genUnchecked
 
 -- | If we can generate values of a certain type, we can also generate lists of
 -- them.
-instance GenValid a =>
-         GenValid [a] where
+instance GenValid a => GenValid [a] where
     genValid = genListOf genValid
 
 -- | This instance ensures that the generated list contains at least one element
 -- that satisfies 'isInvalid'. The rest is unchecked.
-instance GenInvalid a =>
-         GenInvalid [a] where
+instance GenInvalid a => GenInvalid [a] where
     genInvalid =
         sized $ \n -> do
             (x, y, z) <- genSplit3 n
@@ -296,12 +302,10 @@ instance GenUnchecked (Ratio Integer) where
 
 instance GenValid (Ratio Integer)
 
-instance HasResolution a =>
-         GenUnchecked (Fixed a) where
+instance HasResolution a => GenUnchecked (Fixed a) where
     genUnchecked = MkFixed <$> genUnchecked
 
-instance HasResolution a =>
-         GenValid (Fixed a)
+instance HasResolution a => GenValid (Fixed a)
 
 -- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int
@@ -347,21 +351,17 @@ class GGenUnchecked f where
 instance GGenUnchecked U1 where
     gGenUnchecked = pure U1
 
-instance (GGenUnchecked a, GGenUnchecked b) =>
-         GGenUnchecked (a :*: b) where
+instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :*: b) where
     gGenUnchecked = do
         g1 <- gGenUnchecked
         g2 <- gGenUnchecked
         pure $ g1 :*: g2
 
-instance (GGenUnchecked a, GGenUnchecked b) =>
-         GGenUnchecked (a :+: b) where
+instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :+: b) where
     gGenUnchecked = oneof [L1 <$> gGenUnchecked, R1 <$> gGenUnchecked]
 
-instance (GGenUnchecked a) =>
-         GGenUnchecked (M1 i c a) where
+instance (GGenUnchecked a) => GGenUnchecked (M1 i c a) where
     gGenUnchecked = M1 <$> gGenUnchecked
 
-instance (GenUnchecked a) =>
-         GGenUnchecked (K1 i a) where
+instance (GenUnchecked a) => GGenUnchecked (K1 i a) where
     gGenUnchecked = K1 <$> genUnchecked
