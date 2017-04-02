@@ -113,9 +113,33 @@ instance (Validity a, Validity b) => Validity (Either a b) where
     isValid (Left a) = isValid a
     isValid (Right b) = isValid b
 
--- | Any tuple of things is valid if all three of its elements are valid
+-- | Any triple of things is valid if all three of its elements are valid
 instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
     isValid (a, b, c) = isValid a && isValid b && isValid c
+
+-- | Any quadruple of things is valid if all four of its elements are valid
+instance (Validity a, Validity b, Validity c, Validity d) =>
+         Validity (a, b, c, d) where
+    isValid (a, b, c, d) = isValid a && isValid b && isValid c && isValid d
+
+-- | Any quintuple of things is valid if all five of its elements are valid
+instance (Validity a, Validity b, Validity c, Validity d, Validity e) =>
+         Validity (a, b, c, d, e) where
+    isValid (a, b, c, d, e) =
+        isValid a && isValid b && isValid c && isValid d && isValid e
+
+-- | Any sextuple of things is valid if all six of its elements are valid
+instance ( Validity a
+         , Validity b
+         , Validity c
+         , Validity d
+         , Validity e
+         , Validity f
+         ) =>
+         Validity (a, b, c, d, e, f) where
+    isValid (a, b, c, d, e, f) =
+        isValid a &&
+        isValid b && isValid c && isValid d && isValid e && isValid f
 
 -- | A list of things is valid if all of the things are valid.
 --
