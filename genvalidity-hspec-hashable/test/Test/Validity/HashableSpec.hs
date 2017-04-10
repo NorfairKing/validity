@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 -- | Standard 'Spec's for 'Hashable' instances.
 --
@@ -7,8 +8,8 @@ module Test.Validity.HashableSpec where
 
 import Test.Hspec
 import Data.Hashable
-import Test.QuickCheck
 import Test.Validity.Utils
+import GHC.Generics
 
 import Data.GenValidity
 import Test.Validity.Hashable
@@ -23,6 +24,7 @@ spec = do
         hashableSpec @HashFalse
 
 newtype HashTrue = HashTrue Int
+    deriving (Show, Generic)
 
 hT :: Int -- Number used in the definition of HashTrue
 hT = 7
@@ -30,31 +32,24 @@ hT = 7
 instance Eq HashTrue where
     (==) (HashTrue x) (HashTrue y) = (x `mod` hT) == (y `mod` hT)
 
-instance Show HashTrue where
-    showsPrec int (HashTrue a) = showsPrec int a
-
 instance Hashable HashTrue where
     hashWithSalt n (HashTrue a) = (int ^ expo) `mod` hT
                                where int = 1 + (a `mod` hT)
                                      expo = 1 + (n `mod` hT)
 
-instance Validity HashTrue where
-    isValid _ = True
+instance Validity HashTrue
 
 instance GenValid HashTrue
 
-instance GenUnchecked HashTrue where
-    genUnchecked = HashTrue <$> arbitrary
+instance GenUnchecked HashTrue
 
 newtype HashFalse = HashFalse Int
+    deriving (Show, Generic)
 
 hF :: Int -- Numbers used in the definition of HashFalse
 hF = 8
 hM :: Int
 hM = 3
-
-instance Show HashFalse where
-    showsPrec int (HashFalse a) = showsPrec int a
 
 instance Eq HashFalse where
     (==) (HashFalse x) (HashFalse y) = (x `mod` hF) == (y `mod` hF)
@@ -64,12 +59,10 @@ instance Hashable HashFalse where
                                 where int = 1 + (a `mod` hM)
                                       expo = 1 + (n `mod` hM)
 
-instance Validity HashFalse where
-    isValid _ = True
+instance Validity HashFalse
 
 instance GenValid HashFalse
 
-instance GenUnchecked HashFalse where
-    genUnchecked = HashFalse <$> arbitrary
+instance GenUnchecked HashFalse
 
 

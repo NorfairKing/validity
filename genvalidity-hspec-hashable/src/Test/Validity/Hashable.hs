@@ -80,12 +80,12 @@ hashableSpecOnGen
 hashableSpecOnGen gen genname = checkGen gen2 genname
                                     where gen2 = (,) <$> gen <*> gen
 
+-- | Test spec like hashableSpecOnGen but with a special generator
+-- | which is documented to generate equal values by (==) most of the time.
 checkGen
     :: forall a.
        (Show a, Eq a, Typeable a, Hashable a)
     => Gen (a, a) -> String -> Spec
--- The given generator should be documented to generate equal values
--- (by ==) most of the time.
 checkGen gen genname = parallel $ do
         let name = nameOf @a
             hashablestr = (unwords
