@@ -40,6 +40,7 @@ library
         validity >=0.3 && <0.4,
         genvalidity >=0.3 && <0.4,
         QuickCheck -any,
+        hspec-core,
         hspec >=2.2 && <2.5,
         genvalidity-property >= 0.0 && < 0.1
     default-language: Haskell2010
@@ -61,15 +62,14 @@ test-suite genvalidity-hspec-test
     main-is: Spec.hs
     build-depends:
         base -any,
-        genvalidity >=0.3 && <0.4,
-        genvalidity-hspec -any,
+        genvalidity >=0.3 && < 0.4,
+        genvalidity-hspec >= 0.4 && < 0.5,
         hspec,
         hspec-core,
         QuickCheck
     default-language: Haskell2010
     hs-source-dirs: test/
     other-modules:
-        Test.Validity.TestUtils
         Test.Validity.ApplicativeSpec
         Test.Validity.ArbitrarySpec
         Test.Validity.EqSpec
@@ -81,3 +81,4 @@ test-suite genvalidity-hspec-test
         Test.Validity.OrdSpec
         Test.Validity.RelativeValiditySpec
     ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+

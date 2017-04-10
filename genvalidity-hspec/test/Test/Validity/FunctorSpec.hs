@@ -6,7 +6,7 @@ import Test.Hspec
 
 import Data.GenValidity
 import Test.Validity.Functor
-import Test.Validity.TestUtils
+import Test.Validity.Utils
 
 spec :: Spec
 spec = do

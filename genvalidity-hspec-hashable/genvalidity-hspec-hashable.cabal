@@ -1,11 +1,8 @@
-name:                genvalidity-hspec-binary
+name:                genvalidity-hspec-hashable
 version:             0.0.0.0
-synopsis:            Genvalidity specs for "Data.Binary"
-description:         This code will create genvalidity specs for the binary serialization library "Data.Binary", as found on https://hackage.haskell.org/package/binary.
+synopsis:            Standard spec's for Hashable instances
+description:         Standard spec's for Hashable instances
 homepage:            https://github.com/NorfairKing/validity
-synopsis:            Standard spec's for binary-related Instances
-description:         Standard spec's for cereal-related Instances, see https://hackage.haskell.org/package/binary.
-homepage:            https://github.com/NorfairKing/validity#readme
 license:             MIT
 license-file:        LICENSE
 author:              Nick Van den Broeck
@@ -16,46 +13,52 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
+source-repository head
+    type: git
+    location: https://github.com/NorfairKing/validity
+
 library
     exposed-modules:
-        Test.Validity.Binary
+        Test.Validity.Hashable
     build-depends:
-        base >=4.9 && <=5,
+        base >= 4.9 && <5,
+        validity >=0.3 && <0.4,
         genvalidity-hspec >=0.3 && <0.5,
         genvalidity >=0.3 && <0.4,
-        hspec,
-        binary >=0.5 && <0.9,
-        QuickCheck,
-        deepseq >=1.4 && <1.5
+        genvalidity-property >= 0.0 && < 0.1,
+        hspec >=2.2 && <2.5,
+        hashable >= 1.2 && < 1.3,
+        QuickCheck -any
     default-language: Haskell2010
-    hs-source-dirs: src/
-    ghc-options: -Wall
+    hs-source-dirs: src
 
-test-suite genvalidity-hspec-binary-doctests
+test-suite genvalidity-hspec-hashable-doctests
     type: exitcode-stdio-1.0
     main-is: DocTest.hs
     build-depends:
         base -any,
         doctest >=0.11 && <0.12,
-        genvalidity-hspec-binary -any
+        hashable >= 1.2 && < 1.3,
+        genvalidity-hspec-hashable -any,
+        QuickCheck -any
     default-language: Haskell2010
     hs-source-dirs: test
     ghc-options: -threaded
 
-test-suite genvalidity-hspec-binary-test
+test-suite genvalidity-hspec-hashable-test
     type: exitcode-stdio-1.0
     main-is: Spec.hs
     build-depends:
         base -any,
         genvalidity >=0.3 && <0.4,
-        genvalidity-hspec-binary -any,
-        hspec
+        genvalidity-hspec -any,
+        genvalidity-hspec-hashable -any,
+        hashable >= 1.2 && < 1.3,
+        hspec,
+        hspec-core,
+        QuickCheck
     default-language: Haskell2010
     hs-source-dirs: test/
     other-modules:
-        Test.Validity.BinarySpec
+        Test.Validity.HashableSpec
     ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
-
-source-repository head
-  type:     git
-  location: https://github.com/NorfairKing/validity
