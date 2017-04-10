@@ -3,6 +3,9 @@ version:             0.0.0.0
 synopsis:            Genvalidity specs for "Data.Binary"
 description:         This code will create genvalidity specs for the binary serialization library "Data.Binary", as found on https://hackage.haskell.org/package/binary.
 homepage:            https://github.com/NorfairKing/validity
+synopsis:            Standard spec's for binary-related Instances
+description:         Standard spec's for cereal-related Instances, see https://hackage.haskell.org/package/binary.
+homepage:            https://github.com/NorfairKing/validity#readme
 license:             MIT
 license-file:        LICENSE
 author:              Nick Van den Broeck
@@ -55,4 +58,4 @@ test-suite genvalidity-hspec-binary-test
 
 source-repository head
   type:     git
-  location: https://github.com/githubuser/genvalidity-hspec-binary
+  location: https://github.com/NorfairKing/validity
