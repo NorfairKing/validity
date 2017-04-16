@@ -16,6 +16,10 @@ import Test.Hspec.Core.Runner
 import Test.Hspec.Core.Spec
 import Test.QuickCheck.Property
 
+-- | Asserts that a given 'Spec' tree fails _somewhere_.
+--
+-- It also shows the given string when reporting that the tree unexpectedly
+-- succeeded.
 failsBecause :: String -> SpecWith () -> SpecWith ()
 failsBecause s st = mapSpecTree go st
   where
