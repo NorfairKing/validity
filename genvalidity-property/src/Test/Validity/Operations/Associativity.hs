@@ -13,6 +13,14 @@ import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
 
+-- |
+--
+-- \[
+--     Associative(\star)
+--     \quad\equiv\quad
+--     \forall a, b, c:
+--     (a \star b) \star c = a \star (b \star c)
+-- \]
 associativeOnGens
     :: (Show a, Eq a)
     => (a -> a -> a) -> Gen (a, a, a) -> Property
