@@ -217,19 +217,25 @@ genValid :: GenValid a => Gen a
 genInvalid :: GenInvalid a => Gen a
 ``` 
 
-A minimal instantiation only defines `genUnchecked`.
-The `genValid` and `genInvalid` are then defined using `suchThat`.
+An instantiation of `GenUnchecked` can be generated using `Generic` or written manually: 
 
 ``` Haskell
 instance GenUnchecked HasPrimeFactorisation where
     genUnchecked = HasPrimeFactorisation <$> arbitrary
 ```
 
-We can now implement a faster version:
+`GenValid` and `GenInvalid` have default implementations using `suchThat`.
+
+``` Haskell
+instance GenValid HasPrimeFactorisation
+instance GenInvalid HasPrimeFactorisation
+```
+
+However, the internals of `genValid` will often first generate an value, check whether if it is valid and try again if not.
+Because of this inefficiency, we can now implement a faster version of `genValid`:
 
 ``` Haskell
 instance GenValid HasPrimeFactorisation where
-    genValid = HasPrimeFactorisation <$> arbitrary
     genValid = (HasPrimeFactorisation . (+1) . abs) <$> arbitrary
 ```
 
