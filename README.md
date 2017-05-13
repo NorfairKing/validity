@@ -15,7 +15,7 @@ The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions 
 
 The `genvalidity-*` packages provides the `Validity` instances for commonly-used packages.
 
-Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` be can generalised to highly generic functions.
+Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` can be generalised to highly generic functions.
 The `genvalidity-property` and `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.
 The `genvalidity-hspec` uses `TypeApplications` as a central part of its UI, but `genvalidity-property` does not require it.
 
@@ -133,7 +133,7 @@ We can now write functions like these to make the invariants explicit:
 ``` Haskell
 isValidPrimeFactorisation :: PrimeFactorisation -> Bool
 isValidPrimeFactorisation (PrimeFactorisation is)
-  = not (null is) && all isPrime is
+  = not (null is) && isValid is
 ```
 
 Note that the invariants are inherent to the type.
