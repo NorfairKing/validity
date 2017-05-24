@@ -15,7 +15,7 @@ The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions 
 
 The `genvalidity-*` packages provides the `Validity` instances for commonly-used packages.
 
-Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` be can generalised to highly generic functions.
+Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` can be generalised to highly generic functions.
 The `genvalidity-property` and `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.
 The `genvalidity-hspec` uses `TypeApplications` as a central part of its UI, but `genvalidity-property` does not require it.
 
@@ -133,7 +133,7 @@ We can now write functions like these to make the invariants explicit:
 ``` Haskell
 isValidPrimeFactorisation :: PrimeFactorisation -> Bool
 isValidPrimeFactorisation (PrimeFactorisation is)
-  = not (null is) && all isPrime is
+  = not (null is) && isValid is
 ```
 
 Note that the invariants are inherent to the type.
@@ -217,19 +217,25 @@ genValid :: GenValid a => Gen a
 genInvalid :: GenInvalid a => Gen a
 ``` 
 
-A minimal instantiation only defines `genUnchecked`.
-The `genValid` and `genInvalid` are then defined using `suchThat`.
+An instantiation of `GenUnchecked` can be generated using `Generic` or written manually: 
 
 ``` Haskell
 instance GenUnchecked HasPrimeFactorisation where
     genUnchecked = HasPrimeFactorisation <$> arbitrary
 ```
 
-We can now implement a faster version:
+`GenValid` and `GenInvalid` have default implementations using `suchThat`.
+
+``` Haskell
+instance GenValid HasPrimeFactorisation
+instance GenInvalid HasPrimeFactorisation
+```
+
+However, the internals of `genValid` will often first generate an value, check whether if it is valid and try again if not.
+Because of this inefficiency, we can now implement a faster version of `genValid`:
 
 ``` Haskell
 instance GenValid HasPrimeFactorisation where
-    genValid = HasPrimeFactorisation <$> arbitrary
     genValid = (HasPrimeFactorisation . (+1) . abs) <$> arbitrary
 ```
 

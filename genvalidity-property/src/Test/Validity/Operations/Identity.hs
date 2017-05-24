@@ -138,6 +138,13 @@ rightIdentityOnArbitrary
     => (a -> b -> a) -> b -> Property
 rightIdentityOnArbitrary op b = rightIdentityOnGen op b arbitrary
 
+-- |
+--
+-- \[
+--   Identity(\star, \doteq, b)
+--   \quad\equiv\quad
+--   LeftIdentity(\star, \doteq, b) \wedge RightIdentity(\star, \doteq, b)
+-- \]
 identityOnGen
     :: (Show a, Eq a)
     => (a -> a -> a) -> a -> Gen a -> Property

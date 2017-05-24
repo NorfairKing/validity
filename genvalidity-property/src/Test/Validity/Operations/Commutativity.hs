@@ -13,6 +13,14 @@ import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
 
+-- |
+--
+-- \[
+--     Commutative(\star)
+--     \quad\equiv\quad
+--     \forall a, b:
+--     a \star b = b \star a
+-- \]     
 commutativeOnGens
     :: (Show a, Eq a)
     => (a -> a -> a) -> Gen (a, a) -> Property

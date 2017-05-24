@@ -12,4 +12,5 @@ import Data.Functor ((<$>))
 instance GenUnchecked Day where
     genUnchecked = ModifiedJulianDay <$> genUnchecked
 
-instance GenValid Day
+instance GenValid Day where
+    genValid = ModifiedJulianDay <$> genValid

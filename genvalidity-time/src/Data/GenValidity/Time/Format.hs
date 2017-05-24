@@ -17,5 +17,12 @@ instance GenUnchecked TimeLocale where
         genUnchecked <*>
         genUnchecked
 
-instance GenValid TimeLocale
+instance GenValid TimeLocale where
+    genValid =
+        TimeLocale <$> genValid <*> genValid <*> genValid <*>
+        genValid <*>
+        genValid <*>
+        genValid <*>
+        genValid <*>
+        genValid
 #endif

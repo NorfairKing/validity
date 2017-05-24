@@ -11,20 +11,27 @@ import Data.GenValidity.Time.Calendar ()
 import Data.Time.Clock
 import Data.Validity.Time.Clock ()
 
+import Test.QuickCheck
+
 instance GenUnchecked UniversalTime where
     genUnchecked = ModJulianDate <$> genUnchecked
 
-instance GenValid UniversalTime
+instance GenValid UniversalTime where
+    genValid = ModJulianDate <$> genValid
 
 instance GenUnchecked DiffTime where
     genUnchecked = picosecondsToDiffTime <$> genUnchecked
 
-instance GenValid DiffTime
+instance GenValid DiffTime where
+    genValid = picosecondsToDiffTime <$> genValid
 
 instance GenUnchecked UTCTime where
     genUnchecked = UTCTime <$> genUnchecked <*> genUnchecked
 
-instance GenValid UTCTime
+instance GenValid UTCTime where
+    genValid =
+        UTCTime <$> genValid <*>
+        (genValid `suchThat` (>= 0) `suchThat` (<= 86400))
 
 instance GenInvalid UTCTime
 
