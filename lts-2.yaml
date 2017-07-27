@@ -10,6 +10,7 @@ packages:
 - 'validity-bytestring'
 - 'validity-containers'
 - 'validity-path'
+- 'validity-scientific'
 - 'validity-text'
 - 'validity-time'
 extra-deps:
