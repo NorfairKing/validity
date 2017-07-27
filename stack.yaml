@@ -15,6 +15,7 @@ packages:
 - 'validity-bytestring'
 - 'validity-containers'
 - 'validity-path'
+- 'validity-scientific'
 - 'validity-text'
 - 'validity-time'
 resolver: lts-8.5
