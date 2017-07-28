@@ -4,6 +4,7 @@ packages:
 - 'genvalidity-containers'
 - 'genvalidity-path'
 - 'genvalidity-property'
+- 'genvalidity-scientific'
 - 'genvalidity-text'
 - 'genvalidity-time'
 - 'validity'
