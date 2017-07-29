@@ -1,0 +1,36 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE CPP #-}
+
+module Data.GenValidity.HashMap where
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative (pure)
+import Data.Functor ((<$>))
+#endif
+import Data.GenValidity
+import Data.Validity.HashMap ()
+import Test.QuickCheck
+
+import Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as HM
+import Data.Hashable (Hashable)
+
+instance (Hashable k, Eq k, GenUnchecked k, GenUnchecked v) =>
+         GenUnchecked (HashMap k v) where
+    genUnchecked = HM.fromList <$> genUnchecked
+
+instance (Hashable k, Eq k, GenValid k, GenValid v) => GenValid (HashMap k v) where
+    genValid = HM.fromList <$> genValid
+
+instance (Hashable k, Eq k,GenInvalid k, GenInvalid v) =>
+         GenInvalid (HashMap k v) where
+    genInvalid =
+        sized $ \n -> do
+            (k, v, m) <- genSplit3 n
+            let go g1 g2 = do
+                    key <- resize k g1
+                    val <- resize v g2
+                    rest <- resize m genUnchecked
+                    pure $ HM.insert key val rest
+            oneof $ [go genInvalid genUnchecked, go genUnchecked genInvalid]
+    -- Note: HM.fromList <$> genInvalid does not work because of this line in the Data.HashMap documentation:
+    -- 'If the list contains duplicate mappings, the later mappings take precedence.'

@@ -1,0 +1,29 @@
+name: validity-scientific
+version: 0.0.0.0
+cabal-version: >=1.10
+build-type: Simple
+license: MIT
+license-file: LICENSE
+copyright: Copyright: (c) 2017 Tom Sydney Kerckhove
+maintainer: syd.kerckhove@gmail.com
+homepage: https://github.com/NorfairKing/validity#readme
+synopsis: Validity instances for scientific
+description:
+    Please see README.md
+category: Web
+author: Tom Sydney Kerckhove
+
+source-repository head
+    type: git
+    location: https://github.com/NorfairKing/validity
+
+library
+    exposed-modules:
+        Data.Validity.Scientific
+    build-depends:
+        base >= 4.7 && <5,
+        validity -any,
+        scientific -any
+    default-language: Haskell2010
+    hs-source-dirs: src
+
