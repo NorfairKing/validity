@@ -14,6 +14,7 @@ packages:
 - 'validity-scientific'
 - 'validity-text'
 - 'validity-time'
+- 'validity-vector'
 extra-deps:
 - path-0.5.13
 resolver: lts-2.22

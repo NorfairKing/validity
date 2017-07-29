@@ -16,4 +16,5 @@ packages:
 - 'validity-text'
 - 'validity-time'
 - 'validity-unordered-containers'
+- 'validity-vector'
 resolver: lts-6.30

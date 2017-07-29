@@ -21,4 +21,5 @@ packages:
 - 'validity-text'
 - 'validity-time'
 - 'validity-unordered-containers'
+- 'validity-vector'
 resolver: lts-7.20
