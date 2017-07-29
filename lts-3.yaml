@@ -10,7 +10,6 @@ packages:
 - 'validity'
 - 'validity-bytestring'
 - 'validity-containers'
-- 'validity-unordered-containers'
 - 'validity-path'
 - 'validity-scientific'
 - 'validity-text'
