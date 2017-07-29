@@ -4,7 +4,7 @@ cabal-version: >=1.10
 build-type: Simple
 license: MIT
 license-file: LICENSE
-copyright: Copyright: (c) 2016 Tom Sydney Kerckhove
+copyright: Copyright: (c) 2017 Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
 homepage: https://github.com/NorfairKing/validity#readme
 synopsis: GenValidity support for Scientific

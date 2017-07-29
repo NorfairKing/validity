@@ -1,4 +1,4 @@
-name: validity-scientific
+name: validity-unordered-containers
 version: 0.0.0.0
 cabal-version: >=1.10
 build-type: Simple
@@ -7,10 +7,10 @@ license-file: LICENSE
 copyright: Copyright: (c) 2017 Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
 homepage: https://github.com/NorfairKing/validity#readme
-synopsis: Validity instances for scientific
+synopsis: Validity instances for unordered-containers
 description:
     Please see README.md
-category: Web
+category: Validity
 author: Tom Sydney Kerckhove
 
 source-repository head
@@ -19,11 +19,14 @@ source-repository head
 
 library
     exposed-modules:
-        Data.Validity.Scientific
+        Data.Validity.UnorderedContainers
+        Data.Validity.HashMap
+        Data.Validity.HashSet
     build-depends:
         base >= 4.7 && <5,
-        validity -any,
-        scientific -any
+        validity >=0.3 && <0.4,
+        unordered-containers -any,
+        hashable -any
     default-language: Haskell2010
     hs-source-dirs: src
 
