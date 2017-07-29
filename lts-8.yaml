@@ -15,6 +15,7 @@ packages:
 - 'genvalidity-unordered-containers'
 - 'genvalidity-vector'
 - 'validity'
+- 'validity-aeson'
 - 'validity-bytestring'
 - 'validity-containers'
 - 'validity-path'
