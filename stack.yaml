@@ -13,6 +13,7 @@ packages:
 - 'genvalidity-text'
 - 'genvalidity-time'
 - 'genvalidity-unordered-containers'
+- 'genvalidity-vector'
 - 'validity'
 - 'validity-bytestring'
 - 'validity-containers'
