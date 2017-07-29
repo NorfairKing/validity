@@ -9,7 +9,6 @@ packages:
 - 'genvalidity-time'
 - 'genvalidity-vector'
 - 'validity'
-- 'validity-aeson'
 - 'validity-bytestring'
 - 'validity-containers'
 - 'validity-path'
