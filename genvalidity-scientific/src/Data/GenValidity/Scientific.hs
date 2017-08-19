@@ -10,8 +10,6 @@ import Data.GenValidity
 import Data.Scientific
 import Data.Validity.Scientific ()
 
-import Test.QuickCheck
-
 instance GenUnchecked Scientific where
     genUnchecked = scientific <$> genUnchecked <*> genUnchecked
 

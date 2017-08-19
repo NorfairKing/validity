@@ -21,7 +21,7 @@ library
     exposed-modules:
         Data.GenValidity.Scientific
     build-depends:
-        base >= 4.7 && <5,
+        base >=4.7 && <5,
         QuickCheck -any,
         genvalidity -any,
         scientific -any,
@@ -35,7 +35,7 @@ test-suite genvalidity-scientific-test
     main-is: Spec.hs
     build-depends:
         base -any,
-        QuickCheck,
+        QuickCheck -any,
         genvalidity -any,
         genvalidity-hspec -any,
         genvalidity-scientific -any,

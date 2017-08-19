@@ -8,14 +8,11 @@ module Test.Validity.GenValidity.Property
     , genGeneratesInvalid
     ) where
 
-import Data.Data
 
 import Data.GenValidity
 
 import Test.Hspec
 import Test.QuickCheck
-
-import Test.Validity.Property.Utils
 
 -- | The given generator generates only valid data points
 genGeneratesValid

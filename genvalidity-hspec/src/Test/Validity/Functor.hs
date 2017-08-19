@@ -23,10 +23,10 @@ import Test.QuickCheck
 
 import Test.Validity.Functions
 import Test.Validity.Utils
+{-# ANN module "HLint: ignore Functor law" #-}
 
-fmapTypeStr
-    :: forall (f :: * -> *).
-       (Typeable f)
+fmapTypeStr ::
+       forall (f :: * -> *). (Typeable f)
     => String
 fmapTypeStr =
     unwords
@@ -43,9 +43,8 @@ fmapTypeStr =
         , "b"
         ]
 
-flTypeStr
-    :: forall (f :: * -> *).
-       (Typeable f)
+flTypeStr ::
+       forall (f :: * -> *). (Typeable f)
     => String
 flTypeStr =
     unwords ["(<$)", "::", "a", "->", nameOf @f, "b", "->", nameOf @f, "a"]
@@ -55,8 +54,8 @@ flTypeStr =
 -- Example usage:
 --
 -- > functorSpecOnArbitrary @[]
-functorSpecOnValid
-    :: forall (f :: * -> *).
+functorSpecOnValid ::
+       forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Functor f, Typeable f, GenValid (f Int))
     => Spec
 functorSpecOnValid = functorSpecWithInts @f genValid
@@ -66,8 +65,8 @@ functorSpecOnValid = functorSpecWithInts @f genValid
 -- Example usage:
 --
 -- > functorSpecOnArbitrary @[]
-functorSpec
-    :: forall (f :: * -> *).
+functorSpec ::
+       forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Functor f, Typeable f, GenUnchecked (f Int))
     => Spec
 functorSpec = functorSpecWithInts @f genUnchecked
@@ -77,16 +76,16 @@ functorSpec = functorSpecWithInts @f genUnchecked
 -- Example usage:
 --
 -- > functorSpecOnArbitrary @[]
-functorSpecOnArbitrary
-    :: forall (f :: * -> *).
+functorSpecOnArbitrary ::
+       forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Functor f, Typeable f, Arbitrary (f Int))
     => Spec
 functorSpecOnArbitrary = functorSpecWithInts @f arbitrary
 
-functorSpecWithInts
-    :: forall (f :: * -> *).
-       (Eq (f Int), Show (f Int), Functor f, Typeable f)
-    => Gen (f Int) -> Spec
+functorSpecWithInts ::
+       forall (f :: * -> *). (Eq (f Int), Show (f Int), Functor f, Typeable f)
+    => Gen (f Int)
+    -> Spec
 functorSpecWithInts gen =
     functorSpecOnGens
         @f
@@ -111,8 +110,8 @@ functorSpecWithInts gen =
 -- >     (genListOf $ pure 5) "list of fives"
 -- >     ((+) <$> genValid) "additions"
 -- >     ((*) <$> genValid) "multiplications"
-functorSpecOnGens
-    :: forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
+functorSpecOnGens ::
+       forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
        ( Show a
        , Show (f a)
        , Show (f c)
@@ -164,4 +163,4 @@ functorSpecOnGens gena genaname gen genname genf genfname geng gengname =
                      , "and"
                      , genDescr @(f a) genname
                      ]) $
-            forAll gena $ \a -> equivalentOnGen ((<$) a) (fmap $ const a) gen
+            forAll gena $ \a -> equivalentOnGen (a <$) (fmap $ const a) gen

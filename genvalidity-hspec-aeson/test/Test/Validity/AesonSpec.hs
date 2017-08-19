@@ -21,7 +21,7 @@ spec = do
     jsonSpecOnArbitrary @Int
     jsonSpecOnValid @ForShow
 
-data ForShow =
+newtype ForShow =
     ForShow Text
     deriving (Show, Eq, Generic)
 

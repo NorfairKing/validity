@@ -223,7 +223,7 @@ instance Validity Natural where
 -- | Valid if the contained 'Integer's are valid and the denominator is
 -- strictly positive.
 instance Validity Rational where
-    isValid (d :% n) = and [isValid n, isValid d, d > 0]
+    isValid (d :% n) = isValid n && isValid d && d > 0
 
 -- | Valid according to the contained 'Integer'.
 instance HasResolution a => Validity (Fixed a) where

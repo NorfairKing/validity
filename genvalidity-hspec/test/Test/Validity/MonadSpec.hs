@@ -7,6 +7,8 @@ import Test.Hspec
 import Data.GenValidity
 import Test.Validity.Monad
 
+{-# ANN module "HLint: ignore Use :" #-}
+
 spec :: Spec
 spec = do
     monadSpec @[]
@@ -42,7 +44,7 @@ spec = do
         "Just an ABC"
         (Just <$> pure "CDE")
         "Just an ABC"
-        ((flip (++)) <$> genValid)
+        (flip (++) <$> genValid)
         "appends"
         (pure $ \a -> Just a)
         "justisation"

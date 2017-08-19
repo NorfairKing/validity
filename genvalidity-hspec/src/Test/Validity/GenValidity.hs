@@ -54,7 +54,7 @@ genValidSpec
 genValidSpec =
     parallel $ do
         let name = nameOf @a
-        describe ("GenValid " ++ name) $ do
+        describe ("GenValid " ++ name) $ 
             describe ("genValid   :: Gen " ++ name) $
                 it ("only generates valid \'" ++ name ++ "\'s") $
                 genValidGeneratesValid @a
@@ -71,7 +71,7 @@ genInvalidSpec
 genInvalidSpec =
     parallel $ do
         let name = nameOf @a
-        describe ("GenInvalid " ++ name) $ do
+        describe ("GenInvalid " ++ name) $ 
             describe ("genInvalid :: Gen " ++ name) $
                 it ("only generates invalid \'" ++ name ++ "\'s") $
                 genInvalidGeneratesInvalid @a

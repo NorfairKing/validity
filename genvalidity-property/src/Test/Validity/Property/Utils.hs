@@ -3,8 +3,6 @@ module Test.Validity.Property.Utils
     , (===>)
     ) where
 
-import Data.Data
-
 (===>) :: Bool -> Bool -> Bool
 (===>) a b = not a || b
 

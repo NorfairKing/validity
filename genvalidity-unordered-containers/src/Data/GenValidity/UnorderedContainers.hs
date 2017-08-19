@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
 module Data.GenValidity.UnorderedContainers
     ( module UnorderedContainers
     ) where

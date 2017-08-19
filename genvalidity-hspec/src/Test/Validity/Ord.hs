@@ -117,10 +117,10 @@ ordSpecOnGen gen genname =
             fungestr = geTypeStr @a
             funltstr = ltTypeStr @a
             fungtstr = gtTypeStr @a
-            cmple = ((<=) @a)
-            cmpge = ((>=) @a)
-            cmplt = ((<) @a)
-            cmpgt = ((>) @a)
+            cmple = (<=) @a
+            cmpge = (>=) @a
+            cmplt = (<) @a
+            cmpgt = (>) @a
             gen2 = (,) <$> gen <*> gen
             gen3 = (,,) <$> gen <*> gen <*> gen
         describe ("Ord " ++ name) $ do

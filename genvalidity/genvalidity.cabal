@@ -26,17 +26,18 @@ source-repository head
     location: https://github.com/NorfairKing/validity
 
 library
+    
+    if impl(ghc >=8.0.0)
+        ghc-options: -Wno-redundant-constraints
     exposed-modules:
         Data.GenValidity
         Data.GenRelativeValidity
     build-depends:
-        base >= 4.7 && <5,
+        base >=4.7 && <5,
         validity >=0.3.3 && <0.4,
         QuickCheck >=2.7 && <2.10
     default-language: Haskell2010
     hs-source-dirs: src
-    if impl(ghc >= 8.0.0)
-        ghc-options: -Wno-redundant-constraints
 
 test-suite genvalidity-test
     type: exitcode-stdio-1.0
@@ -44,7 +45,7 @@ test-suite genvalidity-test
     build-depends:
         base -any,
         hspec -any,
-        QuickCheck,
+        QuickCheck -any,
         genvalidity -any
     default-language: Haskell2010
     hs-source-dirs: test

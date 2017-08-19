@@ -31,6 +31,6 @@ instance (Ord k, GenInvalid k, GenInvalid v) =>
                     val <- resize v g2
                     rest <- resize m genUnchecked
                     pure $ M.insert key val rest
-            oneof $ [go genInvalid genUnchecked, go genUnchecked genInvalid]
+            oneof [go genInvalid genUnchecked, go genUnchecked genInvalid]
     -- Note: M.fromList <$> genInvalid does not work because of this line in the Data.Map documentation:
     -- ' If the list contains more than one value for the same key, the last value for the key is retained.'

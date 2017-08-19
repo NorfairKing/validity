@@ -1,6 +1,8 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+#if MIN_VERSION_time(1,5,0)
+{-# LANGUAGE RecordWildCards #-}
+#endif
 
 module Data.Validity.Time.Format where
 

@@ -64,6 +64,8 @@ import Test.QuickCheck hiding (Fixed)
 import Control.Applicative ((<$>), pure)
 import Control.Monad (forM)
 
+{-# ANN module "HLint: ignore Reduce duplication" #-}
+
 -- | A class of types for which truly arbitrary values can be generated.
 --
 -- === Automatic instances with 'Generic'

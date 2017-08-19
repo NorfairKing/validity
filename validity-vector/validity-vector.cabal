@@ -21,7 +21,7 @@ library
     exposed-modules:
         Data.Validity.Vector
     build-depends:
-        base >= 4.7 && <5,
+        base >=4.7 && <5,
         validity >=0.3 && <0.4,
         vector -any,
         hashable -any

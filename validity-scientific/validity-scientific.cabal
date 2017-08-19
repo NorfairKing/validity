@@ -21,7 +21,7 @@ library
     exposed-modules:
         Data.Validity.Scientific
     build-depends:
-        base >= 4.7 && <5,
+        base >=4.7 && <5,
         validity -any,
         scientific -any
     default-language: Haskell2010

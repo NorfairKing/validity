@@ -71,7 +71,7 @@ textWithoutAny :: Char -> Gen Text
 textWithoutAny c = textWithoutAnyOf [c]
 
 -- | 'textWithoutAnyOf c' generates a 'Text' value that does not contain any character in 'ls'.
-textWithoutAnyOf :: [Char] -> Gen Text
+textWithoutAnyOf :: String -> Gen Text
 textWithoutAnyOf cs = T.pack <$> genListOf (arbitrary `suchThat` (`notElem` cs))
 
 -- | 'textAllCaps' generates a 'Text' value with only upper-case characters.

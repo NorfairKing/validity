@@ -31,6 +31,6 @@ instance (Hashable k, Eq k,GenInvalid k, GenInvalid v) =>
                     val <- resize v g2
                     rest <- resize m genUnchecked
                     pure $ HM.insert key val rest
-            oneof $ [go genInvalid genUnchecked, go genUnchecked genInvalid]
+            oneof [go genInvalid genUnchecked, go genUnchecked genInvalid]
     -- Note: HM.fromList <$> genInvalid does not work because of this line in the Data.HashMap documentation:
     -- 'If the list contains duplicate mappings, the later mappings take precedence.'

@@ -14,9 +14,9 @@ module Test.Validity.Hashable
     , hashableSpecOnGen
     ) where
 
+import Control.Monad
 import Data.Data
 import Data.Hashable
-import Control.Monad
 import Test.Validity.Utils
 
 import Data.GenValidity
@@ -29,9 +29,8 @@ import Test.QuickCheck
 -- Example usage:
 --
 -- > hashableSpecOnValid @Double
-hashableSpecOnValid
-    :: forall a.
-       (Show a, Eq a, Typeable a, GenValid a, Hashable a)
+hashableSpecOnValid ::
+       forall a. (Show a, Eq a, Typeable a, GenValid a, Hashable a)
     => Spec
 hashableSpecOnValid = hashableSpecOnGen @a genValid "valid"
 
@@ -40,9 +39,8 @@ hashableSpecOnValid = hashableSpecOnGen @a genValid "valid"
 -- Example usage:
 --
 -- > hashableSpecOnInvalid @Double
-hashableSpecOnInvalid
-    :: forall a.
-       (Show a, Eq a, Typeable a, GenInvalid a, Hashable a)
+hashableSpecOnInvalid ::
+       forall a. (Show a, Eq a, Typeable a, GenInvalid a, Hashable a)
     => Spec
 hashableSpecOnInvalid = hashableSpecOnGen @a genInvalid "invalid"
 
@@ -51,9 +49,8 @@ hashableSpecOnInvalid = hashableSpecOnGen @a genInvalid "invalid"
 -- Example usage:
 --
 -- > hashableSpec @Int
-hashableSpec
-    :: forall a.
-       (Show a, Eq a, Typeable a, GenUnchecked a, Hashable a)
+hashableSpec ::
+       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, Hashable a)
     => Spec
 hashableSpec = hashableSpecOnGen @a genUnchecked "unchecked"
 
@@ -62,9 +59,8 @@ hashableSpec = hashableSpecOnGen @a genUnchecked "unchecked"
 -- Example usage:
 --
 -- > hashableSpecOnArbitrary @Int
-hashableSpecOnArbitrary
-    :: forall a.
-       (Show a, Eq a, Typeable a, Arbitrary a, Hashable a)
+hashableSpecOnArbitrary ::
+       forall a. (Show a, Eq a, Typeable a, Arbitrary a, Hashable a)
     => Spec
 hashableSpecOnArbitrary = hashableSpecOnGen @a arbitrary "arbitrary"
 
@@ -73,40 +69,35 @@ hashableSpecOnArbitrary = hashableSpecOnGen @a arbitrary "arbitrary"
 -- Example usage:
 --
 -- > hashableSpecOnGen ((* 2) <$> genValid @Int) "even"
-hashableSpecOnGen
-    :: forall a.
-       (Show a, Eq a, Typeable a, Hashable a)
-    => Gen a -> String -> Spec
-hashableSpecOnGen gen genname = checkGen gen2 genname
-                                    where gen2 = (,) <$> gen <*> gen
+hashableSpecOnGen ::
+       forall a. (Show a, Eq a, Typeable a, Hashable a)
+    => Gen a
+    -> String
+    -> Spec
+hashableSpecOnGen gen = checkGen $ (,) <$> gen <*> gen
 
 -- | Test spec like hashableSpecOnGen but with a special generator
 -- | which is documented to generate equal values by (==) most of the time.
-checkGen
-    :: forall a.
-       (Show a, Eq a, Typeable a, Hashable a)
-    => Gen (a, a) -> String -> Spec
-checkGen gen genname = parallel $ do
+checkGen ::
+       forall a. (Show a, Eq a, Typeable a, Hashable a)
+    => Gen (a, a)
+    -> String
+    -> Spec
+checkGen gen genname =
+    parallel $ do
         let name = nameOf @a
-            hashablestr = (unwords
-                            ["hashWithSalt :: Int ->"
-                            , name
-                            , "-> Int"])
-        describe ("Hashable " ++ name) $ do
-            describe hashablestr $ do
-                it
-                    (unwords
-                         [ "satisfies (a == b) => (hashWithSalt n a) =="
-                         ,"(hashWithSalt n b), for every n and for"
-                         , genname
-                         , name
-                         ]) $
-                    forAll gen $ \(a1, a2) ->
-                        forAll arbitrary $ \int ->
-                            when (a1 == a2) $
-                                let hash = hashWithSalt int
-                                in hash a1 `shouldBe` hash a2
-
-
-
-
+            hashablestr = unwords ["hashWithSalt :: Int ->", name, "-> Int"]
+        describe ("Hashable " ++ name) $
+            describe hashablestr $
+            it
+                (unwords
+                     [ "satisfies (a == b) => (hashWithSalt n a) =="
+                     , "(hashWithSalt n b), for every n and for"
+                     , genname
+                     , name
+                     ]) $
+            forAll gen $ \(a1, a2) ->
+                forAll arbitrary $ \int ->
+                    when (a1 == a2) $
+                    let h = hashWithSalt int
+                    in h a1 `shouldBe` h a2

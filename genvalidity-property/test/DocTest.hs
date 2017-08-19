@@ -13,9 +13,8 @@ main = do
 listFilesRecur :: FilePath -> IO [FilePath]
 listFilesRecur dir = do
     entries <-
-        fmap
             (map (dir </>) .
-             filter (\f -> f /= "." && f /= ".." && takeExtension f /= ".swp")) $
+             filter (\f -> f /= "." && f /= ".." && takeExtension f /= ".swp")) <$>
         getDirectoryContents dir
     dirs <- filterM doesDirectoryExist entries
     files <- filterM doesFileExist entries

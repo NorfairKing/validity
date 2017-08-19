@@ -21,13 +21,13 @@ library
     exposed-modules:
         Data.Validity.Aeson
     build-depends:
-        base >= 4.7 && <5,
+        base >=4.7 && <5,
         aeson -any,
         validity >=0.3 && <0.4,
-        validity-text >= 0.1 && < 0.2,
-        validity-unordered-containers >= 0.0 && < 0.1,
-        validity-vector >= 0.0 && < 0.1,
-        validity-scientific >= 0.0 && < 0.1
+        validity-text >=0.1 && <0.2,
+        validity-unordered-containers >=0.0 && <0.1,
+        validity-vector >=0.0 && <0.1,
+        validity-scientific >=0.0 && <0.1
     default-language: Haskell2010
     hs-source-dirs: src
 

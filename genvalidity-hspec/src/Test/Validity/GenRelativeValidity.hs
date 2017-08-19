@@ -64,7 +64,7 @@ genRelativeValidSpec =
     parallel $ do
         let nameOne = nameOf @a
         let nameTwo = nameOf @a
-        describe ("GenRelativeValidity " ++ nameOne ++ " " ++ nameTwo) $ do
+        describe ("GenRelativeValidity " ++ nameOne ++ " " ++ nameTwo) $
             describe ("genValidFor   :: " ++ nameTwo ++ " -> Gen " ++ nameOne) $
                 it
                     ("only generates valid \'" ++
@@ -87,7 +87,7 @@ genRelativeInvalidSpec =
     parallel $ do
         let nameOne = nameOf @a
         let nameTwo = nameOf @a
-        describe ("GenRelativeInvalid " ++ nameOne ++ " " ++ nameTwo) $ do
+        describe ("GenRelativeInvalid " ++ nameOne ++ " " ++ nameTwo) $
             describe ("genInvalidFor   :: " ++ nameTwo ++ " -> Gen " ++ nameOne) $
                 it
                     ("only generates invalid \'" ++

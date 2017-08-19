@@ -246,6 +246,4 @@ import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord
 import Test.Validity.Property
-import Test.Validity.Relations
 import Test.Validity.RelativeValidity
-import Test.Validity.Types

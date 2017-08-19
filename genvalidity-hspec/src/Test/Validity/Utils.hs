@@ -20,14 +20,12 @@ module Test.Validity.Utils
 import Data.Data
 import Test.Hspec
 
-import Data.GenValidity
 
 import Test.Hspec.Core.Formatters
 import Test.Hspec.Core.Runner
 import Test.Hspec.Core.Spec
 import Test.QuickCheck.Property
 
-import Test.Validity.Property.Utils
 
 nameOf
     :: forall a.
@@ -49,7 +47,7 @@ binRelStr op = unwords ["(" ++ op ++ ")", "::", name, "->", name, "->", "Bool"]
   where
     name = nameOf @a
 
-data Anon a =
+newtype Anon a =
     Anon a
 
 instance Show (Anon a) where
@@ -63,23 +61,24 @@ instance Functor Anon where
 -- It also shows the given string when reporting that the tree unexpectedly
 -- succeeded.
 failsBecause :: String -> SpecWith () -> SpecWith ()
-failsBecause s st = mapSpecTree go st
+failsBecause s = mapSpecTree go
   where
     go :: SpecTree () -> SpecTree ()
     go sp =
-        Leaf $
+        Leaf
         Item
         { itemRequirement = s
         , itemLocation = Nothing
         , itemIsParallelizable = False
         , itemExample =
-              \ps runner callback -> do
+              \_ _ _ -> do
                   let conf = defaultConfig {configFormatter = Just silent}
                   r <- hspecWithResult conf $ fromSpecList [sp]
                   let succesful = summaryExamples r > 0 && summaryFailures r > 0
                   pure $ produceResult succesful
         }
 #if MIN_VERSION_hspec_core(2,4,0)
+produceResult :: Bool -> Either a Test.Hspec.Core.Spec.Result
 produceResult succesful =
     Right $
     if succesful

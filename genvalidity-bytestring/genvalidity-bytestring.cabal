@@ -21,9 +21,9 @@ library
     exposed-modules:
         Data.GenValidity.ByteString
     build-depends:
-        base >= 4.7 && <5,
+        base >=4.7 && <5,
         validity -any,
-        validity-bytestring >= 0.1,
+        validity-bytestring >=0.1,
         genvalidity -any,
         bytestring -any,
         QuickCheck -any
@@ -36,7 +36,7 @@ test-suite genvalidity-bytestring-test
     build-depends:
         base -any,
         hspec -any,
-        QuickCheck,
+        QuickCheck -any,
         genvalidity -any,
         genvalidity-bytestring -any,
         genvalidity-hspec -any,

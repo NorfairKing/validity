@@ -39,10 +39,10 @@ spec = do
         "Just an ABC"
         ((++) <$> genValid)
         "prepends"
-        ((flip (++)) <$> genValid)
+        (flip (++) <$> genValid)
         "appends"
 
-data Fcks a =
+newtype Fcks a =
     Fcks Int
     deriving (Show, Eq)
 

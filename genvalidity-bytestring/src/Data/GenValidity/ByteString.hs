@@ -6,9 +6,6 @@ module Data.GenValidity.ByteString where
 import Data.GenValidity
 import Data.Validity.ByteString ()
 
-import Test.QuickCheck
-
-import Control.Monad
 #if !MIN_VERSION_base(4,8,0)
 import Data.Functor ((<$>))
 #endif
