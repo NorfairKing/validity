@@ -46,6 +46,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
+{-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 
 module Data.GenValidity
     ( module Data.Validity
@@ -55,7 +56,7 @@ module Data.GenValidity
 import Data.Validity
 
 import Data.Fixed (Fixed(..), HasResolution)
-import Data.Word (Word, Word8, Word16)
+import Data.Word (Word, Word8, Word16, Word32, Word64)
 import GHC.Generics
 import GHC.Real (Ratio(..))
 
@@ -271,6 +272,16 @@ instance GenUnchecked Word16 where
     genUnchecked = arbitrary
 
 instance GenValid Word16
+
+instance GenUnchecked Word32 where
+    genUnchecked = arbitrary
+
+instance GenValid Word32
+
+instance GenUnchecked Word64 where
+    genUnchecked = arbitrary
+
+instance GenValid Word64
 
 instance GenUnchecked Float where
     genUnchecked = arbitrary

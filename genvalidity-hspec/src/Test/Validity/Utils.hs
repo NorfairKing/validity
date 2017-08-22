@@ -85,6 +85,7 @@ produceResult succesful =
         then Success
         else Failure Nothing $ Reason "Should have failed but didn't."
 #else
+produceResult :: Bool -> Test.Hspec.Core.Spec.Result
 produceResult succesful =
     if succesful
         then Success

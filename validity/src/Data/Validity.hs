@@ -43,7 +43,7 @@ module Data.Validity
 
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.Maybe (Maybe, fromMaybe)
-import Data.Word (Word, Word8, Word16)
+import Data.Word (Word, Word16, Word32, Word64, Word8)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural (Natural, isValidNatural)
@@ -187,6 +187,13 @@ instance Validity Word8 where
 
 -- | Trivially valid
 instance Validity Word16 where
+    isValid = const True
+-- | Trivially valid
+instance Validity Word32 where
+    isValid = const True
+
+-- | Trivially valid
+instance Validity Word64 where
     isValid = const True
 
 -- | NOT trivially valid:
