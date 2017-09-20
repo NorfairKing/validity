@@ -33,11 +33,11 @@
     Typical examples of tests involving validity could look as follows:
 
     > it "succeeds when given valid input" $ do
-    >     forAll genValid $ \input ->
+    >     forAllValid $ \input ->
     >         myFunction input `shouldSatisfy` isRight
 
     > it "produces valid output when it succeeds" $ do
-    >     forAll genUnchecked $ \input ->
+    >     forAllUnchecked $ \input ->
     >         case myFunction input of
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
@@ -397,6 +397,17 @@ instance HasResolution a => GenUnchecked (Fixed a) where
     shrinkUnchecked = shrink
 
 instance HasResolution a => GenValid (Fixed a)
+
+shrinkT2
+  :: (a -> [a])
+  -> (a, a) -> [(a, a)]
+shrinkT2 s (a, b) = (,) <$> s a <*> s b
+
+shrinkT3
+  :: (a -> [a])
+  -> (a, a, a) -> [(a, a, a)]
+shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
+  
 
 -- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int

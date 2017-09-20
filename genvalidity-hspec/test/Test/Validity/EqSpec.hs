@@ -17,7 +17,7 @@ spec = do
     eqSpec @Int
     failsBecause "reflexivity does not hold for NaN" $ eqSpecOnInvalid @Double
     eqSpecOnArbitrary @Int
-    eqSpecOnGen ((* 2) <$> genValid @Int) "even"
+    eqSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])
     failsBecause "(/=) and (==) don't have opposite semantics" $
         eqSpec @EqFuncMismatch
 

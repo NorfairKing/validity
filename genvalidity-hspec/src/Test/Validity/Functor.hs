@@ -23,6 +23,7 @@ import Test.QuickCheck
 
 import Test.Validity.Functions
 import Test.Validity.Utils
+
 {-# ANN module "HLint: ignore Functor law" #-}
 
 fmapTypeStr ::
@@ -141,7 +142,7 @@ functorSpecOnGens gena genaname gen genname genf genfname geng gengname =
                      [ "satisfies the first Fuctor law: 'fmap id == id' for"
                      , genDescr @(f a) genname
                      ]) $
-                equivalentOnGen (fmap @f id) (id @(f a)) gen
+                equivalentOnGen (fmap @f id) (id @(f a)) gen shrinkNothing
             it
                 (unwords
                      [ "satisfieds the second Functor law: 'fmap (f . g) == fmap f . fmap g' for"
@@ -154,7 +155,11 @@ functorSpecOnGens gena genaname gen genname genf genfname geng gengname =
                      ]) $
                 forAll (Anon <$> genf) $ \(Anon f) ->
                     forAll (Anon <$> geng) $ \(Anon g) ->
-                        equivalentOnGen (fmap (f . g)) (fmap f . fmap g) gen
+                        equivalentOnGen
+                            (fmap (f . g))
+                            (fmap f . fmap g)
+                            gen
+                            shrinkNothing
         describe (flTypeStr @f) $
             it
                 (unwords
@@ -163,4 +168,5 @@ functorSpecOnGens gena genaname gen genname genf genfname geng gengname =
                      , "and"
                      , genDescr @(f a) genname
                      ]) $
-            forAll gena $ \a -> equivalentOnGen (a <$) (fmap $ const a) gen
+            forAll gena $ \a ->
+                equivalentOnGen (a <$) (fmap $ const a) gen shrinkNothing

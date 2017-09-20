@@ -34,9 +34,8 @@ import Test.Validity.Utils
 -- Example usage:
 --
 -- > genValiditySpec @Int
-genValiditySpec
-    :: forall a.
-       (Typeable a, Show a, GenValid a, GenInvalid a)
+genValiditySpec ::
+       forall a. (Typeable a, Show a, GenValid a, GenInvalid a)
     => Spec
 genValiditySpec = do
     genValidSpec @a
@@ -47,34 +46,32 @@ genValiditySpec = do
 -- Example usage:
 --
 -- > genValidSpec @Int
-genValidSpec
-    :: forall a.
-       (Typeable a, Show a, GenValid a)
+genValidSpec ::
+       forall a. (Typeable a, Show a, GenValid a)
     => Spec
 genValidSpec =
     parallel $ do
         let name = nameOf @a
-        describe ("GenValid " ++ name) $ 
+        describe ("GenValid " ++ name) $
             describe ("genValid   :: Gen " ++ name) $
-                it ("only generates valid \'" ++ name ++ "\'s") $
-                genValidGeneratesValid @a
+            it ("only generates valid \'" ++ name ++ "\'s") $
+            genValidGeneratesValid @a
 
 -- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
 --
 -- Example usage:
 --
 -- > genInvalidSpec @Double
-genInvalidSpec
-    :: forall a.
-       (Typeable a, Show a, GenInvalid a)
+genInvalidSpec ::
+       forall a. (Typeable a, Show a, GenInvalid a)
     => Spec
 genInvalidSpec =
     parallel $ do
         let name = nameOf @a
-        describe ("GenInvalid " ++ name) $ 
+        describe ("GenInvalid " ++ name) $
             describe ("genInvalid :: Gen " ++ name) $
-                it ("only generates invalid \'" ++ name ++ "\'s") $
-                genInvalidGeneratesInvalid @a
+            it ("only generates invalid \'" ++ name ++ "\'s") $
+            genInvalidGeneratesInvalid @a
 
 -- | @genValid@ only generates valid data
 --
@@ -88,11 +85,10 @@ genInvalidSpec =
 -- prop> genValidGeneratesValid @Integer
 -- prop> genValidGeneratesValid @(Maybe Int)
 -- prop> genValidGeneratesValid @[Int]
-genValidGeneratesValid
-    :: forall a.
-       (Show a, GenValid a)
+genValidGeneratesValid ::
+       forall a. (Show a, GenValid a)
     => Property
-genValidGeneratesValid = genGeneratesValid @a genValid
+genValidGeneratesValid = genGeneratesValid @a genValid shrinkValid
 
 -- | @genValid@ only generates invalid data
 --
@@ -100,8 +96,7 @@ genValidGeneratesValid = genGeneratesValid @a genValid
 -- prop> genInvalidGeneratesInvalid @Double
 -- prop> genInvalidGeneratesInvalid @(Maybe Double)
 -- prop> genInvalidGeneratesInvalid @[Double]
-genInvalidGeneratesInvalid
-    :: forall a.
-       (Show a, GenInvalid a)
+genInvalidGeneratesInvalid ::
+       forall a. (Show a, GenInvalid a)
     => Property
-genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid
+genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid shrinkInvalid

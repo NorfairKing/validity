@@ -38,6 +38,7 @@ import Test.Validity.Utils
 {-# ANN module "HLint: ignore Monad law, right identity" #-}
 
 {-# ANN module "HLint: ignore Avoid lambda" #-}
+
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 returnTypeStr ::
@@ -193,12 +194,13 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                     (\a (Anon k) -> return a >>= k)
                     (\a (Anon k) -> k a)
                     ((,) <$> gena <*> (Anon <$> genbf))
+                    shrinkNothing
             it
                 (unwords
                      [ "satisfy the second Monad law: 'm >>= return = m' for"
                      , genDescr @(f a) genname
                      ]) $
-                equivalentOnGen (\m -> m >>= return) (\m -> m) gen
+                equivalentOnGen (\m -> m >>= return) (\m -> m) gen shrinkNothing
         describe (bindTypeStr @f) $
             it
                 (unwords
@@ -212,11 +214,12 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                 (\m (Anon k) (Anon h) -> m >>= (\x -> k x >>= h))
                 (\m (Anon k) (Anon h) -> (m >>= k) >>= h)
                 ((,,) <$> gen <*> (Anon <$> genbf) <*> (Anon <$> gencf))
+                shrinkNothing
         describe (unwords ["relation with Applicative", nameOf @f]) $ do
             it
                 (unwords
                      ["satisfies 'pure = return' for", genDescr @(f a) genname]) $
-                equivalentOnGen (pure @f) (return @f) gena
+                equivalentOnGen (pure @f) (return @f) gena shrinkNothing
             it
                 (unwords
                      [ "satisfies '(<*>) = ap' for"
@@ -228,6 +231,7 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                     (\(Anon a) b -> a <*> b)
                     (\(Anon a) b -> ap a b)
                     ((,) <$> (Anon <$> genfab) <*> gen)
+                    shrinkNothing
             it
                 (unwords
                      [ "satisfies '(>>) = (*>)' for"
@@ -235,7 +239,7 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                      , "and"
                      , genDescr @(f b) genbname
                      ]) $
-                equivalentOnGens2 (>>) (*>) ((,) <$> gen <*> genb)
+                equivalentOnGens2 (>>) (*>) ((,) <$> gen <*> genb) shrinkNothing
         describe (unwords ["relation with Functor", nameOf @f]) $
             it
                 (unwords
@@ -248,3 +252,4 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                 (\(Anon f) xs -> fmap f xs)
                 (\(Anon f) xs -> xs >>= (return . f))
                 ((,) <$> (Anon <$> geng) <*> gen)
+                shrinkNothing

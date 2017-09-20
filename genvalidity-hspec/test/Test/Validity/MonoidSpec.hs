@@ -11,4 +11,4 @@ spec = do
     monoidSpecOnValid @[Double]
     monoidSpec @[Int]
     monoidSpecOnArbitrary @[Int]
-    monoidSpecOnGen (pure "a") "singleton list of 'a'"
+    monoidSpecOnGen (pure "a") "singleton list of 'a'" (const [])

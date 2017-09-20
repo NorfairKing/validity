@@ -9,7 +9,7 @@ import Test.Validity.Binary
 
 spec :: Spec
 spec = do
-    binarySpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
+    binarySpecOnGen (genListOf $ pure 'a') "sequence of 'a's" (const [])
     binarySpecOnValid @Double
     binarySpec @Int
     binarySpecOnArbitrary @Int
