@@ -42,10 +42,11 @@
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
     -}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Data.GenValidity
     ( module Data.Validity
@@ -92,6 +93,12 @@ class GenUnchecked a where
         Gen a
     genUnchecked = to <$> gGenUnchecked
 
+    shrinkUnchecked :: a -> [a]
+    default shrinkUnchecked ::
+        (Generic a, RecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) =>
+        a -> [a]
+    shrinkUnchecked = gShrinkUnchecked
+
 -- | A class of types for which valid values can be generated.
 --
 -- If you also write @Arbitrary@ instances for @GenValid@ types, it may be
@@ -111,6 +118,9 @@ class (Validity a, GenUnchecked a) =>
     -- data, otherwise your testing may not cover all cases.
     genValid = genUnchecked `suchThat` isValid
 
+    shrinkValid :: a -> [a]
+    shrinkValid = filter isValid . shrinkUnchecked
+
 -- | A class of types for which invalid values can be generated.
 class (Validity a, GenUnchecked a) =>
       GenInvalid a where
@@ -124,6 +134,9 @@ class (Validity a, GenUnchecked a) =>
     -- If you do, make sure that it is possible to generate all possible
     -- invalid data, otherwise your testing may not cover all cases.
     genInvalid = genUnchecked `suchThat` (not . isValid)
+
+    shrinkInvalid :: a -> [a]
+    shrinkInvalid = filter isValid . shrinkUnchecked
 
 instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (a, b) where
     genUnchecked =
@@ -362,18 +375,109 @@ class GGenUnchecked f where
 
 instance GGenUnchecked U1 where
     gGenUnchecked = pure U1
-
+    
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :*: b) where
     gGenUnchecked = do
         g1 <- gGenUnchecked
         g2 <- gGenUnchecked
         pure $ g1 :*: g2
-
+        
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :+: b) where
     gGenUnchecked = oneof [L1 <$> gGenUnchecked, R1 <$> gGenUnchecked]
-
+    
 instance (GGenUnchecked a) => GGenUnchecked (M1 i c a) where
     gGenUnchecked = M1 <$> gGenUnchecked
-
+    
 instance (GenUnchecked a) => GGenUnchecked (K1 i a) where
     gGenUnchecked = K1 <$> genUnchecked
+
+
+-- | Shrink a term to any of its immediate subterms,
+-- and also recursively shrink all subterms.
+gShrinkUnchecked :: (Generic a, RecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
+gShrinkUnchecked x = uncheckedSubterms x ++ uncheckedRecursivelyShrink x
+
+-- | Recursively shrink all immediate uncheckedSubterms.
+uncheckedRecursivelyShrink :: (Generic a, RecursivelyShrink (Rep a)) => a -> [a]
+uncheckedRecursivelyShrink = map to . guncheckedRecursivelyShrink . from
+
+class RecursivelyShrink f where
+  guncheckedRecursivelyShrink :: f a -> [f a]
+
+instance (RecursivelyShrink f, RecursivelyShrink g) => RecursivelyShrink (f :*: g) where
+  guncheckedRecursivelyShrink (x :*: y) =
+      [x' :*: y | x' <- guncheckedRecursivelyShrink x] ++
+      [x :*: y' | y' <- guncheckedRecursivelyShrink y]
+
+instance (RecursivelyShrink f, RecursivelyShrink g) => RecursivelyShrink (f :+: g) where
+  guncheckedRecursivelyShrink (L1 x) = map L1 (guncheckedRecursivelyShrink x)
+  guncheckedRecursivelyShrink (R1 x) = map R1 (guncheckedRecursivelyShrink x)
+
+instance RecursivelyShrink f => RecursivelyShrink (M1 i c f) where
+  guncheckedRecursivelyShrink (M1 x) = map M1 (guncheckedRecursivelyShrink x)
+
+instance Arbitrary a => RecursivelyShrink (K1 i a) where
+  guncheckedRecursivelyShrink (K1 x) = map K1 (shrink x)
+
+instance RecursivelyShrink U1 where
+  guncheckedRecursivelyShrink U1 = []
+
+instance RecursivelyShrink V1 where
+  -- The empty type can't be shrunk to anything.
+  guncheckedRecursivelyShrink _ = []
+
+
+-- | All immediate uncheckedSubterms of a term.
+uncheckedSubterms :: (Generic a, GUncheckedSubterms (Rep a) a) => a -> [a]
+uncheckedSubterms = gUncheckedSubterms . from
+
+
+class GUncheckedSubterms f a where
+  gUncheckedSubterms :: f a -> [a]
+
+instance GUncheckedSubterms V1 a where
+  gUncheckedSubterms _ = []
+
+instance GUncheckedSubterms U1 a where
+  gUncheckedSubterms U1 = []
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubterms (f :*: g) a where
+  gUncheckedSubterms (l :*: r) = gUncheckedSubtermsIncl l ++ gUncheckedSubtermsIncl r
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubterms (f :+: g) a where
+  gUncheckedSubterms (L1 x) = gUncheckedSubtermsIncl x
+  gUncheckedSubterms (R1 x) = gUncheckedSubtermsIncl x
+
+instance GUncheckedSubterms f a => GUncheckedSubterms (M1 i c f) a where
+  gUncheckedSubterms (M1 x) = gUncheckedSubterms x
+
+instance GUncheckedSubterms (K1 i a) b where
+  gUncheckedSubterms (K1 _) = []
+
+
+class GUncheckedSubtermsIncl f a where
+  gUncheckedSubtermsIncl :: f a -> [a]
+
+instance GUncheckedSubtermsIncl V1 a where
+  gUncheckedSubtermsIncl _ = []
+
+instance GUncheckedSubtermsIncl U1 a where
+  gUncheckedSubtermsIncl U1 = []
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubtermsIncl (f :*: g) a where
+  gUncheckedSubtermsIncl (l :*: r) = gUncheckedSubtermsIncl l ++ gUncheckedSubtermsIncl r
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubtermsIncl (f :+: g) a where
+  gUncheckedSubtermsIncl (L1 x) = gUncheckedSubtermsIncl x
+  gUncheckedSubtermsIncl (R1 x) = gUncheckedSubtermsIncl x
+
+instance GUncheckedSubtermsIncl f a => GUncheckedSubtermsIncl (M1 i c f) a where
+  gUncheckedSubtermsIncl (M1 x) = gUncheckedSubtermsIncl x
+
+-- This is the important case: We've found a term of the same type.
+instance {-# OVERLAPPING #-} GUncheckedSubtermsIncl (K1 i a) a where
+  gUncheckedSubtermsIncl (K1 x) = [x]
+
+instance {-# OVERLAPPING #-} GUncheckedSubtermsIncl (K1 i a) b where
+  gUncheckedSubtermsIncl (K1 _) = []
+
