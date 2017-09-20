@@ -16,11 +16,11 @@ instance GenUnchecked TimeLocale where
         genUnchecked <*>
         genUnchecked <*>
         genUnchecked
+    shrinkUnchecked _ = []
 
 instance GenValid TimeLocale where
     genValid =
-        TimeLocale <$> genValid <*> genValid <*> genValid <*>
-        genValid <*>
+        TimeLocale <$> genValid <*> genValid <*> genValid <*> genValid <*>
         genValid <*>
         genValid <*>
         genValid <*>

@@ -26,6 +26,12 @@ instance GenUnchecked Value where
             , Bool <$> genUnchecked
             , pure Null
             ]
+    shrinkUnchecked (Object hm) = Object <$> shrinkUnchecked hm
+    shrinkUnchecked (Array a) = Array <$> shrinkUnchecked a
+    shrinkUnchecked (String s) = String <$> shrinkUnchecked s
+    shrinkUnchecked (Number s) = Number <$> shrinkUnchecked s
+    shrinkUnchecked (Bool s) = Bool <$> shrinkUnchecked s
+    shrinkUnchecked Null = []
 
 instance GenValid Value where
     genValid =

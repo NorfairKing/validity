@@ -15,18 +15,23 @@ import Test.QuickCheck
 
 instance GenUnchecked UniversalTime where
     genUnchecked = ModJulianDate <$> genUnchecked
+    shrinkUnchecked = fmap ModJulianDate . shrinkUnchecked . getModJulianDate
 
 instance GenValid UniversalTime where
     genValid = ModJulianDate <$> genValid
 
 instance GenUnchecked DiffTime where
     genUnchecked = picosecondsToDiffTime <$> genUnchecked
+    shrinkUnchecked =
+        fmap picosecondsToDiffTime . shrinkUnchecked . diffTimeToPicoseconds
 
 instance GenValid DiffTime where
     genValid = picosecondsToDiffTime <$> genValid
 
 instance GenUnchecked UTCTime where
     genUnchecked = UTCTime <$> genUnchecked <*> genUnchecked
+    shrinkUnchecked (UTCTime d dt) =
+        [UTCTime d' dt' | (d', dt') <- shrinkUnchecked (d, dt)]
 
 instance GenValid UTCTime where
     genValid =
@@ -36,6 +41,7 @@ instance GenValid UTCTime where
 instance GenInvalid UTCTime
 
 instance GenUnchecked NominalDiffTime where
-    genUnchecked = (fromIntegral :: Integer -> NominalDiffTime) <$> genUnchecked
+    genUnchecked = diffUTCTime <$> genUnchecked <*> genUnchecked
+    shrinkUnchecked _ = []
 
 instance GenValid NominalDiffTime

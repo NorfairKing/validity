@@ -12,5 +12,6 @@ import Data.Validity.Scientific ()
 
 instance GenUnchecked Scientific where
     genUnchecked = scientific <$> genUnchecked <*> genUnchecked
+    shrinkUnchecked s = [scientific c e | (c, e) <- shrinkUnchecked (coefficient s, base10Exponent s)]
 
 instance GenValid Scientific

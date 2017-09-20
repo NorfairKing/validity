@@ -48,6 +48,7 @@ newtype Fcks a =
 
 instance GenUnchecked (Fcks a) where
     genUnchecked = Fcks <$> genUnchecked
+    shrinkUnchecked (Fcks i) = Fcks <$> shrinkUnchecked i
 
 instance Functor Fcks where
     fmap _ (Fcks i) = Fcks $ i * 2

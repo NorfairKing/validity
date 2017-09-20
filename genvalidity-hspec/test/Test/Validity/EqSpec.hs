@@ -31,3 +31,4 @@ instance Eq EqFuncMismatch where
 
 instance GenUnchecked EqFuncMismatch where
     genUnchecked = EqFuncMismatch <$> genUnchecked
+    shrinkUnchecked _ = []
