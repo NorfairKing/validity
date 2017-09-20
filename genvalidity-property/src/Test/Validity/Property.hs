@@ -3,6 +3,9 @@
 
 module Test.Validity.Property
     ( module Data.GenValidity
+    , forAllUnchecked
+    , forAllValid
+    , forAllInvalid
       -- * Tests for GenValidity instances
     , genGeneratesValid
     , genGeneratesInvalid
@@ -190,3 +193,4 @@ import Test.Validity.GenValidity.Property
 import Test.Validity.Operations
 import Test.Validity.Relations
 import Test.Validity.Types
+import Test.Validity.Property.Utils
