@@ -95,7 +95,7 @@ class GenUnchecked a where
 
     shrinkUnchecked :: a -> [a]
     default shrinkUnchecked ::
-        (Generic a, RecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) =>
+        (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) =>
         a -> [a]
     shrinkUnchecked = gShrinkUnchecked
 
@@ -247,56 +247,67 @@ instance GenInvalid a => GenInvalid [a] where
 
 instance GenUnchecked () where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid ()
 
 instance GenUnchecked Bool where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Bool
 
 instance GenUnchecked Ordering where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Ordering
 
 instance GenUnchecked Char where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Char
 
 instance GenUnchecked Int where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Int
 
 instance GenUnchecked Word where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word
 
 instance GenUnchecked Word8 where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word8
 
 instance GenUnchecked Word16 where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word16
 
 instance GenUnchecked Word32 where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word32
 
 instance GenUnchecked Word64 where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word64
 
 instance GenUnchecked Float where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Float where
     genValid = arbitrary
@@ -307,6 +318,7 @@ instance GenInvalid Float where
 
 instance GenUnchecked Double where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Double
 
@@ -316,6 +328,7 @@ instance GenInvalid Double where
 
 instance GenUnchecked Integer where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Integer
 
@@ -324,11 +337,13 @@ instance GenUnchecked (Ratio Integer) where
         n <- genUnchecked
         d <- genUnchecked
         pure $ n :% d
+    shrinkUnchecked = shrink
 
 instance GenValid (Ratio Integer)
 
 instance HasResolution a => GenUnchecked (Fixed a) where
     genUnchecked = MkFixed <$> genUnchecked
+    shrinkUnchecked = shrink
 
 instance HasResolution a => GenValid (Fixed a)
 
@@ -394,37 +409,37 @@ instance (GenUnchecked a) => GGenUnchecked (K1 i a) where
 
 -- | Shrink a term to any of its immediate subterms,
 -- and also recursively shrink all subterms.
-gShrinkUnchecked :: (Generic a, RecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
+gShrinkUnchecked :: (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
 gShrinkUnchecked x = uncheckedSubterms x ++ uncheckedRecursivelyShrink x
 
 -- | Recursively shrink all immediate uncheckedSubterms.
-uncheckedRecursivelyShrink :: (Generic a, RecursivelyShrink (Rep a)) => a -> [a]
-uncheckedRecursivelyShrink = map to . guncheckedRecursivelyShrink . from
+uncheckedRecursivelyShrink :: (Generic a, GUncheckedRecursivelyShrink (Rep a)) => a -> [a]
+uncheckedRecursivelyShrink = map to . gUncheckedRecursivelyShrink . from
 
-class RecursivelyShrink f where
-  guncheckedRecursivelyShrink :: f a -> [f a]
+class GUncheckedRecursivelyShrink f where
+  gUncheckedRecursivelyShrink :: f a -> [f a]
 
-instance (RecursivelyShrink f, RecursivelyShrink g) => RecursivelyShrink (f :*: g) where
-  guncheckedRecursivelyShrink (x :*: y) =
-      [x' :*: y | x' <- guncheckedRecursivelyShrink x] ++
-      [x :*: y' | y' <- guncheckedRecursivelyShrink y]
+instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :*: g) where
+  gUncheckedRecursivelyShrink (x :*: y) =
+      [x' :*: y | x' <- gUncheckedRecursivelyShrink x] ++
+      [x :*: y' | y' <- gUncheckedRecursivelyShrink y]
 
-instance (RecursivelyShrink f, RecursivelyShrink g) => RecursivelyShrink (f :+: g) where
-  guncheckedRecursivelyShrink (L1 x) = map L1 (guncheckedRecursivelyShrink x)
-  guncheckedRecursivelyShrink (R1 x) = map R1 (guncheckedRecursivelyShrink x)
+instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :+: g) where
+  gUncheckedRecursivelyShrink (L1 x) = map L1 (gUncheckedRecursivelyShrink x)
+  gUncheckedRecursivelyShrink (R1 x) = map R1 (gUncheckedRecursivelyShrink x)
 
-instance RecursivelyShrink f => RecursivelyShrink (M1 i c f) where
-  guncheckedRecursivelyShrink (M1 x) = map M1 (guncheckedRecursivelyShrink x)
+instance GUncheckedRecursivelyShrink f => GUncheckedRecursivelyShrink (M1 i c f) where
+  gUncheckedRecursivelyShrink (M1 x) = map M1 (gUncheckedRecursivelyShrink x)
 
-instance Arbitrary a => RecursivelyShrink (K1 i a) where
-  guncheckedRecursivelyShrink (K1 x) = map K1 (shrink x)
+instance GenUnchecked a => GUncheckedRecursivelyShrink (K1 i a) where
+  gUncheckedRecursivelyShrink (K1 x) = map K1 (shrinkUnchecked x)
 
-instance RecursivelyShrink U1 where
-  guncheckedRecursivelyShrink U1 = []
+instance GUncheckedRecursivelyShrink U1 where
+  gUncheckedRecursivelyShrink U1 = []
 
-instance RecursivelyShrink V1 where
+instance GUncheckedRecursivelyShrink V1 where
   -- The empty type can't be shrunk to anything.
-  guncheckedRecursivelyShrink _ = []
+  gUncheckedRecursivelyShrink _ = []
 
 
 -- | All immediate uncheckedSubterms of a term.
