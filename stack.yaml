@@ -14,6 +14,7 @@ packages:
 - 'genvalidity-text'
 - 'genvalidity-time'
 - 'genvalidity-unordered-containers'
+- 'genvalidity-uuid'
 - 'genvalidity-vector'
 - 'validity'
 - 'validity-aeson'
