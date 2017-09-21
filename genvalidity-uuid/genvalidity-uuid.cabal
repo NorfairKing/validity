@@ -7,7 +7,7 @@ license-file: LICENSE
 copyright: Copyright: (c) 2017 Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
 homepage: https://github.com/NorfairKing/validity#readme
-synopsis: GenValidity support for UUId
+synopsis: GenValidity support for UUID
 description:
     Please see README.md
 category: Testing
