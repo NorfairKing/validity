@@ -24,5 +24,6 @@ packages:
 - 'validity-text'
 - 'validity-time'
 - 'validity-unordered-containers'
+- 'validity-uuid'
 - 'validity-vector'
 resolver: lts-8.5
