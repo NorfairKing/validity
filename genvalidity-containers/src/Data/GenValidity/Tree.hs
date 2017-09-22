@@ -2,12 +2,10 @@
 {-# LANGUAGE CPP #-}
 
 module Data.GenValidity.Tree where
-
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<*>))
 import Data.Functor ((<$>))
 #endif
-
 import Data.GenValidity
 import Data.Validity.Tree ()
 
@@ -15,18 +13,17 @@ import Test.QuickCheck
 
 import Data.Tree
 
-instance GenUnchecked a =>
-         GenUnchecked (Tree a) where
+instance GenUnchecked a => GenUnchecked (Tree a) where
     genUnchecked = genTreeOf genUnchecked
+    shrinkUnchecked (Node v ts) =
+        [Node v' ts' | (v', ts') <- shrinkUnchecked (v, ts)]
 
-instance GenValid a =>
-         GenValid (Tree a) where
+instance GenValid a => GenValid (Tree a) where
     genValid = genTreeOf genValid
 
 -- | There should be at least one invalid element, either it's here or it's
 -- further down the tree.
-instance (GenUnchecked a, GenInvalid a) =>
-         GenInvalid (Tree a) where
+instance (GenUnchecked a, GenInvalid a) => GenInvalid (Tree a) where
     genInvalid =
         sized $ \n -> do
             size <- upTo n

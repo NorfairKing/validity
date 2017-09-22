@@ -11,6 +11,7 @@ import Data.Functor ((<$>))
 #endif
 instance GenUnchecked Day where
     genUnchecked = ModifiedJulianDay <$> genUnchecked
+    shrinkUnchecked _ = []
 
 instance GenValid Day where
     genValid = ModifiedJulianDay <$> genValid

@@ -22,6 +22,7 @@ import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
 
+import Test.Validity.Property.Utils
 import Test.Validity.Utils
 
 -- | A @Spec@ that specifies that @genValidFor@ and @genInvalidFor@ work as
@@ -33,8 +34,8 @@ import Test.Validity.Utils
 -- Example usage:
 --
 -- > relativeGenValiditySpec @MyDataFor @MyOtherData
-genRelativeValiditySpec
-    :: forall a b.
+genRelativeValiditySpec ::
+       forall a b.
        ( Typeable a
        , Typeable b
        , Show a
@@ -48,8 +49,8 @@ genRelativeValiditySpec = do
     genRelativeValidSpec @a @b
     genRelativeInvalidSpec @a @b
 
-genRelativeValidSpec
-    :: forall a b.
+genRelativeValidSpec ::
+       forall a b.
        ( Typeable a
        , Typeable b
        , Show a
@@ -66,13 +67,13 @@ genRelativeValidSpec =
         let nameTwo = nameOf @a
         describe ("GenRelativeValidity " ++ nameOne ++ " " ++ nameTwo) $
             describe ("genValidFor   :: " ++ nameTwo ++ " -> Gen " ++ nameOne) $
-                it
-                    ("only generates valid \'" ++
-                     nameOne ++ "\'s for the " ++ nameTwo) $
-                genRelativeValidGeneratesValid @a @b
+            it
+                ("only generates valid \'" ++
+                 nameOne ++ "\'s for the " ++ nameTwo) $
+            genRelativeValidGeneratesValid @a @b
 
-genRelativeInvalidSpec
-    :: forall a b.
+genRelativeInvalidSpec ::
+       forall a b.
        ( Typeable a
        , Typeable b
        , Show a
@@ -89,23 +90,23 @@ genRelativeInvalidSpec =
         let nameTwo = nameOf @a
         describe ("GenRelativeInvalid " ++ nameOne ++ " " ++ nameTwo) $
             describe ("genInvalidFor   :: " ++ nameTwo ++ " -> Gen " ++ nameOne) $
-                it
-                    ("only generates invalid \'" ++
-                     nameOne ++ "\'s for the " ++ nameTwo) $
-                genRelativeInvalidGeneratesInvalid @a @b
+            it
+                ("only generates invalid \'" ++
+                 nameOne ++ "\'s for the " ++ nameTwo) $
+            genRelativeInvalidGeneratesInvalid @a @b
 
 -- | @genValidFor b@ only generates values that satisfy @isValidFor b@
-genRelativeValidGeneratesValid
-    :: forall a b.
+genRelativeValidGeneratesValid ::
+       forall a b.
        (Show a, Show b, GenValid b, RelativeValidity a b, GenRelativeValid a b)
     => Property
 genRelativeValidGeneratesValid =
-    forAll genValid $ \(b :: b) ->
+    forAllValid $ \(b :: b) ->
         forAll (genValidFor b) $ \(a :: a) -> a `shouldSatisfy` (`isValidFor` b)
 
 -- | @genInvalidFor b@ only generates values that do not satisfy @isValidFor b@
-genRelativeInvalidGeneratesInvalid
-    :: forall a b.
+genRelativeInvalidGeneratesInvalid ::
+       forall a b.
        ( Show a
        , Show b
        , GenUnchecked b
@@ -114,6 +115,6 @@ genRelativeInvalidGeneratesInvalid
        )
     => Property
 genRelativeInvalidGeneratesInvalid =
-    forAll genUnchecked $ \(b :: b) ->
+    forAllUnchecked $ \(b :: b) ->
         forAll (genInvalidFor b) $ \(a :: a) ->
             a `shouldNotSatisfy` (`isValidFor` b)

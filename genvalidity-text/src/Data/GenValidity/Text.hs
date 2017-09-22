@@ -31,6 +31,7 @@ instance GenUnchecked Text where
             off <- upTo $ max 0 (size - 1)
             let len = size - off
             pure $ Text arr off len
+    shrinkUnchecked _ = []
 
 instance GenValid Text where
     genValid =
@@ -38,6 +39,7 @@ instance GenValid Text where
             size <- upTo n
             chars <- resize size $ genListOf arbitrary
             return $ T.pack chars
+    shrinkValid = fmap T.pack . shrinkValid . T.unpack
 
 instance GenInvalid Text
 

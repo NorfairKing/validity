@@ -203,7 +203,7 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                      [ "satisfy the identity law: 'pure id <*> v = v' for"
                      , genDescr @(f a) genname
                      ]) $
-                equivalentOnGen (pure id <*>) id gen
+                equivalentOnGen (pure id <*>) id gen shrinkNothing
             it
                 (unwords
                      [ "satisfy the composition law: 'pure (.) <*> u <*> v <*> w = u <*> (v <*> w)' for"
@@ -218,7 +218,7 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                          pure (.) <*> (u :: f (b -> c)) <*> (v :: f (a -> b)) <*>
                          (w :: f a) :: f c)
                     (\(Anon u) (Anon v) w -> u <*> (v <*> w) :: f c)
-                    ((,,) <$> (Anon <$> genffb) <*> (Anon <$> genffa) <*> gen)
+                    ((,,) <$> (Anon <$> genffb) <*> (Anon <$> genffa) <*> gen) shrinkNothing
             it
                 (unwords
                      [ "satisfy the homomorphism law: 'pure f <*> pure x = pure (f x)' for"
@@ -229,7 +229,7 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                 equivalentOnGens2
                     (\(Anon f) x -> pure f <*> pure x :: f b)
                     (\(Anon f) x -> pure $ f x :: f b)
-                    ((,) <$> (Anon <$> genfa) <*> gena)
+                    ((,) <$> (Anon <$> genfa) <*> gena) shrinkNothing
             it
                 (unwords
                      [ "satisfy the interchange law: 'u <*> pure y = pure ($ y) <*> u' for"
@@ -240,7 +240,7 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                 equivalentOnGens2
                     (\(Anon u) y -> u <*> pure y :: f b)
                     (\(Anon u) y -> pure ($ y) <*> u :: f b)
-                    ((,) <$> (Anon <$> genffa) <*> gena)
+                    ((,) <$> (Anon <$> genffa) <*> gena) shrinkNothing
             it
                 (unwords
                      [ "satisfy the law about the functor instance: fmap f x = pure f <*> x for"
@@ -251,7 +251,7 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                 equivalentOnGens2
                     (\(Anon f) x -> fmap f x)
                     (\(Anon f) x -> pure f <*> x)
-                    ((,) <$> (Anon <$> genfa) <*> gen)
+                    ((,) <$> (Anon <$> genfa) <*> gen) shrinkNothing
         describe (seqrTypeStr @f) $
             it
                 (unwords
@@ -263,7 +263,7 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                 equivalentOnGens2
                     (\u v -> u *> v)
                     (\u v -> pure (const id) <*> u <*> v)
-                    ((,) <$> gen <*> genb)
+                    ((,) <$> gen <*> genb) shrinkNothing
         describe (seqlTypeStr @f) $
             it
                 (unwords
@@ -275,4 +275,4 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                 equivalentOnGens2
                     (\u v -> u <* v)
                     (\u v -> pure const <*> u <*> v)
-                    ((,) <$> gen <*> genb)
+                    ((,) <$> gen <*> genb) shrinkNothing

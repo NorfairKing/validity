@@ -14,9 +14,10 @@ import Data.Hashable (Hashable)
 
 instance (Hashable v, Eq v, GenUnchecked v) => GenUnchecked (HashSet v) where
     genUnchecked = HS.fromList <$> genUnchecked
+    shrinkUnchecked = fmap HS.fromList . shrinkUnchecked . HS.toList
 
 instance (Hashable v, Eq v, GenValid v) => GenValid (HashSet v) where
     genValid = HS.fromList <$> genValid
 
-instance (Hashable v,Eq v, GenInvalid v) => GenInvalid (HashSet v) where
+instance (Hashable v, Eq v, GenInvalid v) => GenInvalid (HashSet v) where
     genInvalid = HS.fromList <$> genInvalid

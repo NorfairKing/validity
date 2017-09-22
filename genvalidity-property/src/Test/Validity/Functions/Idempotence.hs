@@ -16,18 +16,18 @@ import Test.QuickCheck
 
 idempotentOnGen
     :: (Show a, Eq a)
-    => (a -> a) -> Gen a -> Property
-idempotentOnGen f gen = forAll gen $ \a -> f (f a) `shouldBe` f a
+    => (a -> a) -> Gen a -> (a -> [a]) -> Property
+idempotentOnGen f gen s = forAllShrink gen s $ \a -> f (f a) `shouldBe` f a
 
 idempotentOnValid
     :: (Show a, Eq a, GenValid a)
     => (a -> a) -> Property
-idempotentOnValid func = idempotentOnGen func genValid
+idempotentOnValid func = idempotentOnGen func genValid shrinkValid
 
 idempotent
     :: (Show a, Eq a, GenUnchecked a)
     => (a -> a) -> Property
-idempotent func = idempotentOnGen func genUnchecked
+idempotent func = idempotentOnGen func genUnchecked shrinkUnchecked
 
 -- |
 --
@@ -41,4 +41,4 @@ idempotent func = idempotentOnGen func genUnchecked
 idempotentOnArbitrary
     :: (Show a, Eq a, Arbitrary a)
     => (a -> a) -> Property
-idempotentOnArbitrary func = idempotentOnGen func arbitrary
+idempotentOnArbitrary func = idempotentOnGen func arbitrary shrink
