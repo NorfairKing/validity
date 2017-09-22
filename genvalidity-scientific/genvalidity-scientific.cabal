@@ -1,5 +1,5 @@
 name: genvalidity-scientific
-version: 0.0.0.0
+version: 0.1.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -23,7 +23,7 @@ library
     build-depends:
         base >=4.7 && <5,
         QuickCheck -any,
-        genvalidity -any,
+        genvalidity >=0.4 && <0.5,
         scientific -any,
         validity -any,
         validity-scientific -any

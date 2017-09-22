@@ -1,5 +1,5 @@
 name: genvalidity-vector
-version: 0.0.0.0
+version: 0.1.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -23,7 +23,7 @@ library
     build-depends:
         base <5,
         QuickCheck -any,
-        genvalidity >=0.3 && <0.4,
+        genvalidity >=0.4 && <0.5,
         validity >=0.3 && <0.4,
         validity-vector >=0.0 && <0.1,
         vector -any

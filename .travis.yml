@@ -7,7 +7,7 @@ cache:
 
 matrix:
   include:
-  - env: 
+  - env:
       - RESOLVER_FLAG="--stack-yaml lts-9.yaml"
       - BUILD_PKGS=""
       - TEST_PKGS=""

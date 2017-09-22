@@ -1,5 +1,5 @@
 name: genvalidity-hspec-binary
-version: 0.0.0.0
+version: 0.1.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -24,12 +24,12 @@ library
         Test.Validity.Binary
     build-depends:
         base >=4.9 && <=5,
-        genvalidity-hspec >=0.3 && <0.5,
-        genvalidity >=0.3 && <0.4,
-        hspec -any,
-        binary >=0.5 && <0.9,
         QuickCheck -any,
-        deepseq >=1.4 && <1.5
+        binary >=0.5 && <0.9,
+        deepseq >=1.4 && <1.5,
+        genvalidity >=0.4 && <0.5,
+        genvalidity-hspec >=0.5 && <0.6,
+        hspec -any
     default-language: Haskell2010
     hs-source-dirs: src/
     ghc-options: -Wall
@@ -49,7 +49,7 @@ test-suite genvalidity-hspec-binary-test
     main-is: Spec.hs
     build-depends:
         base -any,
-        genvalidity >=0.3 && <0.4,
+        genvalidity -any,
         genvalidity-hspec-binary -any,
         hspec -any
     default-language: Haskell2010

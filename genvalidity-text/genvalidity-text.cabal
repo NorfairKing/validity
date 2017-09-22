@@ -1,5 +1,5 @@
 name: genvalidity-text
-version: 0.3.1.1
+version: 0.4.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -24,7 +24,7 @@ library
         base >=4.7 && <5,
         validity -any,
         validity-text >=0.1.2,
-        genvalidity -any,
+        genvalidity >=0.4 && <0.5,
         text -any,
         array -any,
         QuickCheck -any

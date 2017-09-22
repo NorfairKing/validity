@@ -1,5 +1,5 @@
 name: genvalidity-hspec-aeson
-version: 0.0.1.1
+version: 0.1.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -22,8 +22,8 @@ library
         Test.Validity.Aeson
     build-depends:
         base >=4.9 && <=5,
-        genvalidity-hspec >=0.3 && <0.5,
-        genvalidity >=0.3 && <0.4,
+        genvalidity-hspec >=0.5 && <0.6,
+        genvalidity >=0.4 && <0.5,
         hspec -any,
         aeson >=0.11 && <1.2,
         QuickCheck -any,
@@ -48,7 +48,7 @@ test-suite genvalidity-hspec-aeson-test
     main-is: Spec.hs
     build-depends:
         base -any,
-        genvalidity >=0.3 && <0.4,
+        genvalidity -any,
         genvalidity-hspec-aeson -any,
         hspec -any,
         aeson -any,

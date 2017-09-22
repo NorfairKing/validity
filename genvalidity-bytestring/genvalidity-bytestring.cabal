@@ -1,5 +1,5 @@
 name: genvalidity-bytestring
-version: 0.0.0.1
+version: 0.1.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -24,7 +24,7 @@ library
         base >=4.7 && <5,
         validity -any,
         validity-bytestring >=0.1,
-        genvalidity -any,
+        genvalidity >=0.4 && <0.5,
         bytestring -any,
         QuickCheck -any
     default-language: Haskell2010
