@@ -14,6 +14,7 @@ packages:
 - 'genvalidity-text'
 - 'genvalidity-time'
 - 'genvalidity-unordered-containers'
+- 'genvalidity-uuid'
 - 'genvalidity-vector'
 - 'validity'
 - 'validity-aeson'
@@ -24,5 +25,6 @@ packages:
 - 'validity-text'
 - 'validity-time'
 - 'validity-unordered-containers'
+- 'validity-uuid'
 - 'validity-vector'
 resolver: lts-8.5
