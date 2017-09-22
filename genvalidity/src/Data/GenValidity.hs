@@ -47,6 +47,13 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE CPP #-}
+#if __GLASGOW_HASKELL__ >= 710
+#define OVERLAPPING_ {-# OVERLAPPING #-}
+#else
+{-# LANGUAGE OverlappingInstances  #-}
+#define OVERLAPPING_
+#endif
 
 module Data.GenValidity
     ( module Data.Validity
@@ -62,7 +69,7 @@ import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
-import Control.Applicative ((<$>), pure)
+import Control.Applicative ((<*>), (<$>), pure)
 import Control.Monad (forM)
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
@@ -565,9 +572,9 @@ instance GUncheckedSubtermsIncl f a => GUncheckedSubtermsIncl (M1 i c f) a where
   gUncheckedSubtermsIncl (M1 x) = gUncheckedSubtermsIncl x
 
 -- This is the important case: We've found a term of the same type.
-instance {-# OVERLAPPING #-} GUncheckedSubtermsIncl (K1 i a) a where
+instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) a where
   gUncheckedSubtermsIncl (K1 x) = [x]
 
-instance {-# OVERLAPPING #-} GUncheckedSubtermsIncl (K1 i a) b where
+instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) b where
   gUncheckedSubtermsIncl (K1 _) = []
 
