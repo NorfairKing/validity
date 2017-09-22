@@ -14,5 +14,9 @@ instance GenUnchecked UUID where
     genUnchecked =
         fromWords <$> genUnchecked <*> genUnchecked <*> genUnchecked <*>
         genUnchecked
+    shrinkUnchecked u =
+        [ fromWords w1 w2 w3 w4
+        | (w1, w2, w3, w4) <- shrinkUnchecked $ toWords u
+        ]
 
 instance GenValid UUID
