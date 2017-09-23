@@ -40,7 +40,7 @@ matrix:
   - env: 
       - RESOLVER_FLAG="--stack-yaml lts-2.yaml"
       - BUILD_PKGS=""
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity"
     addons: {apt: {packages: [libgmp-dev]}}
 
   # Nightly builds are allowed to fail
