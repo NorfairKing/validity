@@ -135,15 +135,15 @@ class (Validity a, GenUnchecked a) =>
     -- | Generate an invalid datum, this should cover all possible invalid
     -- values
     --
-    -- > genInvalid = genUnchecked `suchThat` (not . isValid)
+    -- > genInvalid = genUnchecked `suchThat` isInvalid
     --
     -- To speed up testing, it may be a good idea to implement this yourself.
     -- If you do, make sure that it is possible to generate all possible
     -- invalid data, otherwise your testing may not cover all cases.
-    genInvalid = genUnchecked `suchThat` (not . isValid)
+    genInvalid = genUnchecked `suchThat` isInvalid
 
     shrinkInvalid :: a -> [a]
-    shrinkInvalid = filter isValid . shrinkUnchecked
+    shrinkInvalid = filter isInvalid . shrinkUnchecked
 
 instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (a, b) where
     genUnchecked =
@@ -414,7 +414,7 @@ shrinkT3
   :: (a -> [a])
   -> (a, a, a) -> [(a, a, a)]
 shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
-  
+
 
 -- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int
@@ -439,7 +439,7 @@ genSplit3 n
         (a, z) <- genSplit n
         (b, c) <- genSplit z
         return (a, b, c)
-        
+
 -- | 'genSplit4 a' generates a quadruple '(b, c, d, e)' such that 'b + c + d + e' equals 'a'.
 genSplit4 :: Int -> Gen (Int, Int, Int, Int)
 genSplit4 n
@@ -472,19 +472,19 @@ class GGenUnchecked f where
 
 instance GGenUnchecked U1 where
     gGenUnchecked = pure U1
-    
+
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :*: b) where
     gGenUnchecked = do
         g1 <- gGenUnchecked
         g2 <- gGenUnchecked
         pure $ g1 :*: g2
-        
+
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :+: b) where
     gGenUnchecked = oneof [L1 <$> gGenUnchecked, R1 <$> gGenUnchecked]
-    
+
 instance (GGenUnchecked a) => GGenUnchecked (M1 i c a) where
     gGenUnchecked = M1 <$> gGenUnchecked
-    
+
 instance (GenUnchecked a) => GGenUnchecked (K1 i a) where
     gGenUnchecked = K1 <$> genUnchecked
 

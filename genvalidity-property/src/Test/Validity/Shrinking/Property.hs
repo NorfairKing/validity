@@ -15,7 +15,6 @@ module Test.Validity.Shrinking.Property
 
 import Data.GenValidity
 
-import Test.Hspec
 import Test.QuickCheck
 
 -- |
@@ -83,8 +82,4 @@ shrinkingPreserves ::
     -> (a -> [a])
     -> (a -> Bool)
     -> Property
-shrinkingPreserves gen shrink pred =
-    forAll gen $ \d ->
-        if pred d
-            then all pred $ shrink d
-            else True
+shrinkingPreserves gen s p = forAll gen $ \d -> not (p d) || all p (s d)
