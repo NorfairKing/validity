@@ -19,7 +19,6 @@ source-repository head
 
 library
     exposed-modules:
-        Test.Validity.Property
         Test.Validity.Functions
         Test.Validity.Functions.CanFail
         Test.Validity.Functions.Equivalence
@@ -31,14 +30,16 @@ library
         Test.Validity.Operations.Associativity
         Test.Validity.Operations.Commutativity
         Test.Validity.Operations.Identity
+        Test.Validity.Property
+        Test.Validity.Property.Utils
         Test.Validity.Relations
         Test.Validity.Relations.Antireflexivity
         Test.Validity.Relations.Antisymmetry
         Test.Validity.Relations.Reflexivity
         Test.Validity.Relations.Symmetry
         Test.Validity.Relations.Transitivity
+        Test.Validity.Shrinking.Property
         Test.Validity.Types
-        Test.Validity.Property.Utils
     build-depends:
         base >=4.7 && <5,
         validity >=0.3 && <0.4,
