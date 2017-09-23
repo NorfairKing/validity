@@ -8,9 +8,11 @@ import Test.Hspec
 
 import Data.Aeson
 import Data.GenValidity
+import Data.GenValidity.Aeson ()
 import Data.GenValidity.Text ()
 import Data.Text (Text)
 import GHC.Generics
+import Test.Validity
 import Test.Validity.Aeson
 
 spec :: Spec
@@ -20,6 +22,8 @@ spec = do
     jsonSpec @Int
     jsonSpecOnArbitrary @Int
     jsonSpecOnValid @ForShow
+    jsonSpecOnValid @Value
+    shrinkValidSpec @Value
 
 newtype ForShow =
     ForShow Text

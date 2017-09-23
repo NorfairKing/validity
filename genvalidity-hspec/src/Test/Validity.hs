@@ -18,6 +18,18 @@ module Test.Validity
     , genGeneratesValid
     , genInvalidGeneratesInvalid
     , genGeneratesInvalid
+    , shrinkValiditySpec
+    , shrinkValidSpec
+    , shrinkInvalidSpec
+    , shrinkValidPreservesValidOnGenValid
+    , shrinkInvalidPreservesInvalidOnGenInvalid
+    , shrinkPreservesValidOnGenValid
+    , shrinkPreservesInvalidOnGenInvalid
+    , shrinkValidPreservesValid
+    , shrinkInvalidPreservesInvalid
+    , shrinkingStaysValid
+    , shrinkingStaysInvalid
+    , shrinkingPreserves
       -- * Tests for RelativeValidity instances
     , relativeValiditySpec
     , relativeValidityImpliesValidA
@@ -249,4 +261,5 @@ import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord
 import Test.Validity.Property
+import Test.Validity.Shrinking
 import Test.Validity.RelativeValidity
