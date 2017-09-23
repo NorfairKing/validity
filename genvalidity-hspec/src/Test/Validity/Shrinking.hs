@@ -32,21 +32,25 @@ import Test.Validity.Shrinking.Property
 import Test.Validity.Utils
 
 shrinkValiditySpec ::
-       forall a. (Show a, GenValid a, GenInvalid a)
+       forall a. (Show a, Typeable a, GenValid a, GenInvalid a)
     => Spec
 shrinkValiditySpec = do
     shrinkValidSpec @a
     shrinkInvalidSpec @a
 
 shrinkValidSpec ::
-       forall a. (Show a, GenValid a)
+       forall a. (Show a, Typeable a, GenValid a)
     => Spec
-shrinkValidSpec = pure ()
+shrinkValidSpec =
+    describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $
+    it "preserves validity" $ shrinkValidPreservesValidOnGenValid @a
 
 shrinkInvalidSpec ::
-       forall a. (Show a, GenInvalid a)
+       forall a. (Show a, Typeable a, GenInvalid a)
     => Spec
-shrinkInvalidSpec = pure ()
+shrinkInvalidSpec =
+    describe ("shrinkInvalid :: " ++ nameOf @(a -> [a])) $
+    it "preserves invalidity" $ shrinkInvalidPreservesInvalidOnGenInvalid @a
 
 shrinkValidPreservesValidOnGenValid ::
        forall a. (Show a, GenValid a)
