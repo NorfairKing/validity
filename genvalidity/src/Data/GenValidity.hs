@@ -286,6 +286,7 @@ instance GenInvalid a => GenInvalid (Maybe a) where
 
 instance GenUnchecked a => GenUnchecked [a] where
     genUnchecked = genListOf genUnchecked
+    shrinkUnchecked = shrinkList shrinkUnchecked
 
 -- | If we can generate values of a certain type, we can also generate lists of
 -- them.
