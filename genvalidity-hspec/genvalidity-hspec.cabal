@@ -13,7 +13,11 @@ description:
     .
     * <https://hackage.haskell.org/package/genvalidity-hspec-aeson genvalidity-hspec-aeson>
     .
+    * <https://hackage.haskell.org/package/genvalidity-hspec-binary genvalidity-hspec-binary>
+    .
     * <https://hackage.haskell.org/package/genvalidity-hspec-cereal genvalidity-hspec-cereal>
+    .
+    * <https://hackage.haskell.org/package/genvalidity-hspec-hashable genvalidity-hspec-hashable>
 category: Testing
 author: Tom Sydney Kerckhove
 
@@ -34,6 +38,7 @@ library
         Test.Validity.Monoid
         Test.Validity.Ord
         Test.Validity.RelativeValidity
+        Test.Validity.Shrinking
         Test.Validity.Utils
     build-depends:
         base >=4.9 && <5,
@@ -79,4 +84,5 @@ test-suite genvalidity-hspec-test
         Test.Validity.MonoidSpec
         Test.Validity.OrdSpec
         Test.Validity.RelativeValiditySpec
+        Test.Validity.ShrinkingSpec
     ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
