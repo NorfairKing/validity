@@ -7,6 +7,7 @@ packages:
 - 'genvalidity-scientific'
 - 'genvalidity-text'
 - 'genvalidity-time'
+- 'genvalidity-uuid'
 - 'genvalidity-vector'
 - 'validity'
 - 'validity-bytestring'
@@ -15,6 +16,7 @@ packages:
 - 'validity-scientific'
 - 'validity-text'
 - 'validity-time'
+- 'validity-uuid'
 - 'validity-vector'
 extra-deps:
 - path-0.5.13

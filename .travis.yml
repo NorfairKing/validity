@@ -7,6 +7,12 @@ cache:
 
 matrix:
   include:
+  - env:
+      - RESOLVER_FLAG="--stack-yaml lts-9.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS=""
+    addons: {apt: {packages: [libgmp-dev]}}
+
   - env: 
       - RESOLVER_FLAG="--stack-yaml lts-8.yaml"
       - BUILD_PKGS=""
@@ -22,19 +28,19 @@ matrix:
   - env: 
       - RESOLVER_FLAG="--stack-yaml lts-6.yaml"
       - BUILD_PKGS=""
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time genvalidity genvalidity-property"
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
     addons: {apt: {packages: [libgmp-dev]}}
 
   - env: 
       - RESOLVER_FLAG="--stack-yaml lts-3.yaml"
       - BUILD_PKGS=""
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time genvalidity genvalidity-property"
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
     addons: {apt: {packages: [libgmp-dev]}}
 
   - env: 
       - RESOLVER_FLAG="--stack-yaml lts-2.yaml"
       - BUILD_PKGS=""
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time genvalidity genvalidity-property"
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity"
     addons: {apt: {packages: [libgmp-dev]}}
 
   # Nightly builds are allowed to fail

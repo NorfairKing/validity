@@ -39,15 +39,16 @@ spec = do
         "Just an ABC"
         ((++) <$> genValid)
         "prepends"
-        ((flip (++)) <$> genValid)
+        (flip (++) <$> genValid)
         "appends"
 
-data Fcks a =
+newtype Fcks a =
     Fcks Int
     deriving (Show, Eq)
 
 instance GenUnchecked (Fcks a) where
     genUnchecked = Fcks <$> genUnchecked
+    shrinkUnchecked (Fcks i) = Fcks <$> shrinkUnchecked i
 
 instance Functor Fcks where
     fmap _ (Fcks i) = Fcks $ i * 2

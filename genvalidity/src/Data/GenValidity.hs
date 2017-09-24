@@ -33,19 +33,27 @@
     Typical examples of tests involving validity could look as follows:
 
     > it "succeeds when given valid input" $ do
-    >     forAll genValid $ \input ->
+    >     forAllValid $ \input ->
     >         myFunction input `shouldSatisfy` isRight
 
     > it "produces valid output when it succeeds" $ do
-    >     forAll genUnchecked $ \input ->
+    >     forAllUnchecked $ \input ->
     >         case myFunction input of
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
     -}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE CPP #-}
+#if __GLASGOW_HASKELL__ >= 710
+#define OVERLAPPING_ {-# OVERLAPPING #-}
+#else
+{-# LANGUAGE OverlappingInstances  #-}
+#define OVERLAPPING_
+#endif
 
 module Data.GenValidity
     ( module Data.Validity
@@ -55,14 +63,16 @@ module Data.GenValidity
 import Data.Validity
 
 import Data.Fixed (Fixed(..), HasResolution)
-import Data.Word (Word, Word8, Word16)
+import Data.Word (Word, Word8, Word16, Word32, Word64)
 import GHC.Generics
 import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
-import Control.Applicative ((<$>), pure)
+import Control.Applicative ((<*>), (<$>), pure)
 import Control.Monad (forM)
+
+{-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A class of types for which truly arbitrary values can be generated.
 --
@@ -90,6 +100,12 @@ class GenUnchecked a where
         Gen a
     genUnchecked = to <$> gGenUnchecked
 
+    shrinkUnchecked :: a -> [a]
+    default shrinkUnchecked ::
+        (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) =>
+        a -> [a]
+    shrinkUnchecked = gShrinkUnchecked
+
 -- | A class of types for which valid values can be generated.
 --
 -- If you also write @Arbitrary@ instances for @GenValid@ types, it may be
@@ -109,6 +125,9 @@ class (Validity a, GenUnchecked a) =>
     -- data, otherwise your testing may not cover all cases.
     genValid = genUnchecked `suchThat` isValid
 
+    shrinkValid :: a -> [a]
+    shrinkValid = filter isValid . shrinkUnchecked
+
 -- | A class of types for which invalid values can be generated.
 class (Validity a, GenUnchecked a) =>
       GenInvalid a where
@@ -116,12 +135,15 @@ class (Validity a, GenUnchecked a) =>
     -- | Generate an invalid datum, this should cover all possible invalid
     -- values
     --
-    -- > genInvalid = genUnchecked `suchThat` (not . isValid)
+    -- > genInvalid = genUnchecked `suchThat` isInvalid
     --
     -- To speed up testing, it may be a good idea to implement this yourself.
     -- If you do, make sure that it is possible to generate all possible
     -- invalid data, otherwise your testing may not cover all cases.
-    genInvalid = genUnchecked `suchThat` (not . isValid)
+    genInvalid = genUnchecked `suchThat` isInvalid
+
+    shrinkInvalid :: a -> [a]
+    shrinkInvalid = filter isInvalid . shrinkUnchecked
 
 instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (a, b) where
     genUnchecked =
@@ -202,6 +224,57 @@ instance (GenInvalid a, GenInvalid b, GenInvalid c) =>
                      return (a, b, c)
                 ]
 
+instance (GenUnchecked a, GenUnchecked b, GenUnchecked c, GenUnchecked d) =>
+         GenUnchecked (a, b, c, d) where
+    genUnchecked =
+        sized $ \n -> do
+            (r, s, t, u) <- genSplit4 n
+            a <- resize r genUnchecked
+            b <- resize s genUnchecked
+            c <- resize t genUnchecked
+            d <- resize u genUnchecked
+            return (a, b, c, d)
+
+instance (GenValid a, GenValid b, GenValid c, GenValid d) =>
+         GenValid (a, b, c, d) where
+    genValid =
+        sized $ \n -> do
+            (r, s, t, u) <- genSplit4 n
+            a <- resize r genValid
+            b <- resize s genValid
+            c <- resize t genValid
+            d <- resize u genValid
+            return (a, b, c, d)
+
+-- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
+instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d) =>
+         GenInvalid (a, b, c, d) where
+    genInvalid =
+        sized $ \n -> do
+            (r, s, t, u) <- genSplit4 n
+            oneof
+                [ do a <- resize r genInvalid
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     return (a, b, c, d)
+                , do a <- resize r genUnchecked
+                     b <- resize s genInvalid
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     return (a, b, c, d)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genInvalid
+                     d <- resize u genUnchecked
+                     return (a, b, c, d)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genInvalid
+                     return (a, b, c, d)
+                ]
+
 instance GenUnchecked a => GenUnchecked (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]
 
@@ -213,6 +286,7 @@ instance GenInvalid a => GenInvalid (Maybe a) where
 
 instance GenUnchecked a => GenUnchecked [a] where
     genUnchecked = genListOf genUnchecked
+    shrinkUnchecked = shrinkList shrinkUnchecked
 
 -- | If we can generate values of a certain type, we can also generate lists of
 -- them.
@@ -232,46 +306,67 @@ instance GenInvalid a => GenInvalid [a] where
 
 instance GenUnchecked () where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid ()
 
 instance GenUnchecked Bool where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Bool
 
 instance GenUnchecked Ordering where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Ordering
 
 instance GenUnchecked Char where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Char
 
 instance GenUnchecked Int where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Int
 
 instance GenUnchecked Word where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word
 
 instance GenUnchecked Word8 where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word8
 
 instance GenUnchecked Word16 where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Word16
 
+instance GenUnchecked Word32 where
+    genUnchecked = arbitrary
+    shrinkUnchecked = shrink
+
+instance GenValid Word32
+
+instance GenUnchecked Word64 where
+    genUnchecked = arbitrary
+    shrinkUnchecked = shrink
+
+instance GenValid Word64
+
 instance GenUnchecked Float where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Float where
     genValid = arbitrary
@@ -282,6 +377,7 @@ instance GenInvalid Float where
 
 instance GenUnchecked Double where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Double
 
@@ -291,6 +387,7 @@ instance GenInvalid Double where
 
 instance GenUnchecked Integer where
     genUnchecked = arbitrary
+    shrinkUnchecked = shrink
 
 instance GenValid Integer
 
@@ -299,13 +396,26 @@ instance GenUnchecked (Ratio Integer) where
         n <- genUnchecked
         d <- genUnchecked
         pure $ n :% d
+    shrinkUnchecked = shrink
 
 instance GenValid (Ratio Integer)
 
 instance HasResolution a => GenUnchecked (Fixed a) where
     genUnchecked = MkFixed <$> genUnchecked
+    shrinkUnchecked = shrink
 
 instance HasResolution a => GenValid (Fixed a)
+
+shrinkT2
+  :: (a -> [a])
+  -> (a, a) -> [(a, a)]
+shrinkT2 s (a, b) = (,) <$> s a <*> s b
+
+shrinkT3
+  :: (a -> [a])
+  -> (a, a, a) -> [(a, a, a)]
+shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
+
 
 -- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int
@@ -317,9 +427,12 @@ upTo n
 genSplit :: Int -> Gen (Int, Int)
 genSplit n
     | n < 0 = pure (0, 0)
-    | otherwise = elements [(i, n - i) | i <- [0 .. n]]
+    | otherwise = do
+        i <- choose (0, n)
+        let j = n - i
+        pure (i, j)
 
--- | 'genSplit a' generates a triple '(b, c, d)' such that 'b + c + d' equals 'a'.
+-- | 'genSplit3 a' generates a triple '(b, c, d)' such that 'b + c + d' equals 'a'.
 genSplit3 :: Int -> Gen (Int, Int, Int)
 genSplit3 n
     | n < 0 = pure (0, 0, 0)
@@ -327,6 +440,16 @@ genSplit3 n
         (a, z) <- genSplit n
         (b, c) <- genSplit z
         return (a, b, c)
+
+-- | 'genSplit4 a' generates a quadruple '(b, c, d, e)' such that 'b + c + d + e' equals 'a'.
+genSplit4 :: Int -> Gen (Int, Int, Int, Int)
+genSplit4 n
+    | n < 0 = pure (0, 0, 0, 0)
+    | otherwise = do
+        (y, z) <- genSplit n
+        (a, b) <- genSplit y
+        (c, d) <- genSplit z
+        return (a, b, c, d)
 
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
 arbPartition :: Int -> Gen [Int]
@@ -365,3 +488,94 @@ instance (GGenUnchecked a) => GGenUnchecked (M1 i c a) where
 
 instance (GenUnchecked a) => GGenUnchecked (K1 i a) where
     gGenUnchecked = K1 <$> genUnchecked
+
+
+-- | Shrink a term to any of its immediate subterms,
+-- and also recursively shrink all subterms.
+gShrinkUnchecked :: (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
+gShrinkUnchecked x = uncheckedSubterms x ++ uncheckedRecursivelyShrink x
+
+-- | Recursively shrink all immediate uncheckedSubterms.
+uncheckedRecursivelyShrink :: (Generic a, GUncheckedRecursivelyShrink (Rep a)) => a -> [a]
+uncheckedRecursivelyShrink = map to . gUncheckedRecursivelyShrink . from
+
+class GUncheckedRecursivelyShrink f where
+  gUncheckedRecursivelyShrink :: f a -> [f a]
+
+instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :*: g) where
+  gUncheckedRecursivelyShrink (x :*: y) =
+      [x' :*: y | x' <- gUncheckedRecursivelyShrink x] ++
+      [x :*: y' | y' <- gUncheckedRecursivelyShrink y]
+
+instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :+: g) where
+  gUncheckedRecursivelyShrink (L1 x) = map L1 (gUncheckedRecursivelyShrink x)
+  gUncheckedRecursivelyShrink (R1 x) = map R1 (gUncheckedRecursivelyShrink x)
+
+instance GUncheckedRecursivelyShrink f => GUncheckedRecursivelyShrink (M1 i c f) where
+  gUncheckedRecursivelyShrink (M1 x) = map M1 (gUncheckedRecursivelyShrink x)
+
+instance GenUnchecked a => GUncheckedRecursivelyShrink (K1 i a) where
+  gUncheckedRecursivelyShrink (K1 x) = map K1 (shrinkUnchecked x)
+
+instance GUncheckedRecursivelyShrink U1 where
+  gUncheckedRecursivelyShrink U1 = []
+
+instance GUncheckedRecursivelyShrink V1 where
+  -- The empty type can't be shrunk to anything.
+  gUncheckedRecursivelyShrink _ = []
+
+
+-- | All immediate uncheckedSubterms of a term.
+uncheckedSubterms :: (Generic a, GUncheckedSubterms (Rep a) a) => a -> [a]
+uncheckedSubterms = gUncheckedSubterms . from
+
+
+class GUncheckedSubterms f a where
+  gUncheckedSubterms :: f a -> [a]
+
+instance GUncheckedSubterms V1 a where
+  gUncheckedSubterms _ = []
+
+instance GUncheckedSubterms U1 a where
+  gUncheckedSubterms U1 = []
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubterms (f :*: g) a where
+  gUncheckedSubterms (l :*: r) = gUncheckedSubtermsIncl l ++ gUncheckedSubtermsIncl r
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubterms (f :+: g) a where
+  gUncheckedSubterms (L1 x) = gUncheckedSubtermsIncl x
+  gUncheckedSubterms (R1 x) = gUncheckedSubtermsIncl x
+
+instance GUncheckedSubterms f a => GUncheckedSubterms (M1 i c f) a where
+  gUncheckedSubterms (M1 x) = gUncheckedSubterms x
+
+instance GUncheckedSubterms (K1 i a) b where
+  gUncheckedSubterms (K1 _) = []
+
+
+class GUncheckedSubtermsIncl f a where
+  gUncheckedSubtermsIncl :: f a -> [a]
+
+instance GUncheckedSubtermsIncl V1 a where
+  gUncheckedSubtermsIncl _ = []
+
+instance GUncheckedSubtermsIncl U1 a where
+  gUncheckedSubtermsIncl U1 = []
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubtermsIncl (f :*: g) a where
+  gUncheckedSubtermsIncl (l :*: r) = gUncheckedSubtermsIncl l ++ gUncheckedSubtermsIncl r
+
+instance (GUncheckedSubtermsIncl f a, GUncheckedSubtermsIncl g a) => GUncheckedSubtermsIncl (f :+: g) a where
+  gUncheckedSubtermsIncl (L1 x) = gUncheckedSubtermsIncl x
+  gUncheckedSubtermsIncl (R1 x) = gUncheckedSubtermsIncl x
+
+instance GUncheckedSubtermsIncl f a => GUncheckedSubtermsIncl (M1 i c f) a where
+  gUncheckedSubtermsIncl (M1 x) = gUncheckedSubtermsIncl x
+
+-- This is the important case: We've found a term of the same type.
+instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) a where
+  gUncheckedSubtermsIncl (K1 x) = [x]
+
+instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) b where
+  gUncheckedSubtermsIncl (K1 _) = []
+

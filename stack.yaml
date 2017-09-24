@@ -14,6 +14,7 @@ packages:
 - 'genvalidity-text'
 - 'genvalidity-time'
 - 'genvalidity-unordered-containers'
+- 'genvalidity-uuid'
 - 'genvalidity-vector'
 - 'validity'
 - 'validity-aeson'
@@ -24,5 +25,9 @@ packages:
 - 'validity-text'
 - 'validity-time'
 - 'validity-unordered-containers'
+- 'validity-uuid'
 - 'validity-vector'
-resolver: lts-8.5
+extra-deps:
+  - hlint-1.9.41
+  - haskell-src-exts-1.19.1
+resolver: lts-9.5

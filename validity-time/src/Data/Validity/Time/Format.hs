@@ -1,7 +1,8 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE CPP #-}
-
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+#if MIN_VERSION_time(1,5,0)
+{-# LANGUAGE RecordWildCards #-}
+#endif
 module Data.Validity.Time.Format where
 
 import Data.Validity
@@ -22,5 +23,16 @@ instance Validity TimeLocale where
             , isValid timeFmt
             , isValid time12Fmt
             , isValid knownTimeZones
+            ]
+    validate TimeLocale {..} =
+        mconcat
+            [ wDays <?!> "wDays"
+            , months <?!> "months"
+            , amPm <?!> "amPm"
+            , dateTimeFmt <?!> "dateTimeFmt"
+            , dateFmt <?!> "dateFmt"
+            , timeFmt <?!> "timeFmt"
+            , time12Fmt <?!> "time12Fmt"
+            , knownTimeZones <?!> "knownTimeZones"
             ]
 #endif

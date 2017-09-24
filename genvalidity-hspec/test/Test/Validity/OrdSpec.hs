@@ -14,4 +14,4 @@ spec = do
     failsBecause "NaN >= NaN is False" $ ordSpecOnInvalid @Double
     ordSpec @Int
     ordSpecOnArbitrary @Int
-    ordSpecOnGen ((* 2) <$> genValid @Int) "even"
+    ordSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])

@@ -9,7 +9,7 @@ import Test.Validity.Cereal
 
 spec :: Spec
 spec = do
-    serializeSpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
+    serializeSpecOnGen (genListOf $ pure 'a') "sequence of 'a's" (const [])
     serializeSpecOnValid @Double
     serializeSpec @Int
     serializeSpecOnArbitrary @Int

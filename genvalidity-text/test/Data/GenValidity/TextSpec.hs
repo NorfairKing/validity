@@ -38,7 +38,7 @@ showTextDebug t@(Text arr off len) =
 spec :: Spec
 spec = do
     describe "genValid" $ do
-        it "is always empty when resized to 0" $ do
+        it "is always empty when resized to 0" $
             forAll (resize 0 genValid) (`shouldSatisfy` T.null)
         it "generates valid text" $
             forAll (genValid :: Gen Text) $ \t ->
@@ -48,31 +48,31 @@ spec = do
         forAll ((genUnchecked :: Gen Text) `suchThat` isValid) $ \t ->
             unless (isValid t) $ expectationFailure $ showTextDebug t
     describe "textStartingWith" $ do
-        it "is never empty" $ do
+        it "is never empty" $
             forAll arbitrary $ \c ->
                 forAll (textStartingWith c) $ \t -> t `shouldNotSatisfy` T.null
-        it "contains exactly the first character if resized to 0" $ do
+        it "contains exactly the first character if resized to 0" $
             forAll arbitrary $ \c ->
                 forAll (resize 0 $ textStartingWith c) $ \t ->
                     t `shouldBe` T.pack [c]
-        it "contains exactly the first character if resized to 1" $ do
+        it "contains exactly the first character if resized to 1" $
             forAll arbitrary $ \c ->
                 forAll (resize 0 $ textStartingWith c) $ \t ->
                     t `shouldBe` T.pack [c]
-        it "always starts with the given char" $ do
+        it "always starts with the given char" $
             forAll arbitrary $ \c ->
                 forAll (textStartingWith c) $ \t -> T.head t `shouldBe` c
-    describe "textWithA" $ do
-        it "contains the given character" $ do
-            forAll arbitrary $ \c ->
-                forAll (textWithA c) $ \t -> T.unpack t `shouldSatisfy` (elem c)
-    describe "textWithoutAny" $ do
-        it "never contains the given char" $ do
-            forAll arbitrary $ \c ->
-                forAll (textWithoutAny c) $ \t ->
-                    T.unpack t `shouldNotSatisfy` (elem c)
-    describe "textWithoutAnyOf" $ do
-        it "never contains any of the given chars" $ do
-            forAll arbitrary $ \cs ->
-                forAll (textWithoutAnyOf cs) $ \text ->
-                    T.unpack text `shouldNotSatisfy` (\t -> any (`elem` t) cs)
+    describe "textWithA" $
+        it "contains the given character" $
+        forAll arbitrary $ \c ->
+            forAll (textWithA c) $ \t -> T.unpack t `shouldSatisfy` elem c
+    describe "textWithoutAny" $
+        it "never contains the given char" $
+        forAll arbitrary $ \c ->
+            forAll (textWithoutAny c) $ \t ->
+                T.unpack t `shouldNotSatisfy` elem c
+    describe "textWithoutAnyOf" $
+        it "never contains any of the given chars" $
+        forAll arbitrary $ \cs ->
+            forAll (textWithoutAnyOf cs) $ \text ->
+                T.unpack text `shouldNotSatisfy` (\t -> any (`elem` t) cs)

@@ -13,9 +13,10 @@ import qualified Data.Vector as V
 
 instance GenUnchecked v => GenUnchecked (Vector v) where
     genUnchecked = V.fromList <$> genUnchecked
+    shrinkUnchecked = fmap V.fromList . shrinkUnchecked . V.toList
 
-instance  GenValid v => GenValid (Vector v) where
+instance GenValid v => GenValid (Vector v) where
     genValid = V.fromList <$> genValid
 
-instance  GenInvalid v => GenInvalid (Vector v) where
+instance GenInvalid v => GenInvalid (Vector v) where
     genInvalid = V.fromList <$> genInvalid

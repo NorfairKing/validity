@@ -1,5 +1,5 @@
 name: genvalidity-text
-version: 0.3.1.1
+version: 0.4.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -22,9 +22,9 @@ library
         Data.GenValidity.Text
     build-depends:
         base >=4.7 && <5,
-        validity -any,
-        validity-text >= 0.1.2,
-        genvalidity -any,
+        validity >=0.4 && <0.5,
+        validity-text >=0.2 && <0.3,
+        genvalidity >=0.4 && <0.5,
         text -any,
         array -any,
         QuickCheck -any
@@ -37,7 +37,7 @@ test-suite genvalidity-text-test
     build-depends:
         base -any,
         hspec -any,
-        QuickCheck,
+        QuickCheck -any,
         genvalidity -any,
         genvalidity-text -any,
         genvalidity-hspec -any,

@@ -27,15 +27,27 @@ import Test.QuickCheck
 import Test.Validity.Functions
 import Test.Validity.Utils
 
-returnTypeStr
-    :: forall (m :: * -> *).
-       (Typeable m)
+{-# ANN module "HLint: ignore Use fmap" #-}
+
+{-# ANN module "HLint: ignore Use >=>" #-}
+
+{-# ANN module "HLint: ignore Use id" #-}
+
+{-# ANN module "HLint: ignore Monad law, left identity" #-}
+
+{-# ANN module "HLint: ignore Monad law, right identity" #-}
+
+{-# ANN module "HLint: ignore Avoid lambda" #-}
+
+{-# ANN module "HLint: ignore Reduce duplication" #-}
+
+returnTypeStr ::
+       forall (m :: * -> *). (Typeable m)
     => String
 returnTypeStr = unwords ["return", "::", "a", "->", nameOf @m, "a"]
 
-bindTypeStr
-    :: forall (m :: * -> *).
-       (Typeable m)
+bindTypeStr ::
+       forall (m :: * -> *). (Typeable m)
     => String
 bindTypeStr =
     unwords
@@ -58,8 +70,8 @@ bindTypeStr =
 -- Example usage:
 --
 -- > monadSpecOnArbitrary @[]
-monadSpecOnValid
-    :: forall (f :: * -> *).
+monadSpecOnValid ::
+       forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, GenValid (f Int))
     => Spec
 monadSpecOnValid = monadSpecWithInts @f genValid
@@ -69,8 +81,8 @@ monadSpecOnValid = monadSpecWithInts @f genValid
 -- Example usage:
 --
 -- > monadSpecOnArbitrary @[]
-monadSpec
-    :: forall (f :: * -> *).
+monadSpec ::
+       forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, GenUnchecked (f Int))
     => Spec
 monadSpec = monadSpecWithInts @f genUnchecked
@@ -80,16 +92,16 @@ monadSpec = monadSpecWithInts @f genUnchecked
 -- Example usage:
 --
 -- > monadSpecOnArbitrary @[]
-monadSpecOnArbitrary
-    :: forall (f :: * -> *).
+monadSpecOnArbitrary ::
+       forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, Arbitrary (f Int))
     => Spec
 monadSpecOnArbitrary = monadSpecWithInts @f arbitrary
 
-monadSpecWithInts
-    :: forall (f :: * -> *).
-       (Eq (f Int), Show (f Int), Monad f, Typeable f)
-    => Gen (f Int) -> Spec
+monadSpecWithInts ::
+       forall (f :: * -> *). (Eq (f Int), Show (f Int), Monad f, Typeable f)
+    => Gen (f Int)
+    -> Spec
 monadSpecWithInts gen =
     monadSpecOnGens
         @f
@@ -136,8 +148,8 @@ monadSpecWithInts gen =
 -- >     "singletonisation"
 -- >     (pure $ pure (+ 1))
 -- >     "increment in list"
-monadSpecOnGens
-    :: forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
+monadSpecOnGens ::
+       forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
        ( Show a
        , Eq a
        , Show (f a)
@@ -182,12 +194,13 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                     (\a (Anon k) -> return a >>= k)
                     (\a (Anon k) -> k a)
                     ((,) <$> gena <*> (Anon <$> genbf))
+                    shrinkNothing
             it
                 (unwords
                      [ "satisfy the second Monad law: 'm >>= return = m' for"
                      , genDescr @(f a) genname
                      ]) $
-                equivalentOnGen (\m -> m >>= return) (\m -> m) gen
+                equivalentOnGen (\m -> m >>= return) (\m -> m) gen shrinkNothing
         describe (bindTypeStr @f) $
             it
                 (unwords
@@ -201,15 +214,16 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                 (\m (Anon k) (Anon h) -> m >>= (\x -> k x >>= h))
                 (\m (Anon k) (Anon h) -> (m >>= k) >>= h)
                 ((,,) <$> gen <*> (Anon <$> genbf) <*> (Anon <$> gencf))
+                shrinkNothing
         describe (unwords ["relation with Applicative", nameOf @f]) $ do
             it
                 (unwords
                      ["satisfies 'pure = return' for", genDescr @(f a) genname]) $
-                equivalentOnGen (pure @f) (return @f) gena
+                equivalentOnGen (pure @f) (return @f) gena shrinkNothing
             it
                 (unwords
                      [ "satisfies '(<*>) = ap' for"
-                     , genDescr @(f (a -> b)) $ genfabname
+                     , genDescr @(f (a -> b)) genfabname
                      , "and"
                      , genDescr @(f a) genname
                      ]) $
@@ -217,6 +231,7 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                     (\(Anon a) b -> a <*> b)
                     (\(Anon a) b -> ap a b)
                     ((,) <$> (Anon <$> genfab) <*> gen)
+                    shrinkNothing
             it
                 (unwords
                      [ "satisfies '(>>) = (*>)' for"
@@ -224,8 +239,8 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                      , "and"
                      , genDescr @(f b) genbname
                      ]) $
-                equivalentOnGens2 (>>) (*>) ((,) <$> gen <*> genb)
-        describe (unwords ["relation with Functor", nameOf @f]) $ do
+                equivalentOnGens2 (>>) (*>) ((,) <$> gen <*> genb) shrinkNothing
+        describe (unwords ["relation with Functor", nameOf @f]) $
             it
                 (unwords
                      [ "satisfies 'fmap f xs = xs >>= return . f' for"
@@ -233,7 +248,8 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                      , "and"
                      , genDescr @(f a) genname
                      ]) $
-                equivalentOnGens2
-                    (\(Anon f) xs -> fmap f xs)
-                    (\(Anon f) xs -> xs >>= (return . f))
-                    ((,) <$> (Anon <$> geng) <*> gen)
+            equivalentOnGens2
+                (\(Anon f) xs -> fmap f xs)
+                (\(Anon f) xs -> xs >>= (return . f))
+                ((,) <$> (Anon <$> geng) <*> gen)
+                shrinkNothing

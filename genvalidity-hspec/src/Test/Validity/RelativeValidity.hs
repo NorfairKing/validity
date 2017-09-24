@@ -68,8 +68,8 @@ relativeValidityImpliesValidA ::
        )
     => Property
 relativeValidityImpliesValidA =
-    forAll genUnchecked $ \(a :: a) ->
-        forAll genUnchecked $ \(b :: b) -> (a `isValidFor` b) ===> isValid a
+    forAllUnchecked $ \(a :: a) ->
+        forAllUnchecked $ \(b :: b) -> (a `isValidFor` b) ===> isValid a
 
 -- | @isValidFor a b@ implies @isValid b@ for all @a@
 relativeValidityImpliesValidB ::
@@ -83,5 +83,5 @@ relativeValidityImpliesValidB ::
        )
     => Property
 relativeValidityImpliesValidB =
-    forAll genUnchecked $ \(a :: a) ->
-        forAll genUnchecked $ \(b :: b) -> (a `isValidFor` b) ===> isValid b
+    forAllUnchecked $ \(a :: a) ->
+        forAllUnchecked $ \(b :: b) -> (a `isValidFor` b) ===> isValid b

@@ -44,4 +44,4 @@ arbitraryGeneratesOnlyValid
     :: forall a.
        (Show a, Validity a, Arbitrary a)
     => Property
-arbitraryGeneratesOnlyValid = genGeneratesValid @a arbitrary
+arbitraryGeneratesOnlyValid = genGeneratesValid @a arbitrary shrink

@@ -6,10 +6,10 @@
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.HashableSpec where
 
-import Test.Hspec
 import Data.Hashable
-import Test.Validity.Utils
 import GHC.Generics
+import Test.Hspec
+import Test.Validity.Utils
 
 import Data.GenValidity
 import Test.Validity.Hashable
@@ -20,10 +20,11 @@ spec = do
     hashableSpec @Int
     hashableSpecOnArbitrary @Int
     hashableSpec @HashableValid
-    failsBecause ("Two equal elements aren't hashed to the same value!") $
+    failsBecause "Two equal elements aren't hashed to the same value!" $
         hashableSpec @HashableInvalid
 
-newtype HashableValid = HashableValid Int
+newtype HashableValid =
+    HashableValid Int
     deriving (Show, Generic)
 
 hT :: Int -- Number used in the definition of HashableValid
@@ -34,8 +35,9 @@ instance Eq HashableValid where
 
 instance Hashable HashableValid where
     hashWithSalt n (HashableValid a) = (int ^ expo) `mod` hT
-                               where int = 1 + (a `mod` hT)
-                                     expo = 1 + (n `mod` hT)
+      where
+        int = 1 + (a `mod` hT)
+        expo = 1 + (n `mod` hT)
 
 instance Validity HashableValid
 
@@ -43,11 +45,13 @@ instance GenValid HashableValid
 
 instance GenUnchecked HashableValid
 
-newtype HashableInvalid = HashableInvalid Int
+newtype HashableInvalid =
+    HashableInvalid Int
     deriving (Show, Generic)
 
 hF :: Int -- Numbers used in the definition of HashableInvalid
 hF = 8
+
 hM :: Int
 hM = 3
 
@@ -56,13 +60,12 @@ instance Eq HashableInvalid where
 
 instance Hashable HashableInvalid where
     hashWithSalt n (HashableInvalid a) = (int ^ expo) `mod` hM
-                                where int = 1 + (a `mod` hM)
-                                      expo = 1 + (n `mod` hM)
+      where
+        int = 1 + (a `mod` hM)
+        expo = 1 + (n `mod` hM)
 
 instance Validity HashableInvalid
 
 instance GenValid HashableInvalid
 
 instance GenUnchecked HashableInvalid
-
-

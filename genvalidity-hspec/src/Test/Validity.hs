@@ -4,6 +4,11 @@
 -- | To use the 'Spec' functions in this module, you will need @TypeApplications@.
 module Test.Validity
     ( module Data.GenValidity
+    , forAllUnchecked
+    , forAllValid
+    , forAllInvalid
+    , shouldBeValid
+    , shouldBeInvalid
       -- * Tests for Arbitrary instances involving Validity
     , arbitrarySpec
     , arbitraryGeneratesOnlyValid
@@ -15,6 +20,18 @@ module Test.Validity
     , genGeneratesValid
     , genInvalidGeneratesInvalid
     , genGeneratesInvalid
+    , shrinkValiditySpec
+    , shrinkValidSpec
+    , shrinkInvalidSpec
+    , shrinkValidPreservesValidOnGenValid
+    , shrinkInvalidPreservesInvalidOnGenInvalid
+    , shrinkPreservesValidOnGenValid
+    , shrinkPreservesInvalidOnGenInvalid
+    , shrinkValidPreservesValid
+    , shrinkInvalidPreservesInvalid
+    , shrinkingStaysValid
+    , shrinkingStaysInvalid
+    , shrinkingPreserves
       -- * Tests for RelativeValidity instances
     , relativeValiditySpec
     , relativeValidityImpliesValidA
@@ -246,6 +263,7 @@ import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord
 import Test.Validity.Property
-import Test.Validity.Relations
+import Test.Validity.Shrinking
 import Test.Validity.RelativeValidity
-import Test.Validity.Types
+import Test.Validity.Utils
+

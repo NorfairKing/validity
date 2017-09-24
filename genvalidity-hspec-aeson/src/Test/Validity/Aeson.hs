@@ -31,44 +31,44 @@ import Test.Validity.Utils
 -- Example usage:
 --
 -- > jsonSpecOnValid @Double
-jsonSpecOnValid
-    :: forall a.
-       (Show a, Eq a, Typeable a, GenValid a, FromJSON a, ToJSON a)
+jsonSpecOnValid ::
+       forall a. (Show a, Eq a, Typeable a, GenValid a, FromJSON a, ToJSON a)
     => Spec
-jsonSpecOnValid = jsonSpecOnGen (genValid @a) "valid"
+jsonSpecOnValid = jsonSpecOnGen (genValid @a) "valid" shrinkValid
 
 -- | Standard test spec for properties of JSON-related functions for unchecked values
 --
 -- Example usage:
 --
 -- > jsonSpec @Int
-jsonSpec
-    :: forall a.
+jsonSpec ::
+       forall a.
        (Show a, Eq a, Typeable a, GenUnchecked a, FromJSON a, ToJSON a)
     => Spec
-jsonSpec = jsonSpecOnGen (genUnchecked @a) "unchecked"
+jsonSpec = jsonSpecOnGen (genUnchecked @a) "unchecked" shrinkUnchecked
 
 -- | Standard test spec for properties of JSON-related functions for arbitrary values
 --
 -- Example usage:
 --
 -- > jsonSpecOnArbitrary @Int
-jsonSpecOnArbitrary
-    :: forall a.
-       (Show a, Eq a, Typeable a, Arbitrary a, FromJSON a, ToJSON a)
+jsonSpecOnArbitrary ::
+       forall a. (Show a, Eq a, Typeable a, Arbitrary a, FromJSON a, ToJSON a)
     => Spec
-jsonSpecOnArbitrary = jsonSpecOnGen (arbitrary @a) "arbitrary"
+jsonSpecOnArbitrary = jsonSpecOnGen (arbitrary @a) "arbitrary" shrink
 
 -- | Standard test spec for properties of JSON-related functions for a given generator (and a name for that generator).
 --
 -- Example usage:
 --
 -- > jsonSpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
-jsonSpecOnGen
-    :: forall a.
-       (Show a, Eq a, Typeable a, FromJSON a, ToJSON a)
-    => Gen a -> String -> Spec
-jsonSpecOnGen gen genname =
+jsonSpecOnGen ::
+       forall a. (Show a, Eq a, Typeable a, FromJSON a, ToJSON a)
+    => Gen a
+    -> String
+    -> (a -> [a])
+    -> Spec
+jsonSpecOnGen gen genname s =
     parallel $ do
         let name = nameOf @a
         describe ("JSON " ++ name ++ " (" ++ genname ++ ")") $ do
@@ -80,7 +80,7 @@ jsonSpecOnGen gen genname =
                          , "\"" ++ genname
                          , name ++ "\""
                          ]) $
-                neverFailsToEncodeOnGen gen
+                neverFailsToEncodeOnGen gen s
             describe
                 ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
                 it
@@ -89,36 +89,33 @@ jsonSpecOnGen gen genname =
                          , "\"" ++ genname
                          , name ++ "\"" ++ "'s"
                          ]) $
-                encodeAndDecodeAreInversesOnGen gen
+                encodeAndDecodeAreInversesOnGen gen s
 
 -- |
 --
--- prop> neverFailsToEncodeOnGen @Bool arbitrary
--- prop> neverFailsToEncodeOnGen @Bool genUnchecked
--- prop> neverFailsToEncodeOnGen @Bool genValid
--- prop> neverFailsToEncodeOnGen @Int arbitrary
--- prop> neverFailsToEncodeOnGen @Int genUnchecked
--- prop> neverFailsToEncodeOnGen @Int genValid
-neverFailsToEncodeOnGen
-    :: (Show a, ToJSON a)
-    => Gen a -> Property
-neverFailsToEncodeOnGen gen =
-    forAll gen $ \(a :: a) ->
+-- prop> neverFailsToEncodeOnGen @Bool arbitrary shrink
+-- prop> neverFailsToEncodeOnGen @Bool genUnchecked shrinkUnchecked
+-- prop> neverFailsToEncodeOnGen @Bool genValid shrinkValid
+-- prop> neverFailsToEncodeOnGen @Int arbitrary shrink
+-- prop> neverFailsToEncodeOnGen @Int genUnchecked shrinkUnchecked
+-- prop> neverFailsToEncodeOnGen @Int genValid shrinkValid
+neverFailsToEncodeOnGen :: (Show a, ToJSON a) => Gen a -> (a -> [a]) -> Property
+neverFailsToEncodeOnGen gen s =
+    forAllShrink gen s $ \(a :: a) ->
         evaluate (deepseq (JSON.encode a) ()) `shouldReturn` ()
 
 -- |
 --
--- prop> encodeAndDecodeAreInversesOnGen @Bool arbitrary
--- prop> encodeAndDecodeAreInversesOnGen @Bool genUnchecked
--- prop> encodeAndDecodeAreInversesOnGen @Bool genValid
--- prop> encodeAndDecodeAreInversesOnGen @Int arbitrary
--- prop> encodeAndDecodeAreInversesOnGen @Int genUnchecked
--- prop> encodeAndDecodeAreInversesOnGen @Int genValid
-encodeAndDecodeAreInversesOnGen
-    :: (Show a, Eq a, FromJSON a, ToJSON a)
-    => Gen a -> Property
-encodeAndDecodeAreInversesOnGen gen =
-    forAll gen $ \(a :: a) ->
+-- prop> encodeAndDecodeAreInversesOnGen @Bool arbitrary shrink
+-- prop> encodeAndDecodeAreInversesOnGen @Bool genUnchecked shrinkUnchecked
+-- prop> encodeAndDecodeAreInversesOnGen @Bool genValid shrinkValid
+-- prop> encodeAndDecodeAreInversesOnGen @Int arbitrary shrink
+-- prop> encodeAndDecodeAreInversesOnGen @Int genUnchecked shrinkUnchecked
+-- prop> encodeAndDecodeAreInversesOnGen @Int genValid shrinkValid
+encodeAndDecodeAreInversesOnGen ::
+       (Show a, Eq a, FromJSON a, ToJSON a) => Gen a -> (a -> [a]) -> Property
+encodeAndDecodeAreInversesOnGen gen s =
+    forAllShrink gen s $ \(a :: a) ->
         let encoded = JSON.encode a
             errOrDecoded = JSON.eitherDecode encoded
         in case errOrDecoded of

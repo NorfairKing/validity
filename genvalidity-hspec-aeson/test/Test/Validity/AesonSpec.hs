@@ -8,20 +8,24 @@ import Test.Hspec
 
 import Data.Aeson
 import Data.GenValidity
+import Data.GenValidity.Aeson ()
 import Data.GenValidity.Text ()
 import Data.Text (Text)
 import GHC.Generics
+import Test.Validity
 import Test.Validity.Aeson
 
 spec :: Spec
 spec = do
-    jsonSpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
+    jsonSpecOnGen (genListOf $ pure 'a') "sequence of 'a's" (const [])
     jsonSpecOnValid @Double
     jsonSpec @Int
     jsonSpecOnArbitrary @Int
     jsonSpecOnValid @ForShow
+    jsonSpecOnValid @Value
+    shrinkValidSpec @Value
 
-data ForShow =
+newtype ForShow =
     ForShow Text
     deriving (Show, Eq, Generic)
 

@@ -14,6 +14,7 @@ import Path.Internal
 
 instance GenUnchecked (Path a f) where
     genUnchecked = Path <$> genUnchecked
+    shrinkUnchecked (Path s) = Path <$> shrinkUnchecked s
 
 instance GenValid (Path Abs File)
 
