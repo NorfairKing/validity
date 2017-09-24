@@ -48,6 +48,7 @@ module Data.Validity
     , validateByCheckingName
     , checkValidity
     , prettyValidation
+    , Monoid(..)
     ) where
 
 import Debug.Trace
@@ -56,6 +57,7 @@ import Data.Either (isRight)
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.List (intercalate)
 import Data.Maybe (Maybe, fromMaybe)
+import Data.Monoid
 import Data.Word (Word, Word16, Word32, Word64, Word8)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)

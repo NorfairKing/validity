@@ -42,7 +42,7 @@ library
         Test.Validity.Types
     build-depends:
         base >=4.7 && <5,
-        validity >=0.3 && <0.4,
+        validity >=0.4 && <0.5,
         genvalidity >=0.4 && <0.5,
         QuickCheck -any,
         hspec >=2.1 && <2.5

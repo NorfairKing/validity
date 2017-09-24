@@ -24,7 +24,7 @@ library
         Test.Validity.Hashable
     build-depends:
         base >=4.9 && <5,
-        validity >=0.3 && <0.4,
+        validity >=0.4 && <0.5,
         genvalidity-hspec >=0.5 && <0.6,
         genvalidity >=0.4 && <0.5,
         genvalidity-property >=0.1 && <0.2,

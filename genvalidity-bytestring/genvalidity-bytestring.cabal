@@ -22,8 +22,8 @@ library
         Data.GenValidity.ByteString
     build-depends:
         base >=4.7 && <5,
-        validity -any,
-        validity-bytestring >=0.1,
+        validity >= 0.4 && < 0.5,
+        validity-bytestring >=0.2 && < 0.3,
         genvalidity >=0.4 && <0.5,
         bytestring -any,
         QuickCheck -any

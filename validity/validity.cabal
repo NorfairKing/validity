@@ -1,5 +1,5 @@
 name: validity
-version: 0.3.3.1
+version: 0.4.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -13,17 +13,25 @@ description:
     .
     Note: There are companion instance packages for this library:
     .
+    * <https://hackage.haskell.org/package/validity-aeson validity-aeson>
+    .
     * <https://hackage.haskell.org/package/validity-bytestring validity-bytestring>
     .
     * <https://hackage.haskell.org/package/validity-containers validity-containers>
     .
     * <https://hackage.haskell.org/package/validity-path validity-path>
     .
+    * <https://hackage.haskell.org/package/validity-scientific validity-scientific>
+    .
     * <https://hackage.haskell.org/package/validity-text validity-text>
     .
     * <https://hackage.haskell.org/package/validity-time validity-time>
     .
+    * <https://hackage.haskell.org/package/validity-unordered-containers validity-unordered-containers>
+    .
     * <https://hackage.haskell.org/package/validity-uuid validity-uuid>
+    .
+    * <https://hackage.haskell.org/package/validity-vector validity-vector>
     .
 category: Validity
 author: Tom Sydney Kerckhove

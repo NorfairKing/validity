@@ -1,5 +1,5 @@
 name: validity-unordered-containers
-version: 0.0.0.0
+version: 0.1.0.0
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -24,7 +24,7 @@ library
         Data.Validity.HashSet
     build-depends:
         base >=4.7 && <5,
-        validity >=0.3 && <0.4,
+        validity >=0.4 && <0.5,
         unordered-containers >=0.2.7,
         hashable -any
     default-language: Haskell2010
