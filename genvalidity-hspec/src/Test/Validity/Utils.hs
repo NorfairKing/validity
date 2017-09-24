@@ -15,34 +15,36 @@ module Test.Validity.Utils
     , shouldFail
     , failsBecause
     , Anon(..)
+    , shouldBeValid
+    , shouldBeInvalid
     ) where
 
 import Data.Data
+import Data.Validity
+
+import Control.Monad
+
 import Test.Hspec
-
-
 import Test.Hspec.Core.Formatters
 import Test.Hspec.Core.Runner
 import Test.Hspec.Core.Spec
 import Test.QuickCheck.Property
 
-
-nameOf
-    :: forall a.
-       Typeable a
+nameOf ::
+       forall a. Typeable a
     => String
 nameOf = show $ typeRep (Proxy @a)
 
-genDescr
-    :: forall a.
-       Typeable a
-    => String -> String
+genDescr ::
+       forall a. Typeable a
+    => String
+    -> String
 genDescr genname = unwords ["\"" ++ genname, "::", nameOf @a ++ "\""]
 
-binRelStr
-    :: forall a.
-       Typeable a
-    => String -> String
+binRelStr ::
+       forall a. Typeable a
+    => String
+    -> String
 binRelStr op = unwords ["(" ++ op ++ ")", "::", name, "->", name, "->", "Bool"]
   where
     name = nameOf @a
@@ -66,17 +68,18 @@ failsBecause s = mapSpecTree go
     go :: SpecTree () -> SpecTree ()
     go sp =
         Leaf
-        Item
-        { itemRequirement = s
-        , itemLocation = Nothing
-        , itemIsParallelizable = False
-        , itemExample =
-              \_ _ _ -> do
-                  let conf = defaultConfig {configFormatter = Just silent}
-                  r <- hspecWithResult conf $ fromSpecList [sp]
-                  let succesful = summaryExamples r > 0 && summaryFailures r > 0
-                  pure $ produceResult succesful
-        }
+            Item
+            { itemRequirement = s
+            , itemLocation = Nothing
+            , itemIsParallelizable = False
+            , itemExample =
+                  \_ _ _ -> do
+                      let conf = defaultConfig {configFormatter = Just silent}
+                      r <- hspecWithResult conf $ fromSpecList [sp]
+                      let succesful =
+                              summaryExamples r > 0 && summaryFailures r > 0
+                      pure $ produceResult succesful
+            }
 #if MIN_VERSION_hspec_core(2,4,0)
 produceResult :: Bool -> Either a Test.Hspec.Core.Spec.Result
 produceResult succesful =
@@ -98,3 +101,25 @@ shouldFail =
         { reason = unwords ["Should have failed:", reason res]
         , expect = not $ expect res
         }
+
+shouldBeValid :: (Show a, Validity a) => a -> Expectation
+shouldBeValid a = do
+    case prettyValidation a of
+        Right _ -> pure ()
+        Left err ->
+            expectationFailure $
+            unlines
+                [ "'validate' reported this value to be invalid: " ++ show a
+                , err
+                , ""
+                ]
+    unless (isValid a) $
+        expectationFailure $
+        unlines
+            [ "isValid considered this value invalid: " ++ show a
+            , "This is odd because 'validate' reported no issues."
+            , "Are you sure 'Validity' is implemented correctly?"
+            ]
+
+shouldBeInvalid :: (Show a, Validity a) => a -> Expectation
+shouldBeInvalid a = a `shouldNotSatisfy` isValid

@@ -7,6 +7,8 @@ module Test.Validity
     , forAllUnchecked
     , forAllValid
     , forAllInvalid
+    , shouldBeValid
+    , shouldBeInvalid
       -- * Tests for Arbitrary instances involving Validity
     , arbitrarySpec
     , arbitraryGeneratesOnlyValid
@@ -263,3 +265,5 @@ import Test.Validity.Ord
 import Test.Validity.Property
 import Test.Validity.Shrinking
 import Test.Validity.RelativeValidity
+import Test.Validity.Utils
+

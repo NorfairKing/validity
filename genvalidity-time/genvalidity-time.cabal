@@ -26,7 +26,7 @@ library
         Data.GenValidity.Time.LocalTime
     build-depends:
         base >=4.7 && <5,
-        validity-time >=0.0 && <0.1,
+        validity-time >=0.1 && <0.2,
         genvalidity >=0.4 && <0.5,
         time -any,
         QuickCheck >=2.7

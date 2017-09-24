@@ -13,3 +13,4 @@ import Data.Hashable (Hashable)
 -- the underlying 'HashMap' is valid.
 instance (Hashable v, Validity v) => Validity (HashSet v) where
     isValid hs = isValid $ HS.toMap hs
+    validate hs = HS.toMap hs <?!> "HashSet elements"
