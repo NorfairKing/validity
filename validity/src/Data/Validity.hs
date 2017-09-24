@@ -120,8 +120,10 @@ class Validity a where
 
 data ValidationChain
     = Violated String
+    | Context String
+              ValidationChain
     | Location String
-               (ValidationChain)
+               ValidationChain
     deriving (Show, Eq, Generic)
 
 instance Validity ValidationChain
@@ -161,7 +163,7 @@ prettyValidation a =
         Right a -> Right a
         Left errs -> Left $ intercalate "\n" $ map (errCascade . toStrings) errs
   where
-    toStrings (Violated s) = [s]
+    toStrings (Violated s) = ["Violated: " ++ s]
     toStrings (Location s vc) = s : toStrings vc
     errCascade errList =
         intercalate "\n" $
