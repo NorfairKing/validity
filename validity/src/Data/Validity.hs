@@ -28,6 +28,7 @@
     https://hackage.haskell.org/package/genvalidity ):
 
     > instance Validity Prime where
+    >     validate (Prime n) = isPrime n <?@> "The 'Int' is prime."
     >     isValid (Prime n) = isPrime n
 
     If certain typeclass invariants exist, you can make these explicit in the
@@ -37,17 +38,29 @@
     -}
 module Data.Validity
     ( Validity(..)
+    -- * Helper functions to define 'isValid'
     , triviallyValid
-    , isInvalid
-    , constructValid
-    , constructValidUnsafe
+    -- * Helper functions to define 'validate'
+    , trivialValidation
+    , isValidByValidating
     , check
     , (<?!>)
     , annotate
     , (<?@>)
+    , validateByChecking
     , validateByCheckingName
+    , validateByCheckingDefault
+    -- * Utilities
+    -- ** Utilities for validity checking
+    , isInvalid
+    , constructValid
+    , constructValidUnsafe
+    -- ** Utilities for validation
+    , Validation(..)
+    , ValidationChain(..)
     , checkValidity
     , prettyValidation
+    -- * Re-exports
     , Monoid(..)
     ) where
 
@@ -68,7 +81,45 @@ import GHC.Real (Ratio(..))
 -- | A class of types that have additional invariants defined upon them
 -- that aren't enforced by the type system
 --
--- === Semantics for 'isValid'
+-- === Purpose
+--
+-- 'validate' checks whether a given value is a valid value and reports all
+-- reasons why the given value is not valid if that is the case.
+--
+-- 'isValid' only checks whether a given value is a valid value of its type.
+--
+-- === Instantiating 'Validity'
+--
+-- To instantiate 'Validity', one has to implement both 'isValid' and
+-- 'validate'.
+-- Start by implementing 'validate'. Use the helper functions below to define
+-- all the reasons why a given value would be a valid value of its type.
+-- Then define `isValid = isValidbyValidating' for now.
+--
+-- Example:
+--
+-- > newtype Even = Even Int
+-- >
+-- > instance Validity Even
+-- >     validate (Event i)
+-- >       even i <?@> "The contained 'Int' is even."
+-- >     isValid = isValidByValidating
+--
+-- If it turns out that, at this point, 'isValid' is too slow for your taste,
+-- you can replace the implementation of 'isValid' by a custom implementation.
+-- However, it is important that this 'isValid' implementation has exactly
+-- the same semantics as 'isValidbyValidating'.
+--
+-- Example:
+--
+-- > newtype Even = Even Int
+-- >
+-- > instance Validity Even
+-- >     validate (Event i)
+-- >       even i <?@> "The contained 'Int' is even."
+-- >     isValid (Event i) = even i
+--
+-- === Semantics
 --
 -- 'isValid' should be an underapproximation of actual validity.
 --
@@ -101,29 +152,33 @@ import GHC.Real (Ratio(..))
 --
 -- > {-# LANGUAGE DeriveGeneric #-}
 -- >
--- > data MyType = MyType Double String
--- >     deriving (Show, Eq, Generic)
+-- > data MyType = MyType
+-- >     { myDouble :: Double
+-- >     { myString :: String
+-- >     } deriving (Show, Eq, Generic)
 -- >
 -- > instance Validity MyType
 --
 -- generates something like:
 --
 -- > instance Validity MyType where
--- >     isValid (MyType d s) = isValid d && isValid s
+-- >     isValid (MyType d s)
+-- >         = isValid d && isValid s
+-- >     validate (MyType d s)
+-- >         = d <?!> "myDouble"
+-- >        <> s <?!> "myString"
 class Validity a where
-    isValid :: a -> Bool
-    default isValid :: (Generic a, GValidity (Rep a)) =>
-        a -> Bool
-    isValid = gIsValid . from
     validate :: a -> Validation
     default validate :: (Generic a, GValidity (Rep a)) =>
         a -> Validation
     validate = gValidate . from
+    isValid :: a -> Bool
+    default isValid :: (Generic a, GValidity (Rep a)) =>
+        a -> Bool
+    isValid = gIsValid . from
 
 data ValidationChain
     = Violated String
-    | Context String
-              ValidationChain
     | Location String
                ValidationChain
     deriving (Show, Eq, Generic)
@@ -136,46 +191,46 @@ data Validation = Validation
 
 instance Validity Validation
 
-data Example = Example
-    { exInt :: Int
-    , exDouble :: Double
-    } deriving (Show, Eq, Generic)
-
-instance Validity Example
-
 instance Monoid Validation where
     mempty = Validation []
     mappend (Validation v1) (Validation v2) = Validation $ v1 ++ v2
 
-isInvalid :: Validity a => a -> Bool
-isInvalid = not . isValid
-
+-- | Declare any value to be valid.
+--
+-- > triviallyValid a = seq a True
 triviallyValid :: a -> Bool
 triviallyValid a = seq a True
 
-checkValidity :: Validity a => a -> Either [ValidationChain] a
-checkValidity a =
-    case validate a of
-        Validation [] -> Right a
-        Validation errs -> Left errs
+-- | Implement 'isValid' by using 'validate' and checking that there are no
+-- reasons that the value is invalid.
+isValidByValidating :: Validity a => a -> Bool
+isValidByValidating = isRight . checkValidity
 
-prettyValidation :: Validity a => a -> Either String a
-prettyValidation a =
-    case checkValidity a of
-        Right a -> Right a
-        Left errs -> Left $ intercalate "\n" $ map (errCascade . toStrings) errs
-  where
-    toStrings (Violated s) = ["Violated: " ++ s]
-    toStrings (Location s vc) = s : toStrings vc
-    errCascade errList =
-        intercalate "\n" $
-        flip map (zip [0 ..] errList) $ \(i, segment) ->
-            case i of
-                0 -> segment
-                _ -> replicate i ' ' ++ "\\ " ++ segment
-
+-- | Declare any value to be valid in validation
+--
+-- > trivialValidation a = seq a mempty
 trivialValidation :: a -> Validation
 trivialValidation a = seq a mempty
+
+-- | Implement 'validate' by using 'isValid' and using the given string as the
+-- reason if the value is invalid.
+validateByChecking :: Validity a => String -> a -> Validation
+validateByChecking s a = isValid a <?@> s
+
+-- | Implement 'validate' by using 'isValid' and using the given name to define
+-- the reason if the value is invalid.
+--
+-- > validateByCheckingName name = validateByChecking $ unwords ["The", name, "valid."]
+validateByCheckingName :: Validity a => String -> a -> Validation
+validateByCheckingName name =
+    validateByChecking $ unwords ["The", name, "valid."]
+
+-- | Implement 'validate' by using 'isValid' and using a default reason if the
+-- value is invalid.
+--
+-- > validateByCheckingDefault = validateByChecking "The value is valid."
+validateByCheckingDefault :: Validity a => a -> Validation
+validateByCheckingDefault = validateByChecking "The value is valid."
 
 -- | Check that a given invariant holds.
 --
@@ -183,11 +238,11 @@ trivialValidation a = seq a mempty
 --
 -- Example:
 --
--- check (x < 5) "x is strictly smaller than 5"
+-- > check (x < 5) "x is strictly smaller than 5"
 --
 -- instead of
 --
--- check (x < 5) "x is greater than 5"
+-- > check (x < 5) "x is greater than 5"
 check :: Bool -> String -> Validation
 check b err =
     if b
@@ -195,37 +250,40 @@ check b err =
         else Validation [Violated err]
 
 -- | Infix operator for 'check'
+--
+-- Example:
+--
+-- > x < 5 <?@> "x is strictly smaller than 5"
 (<?@>) :: Bool -> String -> Validation
 (<?@>) = check
 
 infixr 0 <?@>
 
-annotateValidation :: Validation -> String -> Validation
-annotateValidation val s =
-    case val of
-        Validation errs -> Validation $ map (Location s) errs
-
+-- | Declare a sub-part as a necessary part for validation, and annotate it with a name.
+--
+-- Example:
+--
+-- > validate (a, b) =
+-- >     mconcat
+-- >         [ annotate a "The first element of the tuple"
+-- >         , annotate b "The second element of the tuple"
+-- >         ]
 annotate :: Validity a => a -> String -> Validation
 annotate = annotateValidation . validate
 
 -- | Infix operator for 'annotate'
+--
+-- Example:
+--
+-- > validate (a, b) =
+-- >     mconcat
+-- >         [ a <?!> "The first element of the tuple"
+-- >         , b <?!> "The second element of the tuple"
+-- >         ]
 (<?!>) :: Validity a => a -> String -> Validation
 (<?!>) = annotate
 
 infixr 0 <?!>
-
-isValidByValidating :: Validity a => a -> Bool
-isValidByValidating = isRight . checkValidity
-
-validateByChecking :: Validity a => String -> a -> Validation
-validateByChecking s a = isValid a <?@> s
-
-validateByCheckingName :: Validity a => String -> a -> Validation
-validateByCheckingName name =
-    validateByChecking $ unwords ["The", name, "valid."]
-
-validateByCheckingDefault :: Validity a => a -> Validation
-validateByCheckingDefault = validateByChecking "The value is valid."
 
 -- | Any tuple of things is valid if both of its elements are valid
 instance (Validity a, Validity b) => Validity (a, b) where
@@ -435,18 +493,10 @@ instance HasResolution a => Validity (Fixed a) where
     isValid (MkFixed i) = isValid i
     validate (MkFixed i) = validate i
 
--- | Construct a valid element from an unchecked element
-constructValid :: Validity a => a -> Maybe a
-constructValid p =
-    if isValid p
-        then Just p
-        else Nothing
-
--- | Construct a valid element from an unchecked element, throwing 'error'
--- on invalid elements.
-constructValidUnsafe :: (Show a, Validity a) => a -> a
-constructValidUnsafe p =
-    fromMaybe (error $ show p ++ " is not valid") $ constructValid p
+annotateValidation :: Validation -> String -> Validation
+annotateValidation val s =
+    case val of
+        Validation errs -> Validation $ map (Location s) errs
 
 class GValidity f where
     gIsValid :: f a -> Bool
@@ -485,3 +535,52 @@ instance (GValidity a, Selector c) => GValidity (M1 S c a) where
 instance (Validity a) => GValidity (K1 R a) where
     gIsValid (K1 x) = isValid x
     gValidate (K1 x) = validate x
+
+-- | Check whether 'isInvalid' is not valid.
+--
+-- > isInvalid = not . isValid
+isInvalid :: Validity a => a -> Bool
+isInvalid = not . isValid
+
+-- | Construct a valid element from an unchecked element
+constructValid :: Validity a => a -> Maybe a
+constructValid p =
+    if isValid p
+        then Just p
+        else Nothing
+
+-- | Construct a valid element from an unchecked element, throwing 'error'
+-- on invalid elements.
+constructValidUnsafe :: (Show a, Validity a) => a -> a
+constructValidUnsafe p =
+    fromMaybe (error $ show p ++ " is not valid") $ constructValid p
+
+-- | validate a given value.
+--
+-- This function returns either all the reasons why the given value is invalid,
+-- in the form of a list of 'ValidationChain's, or it returns 'Right' with the
+-- input value, as evidence that it is valid.
+--
+-- Note: You map want to use 'prettyValidation' instead, if you want to
+-- display these 'ValidationChain's to a user.
+checkValidity :: Validity a => a -> Either [ValidationChain] a
+checkValidity a =
+    case validate a of
+        Validation [] -> Right a
+        Validation errs -> Left errs
+
+-- | validate a given value, and return a nice error if the value is invalid.
+prettyValidation :: Validity a => a -> Either String a
+prettyValidation a =
+    case checkValidity a of
+        Right a -> Right a
+        Left errs -> Left $ intercalate "\n" $ map (errCascade . toStrings) errs
+  where
+    toStrings (Violated s) = ["Violated: " ++ s]
+    toStrings (Location s vc) = s : toStrings vc
+    errCascade errList =
+        intercalate "\n" $
+        flip map (zip [0 ..] errList) $ \(i, segment) ->
+            case i of
+                0 -> segment
+                _ -> replicate i ' ' ++ "\\ " ++ segment
