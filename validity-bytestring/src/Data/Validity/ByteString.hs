@@ -8,4 +8,5 @@ import Data.ByteString
 
 -- | A 'ByteString' is trivially valid.
 instance Validity ByteString where
-    isValid = const True
+    isValid = triviallyValid
+    validate = validateByCheckingName "ByteString"

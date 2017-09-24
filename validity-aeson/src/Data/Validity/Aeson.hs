@@ -17,3 +17,9 @@ instance Validity Value where
     isValid (Number s) = isValid s
     isValid (Bool b) = isValid b
     isValid Null = True
+    validate (Object o) = o <?!> "Object"
+    validate (Array a) = a <?!> "Array"
+    validate (String t) = t <?!> "String"
+    validate (Number s) = s <?!> "Number"
+    validate (Bool b) = b <?!> "Bool"
+    validate Null = mempty

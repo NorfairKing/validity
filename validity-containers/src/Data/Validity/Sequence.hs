@@ -8,6 +8,6 @@ import Data.Foldable (toList)
 import Data.Sequence (Seq)
 
 -- | A 'Seq'uence of things is valid if all the elements are valid.
-instance Validity v =>
-         Validity (Seq v) where
+instance Validity v => Validity (Seq v) where
     isValid = all isValid . toList
+    validate s = toList s <?!> "Seq elements"

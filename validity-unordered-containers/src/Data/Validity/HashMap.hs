@@ -14,3 +14,4 @@ import qualified Data.HashMap.Strict as HM
 -- concerning a 'HashMap', so no more accurate validity instance can be made.
 instance (Hashable k, Validity k, Validity v) => Validity (HashMap k v) where
     isValid m = all isValid (HM.toList m)
+    validate m = HM.toList m <?!> "HashMap elements"
