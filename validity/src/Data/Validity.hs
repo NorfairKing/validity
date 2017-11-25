@@ -64,13 +64,18 @@ module Data.Validity
     , Monoid(..)
     ) where
 
-import Debug.Trace
 
 import Data.Either (isRight)
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.List (intercalate)
+#if MIN_VERSION_base(4,9,0)
+import Data.List.NonEmpty (NonEmpty((:|)))
+#endif
 import Data.Maybe (Maybe, fromMaybe)
+#if MIN_VERSION_base(4,8,0)
+#else
 import Data.Monoid
+#endif
 import Data.Word (Word, Word16, Word32, Word64, Word8)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
@@ -185,7 +190,7 @@ data ValidationChain
 
 instance Validity ValidationChain
 
-data Validation = Validation
+newtype Validation = Validation
     { unValidation :: [ValidationChain]
     } deriving (Show, Eq, Generic)
 
@@ -371,8 +376,24 @@ instance Validity a => Validity [a] where
         map
             (\(ix, e) ->
                  e <?!>
-                 (unwords ["The element at index", show ix, "in the list"])) .
+                 unwords
+                 [ "The element at index"
+                 , show (ix :: Integer)
+                 , "in the list"]) .
         zip [0 ..]
+
+#if MIN_VERSION_base(4,9,0)
+-- | A nonempty list is valid if all the elements are valid.
+--
+-- See the instance for 'Validity [a]' for more information.
+instance Validity a => Validity (NonEmpty a) where
+    isValid = all isValid
+    validate (e :| es) =
+        mconcat
+            [ e <?!> "The first element of the nonempty list"
+            , es <?!> "The rest of the elements of the nonempty list"
+            ]
+#endif
 
 -- | A Maybe thing is valid if the thing inside is valid or it's nothing
 -- It makes sense to assume that 'Nothing' is valid.
@@ -573,7 +594,7 @@ checkValidity a =
 prettyValidation :: Validity a => a -> Either String a
 prettyValidation a =
     case checkValidity a of
-        Right a -> Right a
+        Right a_ -> Right a_
         Left errs -> Left $ intercalate "\n" $ map (errCascade . toStrings) errs
   where
     toStrings (Violated s) = ["Violated: " ++ s]
