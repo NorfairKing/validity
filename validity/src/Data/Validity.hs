@@ -64,7 +64,6 @@ module Data.Validity
     , Monoid(..)
     ) where
 
-import Debug.Trace
 
 import Data.Either (isRight)
 import Data.Fixed (Fixed(MkFixed), HasResolution)
@@ -73,7 +72,10 @@ import Data.List (intercalate)
 import Data.List.NonEmpty (NonEmpty((:|)))
 #endif
 import Data.Maybe (Maybe, fromMaybe)
+#if MIN_VERSION_base(4,8,0)
+#else
 import Data.Monoid
+#endif
 import Data.Word (Word, Word16, Word32, Word64, Word8)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
@@ -188,7 +190,7 @@ data ValidationChain
 
 instance Validity ValidationChain
 
-data Validation = Validation
+newtype Validation = Validation
     { unValidation :: [ValidationChain]
     } deriving (Show, Eq, Generic)
 
@@ -374,7 +376,10 @@ instance Validity a => Validity [a] where
         map
             (\(ix, e) ->
                  e <?!>
-                 (unwords ["The element at index", show ix, "in the list"])) .
+                 unwords
+                 [ "The element at index"
+                 , show (ix :: Integer)
+                 , "in the list"]) .
         zip [0 ..]
 
 #if MIN_VERSION_base(4,9,0)
@@ -589,7 +594,7 @@ checkValidity a =
 prettyValidation :: Validity a => a -> Either String a
 prettyValidation a =
     case checkValidity a of
-        Right a -> Right a
+        Right a_ -> Right a_
         Left errs -> Left $ intercalate "\n" $ map (errCascade . toStrings) errs
   where
     toStrings (Violated s) = ["Violated: " ++ s]

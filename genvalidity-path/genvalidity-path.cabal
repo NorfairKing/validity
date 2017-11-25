@@ -1,5 +1,5 @@
 name: genvalidity-path
-version: 0.2.0.0
+version: 0.2.0.1
 cabal-version: >=1.10
 build-type: Simple
 license: MIT
@@ -24,7 +24,7 @@ library
         base >=4.7 && <5,
         validity-path >=0.2 && <0.3,
         genvalidity >=0.4 && <0.5,
-        path >=0.5 && <0.6
+        path >=0.5 && <0.7
     default-language: Haskell2010
     hs-source-dirs: src
 
