@@ -63,6 +63,7 @@ module Data.GenValidity
 import Data.Validity
 
 import Data.Fixed (Fixed(..), HasResolution)
+import Data.List.NonEmpty (NonEmpty((:|)))
 import Data.Word (Word, Word8, Word16, Word32, Word64)
 import GHC.Generics
 import GHC.Real (Ratio(..))
@@ -287,6 +288,21 @@ instance GenInvalid a => GenInvalid (Maybe a) where
 instance GenUnchecked a => GenUnchecked [a] where
     genUnchecked = genListOf genUnchecked
     shrinkUnchecked = shrinkList shrinkUnchecked
+
+instance GenUnchecked a => GenUnchecked (NonEmpty a) where
+    genUnchecked = (:|) <$> genUnchecked <*> genUnchecked
+    shrinkUnchecked (v :| vs) = [ e :| es | (e, es) <- shrinkUnchecked (v, vs)]
+
+instance GenValid a => GenValid (NonEmpty a) where
+    genValid = (:|) <$> genValid <*> genValid
+
+instance GenInvalid a => GenInvalid (NonEmpty a) where
+    genInvalid = sized $ \n -> do
+      (a, b) <- genSplit n
+      oneof
+        [ (:|) <$> resize a genUnchecked <*> resize b genInvalid
+        , (:|) <$> resize a genInvalid <*> resize b genUnchecked
+        ]
 
 -- | If we can generate values of a certain type, we can also generate lists of
 -- them.

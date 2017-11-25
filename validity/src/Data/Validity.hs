@@ -69,6 +69,7 @@ import Debug.Trace
 import Data.Either (isRight)
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.List (intercalate)
+import Data.List.NonEmpty (NonEmpty((:|)))
 import Data.Maybe (Maybe, fromMaybe)
 import Data.Monoid
 import Data.Word (Word, Word16, Word32, Word64, Word8)
@@ -373,6 +374,17 @@ instance Validity a => Validity [a] where
                  e <?!>
                  (unwords ["The element at index", show ix, "in the list"])) .
         zip [0 ..]
+
+-- | A nonempty list is valid if all the elements are valid.
+--
+-- See the instance for 'Validity [a]' for more information.
+instance Validity a => Validity (NonEmpty a) where
+    isValid = all isValid
+    validate (e :| es) =
+        mconcat
+            [ e <?!> "The first element of the nonempty list"
+            , es <?!> "The rest of the elements of the nonempty list"
+            ]
 
 -- | A Maybe thing is valid if the thing inside is valid or it's nothing
 -- It makes sense to assume that 'Nothing' is valid.
