@@ -501,11 +501,11 @@ instance Validity Natural where
 -- | Valid if the contained 'Integer's are valid and the denominator is
 -- strictly positive.
 instance Validity Rational where
-    isValid (d :% n) = isValid n && isValid d && d > 0
-    validate (d :% n) =
+    isValid (n :% d) = isValid n && isValid d && d > 0
+    validate (n :% d) =
         mconcat
-            [ d <?!> "The numerator"
-            , n <?!> "The denominator"
+            [ n <?!> "The numerator"
+            , d <?!> "The denominator"
             , (d > 0) <?@> "The denominator is strictly positive."
             ]
 
