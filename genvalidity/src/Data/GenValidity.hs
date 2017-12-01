@@ -411,12 +411,12 @@ instance GenUnchecked Integer where
 
 instance GenValid Integer
 
-instance (Integral a, Arbitrary a, GenUnchecked a) => GenUnchecked (Ratio a) where
+instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
     genUnchecked = do
         n <- genUnchecked
         d <- genUnchecked
         pure $ n :% d
-    shrinkUnchecked = shrink
+    shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d), d' > 0]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a)
 
