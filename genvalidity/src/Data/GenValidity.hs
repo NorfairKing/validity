@@ -418,7 +418,7 @@ instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
         pure $ n :% d
     shrinkUnchecked = shrink
 
-instance (Integral a, GenValid a) => GenValid (Ratio a)
+instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a)
 
 instance HasResolution a => GenUnchecked (Fixed a) where
     genUnchecked = MkFixed <$> genUnchecked
