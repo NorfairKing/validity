@@ -411,7 +411,7 @@ instance GenUnchecked Integer where
 
 instance GenValid Integer
 
-instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
+instance (Integral a, Arbitrary a, GenUnchecked a) => GenUnchecked (Ratio a) where
     genUnchecked = do
         n <- genUnchecked
         d <- genUnchecked
