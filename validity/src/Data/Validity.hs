@@ -75,6 +75,7 @@ import Data.Maybe (Maybe, fromMaybe)
 #if MIN_VERSION_base(4,8,0)
 #else
 import Data.Monoid
+import Data.Ratio
 #endif
 import Data.Word (Word, Word16, Word32, Word64, Word8)
 import GHC.Generics
@@ -498,9 +499,9 @@ instance Validity Natural where
     isValid = isValidNatural
     validate = validateByChecking "Natural"
 #endif
--- | Valid if the contained 'Integer's are valid and the denominator is
+-- | Valid if the contained numbers are valid and the denominator is
 -- strictly positive.
-instance Validity Rational where
+instance (Num a, Ord a, Validity a) => Validity (Ratio a) where
     isValid (n :% d) = isValid n && isValid d && d > 0
     validate (n :% d) =
         mconcat
