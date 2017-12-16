@@ -173,7 +173,8 @@ property :: (Show a, Arbitrary a) => (a -> Bool) -> Test
 ## Randomised Property Testing with QuickCheck
 
 ``` Haskell
-λ> property myTest -- Cool!
+λ> quickCheck myTest
++++ OK, passed 100 tests.  -- Cool!
 ```
 
 # What if not all values are valid
@@ -349,6 +350,16 @@ jsonSpecOnValid :: ...
     decode :: Int -> Data.ByteString.Lazy.ByteString
       ensures that encode and decode are
       inverses for "unchecked Int"'s
+```
+
+# Cost
+
+```
+data MyType = MyType Int Text
+  deriving (Generic)
+instance GenUnchecked MyType
+instance Validity MyType
+instance GenValid MyType
 ```
 
 # Other libraries
