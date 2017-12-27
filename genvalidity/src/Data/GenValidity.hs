@@ -416,7 +416,7 @@ instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
         n <- genUnchecked
         d <- genUnchecked
         pure $ n :% d
-    shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d), d' > 0]
+    shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d)]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a)
 
