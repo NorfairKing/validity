@@ -1,0 +1,37 @@
+name: genvalidity-vector
+version: '0.1.0.0'
+synopsis: GenValidity support for vector
+description: Please see README.md
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2017 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+dependencies:
+- vector
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.GenValidity.Vector
+  dependencies:
+  - base <5
+  - QuickCheck
+  - genvalidity >=0.4 && <0.5
+  - validity >=0.4 && <0.5
+  - validity-vector >=0.1 && <0.2
+tests:
+  genvalidity-vector-test:
+    main: Spec.hs
+    source-dirs: test/
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - base >=4.9 && <=5
+    - genvalidity
+    - genvalidity-hspec
+    - genvalidity-vector
+    - hspec >=2.2 && <2.5

@@ -1,0 +1,19 @@
+name: validity-text
+version: '0.2.0.0'
+synopsis: Validity instances for text
+description: Please see README.md
+category: Web
+author: Tom Sydney Kerckhove
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+dependencies:
+- base >=4.7 && <5
+- validity >=0.4 && <0.5
+- text
+- bytestring
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.Validity.Text

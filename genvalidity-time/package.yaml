@@ -1,0 +1,40 @@
+name: genvalidity-time
+version: '0.1.0.0'
+synopsis: GenValidity support for time
+description: Please see README.md
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2017 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+dependencies:
+- time
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.GenValidity.Time
+  - Data.GenValidity.Time.Calendar
+  - Data.GenValidity.Time.Clock
+  - Data.GenValidity.Time.Format
+  - Data.GenValidity.Time.LocalTime
+  dependencies:
+  - base >=4.7 && <5
+  - validity-time >=0.1 && <0.2
+  - genvalidity >=0.4 && <0.5
+  - QuickCheck >=2.7
+tests:
+  genvalidity-time-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    - -fno-warn-name-shadowing
+    dependencies:
+    - base
+    - genvalidity-time
+    - hspec
+    - genvalidity-hspec

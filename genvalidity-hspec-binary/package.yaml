@@ -1,0 +1,47 @@
+name: genvalidity-hspec-binary
+version: '0.1.0.0'
+synopsis: Standard spec's for binary-related Instances
+description: Standard spec's for cereal-related Instances, see https://hackage.haskell.org/package/binary.
+category: Testing
+author: Nick Van den Broeck
+maintainer: syd.kerckhove@gmail.com
+copyright: 2017 Tom Sydney Kerckhove
+license: MIT
+github: NorfairKing/validity
+extra-source-files:
+- README.md
+dependencies:
+- hspec
+library:
+  source-dirs: src/
+  ghc-options: -Wall
+  exposed-modules:
+  - Test.Validity.Binary
+  dependencies:
+  - base >=4.9 && <=5
+  - QuickCheck
+  - binary >=0.5 && <0.9
+  - deepseq >=1.4 && <1.5
+  - genvalidity >=0.4 && <0.5
+  - genvalidity-hspec >=0.5 && <0.6
+tests:
+  genvalidity-hspec-binary-doctests:
+    main: DocTest.hs
+    source-dirs: test
+    ghc-options: -threaded
+    dependencies:
+    - base
+    - doctest >=0.11 && <0.12
+    - genvalidity-hspec-binary
+  genvalidity-hspec-binary-test:
+    main: Spec.hs
+    source-dirs: test/
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - base
+    - genvalidity
+    - genvalidity-hspec-binary

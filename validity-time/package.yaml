@@ -1,0 +1,22 @@
+name: validity-time
+version: '0.1.0.0'
+synopsis: Validity instances for time
+description: Please see README.md
+category: Validity
+author: Tom Sydney Kerckhove
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2017 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+dependencies:
+- base >=4.7 && <5
+- validity >=0.4 && <0.5
+- time
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.Validity.Time
+  - Data.Validity.Time.Calendar
+  - Data.Validity.Time.Clock
+  - Data.Validity.Time.Format
+  - Data.Validity.Time.LocalTime
