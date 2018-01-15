@@ -191,6 +191,6 @@ import Data.GenValidity
 import Test.Validity.Functions
 import Test.Validity.GenValidity.Property
 import Test.Validity.Operations
+import Test.Validity.Property.Utils
 import Test.Validity.Relations
 import Test.Validity.Types
-import Test.Validity.Property.Utils

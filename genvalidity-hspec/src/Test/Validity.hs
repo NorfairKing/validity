@@ -263,7 +263,6 @@ import Test.Validity.Monoid
 import Test.Validity.Operations
 import Test.Validity.Ord
 import Test.Validity.Property
-import Test.Validity.Shrinking
 import Test.Validity.RelativeValidity
+import Test.Validity.Shrinking
 import Test.Validity.Utils
-

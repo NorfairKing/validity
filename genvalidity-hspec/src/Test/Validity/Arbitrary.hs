@@ -27,9 +27,8 @@ import Test.Validity.Utils
 -- Example usage:
 --
 -- > arbitrarySpec @Int
-arbitrarySpec
-    :: forall a.
-       (Typeable a, Show a, Validity a, Arbitrary a)
+arbitrarySpec ::
+       forall a. (Typeable a, Show a, Validity a, Arbitrary a)
     => Spec
 arbitrarySpec = do
     let name = nameOf @a
@@ -40,8 +39,7 @@ arbitrarySpec = do
 -- | @arbitrary@ only generates valid data
 --
 -- prop> arbitraryGeneratesOnlyValid @Int
-arbitraryGeneratesOnlyValid
-    :: forall a.
-       (Show a, Validity a, Arbitrary a)
+arbitraryGeneratesOnlyValid ::
+       forall a. (Show a, Validity a, Arbitrary a)
     => Property
 arbitraryGeneratesOnlyValid = genGeneratesValid @a arbitrary shrink

@@ -26,11 +26,11 @@ library:
 tests:
   genvalidity-hspec-cereal-doctests:
     main: DocTest.hs
-    source-dirs: test
+    source-dirs: doctest
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.11 && <0.12
+    - doctest >=0.11 && <0.14
     - genvalidity-hspec-cereal
   genvalidity-hspec-cereal-test:
     main: Spec.hs

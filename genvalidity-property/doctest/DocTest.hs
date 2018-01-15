@@ -2,7 +2,6 @@
 #if !MIN_VERSION_base(4,8,0)
 import Data.Functor ((<$>))
 #endif
-
 import Test.DocTest
 
 import Control.Monad
@@ -18,8 +17,8 @@ main = do
 listFilesRecur :: FilePath -> IO [FilePath]
 listFilesRecur dir = do
     entries <-
-            (map (dir </>) .
-             filter (\f -> f /= "." && f /= ".." && takeExtension f /= ".swp")) <$>
+        (map (dir </>) .
+         filter (\f -> f /= "." && f /= ".." && takeExtension f /= ".swp")) <$>
         getDirectoryContents dir
     dirs <- filterM doesDirectoryExist entries
     files <- filterM doesFileExist entries

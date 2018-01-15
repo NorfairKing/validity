@@ -19,7 +19,5 @@ module Data.RelativeValidity
 class RelativeValidity a b where
     isValidFor :: a -> b -> Bool
 
-isInvalidFor
-    :: RelativeValidity a b
-    => a -> b -> Bool
+isInvalidFor :: RelativeValidity a b => a -> b -> Bool
 isInvalidFor a b = not $ isValidFor a b

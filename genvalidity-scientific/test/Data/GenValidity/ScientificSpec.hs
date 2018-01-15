@@ -13,5 +13,5 @@ import Data.Scientific
 spec :: Spec
 spec =
     describe "genValid" $
-        it "generates valid Scientific's" $
-        forAll (genValid :: Gen Scientific) isValid
+    it "generates valid Scientific's" $
+    forAll (genValid :: Gen Scientific) isValid
