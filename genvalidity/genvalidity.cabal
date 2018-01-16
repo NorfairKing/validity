@@ -2,10 +2,10 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f7a4a4bfcf7f082293595e4f68b4be5e4a0241a36104439b6872b3b759bd0c9c
+-- hash: 840d6c35489d2fd27bd375fb91b3e78ad68bc9ce90eb12e72b74816a81a8b8f5
 
 name:           genvalidity
-version:        0.4.0.3
+version:        0.4.0.4
 synopsis:       Testing utilities for the validity library
 description:    Note: There are companion instance packages for this library:
                 .
@@ -49,7 +49,7 @@ library
   build-depends:
       QuickCheck >=2.7 && <2.12
     , base >=4.7 && <5
-    , validity >=0.4.0.2 && <0.5
+    , validity >=0.4.0.3 && <0.5
   if impl(ghc >=8.0.0)
     ghc-options: -Wno-redundant-constraints
   exposed-modules:
