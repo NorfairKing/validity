@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f1267c7dd5ec02603a368a86a66a18ae8fd56657c147597fb0fa68e660a5bc9f
+-- hash: 6bede099b58dae6a035fe30f5317751c56cacdb75922eb9536c7155e9c7c485a
 
 name:           genvalidity
 version:        0.4.0.2
@@ -47,7 +47,7 @@ library
   hs-source-dirs:
       src
   build-depends:
-      QuickCheck >=2.7 && <2.11
+      QuickCheck >=2.7 && <2.12
     , base >=4.7 && <5
     , validity >=0.4.0.2 && <0.5
   if impl(ghc >=8.0.0)
