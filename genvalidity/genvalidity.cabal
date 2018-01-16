@@ -2,10 +2,10 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6bede099b58dae6a035fe30f5317751c56cacdb75922eb9536c7155e9c7c485a
+-- hash: f7a4a4bfcf7f082293595e4f68b4be5e4a0241a36104439b6872b3b759bd0c9c
 
 name:           genvalidity
-version:        0.4.0.2
+version:        0.4.0.3
 synopsis:       Testing utilities for the validity library
 description:    Note: There are companion instance packages for this library:
                 .
