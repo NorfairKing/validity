@@ -7,22 +7,28 @@ module Data.GenValidity.Path where
 import Data.Functor ((<$>))
 #endif
 import Data.GenValidity
+import Data.Maybe
 import Data.Validity.Path ()
 
 import Path
 import Path.Internal
 
+import Test.QuickCheck.Gen
+
 instance GenUnchecked (Path a f) where
     genUnchecked = Path <$> genUnchecked
     shrinkUnchecked (Path s) = Path <$> shrinkUnchecked s
 
-instance GenValid (Path Abs File)
+instance GenValid (Path Abs File) where
+    genValid = (Path . ('/' :) <$> genUnchecked) `suchThat` isValid
 
-instance GenValid (Path Abs Dir)
+instance GenValid (Path Abs Dir) where
+    genValid = (Path . ('/' :) . (++ "/") <$> genUnchecked) `suchThat` isValid
 
 instance GenValid (Path Rel File)
 
-instance GenValid (Path Rel Dir)
+instance GenValid (Path Rel Dir) where
+    genValid = (Path . (++ "/") <$> genUnchecked) `suchThat` isValid
 
 instance GenInvalid (Path Abs File)
 
