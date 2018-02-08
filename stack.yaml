@@ -30,5 +30,4 @@ packages:
 extra-deps:
   - hlint-1.9.41
   - haskell-src-exts-1.19.1
-  - QuickCheck-2.10.1
 resolver: lts-10.3
