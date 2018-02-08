@@ -11,9 +11,6 @@ import Data.Validity.Time.Calendar ()
 
 -- | Valid according to the contained values.
 instance Validity TimeZone where
-    isValid TimeZone {..} =
-        isValid timeZoneMinutes &&
-        isValid timeZoneSummerOnly && isValid timeZoneName
     validate TimeZone {..} =
         mconcat
             [ timeZoneMinutes <?!> "timeZoneMinutes"
@@ -27,18 +24,6 @@ instance Validity TimeZone where
 --  * todMin : range 0 - 59
 --  * todSec : 0 <= todSec < 61,
 instance Validity TimeOfDay where
-    isValid TimeOfDay {..} =
-        and
-            [ isValid todHour
-            , todHour >= 0
-            , todHour <= 23
-            , isValid todMin
-            , todMin >= 0
-            , todMin <= 59
-            , isValid todSec
-            , todSec >= 0
-            , todSec < 61
-            ]
     validate TimeOfDay {..} =
         mconcat
             [ todHour <?!> "todHour"
@@ -54,14 +39,11 @@ instance Validity TimeOfDay where
 
 -- | Valid according to the validity of contained values
 instance Validity LocalTime where
-    isValid LocalTime {..} = isValid localDay && isValid localTimeOfDay
     validate LocalTime {..} =
         mconcat [localDay <?!> "localDay", localTimeOfDay <?!> "localTimeOfDay"]
 
 -- | Valid according to the validity of contained values
 instance Validity ZonedTime where
-    isValid ZonedTime {..} =
-        isValid zonedTimeToLocalTime && isValid zonedTimeZone
     validate ZonedTime {..} =
         mconcat
             [ zonedTimeToLocalTime <?!> "zonedTimeToLocalTime"

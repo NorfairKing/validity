@@ -30,18 +30,6 @@ import qualified System.FilePath as FilePath
 -- * Its path does not contain '..'.
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Abs File) where
-    isValid p@(Path fp) =
-        and
-            [ FilePath.isAbsolute fp
-            , not (FilePath.hasTrailingPathSeparator fp)
-            , FilePath.isValid fp
-#if MIN_VERSION_path(0,6,0)
-            , not ("/." `isSuffixOf` fp)
-            , fp /= "."
-#endif
-            , not (".." `isInfixOf` fp)
-            , parseAbsFile fp == Just p
-            ]
     validate p@(Path fp) =
         mconcat
             [ FilePath.isAbsolute fp <?@> "The path is absolute."
@@ -72,20 +60,6 @@ instance Validity (Path Abs File) where
 -- * Its path does not contain '..'.
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Rel File) where
-    isValid p@(Path fp) =
-        and
-            [ FilePath.isRelative fp
-            , not (FilePath.hasTrailingPathSeparator fp)
-            , FilePath.isValid fp
-#if MIN_VERSION_path(0,6,0)
-            , not ("/." `isSuffixOf` fp)
-            , fp /= "."
-            , fp /= ""
-#endif
-            , fp /= "."
-            , not (".." `isInfixOf` fp)
-            , parseRelFile fp == Just p
-            ]
     validate p@(Path fp) =
         mconcat
             [ FilePath.isRelative fp <?@> "The path is relative."
@@ -112,14 +86,6 @@ instance Validity (Path Rel File) where
 -- * Its path does not contain '..'.
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Abs Dir) where
-    isValid p@(Path fp) =
-        and
-            [ FilePath.isAbsolute fp
-            , FilePath.hasTrailingPathSeparator fp
-            , FilePath.isValid fp
-            , not (".." `isInfixOf` fp)
-            , parseAbsDir fp == Just p
-            ]
     validate p@(Path fp) =
         mconcat
             [ FilePath.isAbsolute fp <?@> "The path is absolute."
@@ -145,20 +111,6 @@ instance Validity (Path Abs Dir) where
 -- * Its path does not contain '..'.
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Rel Dir) where
-    isValid p@(Path fp) =
-        and
-            [ FilePath.isRelative fp
-            , FilePath.hasTrailingPathSeparator fp
-            , FilePath.isValid fp
-            , not (null fp)
-#if MIN_VERSION_path(0,6,0)
-            , fp /= "."
-#else
-            , fp /= ""
-#endif
-            , not (".." `isInfixOf` fp)
-            , parseRelDir fp == Just p
-            ]
     validate p@(Path fp) =
         mconcat
             [ FilePath.isRelative fp <?@> "The path is relattive."

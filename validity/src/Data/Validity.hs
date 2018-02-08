@@ -4,6 +4,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE RankNTypes #-}
 
 {-|
 
@@ -29,7 +30,6 @@
 
     > instance Validity Prime where
     >     validate (Prime n) = isPrime n <?@> "The 'Int' is prime."
-    >     isValid (Prime n) = isPrime n
 
     If certain typeclass invariants exist, you can make these explicit in the
     validity instance as well.
@@ -38,11 +38,7 @@
     -}
 module Data.Validity
     ( Validity(..)
-    -- * Helper functions to define 'isValid'
-    , triviallyValid
-    -- * Helper functions to define 'validate'
-    , trivialValidation
-    , isValidByValidating
+    , isValid
     , check
     , (<?!>)
     , annotate
@@ -64,7 +60,7 @@ module Data.Validity
     , Monoid(..)
     ) where
 
-import Data.Either (isRight)
+import Data.Either (isLeft, isRight)
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.List (intercalate)
 #if MIN_VERSION_base(4,9,0)
@@ -91,15 +87,10 @@ import GHC.Real (Ratio(..))
 -- 'validate' checks whether a given value is a valid value and reports all
 -- reasons why the given value is not valid if that is the case.
 --
--- 'isValid' only checks whether a given value is a valid value of its type.
---
 -- === Instantiating 'Validity'
 --
--- To instantiate 'Validity', one has to implement both 'isValid' and
--- 'validate'.
--- Start by implementing 'validate'. Use the helper functions below to define
--- all the reasons why a given value would be a valid value of its type.
--- Then define `isValid = isValidbyValidating' for now.
+-- To instantiate 'Validity', one has to implement 'validate'.
+-- Use the helper functions below to define all the reasons why a given value would be a valid value of its type.
 --
 -- Example:
 --
@@ -108,49 +99,11 @@ import GHC.Real (Ratio(..))
 -- > instance Validity Even
 -- >     validate (Event i)
 -- >       even i <?@> "The contained 'Int' is even."
--- >     isValid = isValidByValidating
---
--- If it turns out that, at this point, 'isValid' is too slow for your taste,
--- you can replace the implementation of 'isValid' by a custom implementation.
--- However, it is important that this 'isValid' implementation has exactly
--- the same semantics as 'isValidbyValidating'.
---
--- Example:
---
--- > newtype Even = Even Int
--- >
--- > instance Validity Even
--- >     validate (Event i)
--- >       even i <?@> "The contained 'Int' is even."
--- >     isValid (Event i) = even i
---
--- === Semantics
---
--- 'isValid' should be an underapproximation of actual validity.
---
--- This means that if 'isValid' is not a perfect representation of actual
--- validity, for safety reasons, it should never return 'True' for invalid
--- values, but it may return 'False' for valid values.
---
--- For example:
---
--- > isValid = const False
---
--- is a valid implementation for any type, because it never returns 'True'
--- for invalid values.
---
--- > isValid (Even i) = i == 2
---
--- is a valid implementation for @newtype Even = Even Int@, but
---
--- > isValid (Even i) = even i || i == 1
---
--- is not because it returns 'True' for an invalid value: '1'.
 --
 -- === Automatic instances with 'Generic'
 --
 -- An instance of this class can be made automatically if the type in question
--- has a 'Generic' instance. This instance will try to use 'isValid' to
+-- has a 'Generic' instance. This instance will try to use 'validate' to
 -- on all structural sub-parts of the value that is being checked for validity.
 --
 -- Example:
@@ -167,8 +120,6 @@ import GHC.Real (Ratio(..))
 -- generates something like:
 --
 -- > instance Validity MyType where
--- >     isValid (MyType d s)
--- >         = isValid d && isValid s
 -- >     validate (MyType d s)
 -- >         = d <?!> "myDouble"
 -- >        <> s <?!> "myString"
@@ -177,10 +128,9 @@ class Validity a where
     default validate :: (Generic a, GValidity (Rep a)) =>
         a -> Validation
     validate = gValidate . from
-    isValid :: a -> Bool
-    default isValid :: (Generic a, GValidity (Rep a)) =>
-        a -> Bool
-    isValid = gIsValid . from
+
+isValid :: Validity a => a -> Bool
+isValid = isRight . checkValidity
 
 data ValidationChain
     = Violated String
@@ -206,11 +156,6 @@ instance Monoid Validation where
 triviallyValid :: a -> Bool
 triviallyValid a = seq a True
 
--- | Implement 'isValid' by using 'validate' and checking that there are no
--- reasons that the value is invalid.
-isValidByValidating :: Validity a => a -> Bool
-isValidByValidating = isRight . checkValidity
-
 -- | Declare any value to be valid in validation
 --
 -- > trivialValidation a = seq a mempty
@@ -219,23 +164,24 @@ trivialValidation a = seq a mempty
 
 -- | Implement 'validate' by using 'isValid' and using the given string as the
 -- reason if the value is invalid.
-validateByChecking :: Validity a => String -> a -> Validation
-validateByChecking s a = isValid a <?@> s
+validateByChecking :: forall a. (a -> Bool) -> String -> a -> Validation
+validateByChecking isValid s a = isValid a <?@> s
 
 -- | Implement 'validate' by using 'isValid' and using the given name to define
 -- the reason if the value is invalid.
 --
 -- > validateByCheckingName name = validateByChecking $ unwords ["The", name, "valid."]
-validateByCheckingName :: Validity a => String -> a -> Validation
-validateByCheckingName name =
-    validateByChecking $ unwords ["The", name, "valid."]
+validateByCheckingName :: (a -> Bool) -> String -> a -> Validation
+validateByCheckingName isValid name =
+    validateByChecking isValid $ unwords ["The", name, "valid."]
 
 -- | Implement 'validate' by using 'isValid' and using a default reason if the
 -- value is invalid.
 --
 -- > validateByCheckingDefault = validateByChecking "The value is valid."
-validateByCheckingDefault :: Validity a => a -> Validation
-validateByCheckingDefault = validateByChecking "The value is valid."
+validateByCheckingDefault :: (a -> Bool) -> a -> Validation
+validateByCheckingDefault isValid =
+    validateByChecking isValid "The value is valid."
 
 -- | Check that a given invariant holds.
 --
@@ -292,7 +238,6 @@ infixr 0 <?!>
 
 -- | Any tuple of things is valid if both of its elements are valid
 instance (Validity a, Validity b) => Validity (a, b) where
-    isValid (a, b) = isValid a && isValid b
     validate (a, b) =
         mconcat
             [ a <?!> "The first element of the tuple"
@@ -301,14 +246,11 @@ instance (Validity a, Validity b) => Validity (a, b) where
 
 -- | Any Either of things is valid if the contents are valid in either of the cases.
 instance (Validity a, Validity b) => Validity (Either a b) where
-    isValid (Left a) = isValid a
-    isValid (Right b) = isValid b
     validate (Left a) = a <?!> "The 'Left'"
     validate (Right b) = b <?!> "The 'Right'"
 
 -- | Any triple of things is valid if all three of its elements are valid
 instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
-    isValid (a, b, c) = isValid a && isValid b && isValid c
     validate (a, b, c) =
         mconcat
             [ a <?!> "The first element of the triple"
@@ -319,7 +261,6 @@ instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
 -- | Any quadruple of things is valid if all four of its elements are valid
 instance (Validity a, Validity b, Validity c, Validity d) =>
          Validity (a, b, c, d) where
-    isValid (a, b, c, d) = isValid a && isValid b && isValid c && isValid d
     validate (a, b, c, d) =
         mconcat
             [ a <?!> "The first element of the quadruple"
@@ -331,8 +272,6 @@ instance (Validity a, Validity b, Validity c, Validity d) =>
 -- | Any quintuple of things is valid if all five of its elements are valid
 instance (Validity a, Validity b, Validity c, Validity d, Validity e) =>
          Validity (a, b, c, d, e) where
-    isValid (a, b, c, d, e) =
-        isValid a && isValid b && isValid c && isValid d && isValid e
     validate (a, b, c, d, e) =
         mconcat
             [ a <?!> "The first element of the quintuple"
@@ -351,9 +290,6 @@ instance ( Validity a
          , Validity f
          ) =>
          Validity (a, b, c, d, e, f) where
-    isValid (a, b, c, d, e, f) =
-        isValid a &&
-        isValid b && isValid c && isValid d && isValid e && isValid f
     validate (a, b, c, d, e, f) =
         mconcat
             [ a <?!> "The first element of the sextuple"
@@ -370,7 +306,6 @@ instance ( Validity a
 -- If the empty list should not be considered valid as part of your custom data
 -- type, make sure to write a custom @Validity instance@
 instance Validity a => Validity [a] where
-    isValid = all isValid
     validate =
         mconcat .
         map
@@ -387,7 +322,6 @@ instance Validity a => Validity [a] where
 --
 -- See the instance for 'Validity [a]' for more information.
 instance Validity a => Validity (NonEmpty a) where
-    isValid = all isValid
     validate (e :| es) =
         mconcat
             [ e <?!> "The first element of the nonempty list"
@@ -399,67 +333,54 @@ instance Validity a => Validity (NonEmpty a) where
 -- If Nothing wasn't valid, you wouldn't have used a Maybe
 -- in the datastructure.
 instance Validity a => Validity (Maybe a) where
-    isValid Nothing = True
-    isValid (Just a) = isValid a
     validate Nothing = mempty
     validate (Just a) = a <?!> "The 'Just'"
 
 -- | Trivially valid
 instance Validity () where
-    isValid = triviallyValid
-    validate = validateByCheckingName "()"
+    validate = validateByCheckingName (const True) "()"
 
 -- | Trivially valid
 instance Validity Bool where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Bool"
+    validate = validateByCheckingName (const True) "Bool"
 
 -- | Trivially valid
 instance Validity Ordering where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Ordering"
+    validate = validateByCheckingName (const True) "Ordering"
 
 -- | Trivially valid
 instance Validity Char where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Char"
+    validate = validateByCheckingName (const True) "Char"
 
 -- | Trivially valid
 instance Validity Int where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Int"
+    validate = validateByCheckingName (const True) "Int"
 
 -- | Trivially valid
 instance Validity Word where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word"
+    validate = validateByCheckingName (const True) "Word"
 
 -- | Trivially valid
 instance Validity Word8 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word8"
+    validate = validateByCheckingName (const True) "Word8"
 
 -- | Trivially valid
 instance Validity Word16 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word16"
+    validate = validateByCheckingName (const True) "Word16"
 
 -- | Trivially valid
 instance Validity Word32 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word34"
+    validate = validateByCheckingName (const True) "Word34"
 
 -- | Trivially valid
 instance Validity Word64 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word64"
+    validate = validateByCheckingName (const True) "Word64"
 
 -- | NOT trivially valid:
 --
 -- * NaN is not valid.
 -- * Infinite values are not valid.
 instance Validity Float where
-    isValid f = not (isNaN f) && not (isInfinite f)
     validate f =
         mconcat
             [ not (isNaN f) <?@> "The Float is not Nan."
@@ -471,7 +392,6 @@ instance Validity Float where
 -- * NaN is not valid.
 -- * Infinite values are not valid.
 instance Validity Double where
-    isValid d = not (isNaN d) && not (isInfinite d)
     validate d =
         mconcat
             [ not (isNaN d) <?@> "The Double is not NaN."
@@ -487,20 +407,17 @@ instance Validity Double where
 -- assuming that an 'Integer' is always valid.
 -- Even though this is not technically sound, it is good enough for now.
 instance Validity Integer where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Integer"
+    validate = validateByCheckingName (const True) "Integer"
 #if MIN_VERSION_base(4,8,0)
 -- | Valid according to 'isValidNatural'
 --
 -- Only available with @base >= 4.8@.
 instance Validity Natural where
-    isValid = isValidNatural
-    validate = validateByChecking "Natural"
+    validate = validateByChecking isValidNatural "Natural"
 #endif
 -- | Valid if the contained numbers are valid and the denominator is
 -- strictly positive.
 instance (Num a, Ord a, Validity a) => Validity (Ratio a) where
-    isValid (n :% d) = isValid n && isValid d && d > 0
     validate (n :% d) =
         mconcat
             [ n <?!> "The numerator"
@@ -510,7 +427,6 @@ instance (Num a, Ord a, Validity a) => Validity (Ratio a) where
 
 -- | Valid according to the contained 'Integer'.
 instance HasResolution a => Validity (Fixed a) where
-    isValid (MkFixed i) = isValid i
     validate (MkFixed i) = validate i
 
 annotateValidation :: Validation -> String -> Validation
@@ -553,14 +469,13 @@ instance (GValidity a, Selector c) => GValidity (M1 S c a) where
     gValidate m1 = gValidate (unM1 m1) `annotateValidation` selName m1
 
 instance (Validity a) => GValidity (K1 R a) where
-    gIsValid (K1 x) = isValid x
     gValidate (K1 x) = validate x
 
 -- | Check whether 'isInvalid' is not valid.
 --
 -- > isInvalid = not . isValid
 isInvalid :: Validity a => a -> Bool
-isInvalid = not . isValid
+isInvalid = isLeft . checkValidity
 
 -- | Construct a valid element from an unchecked element
 constructValid :: Validity a => a -> Maybe a
