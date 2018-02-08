@@ -33,3 +33,20 @@ tests:
     - hspec
     - genvalidity-hspec
     - path
+benchmarks:
+  genvalidity-path-bench:
+    main: Main.hs
+    source-dirs: bench
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    - -fno-warn-name-shadowing
+    dependencies:
+    - base
+    - genvalidity-path
+    - criterion
+    - path
+    - QuickCheck
+    - genvalidity
