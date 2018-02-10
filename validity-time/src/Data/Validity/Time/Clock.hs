@@ -10,22 +10,14 @@ import Data.Validity.Time.Calendar ()
 
 -- | Valid according to the 'Rational' it contains.
 instance Validity UniversalTime where
-    isValid (ModJulianDate i) = isValid i
-    validate = validateByCheckingName "UniversalTime"
+    validate =
+        validateByCheckingName (\(ModJulianDate i) -> isValid i) "UniversalTime"
 
 -- | Trivially valid
 instance Validity DiffTime where
-    isValid = triviallyValid
-    validate = validateByCheckingName "DiffTime"
+    validate = validateByCheckingName (const True) "DiffTime"
 
 instance Validity UTCTime where
-    isValid UTCTime {..} =
-        and
-            [ isValid utctDay
-            , isValid utctDayTime
-            , utctDayTime >= 0
-            , utctDayTime < 86401
-            ]
     validate UTCTime {..} =
         mconcat
             [ utctDay <?!> "utctDay"
@@ -38,5 +30,7 @@ instance Validity UTCTime where
 instance Validity NominalDiffTime
     -- NominalDiffTime contains a 'Pico' but that constructorr is not exported so we can't do any better than this.
                                                                                                                     where
-    isValid = isValid . (round :: NominalDiffTime -> Integer)
-    validate = validateByCheckingName "NominalDiffTime"
+    validate =
+        validateByCheckingName
+            (isValid . (round :: NominalDiffTime -> Integer))
+            "NominalDiffTime"

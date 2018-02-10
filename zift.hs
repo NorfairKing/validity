@@ -7,6 +7,7 @@
     --package zifter-hindent
     --package zifter-hlint
     --package zifter-stack
+    --package validity-0.4.0.3
 -}
 import Zifter
 import Zifter.Git

@@ -36,7 +36,7 @@ Define explicit validity for `Prime`:
 
 ``` Haskell
 instance Validity Prime where
-    isValid (Prime i) = isPrime i
+    validity (Prime i) = isPrime i <$@> "is prime"
 ```
 
 ### GenUnchecked, GenValid and GenInvalid
@@ -142,13 +142,13 @@ It provides a type class `Validity` that allows us to make the invariants explic
 
 ``` Haskell
 instance Validity HasPrimeFactorisation where
-    isValid (HasPrimeFactorisation i) = i > 1
+    validity (HasPrimeFactorisation i) = i > 1 <?@> "is bigger than 1"
 
 instance Validity Prime where
-    isValid (Prime i) = isPrime i
+    validity (Prime i) = isPrime i <?@> "is prime"
 
 instance Validity PrimeFactorisation where
-    isValid (PrimeFactorisation ps) = not (null ps) && isValid ps
+    validity (PrimeFactorisation ps) = not (null ps) <?@> "isn't null" <> isValid ps <?@> "contains only valid primes"
 ```
 
 Note that in the last instantiation, we used the built-in `instance Validity a => Validity [a]` which requires that all elements of `ps` are valid.
@@ -178,7 +178,7 @@ describe "primeFactorisation" $ do
   it "produces valid output when it succeeds" $ do
     forAll arbitrary $ \h ->
       case primeFactorisation h of
-        Nothing -> return ()
+        Nothing -> pure ()
         Just pf -> pf `shouldSatisfy` isValid
 ```
 
@@ -198,7 +198,7 @@ describe "primeFactorisation" $ do
   it "produces valid output when given valid input" $ do
     forAll (arbitrary `suchThat` isValid) $ \h ->
       case primeFactorisation h of
-        Nothing -> return ()
+        Nothing -> pure ()
         Just pf -> pf `shouldSatisfy` isValid
 ```
 
@@ -231,7 +231,7 @@ instance GenValid HasPrimeFactorisation
 instance GenInvalid HasPrimeFactorisation
 ```
 
-However, the internals of `genValid` will often first generate an value, check whether if it is valid and try again if not.
+However, the internals of `genValid` will often first generate a value, check whether if it is valid and try again if not.
 Because of this inefficiency, we can now implement a faster version of `genValid`:
 
 ``` Haskell
@@ -246,7 +246,7 @@ describe "primeFactorisation" $
   it "produces valid output when given valid input" $
     forAll genValid $ \h ->
       case primeFactorisation h of
-        Nothing -> return ()
+        Nothing -> pure ()
         Just pf -> pf `shouldSatisfy` isValid
 ```
 
