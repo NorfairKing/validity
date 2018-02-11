@@ -11,7 +11,7 @@ spec :: Spec
 spec = do
     describe "upTo" $
         it "returns only positive integers" $
-            forAll arbitrary $ \n -> forAll (upTo n) (`shouldSatisfy` (>= 0))
+        forAll arbitrary $ \n -> forAll (upTo n) (`shouldSatisfy` (>= 0))
     describe "genSplit" $ do
         it "returns positive integers" $
             forAll arbitrary $ \i ->

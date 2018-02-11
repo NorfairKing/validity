@@ -64,7 +64,6 @@ module Data.Validity
     , Monoid(..)
     ) where
 
-
 import Data.Either (isRight)
 import Data.Fixed (Fixed(MkFixed), HasResolution)
 import Data.List (intercalate)
@@ -179,9 +178,8 @@ class Validity a where
         a -> Validation
     validate = gValidate . from
     isValid :: a -> Bool
-    default isValid :: (Generic a, GValidity (Rep a)) =>
-        a -> Bool
-    isValid = gIsValid . from
+    default isValid :: a -> Bool
+    isValid = isRight . checkValidity
 
 data ValidationChain
     = Violated String
@@ -378,11 +376,11 @@ instance Validity a => Validity [a] where
             (\(ix, e) ->
                  e <?!>
                  unwords
-                 [ "The element at index"
-                 , show (ix :: Integer)
-                 , "in the list"]) .
+                     [ "The element at index"
+                     , show (ix :: Integer)
+                     , "in the list"
+                     ]) .
         zip [0 ..]
-
 #if MIN_VERSION_base(4,9,0)
 -- | A nonempty list is valid if all the elements are valid.
 --
@@ -395,7 +393,6 @@ instance Validity a => Validity (NonEmpty a) where
             , es <?!> "The rest of the elements of the nonempty list"
             ]
 #endif
-
 -- | A Maybe thing is valid if the thing inside is valid or it's nothing
 -- It makes sense to assume that 'Nothing' is valid.
 -- If Nothing wasn't valid, you wouldn't have used a Maybe

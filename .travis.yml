@@ -8,10 +8,17 @@ cache:
 matrix:
   include:
   - env:
-      - RESOLVER_FLAG="--stack-yaml nightly.yaml"
+      - RESOLVER_FLAG="--stack-yaml stack.yaml"
       - BUILD_PKGS=""
       - TEST_PKGS=""
     addons: {apt: {packages: [libgmp-dev]}}
+
+  - env:
+      - RESOLVER_FLAG="--stack-yaml lts-10.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS=""
+    addons: {apt: {packages: [libgmp-dev]}}
+
   - env:
       - RESOLVER_FLAG="--stack-yaml lts-9.yaml"
       - BUILD_PKGS=""

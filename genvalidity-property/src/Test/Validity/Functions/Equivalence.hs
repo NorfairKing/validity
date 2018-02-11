@@ -87,7 +87,8 @@ equivalentOnGens2 ::
     -> Gen (a, b)
     -> ((a, b) -> [(a, b)])
     -> Property
-equivalentOnGens2 f g gen s = forAllShrink gen s $ \(a, b) -> f a b `shouldBe` g a b
+equivalentOnGens2 f g gen s =
+    forAllShrink gen s $ \(a, b) -> f a b `shouldBe` g a b
 
 equivalentOnValids2 ::
        (Show a, GenValid a, Show b, GenValid b, Show c, Eq c)

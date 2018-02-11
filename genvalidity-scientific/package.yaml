@@ -1,0 +1,38 @@
+name: genvalidity-scientific
+version: '0.1.0.0'
+synopsis: GenValidity support for Scientific
+description: Please see README.md
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2017 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+dependencies:
+- QuickCheck
+- scientific
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.GenValidity.Scientific
+  dependencies:
+  - base >=4.7 && <5
+  - genvalidity >=0.4 && <0.5
+  - validity >=0.4 && <0.5
+  - validity-scientific >=0.1 && <0.2
+tests:
+  genvalidity-scientific-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    - -fno-warn-name-shadowing
+    dependencies:
+    - base
+    - genvalidity
+    - genvalidity-hspec
+    - genvalidity-scientific
+    - hspec

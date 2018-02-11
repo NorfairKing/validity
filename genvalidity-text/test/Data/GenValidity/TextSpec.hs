@@ -1,8 +1,11 @@
+{-# LANGUAGE TypeApplications #-}
+
 module Data.GenValidity.TextSpec
     ( spec
     ) where
 
 import Control.Monad
+import Data.Either
 import Data.List
 import Data.Word
 import Text.Printf
@@ -76,3 +79,7 @@ spec = do
         forAll arbitrary $ \cs ->
             forAll (textWithoutAnyOf cs) $ \text ->
                 T.unpack text `shouldNotSatisfy` (\t -> any (`elem` t) cs)
+    describe "isValid" $
+        it "equals isRight . checkValidity" $
+        forAll (genUnchecked @Text) $ \t ->
+            isValid t `shouldBe` isRight (checkValidity t)

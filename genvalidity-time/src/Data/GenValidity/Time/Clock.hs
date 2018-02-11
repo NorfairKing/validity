@@ -22,8 +22,7 @@ instance GenValid UniversalTime where
 
 instance GenUnchecked DiffTime where
     genUnchecked = picosecondsToDiffTime <$> genUnchecked
-    shrinkUnchecked =
-        fmap fromRational . shrinkUnchecked . toRational
+    shrinkUnchecked = fmap fromRational . shrinkUnchecked . toRational
 
 instance GenValid DiffTime where
     genValid = picosecondsToDiffTime <$> genValid

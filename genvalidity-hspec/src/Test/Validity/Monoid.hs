@@ -24,23 +24,20 @@ import Test.Validity.Functions
 import Test.Validity.Operations
 import Test.Validity.Utils
 
-memptyTypeStr
-    :: forall a.
-       Typeable a
+memptyTypeStr ::
+       forall a. Typeable a
     => String
 memptyTypeStr = unwords ["mempty", "::", nameOf @a]
 
-mappendTypeStr
-    :: forall a.
-       Typeable a
+mappendTypeStr ::
+       forall a. Typeable a
     => String
 mappendTypeStr = unwords ["mappend", "::", an, "->", an, "->", an]
   where
     an = nameOf @a
 
-mconcatTypeStr
-    :: forall a.
-       Typeable a
+mconcatTypeStr ::
+       forall a. Typeable a
     => String
 mconcatTypeStr = unwords ["mconcat", "::", "[" ++ an ++ "]", "->", an]
   where
@@ -51,9 +48,8 @@ mconcatTypeStr = unwords ["mconcat", "::", "[" ++ an ++ "]", "->", an]
 -- Example usage:
 --
 -- > monoidSpecOnValid @[Double]
-monoidSpecOnValid
-    :: forall a.
-       (Show a, Eq a, Monoid a, Typeable a, GenValid a)
+monoidSpecOnValid ::
+       forall a. (Show a, Eq a, Monoid a, Typeable a, GenValid a)
     => Spec
 monoidSpecOnValid = monoidSpecOnGen @a genValid "valid" shrinkValid
 
@@ -62,9 +58,8 @@ monoidSpecOnValid = monoidSpecOnGen @a genValid "valid" shrinkValid
 -- Example usage:
 --
 -- > monoidSpec @[Int]
-monoidSpec
-    :: forall a.
-       (Show a, Eq a, Monoid a, Typeable a, GenUnchecked a)
+monoidSpec ::
+       forall a. (Show a, Eq a, Monoid a, Typeable a, GenUnchecked a)
     => Spec
 monoidSpec = monoidSpecOnGen @a genUnchecked "unchecked" shrinkUnchecked
 
@@ -73,9 +68,8 @@ monoidSpec = monoidSpecOnGen @a genUnchecked "unchecked" shrinkUnchecked
 -- Example usage:
 --
 -- > monoidSpecOnArbitrary @[Int]
-monoidSpecOnArbitrary
-    :: forall a.
-       (Show a, Eq a, Monoid a, Typeable a, Arbitrary a)
+monoidSpecOnArbitrary ::
+       forall a. (Show a, Eq a, Monoid a, Typeable a, Arbitrary a)
     => Spec
 monoidSpecOnArbitrary = monoidSpecOnGen @a arbitrary "arbitrary" shrink
 
@@ -84,10 +78,12 @@ monoidSpecOnArbitrary = monoidSpecOnGen @a arbitrary "arbitrary" shrink
 -- Example usage:
 --
 -- > monoidSpecOnGen (pure "a") "singleton list of 'a'"
-monoidSpecOnGen
-    :: forall a.
-       (Show a, Eq a, Monoid a, Typeable a)
-    => Gen a -> String -> (a -> [a])-> Spec
+monoidSpecOnGen ::
+       forall a. (Show a, Eq a, Monoid a, Typeable a)
+    => Gen a
+    -> String
+    -> (a -> [a])
+    -> Spec
 monoidSpecOnGen gen genname s =
     parallel $ do
         let name = nameOf @a
@@ -95,7 +91,7 @@ monoidSpecOnGen gen genname s =
             mappendstr = mappendTypeStr @a
             mconcatstr = mconcatTypeStr @a
             gen3 = (,,) <$> gen <*> gen <*> gen
-            s3 (a,b,c) = (,,) <$> s a <*> s b <*> s c
+            s3 (a, b, c) = (,,) <$> s a <*> s b <*> s c
             genl = genListOf gen
             sl = shrinkList s
         describe ("Monoid " ++ name) $ do

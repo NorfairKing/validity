@@ -31,7 +31,8 @@ instance Validity UTCTime where
             [ utctDay <?!> "utctDay"
             , utctDayTime <?!> "utctDayTime"
             , utctDayTime >= 0 <?@> "The day time is positive."
-            , utctDayTime < 86401 <?@> "The day time is strictly less than 86401."
+            , utctDayTime <
+              86401 <?@> "The day time is strictly less than 86401."
             ]
 
 instance Validity NominalDiffTime

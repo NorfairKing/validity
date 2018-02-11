@@ -4,9 +4,9 @@ module Data.Validity.HashMap where
 
 import Data.Validity
 
-import Data.Hashable (Hashable)
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
+import Data.Hashable (Hashable)
 
 -- | A 'HashMap' of things is valid if all the keys and values are valid.
 --
