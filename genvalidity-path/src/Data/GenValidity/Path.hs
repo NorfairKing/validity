@@ -7,7 +7,6 @@ module Data.GenValidity.Path where
 import Data.Functor ((<$>))
 #endif
 import Data.GenValidity
-import Data.Maybe
 import Data.Validity.Path ()
 
 import Path

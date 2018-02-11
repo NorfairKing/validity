@@ -178,9 +178,8 @@ class Validity a where
         a -> Validation
     validate = gValidate . from
     isValid :: a -> Bool
-    default isValid :: (Generic a, GValidity (Rep a)) =>
-        a -> Bool
-    isValid = gIsValid . from
+    default isValid :: a -> Bool
+    isValid = isRight . checkValidity
 
 data ValidationChain
     = Violated String
