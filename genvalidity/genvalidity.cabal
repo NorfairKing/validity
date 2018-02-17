@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 840d6c35489d2fd27bd375fb91b3e78ad68bc9ce90eb12e72b74816a81a8b8f5
+-- hash: 7c4ca8942197063d7d3cda0ff73ffc37666ba61e496e8c1a748201368233eb5e
 
 name:           genvalidity
 version:        0.4.0.4
@@ -72,5 +72,6 @@ test-suite genvalidity-test
     , hspec
   other-modules:
       Data.GenValiditySpec
+      Data.InstanceSpec
       Paths_genvalidity
   default-language: Haskell2010

@@ -76,6 +76,7 @@ import Data.Maybe (Maybe, fromMaybe)
 import Data.Monoid
 import Data.Ratio
 #endif
+import Data.Int (Int, Int16, Int32, Int64, Int8)
 import Data.Word (Word, Word16, Word32, Word64, Word8)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
@@ -427,6 +428,26 @@ instance Validity Char where
 instance Validity Int where
     isValid = triviallyValid
     validate = validateByCheckingName "Int"
+
+-- | Trivially valid
+instance Validity Int8 where
+    isValid = triviallyValid
+    validate = validateByCheckingName "Int8"
+
+-- | Trivially valid
+instance Validity Int16 where
+    isValid = triviallyValid
+    validate = validateByCheckingName "Int16"
+
+-- | Trivially valid
+instance Validity Int32 where
+    isValid = triviallyValid
+    validate = validateByCheckingName "Int34"
+
+-- | Trivially valid
+instance Validity Int64 where
+    isValid = triviallyValid
+    validate = validateByCheckingName "Int64"
 
 -- | Trivially valid
 instance Validity Word where
