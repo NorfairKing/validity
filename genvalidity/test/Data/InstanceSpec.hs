@@ -1,4 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE CPP #-}
 
 module Data.InstanceSpec
     ( spec
@@ -6,7 +7,9 @@ module Data.InstanceSpec
 
 import Data.Data
 import Data.Int
+#if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty)
+#endif
 import Data.Ratio
 import Data.Word
 
@@ -14,6 +17,8 @@ import Control.Monad
 
 import Test.Hspec
 import Test.QuickCheck
+
+import Control.Applicative (pure)
 
 import Data.GenValidity
 
@@ -42,15 +47,16 @@ spec = do
     threeTests (Proxy :: Proxy (Either Double Double))
     threeTests (Proxy :: Proxy (Maybe Double))
     threeTests (Proxy :: Proxy [Double])
-    threeTests (Proxy :: Proxy (NonEmpty Double))
     threeTests (Proxy :: Proxy (Ratio Integer))
     threeTests (Proxy :: Proxy (Ratio Int))
-
+#if MIN_VERSION_base(4,9,0)
+    threeTests (Proxy :: Proxy (NonEmpty Double))
+#endif
 twoTests ::
        forall a. (Show a, Typeable a, GenValid a)
     => Proxy a
     -> Spec
-twoTests proxy = do
+twoTests proxy =
     describe (nameOf proxy) $ do
         genUncheckedTest proxy
         genValidTest proxy
@@ -59,7 +65,7 @@ threeTests ::
        forall a. (Show a, Typeable a, GenValid a, GenInvalid a)
     => Proxy a
     -> Spec
-threeTests proxy = do
+threeTests proxy =
     describe (nameOf proxy) $ do
         genUncheckedTest proxy
         genValidTest proxy
