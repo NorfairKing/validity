@@ -30,4 +30,4 @@ packages:
 extra-deps:
   - hlint-1.9.41
   - haskell-src-exts-1.19.1
-resolver: nightly-2018-01-15
+resolver: nightly-2018-03-12
