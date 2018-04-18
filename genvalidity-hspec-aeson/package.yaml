@@ -1,5 +1,5 @@
 name: genvalidity-hspec-aeson
-version: '0.1.0.2'
+version: '0.1.0.3'
 synopsis: Standard spec's for aeson-related instances
 description: Standard spec's for aeson-related Instances
 category: Testing
@@ -22,7 +22,7 @@ library:
   - genvalidity >=0.4 && <0.5
   - aeson
   - QuickCheck
-  - deepseq >=1.4 && <1.5
+  - deepseq
   - bytestring
 tests:
   genvalidity-hspec-aeson-doctests:
@@ -31,7 +31,7 @@ tests:
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.11 && <0.14
+    - doctest
     - genvalidity-hspec-aeson
   genvalidity-hspec-aeson-test:
     main: Spec.hs

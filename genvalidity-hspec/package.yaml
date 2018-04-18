@@ -43,7 +43,7 @@ library:
   - base >=4.9 && <5
   - genvalidity >=0.4 && <0.5
   - genvalidity-property >=0.1 && <0.2
-  - hspec >=2.2 && <2.5
+  - hspec
   - validity >=0.4 && <0.5
 tests:
   genvalidity-hspec-test:
@@ -65,5 +65,5 @@ tests:
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.11 && <0.14
+    - doctest
     - genvalidity-hspec
