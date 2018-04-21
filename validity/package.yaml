@@ -40,7 +40,7 @@ description: ! 'For more info, see <https://github.com/NorfairKing/validity the 
 category: Validity
 author: Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
@@ -53,3 +53,18 @@ library:
   when:
   - condition: impl(ghc >=8.0.0)
     ghc-options: -Wno-redundant-constraints
+
+tests:
+  validity-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - base
+    - hspec
+    - validity
+

@@ -29,7 +29,6 @@
 
     > instance Validity Prime where
     >     validate (Prime n) = isPrime n <?@> "The 'Int' is prime."
-    >     isValid (Prime n) = isPrime n
 
     If certain typeclass invariants exist, you can make these explicit in the
     validity instance as well.
@@ -38,18 +37,19 @@
     -}
 module Data.Validity
     ( Validity(..)
-    -- * Helper functions to define 'isValid'
-    , triviallyValid
+    , isValid
     -- * Helper functions to define 'validate'
     , trivialValidation
-    , isValidByValidating
     , check
     , (<?!>)
+    , declare
+    , (<!?>)
     , annotate
     , (<?@>)
-    , validateByChecking
-    , validateByCheckingName
-    , validateByCheckingDefault
+    , delve
+    , (<@?>)
+    , invalid
+    , valid
     -- * Utilities
     -- ** Utilities for validity checking
     , isInvalid
@@ -93,14 +93,14 @@ import GHC.Real (Ratio(..))
 -- reasons why the given value is not valid if that is the case.
 --
 -- 'isValid' only checks whether a given value is a valid value of its type.
+-- It is a helper function that checks that 'validate' says that there are
+-- no reasons why the value is invalid.
 --
 -- === Instantiating 'Validity'
 --
--- To instantiate 'Validity', one has to implement both 'isValid' and
--- 'validate'.
--- Start by implementing 'validate'. Use the helper functions below to define
--- all the reasons why a given value would be a valid value of its type.
--- Then define `isValid = isValidbyValidating' for now.
+-- To instantiate 'Validity', one has to implement only 'validate'.
+-- Use the helper functions below to define all the reasons why a given
+-- value would be a valid value of its type.
 --
 -- Example:
 --
@@ -109,21 +109,6 @@ import GHC.Real (Ratio(..))
 -- > instance Validity Even
 -- >     validate (Event i)
 -- >       even i <?@> "The contained 'Int' is even."
--- >     isValid = isValidByValidating
---
--- If it turns out that, at this point, 'isValid' is too slow for your taste,
--- you can replace the implementation of 'isValid' by a custom implementation.
--- However, it is important that this 'isValid' implementation has exactly
--- the same semantics as 'isValidbyValidating'.
---
--- Example:
---
--- > newtype Even = Even Int
--- >
--- > instance Validity Even
--- >     validate (Event i)
--- >       even i <?@> "The contained 'Int' is even."
--- >     isValid (Event i) = even i
 --
 -- === Semantics
 --
@@ -151,7 +136,7 @@ import GHC.Real (Ratio(..))
 -- === Automatic instances with 'Generic'
 --
 -- An instance of this class can be made automatically if the type in question
--- has a 'Generic' instance. This instance will try to use 'isValid' to
+-- has a 'Generic' instance. This instance will try to use 'valid' to
 -- on all structural sub-parts of the value that is being checked for validity.
 --
 -- Example:
@@ -168,8 +153,6 @@ import GHC.Real (Ratio(..))
 -- generates something like:
 --
 -- > instance Validity MyType where
--- >     isValid (MyType d s)
--- >         = isValid d && isValid s
 -- >     validate (MyType d s)
 -- >         = d <?!> "myDouble"
 -- >        <> s <?!> "myString"
@@ -178,9 +161,9 @@ class Validity a where
     default validate :: (Generic a, GValidity (Rep a)) =>
         a -> Validation
     validate = gValidate . from
-    isValid :: a -> Bool
-    default isValid :: a -> Bool
-    isValid = isRight . checkValidity
+
+isValid :: Validity a => a -> Bool
+isValid = isRight . checkValidity
 
 data ValidationChain
     = Violated String
@@ -200,42 +183,11 @@ instance Monoid Validation where
     mempty = Validation []
     mappend (Validation v1) (Validation v2) = Validation $ v1 ++ v2
 
--- | Declare any value to be valid.
---
--- > triviallyValid a = seq a True
-triviallyValid :: a -> Bool
-triviallyValid a = seq a True
-
--- | Implement 'isValid' by using 'validate' and checking that there are no
--- reasons that the value is invalid.
-isValidByValidating :: Validity a => a -> Bool
-isValidByValidating = isRight . checkValidity
-
 -- | Declare any value to be valid in validation
 --
 -- > trivialValidation a = seq a mempty
 trivialValidation :: a -> Validation
 trivialValidation a = seq a mempty
-
--- | Implement 'validate' by using 'isValid' and using the given string as the
--- reason if the value is invalid.
-validateByChecking :: Validity a => String -> a -> Validation
-validateByChecking s a = isValid a <?@> s
-
--- | Implement 'validate' by using 'isValid' and using the given name to define
--- the reason if the value is invalid.
---
--- > validateByCheckingName name = validateByChecking $ unwords ["The", name, "valid."]
-validateByCheckingName :: Validity a => String -> a -> Validation
-validateByCheckingName name =
-    validateByChecking $ unwords ["The", name, "valid."]
-
--- | Implement 'validate' by using 'isValid' and using a default reason if the
--- value is invalid.
---
--- > validateByCheckingDefault = validateByChecking "The value is valid."
-validateByCheckingDefault :: Validity a => a -> Validation
-validateByCheckingDefault = validateByChecking "The value is valid."
 
 -- | Check that a given invariant holds.
 --
@@ -262,7 +214,35 @@ check b err =
 (<?@>) :: Bool -> String -> Validation
 (<?@>) = check
 
-infixr 0 <?@>
+infixr 9 <?@>
+
+-- | 'check', but with the arguments flipped
+declare :: String -> Bool -> Validation
+declare = flip check
+
+-- | '<?@>', but with the arguments flipped.
+(<@?>) :: String -> Bool -> Validation
+(<@?>) = flip check
+
+-- | Construct a trivially invalid 'Validation'
+--
+-- Example:
+--
+-- > data Wrong
+-- >     = Wrong
+-- >     | Fine
+-- >     deriving (Show, Eq)
+-- >
+-- > instance Validity Wrong where
+-- >     validate w =
+-- >         case w of
+-- >             Wrong -> invalid "Wrong"
+-- >             Fine -> valid
+invalid :: String -> Validation
+invalid = check False
+
+valid :: Validation
+valid = mempty
 
 -- | Declare a sub-part as a necessary part for validation, and annotate it with a name.
 --
@@ -288,11 +268,18 @@ annotate = annotateValidation . validate
 (<?!>) :: Validity a => a -> String -> Validation
 (<?!>) = annotate
 
-infixr 0 <?!>
+infixl 9 <?!>
+
+-- | 'annotate', but with the arguments flipped.
+delve :: Validity a => String -> a -> Validation
+delve = flip annotate
+
+-- | '<?!>', but with the arguments flipped
+(<!?>) :: Validity a => String -> a -> Validation
+(<!?>) = delve
 
 -- | Any tuple of things is valid if both of its elements are valid
 instance (Validity a, Validity b) => Validity (a, b) where
-    isValid (a, b) = isValid a && isValid b
     validate (a, b) =
         mconcat
             [ a <?!> "The first element of the tuple"
@@ -301,14 +288,11 @@ instance (Validity a, Validity b) => Validity (a, b) where
 
 -- | Any Either of things is valid if the contents are valid in either of the cases.
 instance (Validity a, Validity b) => Validity (Either a b) where
-    isValid (Left a) = isValid a
-    isValid (Right b) = isValid b
     validate (Left a) = a <?!> "The 'Left'"
     validate (Right b) = b <?!> "The 'Right'"
 
 -- | Any triple of things is valid if all three of its elements are valid
 instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
-    isValid (a, b, c) = isValid a && isValid b && isValid c
     validate (a, b, c) =
         mconcat
             [ a <?!> "The first element of the triple"
@@ -319,7 +303,6 @@ instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
 -- | Any quadruple of things is valid if all four of its elements are valid
 instance (Validity a, Validity b, Validity c, Validity d) =>
          Validity (a, b, c, d) where
-    isValid (a, b, c, d) = isValid a && isValid b && isValid c && isValid d
     validate (a, b, c, d) =
         mconcat
             [ a <?!> "The first element of the quadruple"
@@ -331,8 +314,6 @@ instance (Validity a, Validity b, Validity c, Validity d) =>
 -- | Any quintuple of things is valid if all five of its elements are valid
 instance (Validity a, Validity b, Validity c, Validity d, Validity e) =>
          Validity (a, b, c, d, e) where
-    isValid (a, b, c, d, e) =
-        isValid a && isValid b && isValid c && isValid d && isValid e
     validate (a, b, c, d, e) =
         mconcat
             [ a <?!> "The first element of the quintuple"
@@ -351,9 +332,6 @@ instance ( Validity a
          , Validity f
          ) =>
          Validity (a, b, c, d, e, f) where
-    isValid (a, b, c, d, e, f) =
-        isValid a &&
-        isValid b && isValid c && isValid d && isValid e && isValid f
     validate (a, b, c, d, e, f) =
         mconcat
             [ a <?!> "The first element of the sextuple"
@@ -370,7 +348,6 @@ instance ( Validity a
 -- If the empty list should not be considered valid as part of your custom data
 -- type, make sure to write a custom @Validity instance@
 instance Validity a => Validity [a] where
-    isValid = all isValid
     validate =
         mconcat .
         map
@@ -387,7 +364,6 @@ instance Validity a => Validity [a] where
 --
 -- See the instance for 'Validity [a]' for more information.
 instance Validity a => Validity (NonEmpty a) where
-    isValid = all isValid
     validate (e :| es) =
         mconcat
             [ e <?!> "The first element of the nonempty list"
@@ -399,87 +375,70 @@ instance Validity a => Validity (NonEmpty a) where
 -- If Nothing wasn't valid, you wouldn't have used a Maybe
 -- in the datastructure.
 instance Validity a => Validity (Maybe a) where
-    isValid Nothing = True
-    isValid (Just a) = isValid a
     validate Nothing = mempty
     validate (Just a) = a <?!> "The 'Just'"
 
 -- | Trivially valid
 instance Validity () where
-    isValid = triviallyValid
-    validate = validateByCheckingName "()"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Bool where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Bool"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Ordering where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Ordering"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Char where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Char"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Int where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Int"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Int8 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Int8"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Int16 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Int16"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Int32 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Int34"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Int64 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Int64"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Word where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Word8 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word8"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Word16 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word16"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Word32 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word34"
+    validate = trivialValidation
 
 -- | Trivially valid
 instance Validity Word64 where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Word64"
+    validate = trivialValidation
 
 -- | NOT trivially valid:
 --
 -- * NaN is not valid.
 -- * Infinite values are not valid.
 instance Validity Float where
-    isValid f = not (isNaN f) && not (isInfinite f)
     validate f =
         mconcat
             [ not (isNaN f) <?@> "The Float is not Nan."
@@ -491,7 +450,6 @@ instance Validity Float where
 -- * NaN is not valid.
 -- * Infinite values are not valid.
 instance Validity Double where
-    isValid d = not (isNaN d) && not (isInfinite d)
     validate d =
         mconcat
             [ not (isNaN d) <?@> "The Double is not NaN."
@@ -507,20 +465,17 @@ instance Validity Double where
 -- assuming that an 'Integer' is always valid.
 -- Even though this is not technically sound, it is good enough for now.
 instance Validity Integer where
-    isValid = triviallyValid
-    validate = validateByCheckingName "Integer"
+    validate = trivialValidation
 #if MIN_VERSION_base(4,8,0)
 -- | Valid according to 'isValidNatural'
 --
 -- Only available with @base >= 4.8@.
 instance Validity Natural where
-    isValid = isValidNatural
-    validate = validateByChecking "Natural"
+    validate n = check (isValidNatural n) "The Natural is valid."
 #endif
 -- | Valid if the contained numbers are valid and the denominator is
 -- strictly positive.
 instance (Num a, Ord a, Validity a) => Validity (Ratio a) where
-    isValid (n :% d) = isValid n && isValid d && d > 0
     validate (n :% d) =
         mconcat
             [ n <?!> "The numerator"
@@ -530,7 +485,6 @@ instance (Num a, Ord a, Validity a) => Validity (Ratio a) where
 
 -- | Valid according to the contained 'Integer'.
 instance HasResolution a => Validity (Fixed a) where
-    isValid (MkFixed i) = isValid i
     validate (MkFixed i) = validate i
 
 annotateValidation :: Validation -> String -> Validation
@@ -539,41 +493,31 @@ annotateValidation val s =
         Validation errs -> Validation $ map (Location s) errs
 
 class GValidity f where
-    gIsValid :: f a -> Bool
     gValidate :: f a -> Validation
 
 instance GValidity U1 where
-    gIsValid = triviallyValid
     gValidate = trivialValidation
 
 instance GValidity V1 where
-    gIsValid = triviallyValid
     gValidate = trivialValidation
 
 instance (GValidity a, GValidity b) => GValidity (a :*: b) where
-    gIsValid (a :*: b) = gIsValid a && gIsValid b
     gValidate (a :*: b) = gValidate a `mappend` gValidate b
 
 instance (GValidity a, GValidity b) => GValidity (a :+: b) where
-    gIsValid (L1 x) = gIsValid x
-    gIsValid (R1 x) = gIsValid x
     gValidate (L1 x) = gValidate x
     gValidate (R1 x) = gValidate x
 
 instance (GValidity a, Datatype c) => GValidity (M1 D c a) where
-    gIsValid (M1 x) = gIsValid x
     gValidate m1 = gValidate (unM1 m1)
 
 instance (GValidity a, Constructor c) => GValidity (M1 C c a) where
-    gIsValid (M1 x) = gIsValid x
     gValidate m1 = gValidate (unM1 m1) `annotateValidation` conName m1
 
 instance (GValidity a, Selector c) => GValidity (M1 S c a) where
-    gIsValid (M1 x) = gIsValid x
     gValidate m1 = gValidate (unM1 m1) `annotateValidation` selName m1
 
 instance (Validity a) => GValidity (K1 R a) where
-    gIsValid (K1 x) = isValid x
     gValidate (K1 x) = validate x
 
 -- | Check whether 'isInvalid' is not valid.
