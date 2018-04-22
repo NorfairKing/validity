@@ -23,7 +23,9 @@ instance Validity Wrong where
             Wrong -> invalid "Wrong"
             Fine -> valid
 
-data GeneratedValidity = G Double Double
+data GeneratedValidity =
+    G Double
+      Double
     deriving (Show, Eq, Generic)
 
 instance Validity GeneratedValidity
@@ -35,7 +37,7 @@ data ManuallyInstantiated =
     deriving (Show, Eq)
 
 instance Validity ManuallyInstantiated where
-    validate (M m1 m2) = m1 <?!> "m1" <> m2 <?!> "m2"
+    validate (M m1 m2) = annotate m1 "m1" <> annotate m2 "m2"
 
 -- To make sure that the <?@> operator have the right fixity
 data TwoEvens =
@@ -44,7 +46,7 @@ data TwoEvens =
     deriving (Show, Eq)
 
 instance Validity TwoEvens where
-    validate (E e1 e2) = even e1 <?@> "e1 is even" <> even e2 <?@> "e2 is even"
+    validate (E e1 e2) = declare "e1 is even" (even e1) <> declare "e2 is even" (even e2)
 
 spec :: Spec
 spec = do

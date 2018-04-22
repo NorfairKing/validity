@@ -41,13 +41,9 @@ module Data.Validity
     -- * Helper functions to define 'validate'
     , trivialValidation
     , check
-    , (<?!>)
     , declare
-    , (<!?>)
     , annotate
-    , (<?@>)
     , delve
-    , (<@?>)
     , invalid
     , valid
     -- * Utilities
@@ -206,23 +202,9 @@ check b err =
         then mempty
         else Validation [Violated err]
 
--- | Infix operator for 'check'
---
--- Example:
---
--- > x < 5 <?@> "x is strictly smaller than 5"
-(<?@>) :: Bool -> String -> Validation
-(<?@>) = check
-
-infixr 9 <?@>
-
 -- | 'check', but with the arguments flipped
 declare :: String -> Bool -> Validation
 declare = flip check
-
--- | '<?@>', but with the arguments flipped.
-(<@?>) :: String -> Bool -> Validation
-(<@?>) = flip check
 
 -- | Construct a trivially invalid 'Validation'
 --
@@ -256,48 +238,30 @@ valid = mempty
 annotate :: Validity a => a -> String -> Validation
 annotate = annotateValidation . validate
 
--- | Infix operator for 'annotate'
---
--- Example:
---
--- > validate (a, b) =
--- >     mconcat
--- >         [ a <?!> "The first element of the tuple"
--- >         , b <?!> "The second element of the tuple"
--- >         ]
-(<?!>) :: Validity a => a -> String -> Validation
-(<?!>) = annotate
-
-infixl 9 <?!>
-
 -- | 'annotate', but with the arguments flipped.
 delve :: Validity a => String -> a -> Validation
 delve = flip annotate
-
--- | '<?!>', but with the arguments flipped
-(<!?>) :: Validity a => String -> a -> Validation
-(<!?>) = delve
 
 -- | Any tuple of things is valid if both of its elements are valid
 instance (Validity a, Validity b) => Validity (a, b) where
     validate (a, b) =
         mconcat
-            [ a <?!> "The first element of the tuple"
-            , b <?!> "The second element of the tuple"
+            [ annotate a "The first element of the tuple"
+            , annotate b "The second element of the tuple"
             ]
 
 -- | Any Either of things is valid if the contents are valid in either of the cases.
 instance (Validity a, Validity b) => Validity (Either a b) where
-    validate (Left a) = a <?!> "The 'Left'"
-    validate (Right b) = b <?!> "The 'Right'"
+    validate (Left a) = annotate a "The 'Left'"
+    validate (Right b) = annotate b "The 'Right'"
 
 -- | Any triple of things is valid if all three of its elements are valid
 instance (Validity a, Validity b, Validity c) => Validity (a, b, c) where
     validate (a, b, c) =
         mconcat
-            [ a <?!> "The first element of the triple"
-            , b <?!> "The second element of the triple"
-            , c <?!> "The third element of the triple"
+            [ annotate a "The first element of the triple"
+            , annotate b "The second element of the triple"
+            , annotate c "The third element of the triple"
             ]
 
 -- | Any quadruple of things is valid if all four of its elements are valid
@@ -305,10 +269,10 @@ instance (Validity a, Validity b, Validity c, Validity d) =>
          Validity (a, b, c, d) where
     validate (a, b, c, d) =
         mconcat
-            [ a <?!> "The first element of the quadruple"
-            , b <?!> "The second element of the quadruple"
-            , c <?!> "The third element of the quadruple"
-            , d <?!> "The fourth element of the quadruple"
+            [ annotate a "The first element of the quadruple"
+            , annotate b "The second element of the quadruple"
+            , annotate c "The third element of the quadruple"
+            , annotate d "The fourth element of the quadruple"
             ]
 
 -- | Any quintuple of things is valid if all five of its elements are valid
@@ -316,11 +280,11 @@ instance (Validity a, Validity b, Validity c, Validity d, Validity e) =>
          Validity (a, b, c, d, e) where
     validate (a, b, c, d, e) =
         mconcat
-            [ a <?!> "The first element of the quintuple"
-            , b <?!> "The second element of the quintuple"
-            , c <?!> "The third element of the quintuple"
-            , d <?!> "The fourth element of the quintuple"
-            , e <?!> "The fifth element of the quintuple"
+            [ annotate a "The first element of the quintuple"
+            , annotate b "The second element of the quintuple"
+            , annotate c "The third element of the quintuple"
+            , annotate d "The fourth element of the quintuple"
+            , annotate e "The fifth element of the quintuple"
             ]
 
 -- | Any sextuple of things is valid if all six of its elements are valid
@@ -334,12 +298,12 @@ instance ( Validity a
          Validity (a, b, c, d, e, f) where
     validate (a, b, c, d, e, f) =
         mconcat
-            [ a <?!> "The first element of the sextuple"
-            , b <?!> "The second element of the sextuple"
-            , c <?!> "The third element of the sextuple"
-            , d <?!> "The fourth element of the sextuple"
-            , e <?!> "The fifth element of the sextuple"
-            , f <?!> "The sixth element of the sextuple"
+            [ annotate a "The first element of the sextuple"
+            , annotate b "The second element of the sextuple"
+            , annotate c "The third element of the sextuple"
+            , annotate d "The fourth element of the sextuple"
+            , annotate e "The fifth element of the sextuple"
+            , annotate f "The sixth element of the sextuple"
             ]
 
 -- | A list of things is valid if all of the things are valid.
@@ -352,7 +316,7 @@ instance Validity a => Validity [a] where
         mconcat .
         map
             (\(ix, e) ->
-                 e <?!>
+                 annotate e $
                  unwords
                      [ "The element at index"
                      , show (ix :: Integer)
@@ -366,8 +330,8 @@ instance Validity a => Validity [a] where
 instance Validity a => Validity (NonEmpty a) where
     validate (e :| es) =
         mconcat
-            [ e <?!> "The first element of the nonempty list"
-            , es <?!> "The rest of the elements of the nonempty list"
+            [ annotate e "The first element of the nonempty list"
+            , annotate es "The rest of the elements of the nonempty list"
             ]
 #endif
 -- | A Maybe thing is valid if the thing inside is valid or it's nothing
@@ -376,7 +340,7 @@ instance Validity a => Validity (NonEmpty a) where
 -- in the datastructure.
 instance Validity a => Validity (Maybe a) where
     validate Nothing = mempty
-    validate (Just a) = a <?!> "The 'Just'"
+    validate (Just a) = annotate a "The 'Just'"
 
 -- | Trivially valid
 instance Validity () where
@@ -441,8 +405,8 @@ instance Validity Word64 where
 instance Validity Float where
     validate f =
         mconcat
-            [ not (isNaN f) <?@> "The Float is not Nan."
-            , not (isInfinite f) <?@> "The Float is not infinite."
+            [ declare "The Float is not Nan." $ not (isNaN f)
+            , declare "The Float is not infinite." $ not (isInfinite f)
             ]
 
 -- | NOT trivially valid:
@@ -452,8 +416,8 @@ instance Validity Float where
 instance Validity Double where
     validate d =
         mconcat
-            [ not (isNaN d) <?@> "The Double is not NaN."
-            , not (isInfinite d) <?@> "The Double is not infinite."
+            [ declare"The Double is not NaN." $ not (isNaN d)
+            , declare"The Double is not infinite." $ not (isInfinite d)
             ]
 
 -- | Trivially valid
@@ -478,9 +442,9 @@ instance Validity Natural where
 instance (Num a, Ord a, Validity a) => Validity (Ratio a) where
     validate (n :% d) =
         mconcat
-            [ n <?!> "The numerator"
-            , d <?!> "The denominator"
-            , (d > 0) <?@> "The denominator is strictly positive."
+            [ annotate n "The numerator"
+            , annotate d "The denominator"
+            , declare "The denominator is strictly positive." $ d > 0
             ]
 
 -- | Valid according to the contained 'Integer'.
