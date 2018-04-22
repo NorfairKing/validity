@@ -1,5 +1,5 @@
 name: genvalidity
-version: '0.4.0.5'
+version: '0.5.0.0'
 synopsis: Testing utilities for the validity library
 description: ! 'Note: There are companion instance packages for this library:
 
@@ -37,9 +37,10 @@ description: ! 'Note: There are companion instance packages for this library:
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 library:
   source-dirs: src
   exposed-modules:
@@ -47,11 +48,12 @@ library:
   - Data.GenRelativeValidity
   dependencies:
   - base >=4.7 && <5
-  - validity >=0.4.0.3 && <0.5
+  - validity >=0.5 && <0.6
   - QuickCheck >=2.7 && <2.12
   when:
   - condition: impl(ghc >=8.0.0)
     ghc-options: -Wno-redundant-constraints
+
 tests:
   genvalidity-test:
     main: Spec.hs

@@ -1,15 +1,16 @@
 name: genvalidity-aeson
-version: '0.1.0.0'
+version: '0.2.0.0'
 synopsis: GenValidity support for aeson
 description: Please see README.md
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2017 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2017-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
 - aeson
+
 library:
   source-dirs: src
   exposed-modules:
@@ -17,13 +18,14 @@ library:
   dependencies:
   - base <5
   - QuickCheck
-  - genvalidity >=0.4 && <0.5
-  - validity >=0.4 && <0.5
-  - validity-aeson >=0.1 && <0.2
-  - genvalidity-text >=0.4 && <0.5
-  - genvalidity-vector >=0.1 && <0.2
-  - genvalidity-unordered-containers >=0.1 && <0.2
-  - genvalidity-scientific >=0.1 && <0.2
+  - genvalidity >=0.5 && <0.6
+  - genvalidity-scientific >=0.2 && <0.3
+  - genvalidity-text >=0.5 && <0.6
+  - genvalidity-unordered-containers >=0.2 && <0.3
+  - genvalidity-vector >=0.2 && <0.3
+  - validity >=0.5 && <0.6
+  - validity-aeson >=0.2 && <0.3
+
 tests:
   genvalidity-aeson-test:
     main: Spec.hs

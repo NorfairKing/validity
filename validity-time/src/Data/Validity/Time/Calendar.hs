@@ -8,5 +8,4 @@ import Data.Time.Calendar
 
 -- | Valid according to the 'Integer' it contains.
 instance Validity Day where
-    validate =
-        delve "toModifiedJulianDay" . toModifiedJulianDay
+    validate = delve "toModifiedJulianDay" . toModifiedJulianDay

@@ -416,8 +416,8 @@ instance Validity Float where
 instance Validity Double where
     validate d =
         mconcat
-            [ declare"The Double is not NaN." $ not (isNaN d)
-            , declare"The Double is not infinite." $ not (isInfinite d)
+            [ declare "The Double is not NaN." $ not (isNaN d)
+            , declare "The Double is not infinite." $ not (isInfinite d)
             ]
 
 -- | Trivially valid

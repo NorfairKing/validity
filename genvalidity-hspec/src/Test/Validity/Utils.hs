@@ -69,17 +69,18 @@ failsBecause s = mapSpecTree go
     go sp =
         Leaf
             Item
-            { itemRequirement = s
-            , itemLocation = Nothing
-            , itemIsParallelizable = False
-            , itemExample =
-                  \_ _ _ -> do
-                      let conf = defaultConfig {configFormatter = Just silent}
-                      r <- hspecWithResult conf $ fromSpecList [sp]
-                      let succesful =
-                              summaryExamples r > 0 && summaryFailures r > 0
-                      pure $ produceResult succesful
-            }
+                { itemRequirement = s
+                , itemLocation = Nothing
+                , itemIsParallelizable = False
+                , itemExample =
+                      \_ _ _ -> do
+                          let conf =
+                                  defaultConfig {configFormatter = Just silent}
+                          r <- hspecWithResult conf $ fromSpecList [sp]
+                          let succesful =
+                                  summaryExamples r > 0 && summaryFailures r > 0
+                          pure $ produceResult succesful
+                }
 #if MIN_VERSION_hspec_core(2,4,0)
 produceResult :: Bool -> Either a Test.Hspec.Core.Spec.Result
 produceResult succesful =
@@ -98,9 +99,9 @@ shouldFail :: Property -> Property
 shouldFail =
     mapResult $ \res ->
         res
-        { reason = unwords ["Should have failed:", reason res]
-        , expect = not $ expect res
-        }
+            { reason = unwords ["Should have failed:", reason res]
+            , expect = not $ expect res
+            }
 
 shouldBeValid :: (Show a, Validity a) => a -> Expectation
 shouldBeValid a = do

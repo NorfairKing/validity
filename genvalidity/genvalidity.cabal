@@ -2,10 +2,10 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7dd39b10a52f5ae336182586fe5ade7d1ae28bd7f51d2803adefa9ae708eb924
+-- hash: 44ca0d7036af5c0a3fb7191edbe25a916909be1094ab9036589bc8bb76b7609b
 
 name:           genvalidity
-version:        0.4.0.5
+version:        0.5.0.0
 synopsis:       Testing utilities for the validity library
 description:    Note: There are companion instance packages for this library:
                 .
@@ -33,7 +33,7 @@ homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd.kerckhove@gmail.com
-copyright:      Copyright: (c) 2016 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2018 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
@@ -49,7 +49,7 @@ library
   build-depends:
       QuickCheck >=2.7 && <2.12
     , base >=4.7 && <5
-    , validity >=0.4.0.3 && <0.5
+    , validity >=0.5 && <0.6
   if impl(ghc >=8.0.0)
     ghc-options: -Wno-redundant-constraints
   exposed-modules:

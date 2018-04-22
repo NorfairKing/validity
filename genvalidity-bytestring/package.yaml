@@ -1,25 +1,27 @@
 name: genvalidity-bytestring
-version: '0.1.0.0'
+version: '0.2.0.0'
 synopsis: GenValidity support for ByteString
 description: Please see README.md
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
 - bytestring
 - QuickCheck
+
 library:
   source-dirs: src
   exposed-modules:
   - Data.GenValidity.ByteString
   dependencies:
   - base >=4.7 && <5
-  - validity >=0.4 && <0.5
-  - validity-bytestring >=0.2 && <0.3
-  - genvalidity >=0.4 && <0.5
+  - validity >=0.5 && <0.6
+  - validity-bytestring >=0.3 && <0.4
+  - genvalidity >=0.5 && <0.6
+
 tests:
   genvalidity-bytestring-test:
     main: Spec.hs

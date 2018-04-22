@@ -10,6 +10,6 @@ import Data.Scientific
 instance Validity Scientific where
     validate s =
         mconcat
-            [ annotate (coefficient s)  "coefficient"
-            , annotate (base10Exponent s)  "base10Exponent"
+            [ annotate (coefficient s) "coefficient"
+            , annotate (base10Exponent s) "base10Exponent"
             ]

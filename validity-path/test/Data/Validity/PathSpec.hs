@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
-
 module Data.Validity.PathSpec
     ( spec
     ) where
@@ -25,7 +23,7 @@ spec = do
         it "positively checks for absolute paths" $ shouldBeValid $ p "/test"
         it "checks for absolute paths" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isAbsolute path)) $
+                unless (System.FilePath.isAbsolute path) $
                 shouldBeInvalid $ p path
         it "negatively checks for trailing path separators" $
             shouldBeInvalid $ p "/test/"
@@ -38,14 +36,13 @@ spec = do
             shouldBeInvalid $ p "/test/../file"
         it "checks for isValid from System.FilePath" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isValid path)) $
-                shouldBeInvalid $ p path
+                unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path
     describe "Path Rel File" $ do
         let p :: String -> Path Rel File
             p = Path
         it "checks for relative paths" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isRelative path)) $
+                unless (System.FilePath.isRelative path) $
                 shouldBeInvalid $ p path
         it "checks that the path is not empty" $ shouldBeInvalid $ p ""
         it "negatively checks for being \".\"" $ shouldBeInvalid $ p "."
@@ -55,32 +52,29 @@ spec = do
             shouldBeInvalid $ p "/test/../file"
         it "checks for isValid from System.FilePath" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isValid path)) $
-                shouldBeInvalid $ p path
+                unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path
     describe "Path Abs Dir" $ do
         let p :: String -> Path Abs Dir
             p = Path
         it "checks for absolute paths" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isAbsolute path)) $
+                unless (System.FilePath.isAbsolute path) $
                 shouldBeInvalid $ p path
         it "negatively checks for containing \"..\"" $
             shouldBeInvalid $ p "/test/../dir"
         it "checks for isValid from System.FilePath" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isValid path)) $
-                shouldBeInvalid $ p path
+                unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path
     describe "Path Rel Dir" $ do
         let p :: String -> Path Rel Dir
             p = Path
         it "checks for relative paths" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isRelative path)) $
+                unless (System.FilePath.isRelative path) $
                 shouldBeInvalid $ p path
         it "checks that the path is not empty" $ shouldBeInvalid $ p ""
         it "negatively checks for containing \"..\"" $
             shouldBeInvalid $ p "test/../dir"
         it "checks for isValid from System.FilePath" $
             forAllValid $ \path ->
-                when (not (System.FilePath.isValid path)) $
-                shouldBeInvalid $ p path
+                unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path

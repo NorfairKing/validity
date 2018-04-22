@@ -5,11 +5,12 @@ description: Please see README.md
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
 - containers
+
 library:
   source-dirs: src
   exposed-modules:
@@ -21,9 +22,10 @@ library:
   dependencies:
   - base <5
   - QuickCheck
-  - genvalidity >=0.4 && <0.5
-  - validity >=0.4 && <0.5
-  - validity-containers >=0.2 && <0.3
+  - genvalidity >=0.5 && <0.6
+  - validity >=0.5 && <0.6
+  - validity-containers >=0.3 && <0.4
+
 tests:
   genvalidity-containers-test:
     main: Spec.hs

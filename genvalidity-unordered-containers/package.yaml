@@ -1,15 +1,16 @@
 name: genvalidity-unordered-containers
-version: '0.1.0.0'
+version: '0.2.0.0'
 synopsis: GenValidity support for unordered-containers
 description: Please see README.md
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2017 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2017-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
 - unordered-containers
+
 library:
   source-dirs: src
   exposed-modules:
@@ -19,10 +20,11 @@ library:
   dependencies:
   - base <5
   - QuickCheck
-  - genvalidity >=0.4 && <0.5
+  - genvalidity >=0.5 && <0.6
   - hashable
-  - validity >=0.4 && <0.5
+  - validity >=0.5 && <0.6
   - validity-unordered-containers >=0.1 && <0.2
+
 tests:
   genvalidity-unordered-containers-test:
     main: Spec.hs

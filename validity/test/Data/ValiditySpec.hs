@@ -46,7 +46,8 @@ data TwoEvens =
     deriving (Show, Eq)
 
 instance Validity TwoEvens where
-    validate (E e1 e2) = declare "e1 is even" (even e1) <> declare "e2 is even" (even e2)
+    validate (E e1 e2) =
+        declare "e1 is even" (even e1) <> declare "e2 is even" (even e2)
 
 spec :: Spec
 spec = do

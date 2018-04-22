@@ -29,12 +29,14 @@ instance Validity Text where
                     in len == 0 || c < 0xDC00 || c > 0xDFFF)
                   "The offset character is valid UTF16."
                  -- It contains a valid UTF16
-            , check ((== (Right t :: Either E.UnicodeException Text)) $
-               U.unsafeDupablePerformIO .
-               try .
-               evaluate .
-               E.decodeUtf16LEWith E.strictDecode .
-               LB.toStrict . SBB.toLazyByteString . mconcat . map SBB.word16LE $
-               A.toList arr off len)
-              "The bytes can correctly be decoded as UTF16."
+            , check
+                  ((== (Right t :: Either E.UnicodeException Text)) $
+                   U.unsafeDupablePerformIO .
+                   try .
+                   evaluate .
+                   E.decodeUtf16LEWith E.strictDecode .
+                   LB.toStrict .
+                   SBB.toLazyByteString . mconcat . map SBB.word16LE $
+                   A.toList arr off len)
+                  "The bytes can correctly be decoded as UTF16."
             ]

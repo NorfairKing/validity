@@ -19,8 +19,8 @@ instance Validity DiffTime where
 instance Validity UTCTime where
     validate UTCTime {..} =
         mconcat
-            [ annotate utctDay $ "utctDay"
-            , annotate utctDayTime $ "utctDayTime"
+            [ annotate utctDay "utctDay"
+            , annotate utctDayTime "utctDayTime"
             , check (utctDayTime >= 0) "The day time is positive."
             , check
                   (utctDayTime < 86401)
@@ -30,7 +30,4 @@ instance Validity UTCTime where
 instance Validity NominalDiffTime
     -- NominalDiffTime contains a 'Pico' but that constructorr is not exported so we can't do any better than this.
                                                                                                                     where
-    validate ndt =
-        annotate
-            ((round :: NominalDiffTime -> Integer) ndt)
-            "round"
+    validate ndt = annotate ((round :: NominalDiffTime -> Integer) ndt) "round"
