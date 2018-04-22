@@ -36,7 +36,7 @@ Define explicit validity for `Prime`:
 
 ``` Haskell
 instance Validity Prime where
-    isValid (Prime i) = isPrime i
+    validate (Prime i) = check (isPrime i) "the contained integer is a prime"
 ```
 
 ### GenUnchecked, GenValid and GenInvalid
@@ -142,13 +142,17 @@ It provides a type class `Validity` that allows us to make the invariants explic
 
 ``` Haskell
 instance Validity HasPrimeFactorisation where
-    isValid (HasPrimeFactorisation i) = i > 1
+    validate (HasPrimeFactorisation i) = check (i > 1) "the contained integer is greater than 1"
 
 instance Validity Prime where
-    isValid (Prime i) = isPrime i
+    validate (Prime i) = check (isPrime i) "the contained integer is a prime"
 
 instance Validity PrimeFactorisation where
     isValid (PrimeFactorisation ps) = not (null ps) && isValid ps
+    validate (PrimeFactorisation ps) = mconcat
+        [ check (not (null ps)) "there is at least one prime
+        , annotate ps "the contained primes"
+        ]
 ```
 
 Note that in the last instantiation, we used the built-in `instance Validity a => Validity [a]` which requires that all elements of `ps` are valid.
