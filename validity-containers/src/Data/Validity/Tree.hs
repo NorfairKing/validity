@@ -8,5 +8,5 @@ import Data.Tree
 
 -- | A 'Tree' of things is valid if all the things in the 'Tree' are valid.
 instance Validity a => Validity (Tree a) where
-    isValid (Node rl sf) = isValid rl && isValid sf
-    validate (Node rl sf) = mconcat [rl <?!> "rootLabel", sf <?!> "subForest"]
+    validate (Node rl sf) =
+        mconcat [annotate rl "rootLabel", annotate sf "subForest"]

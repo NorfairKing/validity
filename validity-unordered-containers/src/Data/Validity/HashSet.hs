@@ -12,5 +12,4 @@ import Data.Hashable (Hashable)
 -- | A 'HashSet' of things is valid if all the elements are valid and
 -- the underlying 'HashMap' is valid.
 instance (Hashable v, Validity v) => Validity (HashSet v) where
-    isValid hs = isValid $ HS.toMap hs
-    validate hs = HS.toMap hs <?!> "HashSet elements"
+    validate =delve "HashSet elements". HS.toMap

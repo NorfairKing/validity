@@ -13,5 +13,4 @@ import Data.Hashable (Hashable)
 -- The 'unordered-containers' package does not export any more functionality
 -- concerning a 'HashMap', so no more accurate validity instance can be made.
 instance (Hashable k, Validity k, Validity v) => Validity (HashMap k v) where
-    isValid m = all isValid (HM.toList m)
-    validate m = HM.toList m <?!> "HashMap elements"
+    validate = delve"HashMap elements". HM.toList

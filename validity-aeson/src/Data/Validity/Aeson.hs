@@ -11,15 +11,9 @@ import Data.Validity.Vector ()
 
 -- | A 'Value' is valid if the recursive components are valid.
 instance Validity Value where
-    isValid (Object o) = isValid o
-    isValid (Array a) = isValid a
-    isValid (String t) = isValid t
-    isValid (Number s) = isValid s
-    isValid (Bool b) = isValid b
-    isValid Null = True
-    validate (Object o) = o <?!> "Object"
-    validate (Array a) = a <?!> "Array"
-    validate (String t) = t <?!> "String"
-    validate (Number s) = s <?!> "Number"
-    validate (Bool b) = b <?!> "Bool"
-    validate Null = mempty
+    validate (Object o) = annotate o "Object"
+    validate (Array a)  = annotate a "Array"
+    validate (String t) = annotate t "String"
+    validate (Number s) = annotate s "Number"
+    validate (Bool b)   = annotate b "Bool"
+    validate Null = valid

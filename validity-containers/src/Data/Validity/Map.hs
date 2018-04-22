@@ -10,9 +10,8 @@ import qualified Data.Map as M
 -- | A 'Map' of things is valid if all the keys and values are valid and the 'Map' itself
 -- is valid.
 instance (Ord k, Validity k, Validity v) => Validity (Map k v) where
-    isValid m = M.valid m && all isValid (M.toList m)
     validate m =
         mconcat
-            [ M.valid m <?@> "The Map structure is valid."
-            , M.toList m <?!> "Map elements"
+            [ declare "The Map structure is valid." $ M.valid m
+            , delve "Map elements" $ M.toList m
             ]

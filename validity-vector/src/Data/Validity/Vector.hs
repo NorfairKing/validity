@@ -12,5 +12,4 @@ import qualified Data.Vector as V
 -- TODO make a more comprehensive instance that looks at implementation and
 -- the underlying 'Array'
 instance (Validity a) => Validity (Vector a) where
-    isValid hs = isValid $ V.toList hs
-    validate hs = V.toList hs <?!> "Vector elements"
+    validate hs = annotate (V.toList hs) "Vector elements"

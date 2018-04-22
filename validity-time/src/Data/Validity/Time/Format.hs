@@ -13,26 +13,15 @@ import Data.Validity.Time.LocalTime ()
 #if MIN_VERSION_time(1,5,0)
 -- | Valid according to the contained values
 instance Validity TimeLocale where
-    isValid TimeLocale {..} =
-        and
-            [ isValid wDays
-            , isValid months
-            , isValid amPm
-            , isValid dateTimeFmt
-            , isValid dateFmt
-            , isValid timeFmt
-            , isValid time12Fmt
-            , isValid knownTimeZones
-            ]
     validate TimeLocale {..} =
         mconcat
-            [ wDays <?!> "wDays"
-            , months <?!> "months"
-            , amPm <?!> "amPm"
-            , dateTimeFmt <?!> "dateTimeFmt"
-            , dateFmt <?!> "dateFmt"
-            , timeFmt <?!> "timeFmt"
-            , time12Fmt <?!> "time12Fmt"
-            , knownTimeZones <?!> "knownTimeZones"
+            [ annotate wDays $ "wDays"
+            , annotate months $ "months"
+            , annotate amPm $ "amPm"
+            , annotate dateTimeFmt $ "dateTimeFmt"
+            , annotate dateFmt $ "dateFmt"
+            , annotate timeFmt $ "timeFmt"
+            , annotate time12Fmt $ "time12Fmt"
+            , annotate knownTimeZones $ "knownTimeZones"
             ]
 #endif

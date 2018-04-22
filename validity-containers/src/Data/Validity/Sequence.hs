@@ -9,5 +9,4 @@ import Data.Sequence (Seq)
 
 -- | A 'Seq'uence of things is valid if all the elements are valid.
 instance Validity v => Validity (Seq v) where
-    isValid = all isValid . toList
-    validate s = toList s <?!> "Seq elements"
+    validate s = annotate (toList s) "Seq elements"
