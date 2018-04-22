@@ -9,11 +9,7 @@ import Data.Validity
 import Path
 import Path.Internal
 
-import Data.List ( isInfixOf
-#if MIN_VERSION_path(0,6,0)
-                 , isSuffixOf
-#endif
-                 )
+import Data.List (isInfixOf, isSuffixOf)
 
 import qualified System.FilePath as FilePath
 
@@ -23,8 +19,8 @@ import qualified System.FilePath as FilePath
 -- * Its path is an absolute path
 -- * Its path has no trailing path separators
 -- * Its path is valid according to 'System.FilePath's definition.
-#if MIN_VERSION_path(0,6,0)
 -- * Its path does not end in '/.'
+#if MIN_VERSION_path(0,6,0)
 -- * Its path is not '.'
 #endif
 -- * Its path does not contain '..'.
@@ -37,8 +33,8 @@ instance Validity (Path Abs File) where
               not (FilePath.hasTrailingPathSeparator fp)
             , declare "System.FilePath considers the path valid." $
               FilePath.isValid fp
-#if MIN_VERSION_path(0,6,0)
             , declare "The path does not end in /." $ not ("/." `isSuffixOf` fp)
+#if MIN_VERSION_path(0,6,0)
             , declare "The path does not equal \".\"" $ fp /= "."
 #endif
             , declare "The path does not contain '..'." $ not (".." `isInfixOf` fp)
@@ -51,10 +47,10 @@ instance Validity (Path Abs File) where
 -- * Its path is a relative path
 -- * Its path does not have a trailing path separator
 -- * Its path is valid according to 'System.FilePath's definition.
+-- * Its path is not '.'
+-- * Its path is not empty
 #if MIN_VERSION_path(0,6,0)
 -- * Its path does not end in '/.'
--- * Its path is not '.'
--- * Its path is not ''
 #endif
 -- * Its path is not '.'
 -- * Its path does not contain '..'.
@@ -68,10 +64,9 @@ instance Validity (Path Rel File) where
             , declare "System.FilePath considers the path valid." $
               FilePath.isValid fp
             , declare "The path does not equal \".\"" $ fp /= "."
+            , declare "The path is not empty" $ null fp
 #if MIN_VERSION_path(0,6,0)
             , declare "The path does not end in /." $ not ("/." `isSuffixOf` fp)
-            , declare "The path is not '.'" $ fp /= "."
-            , declare "The path is not ''" $ fp /= ""
 #endif
             , declare "The path does not contain '..'." $ not (".." `isInfixOf` fp)
             , declare "The path can be identically parsed as a relative file path." $
@@ -104,7 +99,6 @@ instance Validity (Path Abs Dir) where
 -- * Its path has a trailing path separator
 -- * Its path is valid according to 'System.FilePath's definition.
 #if MIN_VERSION_path(0,6,0)
--- * Its path is not ''
 #else
 -- * Its path is not '.'
 #endif
@@ -120,9 +114,8 @@ instance Validity (Path Rel Dir) where
               FilePath.isValid fp
             , declare "The path is not empty." $ not (null fp)
 #if MIN_VERSION_path(0,6,0)
-            , declare "The path does not equal \".\"" $ fp /= "."
 #else
-            , declare "The path is not \"\"" $ fp /= ""
+            , declare "The path does not equal \".\"" $ fp /= "."
 #endif
             , declare "The path does not contain '..'." $ not (".." `isInfixOf` fp)
             , declare "The path can be identically parsed as a relative directory path." $
