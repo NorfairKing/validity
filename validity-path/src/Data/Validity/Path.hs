@@ -64,7 +64,7 @@ instance Validity (Path Rel File) where
             , declare "System.FilePath considers the path valid." $
               FilePath.isValid fp
             , declare "The path does not equal \".\"" $ fp /= "."
-            , declare "The path is not empty" $ null fp
+            , declare "The path is not empty" $ not (null fp)
 #if MIN_VERSION_path(0,6,0)
             , declare "The path does not end in /." $ not ("/." `isSuffixOf` fp)
 #endif

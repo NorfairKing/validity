@@ -24,7 +24,8 @@ instance GenValid (Path Abs File) where
 instance GenValid (Path Abs Dir) where
     genValid = (Path . ('/' :) . (++ "/") <$> genUnchecked) `suchThat` isValid
 
-instance GenValid (Path Rel File)
+instance GenValid (Path Rel File) where
+    genValid = (Path <$> genUnchecked) `suchThat` isValid
 
 instance GenValid (Path Rel Dir) where
     genValid = (Path . (++ "/") <$> genUnchecked) `suchThat` isValid
