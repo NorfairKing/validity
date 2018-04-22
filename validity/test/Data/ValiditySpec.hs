@@ -52,10 +52,10 @@ instance Validity TwoEvens where
 spec :: Spec
 spec = do
     describe "Wrong" $ do
-        it "says Wrong is invalid" $ Wrong `shouldNotSatisfy` isValid
+        it "says Wrong is invalid" $ Wrong `shouldSatisfy` (not . isValid)
         it "says Fine is valid" $ Fine `shouldSatisfy` isValid
     describe "GeneratedValidity" $ do
         let nan = read "NaN"
-        it "says G nan 0 is not valid" $ G nan 0 `shouldNotSatisfy` isValid
-        it "says G 0 nan is not valid" $ G 0 nan `shouldNotSatisfy` isValid
+        it "says G nan 0 is not valid" $ G nan 0 `shouldSatisfy` (not . isValid)
+        it "says G 0 nan is not valid" $ G 0 nan `shouldSatisfy` (not . isValid)
         it "says G 0 0 is valid" $ G 0 0 `shouldSatisfy` isValid
