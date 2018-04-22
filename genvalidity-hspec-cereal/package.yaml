@@ -1,5 +1,5 @@
 name: genvalidity-hspec-cereal
-version: '0.1.0.0'
+version: '0.1.0.1'
 synopsis: Standard spec's for cereal-related instances
 description: Standard spec's for cereal-related Instances
 category: Testing
@@ -20,9 +20,9 @@ library:
   - base >=4.9 && <=5
   - genvalidity-hspec >=0.5 && <0.6
   - genvalidity >=0.4 && <0.5
-  - cereal >=0.5 && <0.6
+  - cereal
   - QuickCheck
-  - deepseq >=1.4 && <1.5
+  - deepseq
 tests:
   genvalidity-hspec-cereal-doctests:
     main: DocTest.hs
@@ -30,7 +30,7 @@ tests:
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.11 && <0.14
+    - doctest
     - genvalidity-hspec-cereal
   genvalidity-hspec-cereal-test:
     main: Spec.hs
