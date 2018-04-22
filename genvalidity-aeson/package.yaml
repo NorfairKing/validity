@@ -40,4 +40,4 @@ tests:
     - genvalidity
     - genvalidity-hspec
     - genvalidity-aeson
-    - hspec >=2.2 && <2.5
+    - hspec

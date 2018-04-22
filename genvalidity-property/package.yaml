@@ -38,7 +38,7 @@ library:
   - validity >=0.5 && <0.6
   - genvalidity >=0.5 && <0.6
   - QuickCheck
-  - hspec >=2.1 && <2.5
+  - hspec >=2.1
 
 tests:
   genvalidity-property-doctests:
@@ -47,7 +47,7 @@ tests:
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.9 && <0.14
+    - doctest
     - genvalidity-property
     - directory >=1.2 && <1.4
     - filepath >=1.3 && <1.5

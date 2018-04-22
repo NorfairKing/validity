@@ -36,4 +36,4 @@ tests:
     - genvalidity
     - genvalidity-hspec
     - genvalidity-vector
-    - hspec >=2.2 && <2.5
+    - hspec

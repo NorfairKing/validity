@@ -71,7 +71,11 @@ failsBecause s = mapSpecTree go
             Item
                 { itemRequirement = s
                 , itemLocation = Nothing
+#if MIN_VERSION_hspec_core(2,5,0)
+                , itemIsParallelizable = Nothing
+#else
                 , itemIsParallelizable = False
+#endif
                 , itemExample =
                       \_ _ _ -> do
                           let conf =
@@ -82,12 +86,23 @@ failsBecause s = mapSpecTree go
                           pure $ produceResult succesful
                 }
 #if MIN_VERSION_hspec_core(2,4,0)
+#if MIN_VERSION_hspec_core(2,5,0)
+produceResult :: Bool -> Test.Hspec.Core.Spec.Result
+produceResult succesful = Result
+  { resultInfo = ""
+  , resultStatus =
+    if succesful
+        then Success
+        else Failure Nothing $ Reason "Should have failed but didn't."
+  }
+#else
 produceResult :: Bool -> Either a Test.Hspec.Core.Spec.Result
 produceResult succesful =
     Right $
     if succesful
         then Success
         else Failure Nothing $ Reason "Should have failed but didn't."
+#endif
 #else
 produceResult :: Bool -> Test.Hspec.Core.Spec.Result
 produceResult succesful =

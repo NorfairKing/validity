@@ -40,4 +40,4 @@ tests:
     - genvalidity
     - genvalidity-containers
     - genvalidity-hspec
-    - hspec >=2.2 && <2.5
+    - hspec

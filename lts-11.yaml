@@ -27,4 +27,4 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-resolver: lts-10.10
+resolver: lts-11.5

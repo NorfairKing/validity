@@ -39,4 +39,4 @@ tests:
     - genvalidity
     - genvalidity-hspec
     - genvalidity-unordered-containers
-    - hspec >=2.2 && <2.5
+    - hspec

@@ -58,6 +58,9 @@ module Data.Validity
     , prettyValidation
     -- * Re-exports
     , Monoid(..)
+#if MIN_VERSION_base(4,11,0)
+    , Semigroup(..)
+#endif
     ) where
 
 import Data.Either (isRight)
@@ -174,11 +177,17 @@ newtype Validation = Validation
     } deriving (Show, Eq, Generic)
 
 instance Validity Validation
-
+#if MIN_VERSION_base(4,11,0)
+instance Semigroup Validation where
+    (Validation v1) <> (Validation v2) = Validation $ v1 ++ v2
+#endif
 instance Monoid Validation where
     mempty = Validation []
+#if MIN_VERSION_base(4,11,0)
+    mappend = (<>)
+#else
     mappend (Validation v1) (Validation v2) = Validation $ v1 ++ v2
-
+#endif
 -- | Declare any value to be valid in validation
 --
 -- > trivialValidation a = seq a mempty
