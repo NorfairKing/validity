@@ -279,6 +279,69 @@ instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d) =>
                      return (a, b, c, d)
                 ]
 
+instance (GenUnchecked a, GenUnchecked b, GenUnchecked c, GenUnchecked d, GenUnchecked e) =>
+         GenUnchecked (a, b, c, d, e) where
+    genUnchecked =
+        sized $ \n -> do
+            (r, s, t, u, v) <- genSplit5 n
+            a <- resize r genUnchecked
+            b <- resize s genUnchecked
+            c <- resize t genUnchecked
+            d <- resize u genUnchecked
+            e <- resize v genUnchecked
+            return (a, b, c, d, e)
+
+instance (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e) =>
+         GenValid (a, b, c, d, e) where
+    genValid =
+        sized $ \n -> do
+            (r, s, t, u, v) <- genSplit5 n
+            a <- resize r genValid
+            b <- resize s genValid
+            c <- resize t genValid
+            d <- resize u genValid
+            e <- resize v genValid
+            return (a, b, c, d, e)
+
+-- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
+instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d, GenInvalid e) =>
+         GenInvalid (a, b, c, d, e) where
+    genInvalid =
+        sized $ \n -> do
+            (r, s, t, u, v) <- genSplit5 n
+            oneof
+                [ do a <- resize r genInvalid
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genInvalid
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genInvalid
+                     d <- resize u genUnchecked
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genInvalid
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     e <- resize v genInvalid
+                     return (a, b, c, d, e)
+                ]
+
 instance GenUnchecked a => GenUnchecked (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]
 
@@ -498,6 +561,16 @@ genSplit4 n
         (a, b) <- genSplit y
         (c, d) <- genSplit z
         return (a, b, c, d)
+
+-- | 'genSplit5 a' generates a quadruple '(b, c, d, e, f)' such that 'b + c + d + e + f' equals 'a'.
+genSplit5 :: Int -> Gen (Int, Int, Int, Int, Int)
+genSplit5 n
+    | n < 0 = pure (0, 0, 0, 0, 0)
+    | otherwise = do
+        (y, z) <- genSplit n
+        (a, b, c) <- genSplit3 y
+        (d, e) <- genSplit z
+        return (a, b, c, d, e)
 
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
 arbPartition :: Int -> Gen [Int]

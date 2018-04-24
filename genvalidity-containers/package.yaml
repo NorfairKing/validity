@@ -16,9 +16,9 @@ library:
   exposed-modules:
   - Data.GenValidity.Containers
   - Data.GenValidity.Map
-  - Data.GenValidity.Tree
   - Data.GenValidity.Sequence
   - Data.GenValidity.Set
+  - Data.GenValidity.Tree
   dependencies:
   - base <5
   - QuickCheck
