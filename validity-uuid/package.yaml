@@ -1,5 +1,5 @@
 name: validity-uuid
-version: '0.0.0.0'
+version: '0.1.0.0'
 synopsis: Validity instances for uuid
 description: Please see README.md
 category: Web
