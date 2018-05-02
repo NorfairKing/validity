@@ -68,6 +68,7 @@ import Data.List.NonEmpty (NonEmpty((:|)))
 #endif
 import Data.Word (Word, Word8, Word16, Word32, Word64)
 import Data.Int (Int, Int8, Int16, Int32, Int64)
+import Data.Ratio ((%))
 import GHC.Generics
 import GHC.Real (Ratio(..))
 
@@ -507,13 +508,18 @@ instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
         pure $ n :% d
     shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d)]
 
-instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a)
+instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
+    genValid = do
+      n <- genValid
+      d <- genValid `suchThat` (> 0)
+      pure $ n % d
+    shrinkValid (n :% d) = [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenInvalid (Ratio a)
 
 instance HasResolution a => GenUnchecked (Fixed a) where
     genUnchecked = MkFixed <$> genUnchecked
-    shrinkUnchecked = shrink
+    shrinkUnchecked (MkFixed i) = MkFixed <$> shrinkUnchecked i
 
 instance HasResolution a => GenValid (Fixed a)
 

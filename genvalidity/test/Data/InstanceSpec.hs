@@ -10,6 +10,7 @@ import Data.Int
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty)
 #endif
+import Data.Fixed
 import Data.Ratio
 import Data.Word
 
@@ -44,11 +45,19 @@ spec = do
     threeTests (Proxy :: Proxy (Double, Double))
     threeTests (Proxy :: Proxy (Double, Double, Double))
     threeTests (Proxy :: Proxy (Double, Double, Double, Double))
+    threeTests (Proxy :: Proxy (Double, Double, Double, Double, Double))
     threeTests (Proxy :: Proxy (Either Double Double))
     threeTests (Proxy :: Proxy (Maybe Double))
     threeTests (Proxy :: Proxy [Double])
     threeTests (Proxy :: Proxy (Ratio Integer))
     threeTests (Proxy :: Proxy (Ratio Int))
+    twoTests (Proxy :: Proxy Uni)
+    twoTests (Proxy :: Proxy Deci)
+    twoTests (Proxy :: Proxy Centi)
+    twoTests (Proxy :: Proxy Milli)
+    twoTests (Proxy :: Proxy Micro)
+    twoTests (Proxy :: Proxy Nano)
+    twoTests (Proxy :: Proxy Pico)
 #if MIN_VERSION_base(4,9,0)
     threeTests (Proxy :: Proxy (NonEmpty Double))
 #endif
@@ -80,7 +89,7 @@ genUncheckedTest proxy = do
             ["genUnchecked of", nameOf proxy, "does not crash while validating"]) $
         forAll genUnchecked $ \a ->
             case prettyValidation (a :: a) of
-                Right _ -> True
+                Right v -> seq v True
                 Left err -> seq err True
     it (unwords
             [ "shrinkUnchecked of"
@@ -90,7 +99,7 @@ genUncheckedTest proxy = do
         forAll genUnchecked $ \a ->
             forM_ (shrinkUnchecked a) $ \v ->
                 case prettyValidation (v :: a) of
-                    Right _ -> pure () :: IO ()
+                    Right v_ -> seq v_ $ pure () :: IO ()
                     Left err -> seq err $ pure ()
 
 genValidTest ::
@@ -101,7 +110,7 @@ genValidTest proxy = do
     it (unwords ["genValid of", nameOf proxy, "generates only valid values"]) $
         forAll genValid $ \a ->
             case prettyValidation (a :: a) of
-                Right _ -> pure ()
+                Right v -> seq v $ pure ()
                 Left err ->
                     expectationFailure $
                     unlines
@@ -114,7 +123,7 @@ genValidTest proxy = do
         forAll genValid $ \a ->
             forM_ (shrinkValid a) $ \v ->
                 case prettyValidation (v :: a) of
-                    Right _ -> pure ()
+                    Right v_ -> seq v_ $ pure ()
                     Left err ->
                         expectationFailure $
                         unlines
@@ -123,6 +132,16 @@ genValidTest proxy = do
                             , err
                             , ""
                             ]
+    it (unwords
+            [ "shrinkValid of"
+            , nameOf proxy
+            , "only produces values that do not crash while validating"
+            ]) $
+        forAll genValid $ \a ->
+            forM_ (shrinkValid a) $ \v ->
+                case prettyValidation (v :: a) of
+                    Right v_ -> seq v_ $ pure () :: IO ()
+                    Left err -> seq err $ pure ()
 
 genInvalidTest ::
        forall a. (Show a, Typeable a, GenInvalid a)
@@ -136,7 +155,7 @@ genInvalidTest proxy = do
                     expectationFailure $
                     unlines
                         ["'validate' reported this value to be valid: ", show a]
-                Left _ -> pure ()
+                Left e -> seq e $ pure ()
     it (unwords
             ["shrinkInvalid of", nameOf proxy, "shrinks to only invalid values"]) $
         forAll genInvalid $ \a ->
@@ -148,7 +167,22 @@ genInvalidTest proxy = do
                             [ "'validate' reported this value to be valid: "
                             , show v
                             ]
-                    Left _ -> pure ()
+                    Left e -> seq e $ pure ()
+    it (unwords
+            [ "shrinkInvalid of"
+            , nameOf proxy
+            , "only produces values that do not crash while validating"
+            ]) $
+        forAll genInvalid $ \a ->
+            forM_ (shrinkInvalid a) $ \v ->
+                case prettyValidation (v :: a) of
+                    Right _ ->
+                        expectationFailure $
+                        unlines
+                            [ "'validate' reported this value to be valid: "
+                            , show v
+                            ]
+                    Left e -> seq e $ pure ()
 
 nameOf ::
        forall a. Typeable a
