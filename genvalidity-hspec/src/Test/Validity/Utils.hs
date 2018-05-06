@@ -20,15 +20,15 @@ module Test.Validity.Utils
     ) where
 
 import Data.Data
-import Data.Validity
-
-import Control.Monad
 
 import Test.Hspec
 import Test.Hspec.Core.Formatters
 import Test.Hspec.Core.Runner
 import Test.Hspec.Core.Spec
+
 import Test.QuickCheck.Property
+
+import Test.Validity.Property.Utils
 
 nameOf ::
        forall a. Typeable a
@@ -117,25 +117,3 @@ shouldFail =
             { reason = unwords ["Should have failed:", reason res]
             , expect = not $ expect res
             }
-
-shouldBeValid :: (Show a, Validity a) => a -> Expectation
-shouldBeValid a = do
-    case prettyValidation a of
-        Right _ -> pure ()
-        Left err ->
-            expectationFailure $
-            unlines
-                [ "'validate' reported this value to be invalid: " ++ show a
-                , err
-                , ""
-                ]
-    unless (isValid a) $
-        expectationFailure $
-        unlines
-            [ "isValid considered this value invalid: " ++ show a
-            , "This is odd because 'validate' reported no issues."
-            , "Are you sure 'Validity' is implemented correctly?"
-            ]
-
-shouldBeInvalid :: (Show a, Validity a) => a -> Expectation
-shouldBeInvalid a = a `shouldNotSatisfy` isValid

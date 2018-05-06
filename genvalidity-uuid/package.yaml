@@ -1,5 +1,5 @@
 name: genvalidity-uuid
-version: '0.1.0.0'
+version: '0.1.0.1'
 synopsis: GenValidity support for UUID
 description: Please see README.md
 category: Testing
@@ -18,9 +18,9 @@ library:
   - Data.GenValidity.UUID
   dependencies:
   - base >=4.7 && <5
-  - genvalidity >=0.5 && <0.6
-  - validity >=0.5 && <0.6
-  - validity-uuid >=0.0 && <0.1
+  - genvalidity >=0.5
+  - validity >=0.5
+  - validity-uuid >=0.0
 
 tests:
   genvalidity-uuid-test:

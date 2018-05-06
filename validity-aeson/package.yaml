@@ -1,5 +1,5 @@
 name: validity-aeson
-version: '0.2.0.0'
+version: '0.2.0.1'
 synopsis: Validity instances for aeson
 description: Please see README.md
 category: Validity
@@ -12,11 +12,11 @@ github: NorfairKing/validity
 dependencies:
 - base >=4.7 && <5
 - aeson
-- validity >=0.5 && <0.6
-- validity-text >=0.3 && <0.4
-- validity-unordered-containers >=0.1 && <0.2
-- validity-vector >=0.1 && <0.2
-- validity-scientific >=0.2 && <0.3
+- validity >=0.5
+- validity-text >=0.3
+- validity-unordered-containers >=0.1
+- validity-vector >=0.1
+- validity-scientific >=0.2
 
 library:
   source-dirs: src
