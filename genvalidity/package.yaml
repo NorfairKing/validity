@@ -1,5 +1,5 @@
 name: genvalidity
-version: '0.5.0.2'
+version: '0.5.0.3'
 synopsis: Testing utilities for the validity library
 description: ! 'Note: There are companion instance packages for this library:
 
@@ -48,8 +48,8 @@ library:
   - Data.GenRelativeValidity
   dependencies:
   - base >=4.7 && <5
-  - validity >=0.5 && <0.6
-  - QuickCheck >=2.7 && <2.12
+  - validity >=0.5
+  - QuickCheck >=2.7
   when:
   - condition: impl(ghc >=8.0.0)
     ghc-options: -Wno-redundant-constraints
