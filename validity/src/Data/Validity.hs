@@ -172,11 +172,16 @@ data ValidationChain
 
 instance Validity ValidationChain
 
+-- | The result of validating a value.
+--
+-- `mempty` means the value was valid.
+--
+-- This type intentionally doesn't have a `Validity` instance to make sure
+-- you can never accidentally use `annotate` or `delve` twice.
 newtype Validation = Validation
     { unValidation :: [ValidationChain]
     } deriving (Show, Eq, Generic)
 
-instance Validity Validation
 #if MIN_VERSION_base(4,11,0)
 instance Semigroup Validation where
     (Validation v1) <> (Validation v2) = Validation $ v1 ++ v2
