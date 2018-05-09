@@ -1,5 +1,5 @@
 name: validity-containers
-version: '0.3.0.0'
+version: '0.3.0.1'
 synopsis: Validity instances for containers
 description: Please see README.md
 category: Validity
@@ -10,7 +10,7 @@ license: MIT
 github: NorfairKing/validity
 dependencies:
 - base >=4.7 && <5
-- validity >=0.5 && <0.6
+- validity >=0.5
 - containers
 library:
   source-dirs: src
