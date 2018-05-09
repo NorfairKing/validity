@@ -1,5 +1,5 @@
 name: genvalidity-hspec
-version: '0.6.0.2'
+version: '0.6.0.3'
 synopsis: Standard spec's for GenValidity instances
 description: ! 'Note: There are companion packages for this library:
 
@@ -42,10 +42,10 @@ library:
   - Test.Validity.Utils
   dependencies:
   - base >=4.9 && <5
-  - genvalidity >=0.5 && <0.6
-  - genvalidity-property >=0.2 && <0.3
+  - genvalidity >=0.5
+  - genvalidity-property >=0.2
   - hspec
-  - validity >=0.5 && <0.6
+  - validity >=0.5
 
 tests:
   genvalidity-hspec-test:

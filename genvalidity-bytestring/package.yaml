@@ -1,5 +1,5 @@
 name: genvalidity-bytestring
-version: '0.2.0.0'
+version: '0.2.0.1'
 synopsis: GenValidity support for ByteString
 description: Please see README.md
 category: Testing
@@ -18,9 +18,9 @@ library:
   - Data.GenValidity.ByteString
   dependencies:
   - base >=4.7 && <5
-  - validity >=0.5 && <0.6
-  - validity-bytestring >=0.3 && <0.4
-  - genvalidity >=0.5 && <0.6
+  - validity >=0.5
+  - validity-bytestring >=0.3
+  - genvalidity >=0.5
 
 tests:
   genvalidity-bytestring-test:

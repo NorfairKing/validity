@@ -1,5 +1,5 @@
 name: genvalidity-property
-version: '0.2.0.1'
+version: '0.2.0.2'
 synopsis: Standard properties for functions on `Validity` types
 description: Standard properties for functions on `Validity` types
 category: Testing
@@ -35,8 +35,8 @@ library:
   - Test.Validity.Types
   dependencies:
   - base >=4.7 && <5
-  - validity >=0.5 && <0.6
-  - genvalidity >=0.5 && <0.6
+  - validity >=0.5
+  - genvalidity >=0.5
   - QuickCheck
   - hspec >=2.1
 
