@@ -44,6 +44,7 @@ module Data.Validity
     , declare
     , annotate
     , delve
+    , decorate
     , invalid
     , valid
     -- * Utilities
@@ -220,6 +221,26 @@ check b err =
 declare :: String -> Bool -> Validation
 declare = flip check
 
+-- | Declare a sub-part as a necessary part for validation, and annotate it with a name.
+--
+-- Example:
+--
+-- > validate (a, b) =
+-- >     mconcat
+-- >         [ annotate a "The first element of the tuple"
+-- >         , annotate b "The second element of the tuple"
+-- >         ]
+annotate :: Validity a => a -> String -> Validation
+annotate = annotateValidation . validate
+
+-- | 'annotate', but with the arguments flipped.
+delve :: Validity a => String -> a -> Validation
+delve = flip annotate
+
+-- | Decorate a validation with a location
+decorate :: String -> Validation -> Validation
+decorate = flip annotateValidation
+
 -- | Construct a trivially invalid 'Validation'
 --
 -- Example:
@@ -239,22 +260,6 @@ invalid = check False
 
 valid :: Validation
 valid = mempty
-
--- | Declare a sub-part as a necessary part for validation, and annotate it with a name.
---
--- Example:
---
--- > validate (a, b) =
--- >     mconcat
--- >         [ annotate a "The first element of the tuple"
--- >         , annotate b "The second element of the tuple"
--- >         ]
-annotate :: Validity a => a -> String -> Validation
-annotate = annotateValidation . validate
-
--- | 'annotate', but with the arguments flipped.
-delve :: Validity a => String -> a -> Validation
-delve = flip annotate
 
 -- | Any tuple of things is valid if both of its elements are valid
 instance (Validity a, Validity b) => Validity (a, b) where
