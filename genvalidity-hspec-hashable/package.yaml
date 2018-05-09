@@ -1,5 +1,5 @@
 name: genvalidity-hspec-hashable
-version: '0.2.0.0'
+version: '0.2.0.1'
 synopsis: Standard spec's for Hashable instances
 description: Standard spec's for Hashable instances
 category: Testing
@@ -20,10 +20,10 @@ library:
   - Test.Validity.Hashable
   dependencies:
   - base >=4.9 && <5
-  - validity >=0.5 && <0.6
-  - genvalidity-hspec >=0.6 && <0.7
-  - genvalidity >=0.5 && <0.6
-  - genvalidity-property >=0.2 && <0.3
+  - validity >=0.5
+  - genvalidity-hspec >=0.6
+  - genvalidity >=0.5
+  - genvalidity-property >=0.2
   - hspec
 
 tests:

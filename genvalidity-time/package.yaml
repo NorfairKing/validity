@@ -1,5 +1,5 @@
 name: genvalidity-time
-version: '0.2.0.1'
+version: '0.2.0.2'
 synopsis: GenValidity support for time
 description: Please see README.md
 category: Testing
@@ -21,8 +21,8 @@ library:
   - Data.GenValidity.Time.LocalTime
   dependencies:
   - base >=4.7 && <5
-  - validity-time >=0.2 && <0.3
-  - genvalidity >=0.5 && <0.6
+  - validity-time >=0.2
+  - genvalidity >=0.5
   - QuickCheck
   
 tests:

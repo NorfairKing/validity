@@ -1,5 +1,5 @@
 name: genvalidity-path
-version: '0.3.0.0'
+version: '0.3.0.1'
 synopsis: GenValidity support for Path
 description: Please see README.md
 category: Testing
@@ -14,8 +14,8 @@ library:
   - Data.GenValidity.Path
   dependencies:
   - base >=4.7 && <5
-  - validity-path >=0.3 && <0.4
-  - genvalidity >=0.5 && <0.6
+  - validity-path >=0.3
+  - genvalidity >=0.5
   - path >=0.5 && <0.7
   - QuickCheck
 
