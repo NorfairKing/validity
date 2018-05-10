@@ -538,7 +538,7 @@ shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
 upTo :: Int -> Gen Int
 upTo n
     | n <= 0 = pure 0
-    | otherwise = elements [0 .. n]
+    | otherwise = choose (0, n)
 
 -- | 'genSplit a' generates a tuple '(b, c)' such that 'b + c' equals 'a'.
 genSplit :: Int -> Gen (Int, Int)
@@ -583,7 +583,7 @@ arbPartition :: Int -> Gen [Int]
 arbPartition k
     | k <= 0 = pure []
     | otherwise = do
-        first <- elements [1 .. k]
+        first <- choose (1, k)
         rest <- arbPartition $ k - first
         return $ first : rest
 
