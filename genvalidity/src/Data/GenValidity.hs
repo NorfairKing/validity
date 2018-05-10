@@ -483,7 +483,7 @@ instance GenValid Float where
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Float where
-    genInvalid = elements [read "NaN", read "Infinity"]
+    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity", read "-0"]
 
 instance GenUnchecked Double where
     genUnchecked = arbitrary
@@ -493,7 +493,7 @@ instance GenValid Double
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Double where
-    genInvalid = elements [read "NaN", read "Infinity"]
+    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity", read "-0"]
 
 instance GenUnchecked Integer where
     genUnchecked = arbitrary
