@@ -22,6 +22,7 @@ module Test.Validity
     , genGeneratesInvalid
     , shrinkValiditySpec
     , shrinkValidSpec
+    , shrinkValidSpecWithLimit
     , shrinkInvalidSpec
     , shrinkValidPreservesValidOnGenValid
     , shrinkInvalidPreservesInvalidOnGenInvalid
