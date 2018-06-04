@@ -24,6 +24,8 @@ import Control.Applicative (pure)
 #endif
 import Data.GenValidity
 
+import GHC.Natural
+
 spec :: Spec
 spec = do
     twoTests (Proxy :: Proxy ())
@@ -60,6 +62,7 @@ spec = do
     twoTests (Proxy :: Proxy Micro)
     twoTests (Proxy :: Proxy Nano)
     twoTests (Proxy :: Proxy Pico)
+    twoTests (Proxy :: Proxy Natural)
 #if MIN_VERSION_base(4,9,0)
     threeTests (Proxy :: Proxy (NonEmpty Double))
 #endif
