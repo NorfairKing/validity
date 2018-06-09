@@ -42,6 +42,7 @@ module Data.Validity
     ( Validity(..)
     -- * Helper functions to define 'validate'
     , trivialValidation
+    , genericValidate
     , check
     , declare
     , annotate
@@ -167,7 +168,10 @@ class Validity a where
     validate :: a -> Validation
     default validate :: (Generic a, GValidity (Rep a)) =>
         a -> Validation
-    validate = gValidate . from
+    validate = genericValidate
+
+genericValidate :: (Generic a, GValidity (Rep a)) => a -> Validation
+genericValidate = gValidate . from
 
 data ValidationChain
     = Violated String
