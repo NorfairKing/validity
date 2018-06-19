@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 module Test.Validity.Property.Utils
     ( forAllUnchecked
     , forAllValid
@@ -8,13 +10,12 @@ module Test.Validity.Property.Utils
     , (===>)
     ) where
 
-import Control.Monad (unless)
-
+import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
-
-import Data.GenValidity
-
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative (pure)
+#endif
 forAllUnchecked ::
        (Show a, GenUnchecked a, Testable prop) => (a -> prop) -> Property
 forAllUnchecked = forAllShrink genUnchecked shrinkUnchecked
@@ -33,23 +34,27 @@ forAllInvalid = forAllShrink genInvalid shrinkInvalid
 (<==>) a b = a ===> b && b ===> a
 
 shouldBeValid :: (Show a, Validity a) => a -> Expectation
-shouldBeValid a = do
+shouldBeValid a =
     case prettyValidation a of
         Right _ -> pure ()
         Left err ->
             expectationFailure $
             unlines
-                [ "'validate' reported this value to be invalid: " ++ show a
+                [ "'validate' reported this value to be invalid: "
+                , show a
+                , "with explanation"
                 , err
                 , ""
                 ]
-    unless (isValid a) $
-        expectationFailure $
-        unlines
-            [ "isValid considered this value invalid: " ++ show a
-            , "This is odd because 'validate' reported no issues."
-            , "Are you sure 'Validity' is implemented correctly?"
-            ]
 
 shouldBeInvalid :: (Show a, Validity a) => a -> Expectation
-shouldBeInvalid a = a `shouldNotSatisfy` isValid
+shouldBeInvalid a =
+    case prettyValidation a of
+        Right _ ->
+            expectationFailure $
+            unlines
+                [ "'validate' reported this value to be valid: "
+                , show a
+                , "where we expected it to be invalid"
+                ]
+        Left _ -> pure ()

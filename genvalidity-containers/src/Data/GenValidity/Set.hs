@@ -4,7 +4,9 @@
 module Data.GenValidity.Set
     ( genStructurallyValidSetOf
     , genStructurallyValidSetOfInvalidValues
+#if !MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidSet
+#endif
     ) where
 #if !MIN_VERSION_base(4,8,0)
 import Data.Functor ((<$>))
@@ -15,10 +17,10 @@ import Test.QuickCheck
 
 import Data.Set (Set)
 import qualified Data.Set as S
-#if !MIN_VERSION_base(4,8,0)
+#if !MIN_VERSION_containers(0,5,9)
 import qualified Data.Set.Internal as Internal
 #endif
-#if !MIN_VERSION_base(4,8,0)
+#if !MIN_VERSION_containers(0,5,9)
 instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
     genUnchecked =
         sized $ \n ->
@@ -44,12 +46,15 @@ instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
 #endif
 instance (Ord v, GenValid v) => GenValid (Set v) where
     genValid = S.fromList <$> genValid
-
+#if !MIN_VERSION_containers(0,5,9)
 instance (Ord v, GenInvalid v) => GenInvalid (Set v) where
     genInvalid =
         oneof
             [genStructurallyValidSetOfInvalidValues, genStructurallyInvalidSet]
-
+#else
+instance (Ord v, GenInvalid v) => GenInvalid (Set v) where
+    genInvalid = genStructurallyValidSetOfInvalidValues
+#endif
 genStructurallyValidSetOf :: Ord v => Gen v -> Gen (Set v)
 genStructurallyValidSetOf g =
     sized $ \n ->
@@ -70,10 +75,11 @@ genStructurallyValidSetOfInvalidValues =
         val <- resize v genInvalid
         rest <- resize m $ genStructurallyValidSetOf genUnchecked
         pure $ S.insert val rest
-
+#if !MIN_VERSION_containers(0,5,9)
 genStructurallyInvalidSet :: (Ord v, GenUnchecked v) => Gen (Set v)
 genStructurallyInvalidSet = do
     v <- genUnchecked
     if S.valid v
         then scale (+ 1) genUnchecked
         else pure v
+#endif
