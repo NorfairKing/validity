@@ -54,6 +54,9 @@
 {-# LANGUAGE OverlappingInstances  #-}
 #define OVERLAPPING_
 #endif
+#if MIN_VERSION_base(4,9,0)
+{-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
+#endif
 
 module Data.GenValidity
     ( module Data.Validity
@@ -66,16 +69,24 @@ import Data.Fixed (Fixed(..), HasResolution)
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty((:|)))
 #endif
+#if MIN_VERSION_base(4,8,0)
+import Data.Word (Word8, Word16, Word32, Word64)
+#else
 import Data.Word (Word, Word8, Word16, Word32, Word64)
-import Data.Int (Int, Int8, Int16, Int32, Int64)
+#endif
+import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Ratio ((%))
 import GHC.Generics
 import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
+#if MIN_VERSION_base(4,8,0)
+import Control.Monad (forM)
+#else
 import Control.Applicative ((<*>), (<$>), pure)
 import Control.Monad (forM)
+#endif
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 

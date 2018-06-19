@@ -15,9 +15,6 @@ import qualified Data.Text.Encoding as E
 import qualified Data.Text.Encoding.Error as E
 import Data.Text.Internal (Text(..))
 import qualified Data.Text.Unsafe as U
-#if !MIN_VERSION_base(4,8,0)
-import Data.Monoid (mconcat)
-#endif
 -- | A text is valid if the internal structure is consistent.
 instance Validity Text where
     validate t@(Text arr off len) =
@@ -26,7 +23,7 @@ instance Validity Text where
             , check (off >= 0) "The offset is positive."
             , check
                   (let c = A.unsafeIndex arr off
-                    in len == 0 || c < 0xDC00 || c > 0xDFFF)
+                   in len == 0 || c < 0xDC00 || c > 0xDFFF)
                   "The offset character is valid UTF16."
                  -- It contains a valid UTF16
             , check

@@ -18,9 +18,10 @@ import Control.Monad
 
 import Test.Hspec
 import Test.QuickCheck
-
+#if MIN_VERSION_base(4,8,0)
+#else
 import Control.Applicative (pure)
-
+#endif
 import Data.GenValidity
 
 spec :: Spec
@@ -48,6 +49,7 @@ spec = do
     threeTests (Proxy :: Proxy (Double, Double, Double, Double, Double))
     threeTests (Proxy :: Proxy (Either Double Double))
     threeTests (Proxy :: Proxy (Maybe Double))
+    threeTests (Proxy :: Proxy (Maybe (Maybe Double)))
     threeTests (Proxy :: Proxy [Double])
     threeTests (Proxy :: Proxy (Ratio Integer))
     threeTests (Proxy :: Proxy (Ratio Int))

@@ -50,6 +50,18 @@ matrix:
     addons: {apt: {packages: [libgmp-dev]}}
 
   - env: 
+      - RESOLVER_FLAG="--stack-yaml lts-5.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
+    addons: {apt: {packages: [libgmp-dev]}}
+
+  - env: 
+      - RESOLVER_FLAG="--stack-yaml lts-4.yaml"
+      - BUILD_PKGS=""
+      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
+    addons: {apt: {packages: [libgmp-dev]}}
+
+  - env: 
       - RESOLVER_FLAG="--stack-yaml lts-3.yaml"
       - BUILD_PKGS=""
       - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
@@ -81,11 +93,11 @@ before_install:
   - chmod a+x ~/.local/bin/stack
 
 install:
-- stack +RTS -N2 -RTS setup $RESOLVER_FLAG
-- stack +RTS -N2 -RTS build --only-snapshot $RESOLVER_FLAG
+- stack setup $RESOLVER_FLAG
+- stack build --only-snapshot $RESOLVER_FLAG
 
 script:
 - git --version
 - stack --version
-- stack --no-terminal $RESOLVER_FLAG build --haddock $BUILD_PKGS
+- stack --no-terminal $RESOLVER_FLAG build --haddock --pedantic $BUILD_PKGS
 - stack --no-terminal $RESOLVER_FLAG test $TEST_PKGS

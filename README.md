@@ -13,7 +13,7 @@ Property testing for functions involving types with invariants often requires wr
 The `genvalidity` package provides a general framework to define these generators.
 The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions to generate unchecked values, valid values and invalid values.
 
-The `genvalidity-*` packages provides the `Validity` instances for commonly-used packages.
+The `genvalidity-*` packages provides the `GenUnchecked` and `GenValid` instances for commonly-used packages.
 
 Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` can be generalised to highly generic functions.
 The `genvalidity-property` and `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.

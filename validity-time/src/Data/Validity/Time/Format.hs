@@ -4,13 +4,13 @@
 {-# LANGUAGE RecordWildCards #-}
 #endif
 module Data.Validity.Time.Format where
-
+#if MIN_VERSION_time(1,5,0)
 import Data.Validity
 
 import Data.Time.Format
 
 import Data.Validity.Time.LocalTime ()
-#if MIN_VERSION_time(1,5,0)
+
 -- | Valid according to the contained values
 instance Validity TimeLocale where
     validate TimeLocale {..} =

@@ -15,8 +15,10 @@ import Test.QuickCheck
 
 import Data.Set (Set)
 import qualified Data.Set as S
+#if !MIN_VERSION_base(4,8,0)
 import qualified Data.Set.Internal as Internal
-
+#endif
+#if !MIN_VERSION_base(4,8,0)
 instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
     genUnchecked =
         sized $ \n ->
@@ -35,7 +37,11 @@ instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
         [ Internal.Bin s' a' s1' s2'
         | (s', a', s1', s2') <- shrinkUnchecked (s, a, s1, s2)
         ]
-
+#else
+instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
+    genUnchecked = S.fromList <$> genUnchecked
+    shrinkUnchecked = fmap S.fromList . shrinkUnchecked . S.toList
+#endif
 instance (Ord v, GenValid v) => GenValid (Set v) where
     genValid = S.fromList <$> genValid
 

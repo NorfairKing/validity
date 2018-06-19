@@ -4,6 +4,9 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeOperators #-}
+#if MIN_VERSION_base(4,9,0)
+{-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
+#endif
 
 {-|
 
@@ -37,7 +40,6 @@
     -}
 module Data.Validity
     ( Validity(..)
-    , isValid
     -- * Helper functions to define 'validate'
     , trivialValidation
     , check
@@ -49,6 +51,7 @@ module Data.Validity
     , valid
     -- * Utilities
     -- ** Utilities for validity checking
+    , isValid
     , isInvalid
     , constructValid
     , constructValidUnsafe
@@ -70,14 +73,18 @@ import Data.List (intercalate)
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty((:|)))
 #endif
-import Data.Maybe (Maybe, fromMaybe)
+import Data.Maybe (fromMaybe)
 #if MIN_VERSION_base(4,8,0)
 #else
 import Data.Monoid
 import Data.Ratio
 #endif
-import Data.Int (Int, Int16, Int32, Int64, Int8)
+import Data.Int (Int16, Int32, Int64, Int8)
+#if MIN_VERSION_base(4,8,0)
+import Data.Word (Word16, Word32, Word64, Word8)
+#else
 import Data.Word (Word, Word16, Word32, Word64, Word8)
+#endif
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural (Natural, isValidNatural)
@@ -85,7 +92,7 @@ import GHC.Natural (Natural, isValidNatural)
 import GHC.Real (Ratio(..))
 
 -- | A class of types that have additional invariants defined upon them
--- that aren't enforced by the type system
+  
 --
 -- === Purpose
 --
@@ -112,7 +119,7 @@ import GHC.Real (Ratio(..))
 --
 -- === Semantics
 --
--- 'isValid' should be an underapproximation of actual validity.
+-- 'validate' should be an underapproximation of actual validity.
 --
 -- This means that if 'isValid' is not a perfect representation of actual
 -- validity, for safety reasons, it should never return 'True' for invalid
@@ -120,18 +127,18 @@ import GHC.Real (Ratio(..))
 --
 -- For example:
 --
--- > isValid = const False
+-- > validate = const $ invalid "always"
 --
--- is a valid implementation for any type, because it never returns 'True'
--- for invalid values.
+-- is a valid implementation for any type, because now 'isValid' never returns
+-- 'True' for invalid values.
 --
--- > isValid (Even i) = i == 2
+-- > validate (Even i) = declare "The integer is equal to two" $ i == 2
 --
 -- is a valid implementation for @newtype Even = Even Int@, but
 --
--- > isValid (Even i) = even i || i == 1
+-- > validate (Even i) = declare "The integer is even or equal to one" $ even i || i == 1
 --
--- is not because it returns 'True' for an invalid value: '1'.
+-- is not because then `isValid` returns 'True' for an invalid value: '1'.
 --
 -- === Automatic instances with 'Generic'
 --
@@ -154,16 +161,13 @@ import GHC.Real (Ratio(..))
 --
 -- > instance Validity MyType where
 -- >     validate (MyType d s)
--- >         = d <?!> "myDouble"
--- >        <> s <?!> "myString"
+-- >         = annotate d "myDouble"
+-- >        <> annotate s "myString"
 class Validity a where
     validate :: a -> Validation
     default validate :: (Generic a, GValidity (Rep a)) =>
         a -> Validation
     validate = gValidate . from
-
-isValid :: Validity a => a -> Bool
-isValid = isRight . checkValidity
 
 data ValidationChain
     = Violated String
@@ -505,7 +509,11 @@ instance (GValidity a, Selector c) => GValidity (M1 S c a) where
 instance (Validity a) => GValidity (K1 R a) where
     gValidate (K1 x) = validate x
 
--- | Check whether 'isInvalid' is not valid.
+-- | Check whether a value is valid.
+isValid :: Validity a => a -> Bool
+isValid = isRight . checkValidity
+
+-- | Check whether a value is not valid.
 --
 -- > isInvalid = not . isValid
 isInvalid :: Validity a => a -> Bool
