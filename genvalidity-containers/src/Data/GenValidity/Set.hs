@@ -1,10 +1,10 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Set
     ( genStructurallyValidSetOf
     , genStructurallyValidSetOfInvalidValues
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidSet
 #endif
     ) where
@@ -17,10 +17,10 @@ import Test.QuickCheck
 
 import Data.Set (Set)
 import qualified Data.Set as S
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 import qualified Data.Set.Internal as Internal
 #endif
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
     genUnchecked =
         sized $ \n ->
@@ -46,7 +46,7 @@ instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
 #endif
 instance (Ord v, GenValid v) => GenValid (Set v) where
     genValid = S.fromList <$> genValid
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 instance (Ord v, GenInvalid v) => GenInvalid (Set v) where
     genInvalid =
         oneof
@@ -75,7 +75,7 @@ genStructurallyValidSetOfInvalidValues =
         val <- resize v genInvalid
         rest <- resize m $ genStructurallyValidSetOf genUnchecked
         pure $ S.insert val rest
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 genStructurallyInvalidSet :: (Ord v, GenUnchecked v) => Gen (Set v)
 genStructurallyInvalidSet = do
     v <- genUnchecked

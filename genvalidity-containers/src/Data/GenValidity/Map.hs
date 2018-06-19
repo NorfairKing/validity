@@ -4,7 +4,7 @@
 module Data.GenValidity.Map
     ( genStructurallyValidMapOf
     , genStructurallyValidMapOfInvalidValues
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidMap
 #endif
     ) where
@@ -18,11 +18,11 @@ import Test.QuickCheck
 
 import Data.Map (Map)
 import qualified Data.Map as M
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 import qualified Data.Map.Internal as Internal
 #endif
 
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
     genUnchecked =
         sized $ \n ->
@@ -49,7 +49,7 @@ instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
 #endif
 instance (Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
     genValid = M.fromList <$> genValid
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 instance (Ord k, GenInvalid k, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid =
         oneof
@@ -85,7 +85,7 @@ genStructurallyValidMapOfInvalidValues =
                     (,) <$> genUnchecked <*> genUnchecked
                 pure $ M.insert key val rest
         oneof [go genInvalid genUnchecked, go genUnchecked genInvalid]
-#if !MIN_VERSION_containers(0,5,9)
+#if MIN_VERSION_containers(0,5,9)
 genStructurallyInvalidMap ::
        (Ord k, GenUnchecked k, GenUnchecked v) => Gen (Map k v)
 genStructurallyInvalidMap = do
