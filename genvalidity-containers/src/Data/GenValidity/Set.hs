@@ -80,6 +80,6 @@ genStructurallyInvalidSet :: (Ord v, GenUnchecked v) => Gen (Set v)
 genStructurallyInvalidSet = do
     v <- genUnchecked
     if S.valid v
-        then scale (+ 1) genUnchecked
+        then scale (+ 1) genStructurallyInvalidSet
         else pure v
 #endif

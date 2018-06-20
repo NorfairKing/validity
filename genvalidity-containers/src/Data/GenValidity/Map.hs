@@ -90,6 +90,6 @@ genStructurallyInvalidMap ::
 genStructurallyInvalidMap = do
     v <- genUnchecked
     if M.valid v
-        then scale (+ 1) genUnchecked
+        then scale (+ 1) genStructurallyInvalidMap
         else pure v
 #endif
