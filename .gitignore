@@ -6,6 +6,7 @@
 
 dist
 dist-*
+result
 cabal-dev
 *.o
 *.hi
