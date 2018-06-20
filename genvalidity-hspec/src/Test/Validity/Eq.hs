@@ -102,28 +102,28 @@ eqSpecOnGen gen genname s =
                     (unwords
                          [ "is reflexive for"
                          , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
+                         , name ++ "\"" ++ "s"
                          ]) $
                     reflexivityOnGen eq gen s
                 it
                     (unwords
                          [ "is symmetric for"
                          , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
+                         , name ++ "\"" ++ "s"
                          ]) $
                     symmetryOnGens eq gen2 s
                 it
                     (unwords
                          [ "is transitive for"
                          , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
+                         , name ++ "\"" ++ "s"
                          ]) $
                     transitivityOnGens eq gen3 s
                 it
                     (unwords
                          [ "is equivalent to (\\a b -> not $ a /= b) for"
                          , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
+                         , name ++ "\"" ++ "s"
                          ]) $
                     equivalentOnGens2 eq (\a b -> not $ a `neq` b) gen2 s2
             describe funneqstr $ do
@@ -131,13 +131,13 @@ eqSpecOnGen gen genname s =
                     (unwords
                          [ "is antireflexive for"
                          , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
+                         , name ++ "\"" ++ "s"
                          ]) $
                     antireflexivityOnGen neq gen s
                 it
                     (unwords
                          [ "is equivalent to (\\a b -> not $ a == b) for"
                          , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
+                         , name ++ "\"" ++ "s"
                          ]) $
                     equivalentOnGens2 neq (\a b -> not $ a `eq` b) gen2 s2
