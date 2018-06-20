@@ -9,8 +9,7 @@ module Data.GenValidity.Map
 #endif
     ) where
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative (pure)
-import Data.Functor ((<$>))
+import Control.Applicative (pure, (<$>), (<*>))
 #endif
 import Data.GenValidity
 import Data.Validity.Map ()

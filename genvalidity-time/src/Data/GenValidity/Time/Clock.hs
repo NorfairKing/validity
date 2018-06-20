@@ -22,9 +22,12 @@ instance GenValid UniversalTime where
 
 instance GenUnchecked DiffTime where
     genUnchecked = picosecondsToDiffTime <$> genUnchecked
+#if MIN_VERSION_time(1,6,0)
     shrinkUnchecked =
         fmap picosecondsToDiffTime . shrinkUnchecked . diffTimeToPicoseconds
-
+#else
+    shrinkUnchecked = const []
+#endif
 instance GenValid DiffTime where
     genValid = picosecondsToDiffTime <$> genValid
 
@@ -42,6 +45,10 @@ instance GenInvalid UTCTime
 
 instance GenUnchecked NominalDiffTime where
     genUnchecked = diffUTCTime <$> genUnchecked <*> genUnchecked
-    shrinkUnchecked _ = []
-
+#if MIN_VERSION_time(1,9,0)
+    shrinkUnchecked =
+        fmap secondsToNominalDiffTime . shrinkUnchecked . nominalDiffTimeToSeconds
+#else
+    shrinkUnchecked = const []
+#endif
 instance GenValid NominalDiffTime

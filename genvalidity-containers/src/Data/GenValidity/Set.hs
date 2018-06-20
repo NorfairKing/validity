@@ -9,7 +9,7 @@ module Data.GenValidity.Set
 #endif
     ) where
 #if !MIN_VERSION_base(4,8,0)
-import Data.Functor ((<$>))
+import Control.Applicative ((<$>), pure)
 #endif
 import Data.GenValidity
 import Data.Validity.Set ()
