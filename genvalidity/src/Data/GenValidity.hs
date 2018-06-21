@@ -77,12 +77,12 @@ import Data.Word (Word, Word8, Word16, Word32, Word64)
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Ratio ((%))
 import GHC.Generics
-import GHC.Natural
 import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
 #if MIN_VERSION_base(4,8,0)
+import GHC.Natural
 import Control.Monad (forM)
 #else
 import Control.Applicative ((<*>), (<$>), pure)
@@ -513,6 +513,7 @@ instance GenUnchecked Integer where
 
 instance GenValid Integer
 
+#if MIN_VERSION_base(4,8,0)
 instance GenUnchecked Natural where
     genUnchecked = fromInteger . abs <$> genUnchecked
     shrinkUnchecked 0 = []
@@ -520,6 +521,7 @@ instance GenUnchecked Natural where
 
 instance GenValid Natural where
     genValid = naturalFromInteger . abs <$> genValid
+#endif
 
 instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
     genUnchecked = do

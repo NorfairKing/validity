@@ -88,7 +88,7 @@ import Data.Word (Word, Word16, Word32, Word64, Word8)
 #endif
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
-import GHC.Natural (Natural, isValidNatural)
+import GHC.Natural
 #endif
 import GHC.Real (Ratio(..))
 
