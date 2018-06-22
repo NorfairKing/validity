@@ -520,7 +520,7 @@ instance GenUnchecked Natural where
     shrinkUnchecked n = [0 .. n-1]
 
 instance GenValid Natural where
-    genValid = naturalFromInteger . abs <$> genValid
+    genValid = fromInteger . abs <$> genValid
 #endif
 
 instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
