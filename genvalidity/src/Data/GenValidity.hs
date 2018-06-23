@@ -82,6 +82,7 @@ import GHC.Real (Ratio(..))
 import Test.QuickCheck hiding (Fixed)
 
 #if MIN_VERSION_base(4,8,0)
+import GHC.Natural
 import Control.Monad (forM)
 #else
 import Control.Applicative ((<*>), (<$>), pure)
@@ -511,6 +512,16 @@ instance GenUnchecked Integer where
     shrinkUnchecked = shrink
 
 instance GenValid Integer
+
+#if MIN_VERSION_base(4,8,0)
+instance GenUnchecked Natural where
+    genUnchecked = fromInteger . abs <$> genUnchecked
+    shrinkUnchecked 0 = []
+    shrinkUnchecked n = [0 .. n-1]
+
+instance GenValid Natural where
+    genValid = fromInteger . abs <$> genValid
+#endif
 
 instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
     genUnchecked = do

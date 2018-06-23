@@ -88,12 +88,12 @@ import Data.Word (Word, Word16, Word32, Word64, Word8)
 #endif
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
-import GHC.Natural (Natural, isValidNatural)
+import GHC.Natural
 #endif
 import GHC.Real (Ratio(..))
 
 -- | A class of types that have additional invariants defined upon them
-  
+
 --
 -- === Purpose
 --
@@ -464,7 +464,7 @@ instance Validity Integer where
 --
 -- Only available with @base >= 4.8@.
 instance Validity Natural where
-    validate n = check (isValidNatural n) "The Natural is valid."
+    validate = declare "The Natural is valid." . isValidNatural
 #endif
 -- | Valid if the contained numbers are valid and the denominator is
 -- strictly positive.

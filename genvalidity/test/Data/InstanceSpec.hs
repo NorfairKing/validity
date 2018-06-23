@@ -19,10 +19,12 @@ import Control.Monad
 import Test.Hspec
 import Test.QuickCheck
 #if MIN_VERSION_base(4,8,0)
+import GHC.Natural
 #else
 import Control.Applicative (pure)
 #endif
 import Data.GenValidity
+
 
 spec :: Spec
 spec = do
@@ -60,6 +62,9 @@ spec = do
     twoTests (Proxy :: Proxy Micro)
     twoTests (Proxy :: Proxy Nano)
     twoTests (Proxy :: Proxy Pico)
+#if MIN_VERSION_base(4,8,0)
+    twoTests (Proxy :: Proxy Natural)
+#endif
 #if MIN_VERSION_base(4,9,0)
     threeTests (Proxy :: Proxy (NonEmpty Double))
 #endif
