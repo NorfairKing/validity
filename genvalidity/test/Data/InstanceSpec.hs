@@ -25,7 +25,6 @@ import Control.Applicative (pure)
 #endif
 import Data.GenValidity
 
-
 spec :: Spec
 spec = do
     twoTests (Proxy :: Proxy ())

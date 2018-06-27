@@ -29,6 +29,8 @@ import Test.Validity.Utils
 
 {-# ANN module "HLint: ignore Use fmap" #-}
 
+{-# ANN module "HLint: ignore Use <$>" #-}
+
 {-# ANN module "HLint: ignore Use >=>" #-}
 
 {-# ANN module "HLint: ignore Use id" #-}

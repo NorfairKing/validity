@@ -653,8 +653,7 @@ class GUncheckedRecursivelyShrink f where
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :*: g) where
   gUncheckedRecursivelyShrink (x :*: y) =
-      [x' :*: y | x' <- gUncheckedRecursivelyShrink x] ++
-      [x :*: y' | y' <- gUncheckedRecursivelyShrink y]
+      [x' :*: y' | x' <- gUncheckedRecursivelyShrink x, y' <- gUncheckedRecursivelyShrink y]
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :+: g) where
   gUncheckedRecursivelyShrink (L1 x) = map L1 (gUncheckedRecursivelyShrink x)

@@ -72,8 +72,8 @@ shrinkValidPreservesValidOnGenValidWithLimit ::
        forall a. (Show a, GenValid a)
     => Int
     -> Property
-shrinkValidPreservesValidOnGenValidWithLimit l =
-    shrinkingStaysValidWithLimit @a genValid shrinkValid l
+shrinkValidPreservesValidOnGenValidWithLimit =
+    shrinkingStaysValidWithLimit @a genValid shrinkValid
 
 shrinkInvalidPreservesInvalidOnGenInvalid ::
        forall a. (Show a, GenInvalid a)

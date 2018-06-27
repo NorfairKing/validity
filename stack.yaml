@@ -28,3 +28,6 @@ packages:
 - 'validity-uuid'
 - 'validity-vector'
 resolver: lts-11.14
+extra-deps:
+- hlint-2.0.15
+- extra-1.6.5
