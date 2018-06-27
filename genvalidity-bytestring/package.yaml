@@ -1,5 +1,5 @@
 name: genvalidity-bytestring
-version: '0.2.0.1'
+version: '0.2.0.2'
 synopsis: GenValidity support for ByteString
 description: Please see README.md
 category: Testing

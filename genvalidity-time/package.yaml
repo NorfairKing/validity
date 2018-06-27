@@ -1,5 +1,5 @@
 name: genvalidity-time
-version: '0.2.0.2'
+version: '0.2.1.0'
 synopsis: GenValidity support for time
 description: Please see README.md
 category: Testing
@@ -24,7 +24,7 @@ library:
   - validity-time >=0.2
   - genvalidity >=0.5
   - QuickCheck
-  
+
 tests:
   genvalidity-time-test:
     main: Spec.hs

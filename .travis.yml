@@ -99,5 +99,5 @@ install:
 script:
 - git --version
 - stack --version
-- stack --no-terminal $RESOLVER_FLAG build --haddock --pedantic $BUILD_PKGS
-- stack --no-terminal $RESOLVER_FLAG test --pedantic $TEST_PKGS
+- travis_wait 45 stack --no-terminal $RESOLVER_FLAG build --haddock --pedantic $BUILD_PKGS
+- travis_wait 45 stack --no-terminal $RESOLVER_FLAG test --pedantic $TEST_PKGS

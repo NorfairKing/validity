@@ -1,5 +1,5 @@
 name: genvalidity-hspec-aeson
-version: '0.2.0.1'
+version: '0.3.0.0'
 synopsis: Standard spec's for aeson-related instances
 description: Standard spec's for aeson-related Instances
 category: Testing

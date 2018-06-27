@@ -1,5 +1,5 @@
 name: genvalidity-aeson
-version: '0.2.0.1'
+version: '0.2.0.2'
 synopsis: GenValidity support for aeson
 description: Please see README.md
 category: Testing

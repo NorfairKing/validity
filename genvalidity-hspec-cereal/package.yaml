@@ -1,5 +1,5 @@
 name: genvalidity-hspec-cereal
-version: '0.2.0.1'
+version: '0.2.0.2'
 synopsis: Standard spec's for cereal-related instances
 description: Standard spec's for cereal-related Instances
 category: Testing
