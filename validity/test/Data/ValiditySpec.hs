@@ -1,13 +1,14 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE CPP #-}
 
 module Data.ValiditySpec
     ( spec
     ) where
 
 import GHC.Generics (Generic)
-
+#if !MIN_VERSION_base(4,11,0)
 import Data.Monoid
-
+#endif
 import Data.Validity
 
 import Test.Hspec
