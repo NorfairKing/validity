@@ -4,7 +4,10 @@
 module Data.InstanceSpec
     ( spec
     ) where
-
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative ((<*>), pure)
+import Data.Functor ((<$>))
+#endif
 import Data.Data
 import Data.Int
 #if MIN_VERSION_base(4,9,0)
@@ -20,8 +23,6 @@ import Test.Hspec
 import Test.QuickCheck
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
-#else
-import Control.Applicative (pure)
 #endif
 import Data.GenValidity
 
