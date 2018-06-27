@@ -20,7 +20,7 @@ instance Validity a => Validity (V.Vector a) where
     validate hs = annotate (V.toList hs) "Vector elements"
 
 instance (MUV.Unbox e, Validity e) => Validity (UV.Vector e) where
-    validate = UV.foldl' (\val x -> val `mappend` validate x) mempty
+    validate = delve "Vector elements" . UV.toList
 
 instance (MSV.Storable e, Validity e) => Validity (SV.Vector e) where
-    validate = validate . GHC.toList
+    validate = delve "Vector elements" . GHC.toList
