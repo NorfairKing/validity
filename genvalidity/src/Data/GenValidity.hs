@@ -488,7 +488,11 @@ instance GenValid Word64
 
 instance GenUnchecked Float where
     genUnchecked = arbitrary
+#if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked = shrink
+#else
+    shrinkUnchecked _ = []
+#endif
 
 instance GenValid Float where
     genValid = arbitrary
@@ -499,7 +503,11 @@ instance GenInvalid Float where
 
 instance GenUnchecked Double where
     genUnchecked = arbitrary
+#if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked = shrink
+#else
+    shrinkUnchecked _ = []
+#endif
 
 instance GenValid Double
 

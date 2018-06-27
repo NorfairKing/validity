@@ -43,30 +43,66 @@ spec = do
     twoTests (Proxy :: Proxy Int64)
     twoTests (Proxy :: Proxy Integer)
     threeTests (Proxy :: Proxy Float)
+    threeTupleTests (Proxy :: Proxy Float)
     threeTests (Proxy :: Proxy Double)
-    threeTests (Proxy :: Proxy (Double, Double))
-    threeTests (Proxy :: Proxy (Double, Double, Double))
-    threeTests (Proxy :: Proxy (Double, Double, Double, Double))
-    threeTests (Proxy :: Proxy (Double, Double, Double, Double, Double))
+    threeTupleTests (Proxy :: Proxy Double)
+    threeTests (Proxy :: Proxy Rational)
+    threeTupleTests (Proxy :: Proxy Rational)
     threeTests (Proxy :: Proxy (Either Double Double))
     threeTests (Proxy :: Proxy (Maybe Double))
     threeTests (Proxy :: Proxy (Maybe (Maybe Double)))
     threeTests (Proxy :: Proxy [Double])
     threeTests (Proxy :: Proxy (Ratio Integer))
+    threeTests (Proxy :: Proxy (Ratio Integer))
+    threeTupleTests (Proxy :: Proxy (Ratio Integer))
     threeTests (Proxy :: Proxy (Ratio Int))
+    threeTupleTests (Proxy :: Proxy (Ratio Int))
     twoTests (Proxy :: Proxy Uni)
+    twoTupleTests (Proxy :: Proxy Uni)
     twoTests (Proxy :: Proxy Deci)
+    twoTupleTests (Proxy :: Proxy Deci)
     twoTests (Proxy :: Proxy Centi)
+    twoTupleTests (Proxy :: Proxy Centi)
     twoTests (Proxy :: Proxy Milli)
+    twoTupleTests (Proxy :: Proxy Milli)
     twoTests (Proxy :: Proxy Micro)
+    twoTupleTests (Proxy :: Proxy Micro)
     twoTests (Proxy :: Proxy Nano)
+    twoTupleTests (Proxy :: Proxy Nano)
     twoTests (Proxy :: Proxy Pico)
+    twoTupleTests (Proxy :: Proxy Pico)
 #if MIN_VERSION_base(4,8,0)
     twoTests (Proxy :: Proxy Natural)
+    
+    twoTupleTests (Proxy :: Proxy Natural)
+    
+    twoTests (Proxy :: Proxy (Ratio Integer))
+    
+    twoTupleTests (Proxy :: Proxy (Ratio Int))
 #endif
 #if MIN_VERSION_base(4,9,0)
     threeTests (Proxy :: Proxy (NonEmpty Double))
 #endif
+twoTupleTests ::
+       forall a. (Show a, Typeable a, GenValid a)
+    => Proxy a
+    -> Spec
+twoTupleTests proxy = do
+    twoTests $ (,) <$> proxy <*> proxy
+    twoTests $ (,,) <$> proxy <*> proxy <*> proxy
+    twoTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
+    twoTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
+
+threeTupleTests ::
+       forall a. (Show a, Typeable a, GenValid a, GenInvalid a)
+    => Proxy a
+    -> Spec
+threeTupleTests proxy = do
+    threeTests $ (,) <$> proxy <*> proxy
+    threeTests $ (,,) <$> proxy <*> proxy <*> proxy
+    threeTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
+    threeTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
+
 twoTests ::
        forall a. (Show a, Typeable a, GenValid a)
     => Proxy a
