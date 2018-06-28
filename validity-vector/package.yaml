@@ -1,10 +1,12 @@
 name: validity-vector
-version: '0.2.0.1'
+version: '0.2.0.2'
 synopsis: Validity instances for vector
 description: Please see README.md
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
 copyright: ! 'Copyright: (c) 2017-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity

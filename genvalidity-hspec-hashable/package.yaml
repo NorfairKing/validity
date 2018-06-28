@@ -4,7 +4,9 @@ synopsis: Standard spec's for Hashable instances
 description: Standard spec's for Hashable instances
 category: Testing
 author: Nick Van den Broeck
-maintainer: syd.kerckhove@gmail.com
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
 copyright: 2017-2018 Tom Sydney Kerckhove
 license: MIT
 github: NorfairKing/validity

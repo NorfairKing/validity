@@ -39,7 +39,9 @@ description: ! 'For more info, see <https://github.com/NorfairKing/validity the 
 '
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
 copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
@@ -67,4 +69,3 @@ tests:
     - base
     - hspec
     - validity
-
