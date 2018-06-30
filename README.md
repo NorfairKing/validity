@@ -13,7 +13,7 @@ Property testing for functions involving types with invariants often requires wr
 The `genvalidity` package provides a general framework to define these generators.
 The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions to generate unchecked values, valid values and invalid values.
 
-The `genvalidity-*` packages provides the `Validity` instances for commonly-used packages.
+The `genvalidity-*` packages provides the `GenUnchecked` and `GenValid` instances for commonly-used packages.
 
 Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` can be generalised to highly generic functions.
 The `genvalidity-property` and `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.
@@ -23,6 +23,89 @@ The `genvalidity-hspec-*` packages provide automatic property testing functions 
 
 ## A usage example
 
+### Usage example with derived instances
+
+Assume you have some data type:
+
+``` Haskell
+data MyType = MyType
+  { myBool :: Bool
+  , myDouble :: Double
+  }
+```
+
+#### Step 1: derive `Generic`:
+
+``` Haskell
+  } deriving (Show, Eq, Generic)
+```
+
+#### Step 2: instantiate `Validity`:
+
+``` Haskell
+instance Validity MyType
+```
+
+The implementation is generated because `MyType` instantiates `Generic`.
+
+#### Step 3: instantiate `GenUnchecked` and `GenValid`:
+
+``` Haskell
+instance GenUnchecked MyType
+instance GenValid MyType
+```
+
+Again, the implementation is generated because `MyType` instantiates `Generic`.
+
+#### Step 4: Write simple instance tests using test suite combinators:
+
+``` Haskell
+spec :: Spec
+spec = do
+  eqSpec @MyType
+  genValidSpec @MyType
+```
+
+These two lines will generate the test suite that has output as follows:
+
+```
+  Eq UUID User
+    (==) :: MyType -> MyType -> Bool
+      is reflexive for "unchecked MyType"s
+      is symmetric for "unchecked MyType"s
+      is transitive for "unchecked MyType"s
+      is equivalent to (\a b -> not $ a /= b) for "unchecked MyType"s
+    (/=) :: MyType -> MyType -> Bool
+      is antireflexive for "unchecked MyType"s
+      is equivalent to (\a b -> not $ a == b) for "unchecked MyType"s
+  GenValid MyType
+    genValid   :: Gen MyType
+      only generates valid 'MyType's
+```
+
+#### Conclusion
+
+The following few lines are all that you need to get started with validity-based testing:
+
+``` Haskell
+data MyType = MyType
+  { myBool :: Bool
+  , myDouble :: Double
+  } deriving (Show, Eq, Generic)
+
+instance Validity MyType
+instance GenUnchecked MyType
+instance GenValid MyType
+
+spec :: Spec
+spec = do
+  eqSpec @MyType
+  genValidSpec @MyType
+```
+
+
+### Usage example with custom instances
+
 Assume the following `Prime` `newtype` and an `isPrime` function:
 
 ``` Haskell
@@ -30,16 +113,16 @@ newtype Prime = Prime Int
 isPrime :: Int -> Bool
 ``` 
 
-### Validity
+#### Validity
 
 Define explicit validity for `Prime`:
 
 ``` Haskell
 instance Validity Prime where
-    isValid (Prime i) = isPrime i
+    validate (Prime i) = check (isPrime i) "the contained integer is a prime"
 ```
 
-### GenUnchecked, GenValid and GenInvalid
+#### GenUnchecked, GenValid and GenInvalid
 
 Define generators for valid and invalid primes:
 
@@ -57,7 +140,7 @@ instance GenValid Prime where
 instance GenInvalid Prime
 ```
 
-### Genvalidity Hspec
+#### Genvalidity Hspec
 
 Given a smart constructor for `Prime`s:
 
@@ -142,13 +225,17 @@ It provides a type class `Validity` that allows us to make the invariants explic
 
 ``` Haskell
 instance Validity HasPrimeFactorisation where
-    isValid (HasPrimeFactorisation i) = i > 1
+    validate (HasPrimeFactorisation i) = check (i > 1) "the contained integer is greater than 1"
 
 instance Validity Prime where
-    isValid (Prime i) = isPrime i
+    validate (Prime i) = check (isPrime i) "the contained integer is a prime"
 
 instance Validity PrimeFactorisation where
     isValid (PrimeFactorisation ps) = not (null ps) && isValid ps
+    validate (PrimeFactorisation ps) = mconcat
+        [ check (not (null ps)) "there is at least one prime
+        , annotate ps "the contained primes"
+        ]
 ```
 
 Note that in the last instantiation, we used the built-in `instance Validity a => Validity [a]` which requires that all elements of `ps` are valid.

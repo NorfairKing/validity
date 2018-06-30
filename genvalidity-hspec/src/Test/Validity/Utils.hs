@@ -20,15 +20,15 @@ module Test.Validity.Utils
     ) where
 
 import Data.Data
-import Data.Validity
-
-import Control.Monad
 
 import Test.Hspec
 import Test.Hspec.Core.Formatters
 import Test.Hspec.Core.Runner
 import Test.Hspec.Core.Spec
+
 import Test.QuickCheck.Property
+
+import Test.Validity.Property.Utils
 
 nameOf ::
        forall a. Typeable a
@@ -69,24 +69,40 @@ failsBecause s = mapSpecTree go
     go sp =
         Leaf
             Item
-            { itemRequirement = s
-            , itemLocation = Nothing
-            , itemIsParallelizable = False
-            , itemExample =
-                  \_ _ _ -> do
-                      let conf = defaultConfig {configFormatter = Just silent}
-                      r <- hspecWithResult conf $ fromSpecList [sp]
-                      let succesful =
-                              summaryExamples r > 0 && summaryFailures r > 0
-                      pure $ produceResult succesful
-            }
+                { itemRequirement = s
+                , itemLocation = Nothing
+#if MIN_VERSION_hspec_core(2,5,0)
+                , itemIsParallelizable = Nothing
+#else
+                , itemIsParallelizable = False
+#endif
+                , itemExample =
+                      \_ _ _ -> do
+                          let conf =
+                                  defaultConfig {configFormatter = Just silent}
+                          r <- hspecWithResult conf $ fromSpecList [sp]
+                          let succesful =
+                                  summaryExamples r > 0 && summaryFailures r > 0
+                          pure $ produceResult succesful
+                }
 #if MIN_VERSION_hspec_core(2,4,0)
+#if MIN_VERSION_hspec_core(2,5,0)
+produceResult :: Bool -> Test.Hspec.Core.Spec.Result
+produceResult succesful = Result
+  { resultInfo = ""
+  , resultStatus =
+    if succesful
+        then Success
+        else Failure Nothing $ Reason "Should have failed but didn't."
+  }
+#else
 produceResult :: Bool -> Either a Test.Hspec.Core.Spec.Result
 produceResult succesful =
     Right $
     if succesful
         then Success
         else Failure Nothing $ Reason "Should have failed but didn't."
+#endif
 #else
 produceResult :: Bool -> Test.Hspec.Core.Spec.Result
 produceResult succesful =
@@ -98,28 +114,6 @@ shouldFail :: Property -> Property
 shouldFail =
     mapResult $ \res ->
         res
-        { reason = unwords ["Should have failed:", reason res]
-        , expect = not $ expect res
-        }
-
-shouldBeValid :: (Show a, Validity a) => a -> Expectation
-shouldBeValid a = do
-    case prettyValidation a of
-        Right _ -> pure ()
-        Left err ->
-            expectationFailure $
-            unlines
-                [ "'validate' reported this value to be invalid: " ++ show a
-                , err
-                , ""
-                ]
-    unless (isValid a) $
-        expectationFailure $
-        unlines
-            [ "isValid considered this value invalid: " ++ show a
-            , "This is odd because 'validate' reported no issues."
-            , "Are you sure 'Validity' is implemented correctly?"
-            ]
-
-shouldBeInvalid :: (Show a, Validity a) => a -> Expectation
-shouldBeInvalid a = a `shouldNotSatisfy` isValid
+            { reason = unwords ["Should have failed:", reason res]
+            , expect = not $ expect res
+            }

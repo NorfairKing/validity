@@ -1,5 +1,5 @@
 name: genvalidity-hspec
-version: '0.5.0.0'
+version: '0.6.1.0'
 synopsis: Standard spec's for GenValidity instances
 description: ! 'Note: There are companion packages for this library:
 
@@ -16,13 +16,16 @@ description: ! 'Note: There are companion packages for this library:
   * <https://hackage.haskell.org/package/genvalidity-hspec-hashable genvalidity-hspec-hashable>'
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
+copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
 - QuickCheck
 - hspec-core
+
 library:
   source-dirs: src
   exposed-modules:
@@ -41,10 +44,11 @@ library:
   - Test.Validity.Utils
   dependencies:
   - base >=4.9 && <5
-  - genvalidity >=0.4 && <0.5
-  - genvalidity-property >=0.1 && <0.2
-  - hspec >=2.2 && <2.5
-  - validity >=0.4 && <0.5
+  - genvalidity >=0.5
+  - genvalidity-property >=0.2
+  - hspec
+  - validity >=0.5
+
 tests:
   genvalidity-hspec-test:
     main: Spec.hs
@@ -65,5 +69,5 @@ tests:
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.11 && <0.14
+    - doctest
     - genvalidity-hspec

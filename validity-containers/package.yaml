@@ -1,16 +1,18 @@
 name: validity-containers
-version: '0.2.0.0'
+version: '0.3.1.0'
 synopsis: Validity instances for containers
 description: Please see README.md
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
+copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
 - base >=4.7 && <5
-- validity >=0.4 && <0.5
+- validity >=0.5
 - containers
 library:
   source-dirs: src

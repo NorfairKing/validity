@@ -8,5 +8,4 @@ import Data.UUID
 
 -- | A 'UUID' is valid according to the contained words
 instance Validity UUID where
-    isValid = isValid . toWords
-    validate = validateByCheckingName "UUID"
+    validate = delve "words" . toWords

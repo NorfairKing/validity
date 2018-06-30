@@ -100,8 +100,8 @@ checkGen gen genname s =
                      , name
                      ]) $
             let ss (a, b) = (,) <$> s a <*> s b
-            in forAllShrink gen ss $ \(a1, a2) ->
-                   forAllUnchecked $ \int ->
-                       when (a1 == a2) $
-                       let h = hashWithSalt int
-                       in h a1 `shouldBe` h a2
+             in forAllShrink gen ss $ \(a1, a2) ->
+                    forAllUnchecked $ \int ->
+                        when (a1 == a2) $
+                        let h = hashWithSalt int
+                         in h a1 `shouldBe` h a2

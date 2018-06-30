@@ -1,13 +1,16 @@
 name: genvalidity-property
-version: '0.1.0.0'
+version: '0.2.0.2'
 synopsis: Standard properties for functions on `Validity` types
 description: Standard properties for functions on `Validity` types
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2016 Tom Sydney Kerckhove'
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
+copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 library:
   source-dirs: src
   exposed-modules:
@@ -34,10 +37,11 @@ library:
   - Test.Validity.Types
   dependencies:
   - base >=4.7 && <5
-  - validity >=0.4 && <0.5
-  - genvalidity >=0.4 && <0.5
+  - validity >=0.5
+  - genvalidity >=0.5
   - QuickCheck
-  - hspec >=2.1 && <2.5
+  - hspec >=2.1
+
 tests:
   genvalidity-property-doctests:
     main: DocTest.hs
@@ -45,7 +49,7 @@ tests:
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.9 && <0.14
+    - doctest
     - genvalidity-property
     - directory >=1.2 && <1.4
     - filepath >=1.3 && <1.5

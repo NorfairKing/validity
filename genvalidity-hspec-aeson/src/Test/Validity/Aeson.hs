@@ -82,7 +82,8 @@ jsonSpecOnGen gen genname s =
                          ]) $
                 neverFailsToEncodeOnGen gen s
             describe
-                ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString") $
+                ("decode :: Data.ByteString.Lazy.ByteString -> Either String " ++
+                 name) $
                 it
                     (unwords
                          [ "ensures that encode and decode are inverses for"
@@ -118,25 +119,25 @@ encodeAndDecodeAreInversesOnGen gen s =
     forAllShrink gen s $ \(a :: a) ->
         let encoded = JSON.encode a
             errOrDecoded = JSON.eitherDecode encoded
-        in case errOrDecoded of
-               Left err ->
-                   expectationFailure $
-                   unlines
-                       [ "Decoding failed with error"
-                       , err
-                       , "instead of decoding to"
-                       , show a
-                       , "'encode' encoded it to the json"
-                       , show encoded
-                       ]
-               Right decoded ->
-                   unless (decoded == a) $
-                   expectationFailure $
-                   unlines
-                       [ "Decoding succeeded, but the decoded value"
-                       , show decoded
-                       , "differs from expected decoded value"
-                       , show a
-                       , "'encode' encoded it to the json"
-                       , show encoded
-                       ]
+         in case errOrDecoded of
+                Left err ->
+                    expectationFailure $
+                    unlines
+                        [ "Decoding failed with error"
+                        , err
+                        , "instead of decoding to"
+                        , show a
+                        , "'encode' encoded it to the json"
+                        , show encoded
+                        ]
+                Right decoded ->
+                    unless (decoded == a) $
+                    expectationFailure $
+                    unlines
+                        [ "Decoding succeeded, but the decoded value"
+                        , show decoded
+                        , "differs from expected decoded value"
+                        , show a
+                        , "'encode' encoded it to the json"
+                        , show encoded
+                        ]

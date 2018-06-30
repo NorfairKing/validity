@@ -1,11 +1,13 @@
 name: genvalidity-hspec-hashable
-version: '0.1.0.0'
+version: '0.2.0.2'
 synopsis: Standard spec's for Hashable instances
 description: Standard spec's for Hashable instances
 category: Testing
 author: Nick Van den Broeck
-maintainer: syd.kerckhove@gmail.com
-copyright: 2017 Tom Sydney Kerckhove
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
+copyright: 2017-2018 Tom Sydney Kerckhove
 license: MIT
 github: NorfairKing/validity
 extra-source-files:
@@ -13,17 +15,19 @@ extra-source-files:
 dependencies:
 - hashable >=1.2 && <1.3
 - QuickCheck
+
 library:
   source-dirs: src
   exposed-modules:
   - Test.Validity.Hashable
   dependencies:
   - base >=4.9 && <5
-  - validity >=0.4 && <0.5
-  - genvalidity-hspec >=0.5 && <0.6
-  - genvalidity >=0.4 && <0.5
-  - genvalidity-property >=0.1 && <0.2
-  - hspec >=2.2 && <2.5
+  - validity >=0.5
+  - genvalidity-hspec >=0.6
+  - genvalidity >=0.5
+  - genvalidity-property >=0.2
+  - hspec
+
 tests:
   genvalidity-hspec-hashable-test:
     main: Spec.hs
@@ -47,5 +51,5 @@ tests:
     ghc-options: -threaded
     dependencies:
     - base
-    - doctest >=0.11 && <0.14
+    - doctest
     - genvalidity-hspec-hashable

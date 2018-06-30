@@ -15,40 +15,26 @@ import qualified Data.Text.Encoding as E
 import qualified Data.Text.Encoding.Error as E
 import Data.Text.Internal (Text(..))
 import qualified Data.Text.Unsafe as U
-#if !MIN_VERSION_base(4,8,0)
-import Data.Monoid (mconcat)
-#endif
+
 -- | A text is valid if the internal structure is consistent.
 instance Validity Text where
-    isValid t@(Text arr off len) =
-        and
-            [ len >= 0
-            , off >= 0
-            , let c = A.unsafeIndex arr off
-              in len == 0 || c < 0xDC00 || c > 0xDFFF
-                 -- It contains a valid UTF16
-            , (== (Right t :: Either E.UnicodeException Text)) $
-              U.unsafeDupablePerformIO .
-              try .
-              evaluate .
-              E.decodeUtf16LEWith E.strictDecode .
-              LB.toStrict . SBB.toLazyByteString . mconcat . map SBB.word16LE $
-              A.toList arr off len
-            ]
     validate t@(Text arr off len) =
         mconcat
-            [ len >= 0 <?@> "The length is positive."
-            , off >= 0 <?@> "The offset is positive."
-            , (let c = A.unsafeIndex arr off
-               in len == 0 || c < 0xDC00 || c > 0xDFFF) <?@>
-              "The offset character is valid UTF16."
+            [ check (len >= 0) "The length is positive."
+            , check (off >= 0) "The offset is positive."
+            , check
+                  (let c = A.unsafeIndex arr off
+                    in len == 0 || c < 0xDC00 || c > 0xDFFF)
+                  "The offset character is valid UTF16."
                  -- It contains a valid UTF16
-            , ((== (Right t :: Either E.UnicodeException Text)) $
-               U.unsafeDupablePerformIO .
-               try .
-               evaluate .
-               E.decodeUtf16LEWith E.strictDecode .
-               LB.toStrict . SBB.toLazyByteString . mconcat . map SBB.word16LE $
-               A.toList arr off len) <?@>
-              "The bytes can correctly be decoded as UTF16."
+            , check
+                  ((== (Right t :: Either E.UnicodeException Text)) $
+                   U.unsafeDupablePerformIO .
+                   try .
+                   evaluate .
+                   E.decodeUtf16LEWith E.strictDecode .
+                   LB.toStrict .
+                   SBB.toLazyByteString . mconcat . map SBB.word16LE $
+                   A.toList arr off len)
+                  "The bytes can correctly be decoded as UTF16."
             ]

@@ -29,6 +29,8 @@ import Test.Validity.Utils
 
 {-# ANN module "HLint: ignore Use fmap" #-}
 
+{-# ANN module "HLint: ignore Use <$>" #-}
+
 {-# ANN module "HLint: ignore Use >=>" #-}
 
 {-# ANN module "HLint: ignore Use id" #-}
@@ -69,7 +71,7 @@ bindTypeStr =
 --
 -- Example usage:
 --
--- > monadSpecOnArbitrary @[]
+-- > monadSpecOnValid @[]
 monadSpecOnValid ::
        forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, GenValid (f Int))
@@ -80,7 +82,7 @@ monadSpecOnValid = monadSpecWithInts @f genValid
 --
 -- Example usage:
 --
--- > monadSpecOnArbitrary @[]
+-- > monadSpec @[]
 monadSpec ::
        forall (f :: * -> *).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, GenUnchecked (f Int))

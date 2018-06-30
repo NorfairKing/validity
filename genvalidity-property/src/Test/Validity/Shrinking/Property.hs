@@ -9,6 +9,7 @@ module Test.Validity.Shrinking.Property
     , shrinkValidPreservesValid
     , shrinkInvalidPreservesInvalid
     , shrinkingStaysValid
+    , shrinkingStaysValidWithLimit
     , shrinkingStaysInvalid
     , shrinkingPreserves
     ) where
@@ -63,6 +64,15 @@ shrinkingStaysValid ::
     -> Property
 shrinkingStaysValid gen s = shrinkingPreserves gen s isValid
 
+shrinkingStaysValidWithLimit ::
+       forall a. (Show a, Validity a)
+    => Gen a
+    -> (a -> [a])
+    -> Int
+    -> Property
+shrinkingStaysValidWithLimit gen s l =
+    shrinkingPreservesWithLimit gen s l isValid
+
 -- |
 --
 -- prop> shrinkingStaysInvalid (pure (1/0) :: Gen Double) (:[])
@@ -83,3 +93,13 @@ shrinkingPreserves ::
     -> (a -> Bool)
     -> Property
 shrinkingPreserves gen s p = forAll gen $ \d -> not (p d) || all p (s d)
+
+shrinkingPreservesWithLimit ::
+       forall a. Show a
+    => Gen a
+    -> (a -> [a])
+    -> Int
+    -> (a -> Bool)
+    -> Property
+shrinkingPreservesWithLimit gen s l p =
+    forAll gen $ \d -> not (p d) || all p (take l $ s d)

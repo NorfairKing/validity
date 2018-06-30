@@ -20,10 +20,16 @@ main =
         recursiveZift
         preprocessor $
             hindentZiftExcept
-                [ "genvalidity/src/Data/GenRelativeValidity.hs"
+                [ "genvalidity-containers/src/Data/GenValidity/Map.hs"
+                , "genvalidity-containers/src/Data/GenValidity/Set.hs"
+                , "genvalidity-containers/test/Test/Validity/Containers/MapSpec.hs"
+                , "genvalidity-containers/test/Test/Validity/Containers/SetSpec.hs"
+                , "genvalidity-hspec/src/Test/Validity/Utils.hs"
+                , "genvalidity/src/Data/GenRelativeValidity.hs"
                 , "genvalidity/src/Data/GenValidity.hs"
-                , "validity/src/Data/RelativeValidity.hs"
                 , "validity-path/src/Data/Validity/Path.hs"
+                , "validity/src/Data/RelativeValidity.hs"
+                , "validity/src/Data/Validity.hs"
                 ]
         prechecker gitAddAllZift
         checker $ do

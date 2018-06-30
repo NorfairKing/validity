@@ -55,7 +55,7 @@ genValidSpec =
         describe ("GenValid " ++ name) $
             describe ("genValid   :: Gen " ++ name) $
             it ("only generates valid \'" ++ name ++ "\'s") $
-            genValidGeneratesValid @a
+            forAllShrink genValid shrinkValid $ shouldBeValid @a
 
 -- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
 --
@@ -71,7 +71,7 @@ genInvalidSpec =
         describe ("GenInvalid " ++ name) $
             describe ("genInvalid :: Gen " ++ name) $
             it ("only generates invalid \'" ++ name ++ "\'s") $
-            genInvalidGeneratesInvalid @a
+            forAllShrink genInvalid shrinkInvalid $ shouldBeInvalid @a
 
 -- | @genValid@ only generates valid data
 --

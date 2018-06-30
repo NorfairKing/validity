@@ -54,6 +54,9 @@
 {-# LANGUAGE OverlappingInstances  #-}
 #define OVERLAPPING_
 #endif
+#if MIN_VERSION_base(4,9,0)
+{-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
+#endif
 
 module Data.GenValidity
     ( module Data.Validity
@@ -66,14 +69,25 @@ import Data.Fixed (Fixed(..), HasResolution)
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty((:|)))
 #endif
+#if MIN_VERSION_base(4,8,0)
+import Data.Word (Word8, Word16, Word32, Word64)
+#else
 import Data.Word (Word, Word8, Word16, Word32, Word64)
+#endif
+import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Ratio ((%))
 import GHC.Generics
 import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
+#if MIN_VERSION_base(4,8,0)
+import GHC.Natural
+import Control.Monad (forM)
+#else
 import Control.Applicative ((<*>), (<$>), pure)
 import Control.Monad (forM)
+#endif
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
@@ -278,6 +292,69 @@ instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d) =>
                      return (a, b, c, d)
                 ]
 
+instance (GenUnchecked a, GenUnchecked b, GenUnchecked c, GenUnchecked d, GenUnchecked e) =>
+         GenUnchecked (a, b, c, d, e) where
+    genUnchecked =
+        sized $ \n -> do
+            (r, s, t, u, v) <- genSplit5 n
+            a <- resize r genUnchecked
+            b <- resize s genUnchecked
+            c <- resize t genUnchecked
+            d <- resize u genUnchecked
+            e <- resize v genUnchecked
+            return (a, b, c, d, e)
+
+instance (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e) =>
+         GenValid (a, b, c, d, e) where
+    genValid =
+        sized $ \n -> do
+            (r, s, t, u, v) <- genSplit5 n
+            a <- resize r genValid
+            b <- resize s genValid
+            c <- resize t genValid
+            d <- resize u genValid
+            e <- resize v genValid
+            return (a, b, c, d, e)
+
+-- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
+instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d, GenInvalid e) =>
+         GenInvalid (a, b, c, d, e) where
+    genInvalid =
+        sized $ \n -> do
+            (r, s, t, u, v) <- genSplit5 n
+            oneof
+                [ do a <- resize r genInvalid
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genInvalid
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genInvalid
+                     d <- resize u genUnchecked
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genInvalid
+                     e <- resize v genUnchecked
+                     return (a, b, c, d, e)
+                , do a <- resize r genUnchecked
+                     b <- resize s genUnchecked
+                     c <- resize t genUnchecked
+                     d <- resize u genUnchecked
+                     e <- resize v genInvalid
+                     return (a, b, c, d, e)
+                ]
+
 instance GenUnchecked a => GenUnchecked (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]
 
@@ -353,6 +430,31 @@ instance GenUnchecked Int where
     shrinkUnchecked = shrink
 
 instance GenValid Int
+instance GenUnchecked Int8 where
+    genUnchecked = arbitrary
+    shrinkUnchecked = shrink
+
+instance GenValid Int8
+
+instance GenUnchecked Int16 where
+    genUnchecked = arbitrary
+    shrinkUnchecked = shrink
+
+instance GenValid Int16
+
+instance GenUnchecked Int32 where
+    genUnchecked = arbitrary
+    shrinkUnchecked = shrink
+
+instance GenValid Int32
+
+instance GenUnchecked Int64 where
+    genUnchecked = arbitrary
+    shrinkUnchecked = shrink
+
+instance GenValid Int64 where
+    genValid = arbitrary
+    shrinkValid = shrink
 
 instance GenUnchecked Word where
     genUnchecked = arbitrary
@@ -386,30 +488,48 @@ instance GenValid Word64
 
 instance GenUnchecked Float where
     genUnchecked = arbitrary
+#if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked = shrink
+#else
+    shrinkUnchecked _ = []
+#endif
 
 instance GenValid Float where
     genValid = arbitrary
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Float where
-    genInvalid = elements [read "NaN", read "Infinity"]
+    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity", read "-0"]
 
 instance GenUnchecked Double where
     genUnchecked = arbitrary
+#if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked = shrink
+#else
+    shrinkUnchecked _ = []
+#endif
 
 instance GenValid Double
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Double where
-    genInvalid = elements [read "NaN", read "Infinity"]
+    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity", read "-0"]
 
 instance GenUnchecked Integer where
     genUnchecked = arbitrary
     shrinkUnchecked = shrink
 
 instance GenValid Integer
+
+#if MIN_VERSION_base(4,8,0)
+instance GenUnchecked Natural where
+    genUnchecked = fromInteger . abs <$> genUnchecked
+    shrinkUnchecked 0 = []
+    shrinkUnchecked n = [0 .. n-1]
+
+instance GenValid Natural where
+    genValid = fromInteger . abs <$> genValid
+#endif
 
 instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
     genUnchecked = do
@@ -418,11 +538,18 @@ instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
         pure $ n :% d
     shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d)]
 
-instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a)
+instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
+    genValid = do
+      n <- genValid
+      d <- genValid `suchThat` (> 0)
+      pure $ n % d
+    shrinkValid (n :% d) = [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
+
+instance (Integral a, Num a, Ord a, GenValid a) => GenInvalid (Ratio a)
 
 instance HasResolution a => GenUnchecked (Fixed a) where
     genUnchecked = MkFixed <$> genUnchecked
-    shrinkUnchecked = shrink
+    shrinkUnchecked (MkFixed i) = MkFixed <$> shrinkUnchecked i
 
 instance HasResolution a => GenValid (Fixed a)
 
@@ -441,7 +568,7 @@ shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
 upTo :: Int -> Gen Int
 upTo n
     | n <= 0 = pure 0
-    | otherwise = elements [0 .. n]
+    | otherwise = choose (0, n)
 
 -- | 'genSplit a' generates a tuple '(b, c)' such that 'b + c' equals 'a'.
 genSplit :: Int -> Gen (Int, Int)
@@ -471,12 +598,22 @@ genSplit4 n
         (c, d) <- genSplit z
         return (a, b, c, d)
 
+-- | 'genSplit5 a' generates a quadruple '(b, c, d, e, f)' such that 'b + c + d + e + f' equals 'a'.
+genSplit5 :: Int -> Gen (Int, Int, Int, Int, Int)
+genSplit5 n
+    | n < 0 = pure (0, 0, 0, 0, 0)
+    | otherwise = do
+        (y, z) <- genSplit n
+        (a, b, c) <- genSplit3 y
+        (d, e) <- genSplit z
+        return (a, b, c, d, e)
+
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
 arbPartition :: Int -> Gen [Int]
 arbPartition k
     | k <= 0 = pure []
     | otherwise = do
-        first <- elements [1 .. k]
+        first <- choose (1, k)
         rest <- arbPartition $ k - first
         return $ first : rest
 
@@ -524,8 +661,7 @@ class GUncheckedRecursivelyShrink f where
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :*: g) where
   gUncheckedRecursivelyShrink (x :*: y) =
-      [x' :*: y | x' <- gUncheckedRecursivelyShrink x] ++
-      [x :*: y' | y' <- gUncheckedRecursivelyShrink y]
+      [x' :*: y' | x' <- gUncheckedRecursivelyShrink x, y' <- gUncheckedRecursivelyShrink y]
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :+: g) where
   gUncheckedRecursivelyShrink (L1 x) = map L1 (gUncheckedRecursivelyShrink x)

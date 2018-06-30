@@ -1,16 +1,18 @@
 name: validity-uuid
-version: '0.0.0.0'
+version: '0.1.0.2'
 synopsis: Validity instances for uuid
 description: Please see README.md
 category: Web
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2017 Tom Sydney Kerckhove'
+maintainer:
+- syd.kerckhove@gmail.com
+- nick.van.den.broeck666@gmail.com
+copyright: ! 'Copyright: (c) 2017-2018 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
 - base >=4.7 && <5
-- validity >=0.4 && <0.5
+- validity >=0.5
 - uuid
 library:
   source-dirs: src

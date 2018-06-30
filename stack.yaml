@@ -21,13 +21,14 @@ packages:
 - 'validity-bytestring'
 - 'validity-containers'
 - 'validity-path'
+- 'validity-primitive'
 - 'validity-scientific'
 - 'validity-text'
 - 'validity-time'
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
+resolver: lts-11.14
 extra-deps:
-  - hlint-1.9.41
-  - haskell-src-exts-1.19.1
-resolver: lts-10.3
+- hlint-2.0.15
+- extra-1.6.5
