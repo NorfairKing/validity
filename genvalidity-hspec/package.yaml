@@ -47,6 +47,7 @@ library:
   - genvalidity >=0.5
   - genvalidity-property >=0.2
   - hspec
+  - transformers
   - validity >=0.5
 
 tests:
