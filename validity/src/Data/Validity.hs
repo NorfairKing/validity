@@ -432,7 +432,7 @@ instance Validity Word64 where
 instance Validity Float where
     validate f =
         mconcat
-            [ declare "The Float is not Nan." $ not (isNaN f)
+            [ declare "The Float is not NaN." $ not (isNaN f)
             , declare "The Float is not infinite." $ not (isInfinite f)
             ]
 
