@@ -525,6 +525,7 @@ instance GenValid Integer
 instance GenUnchecked Natural where
     genUnchecked = fromInteger . abs <$> genUnchecked
     shrinkUnchecked 0 = []
+    -- Extra case is necessary because 0 - 1 errors for Naturals.
     shrinkUnchecked n = [0 .. n-1]
 
 instance GenValid Natural where
