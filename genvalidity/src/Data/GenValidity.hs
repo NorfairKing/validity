@@ -499,7 +499,7 @@ instance GenValid Float where
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Float where
-    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity", read "-0"]
+    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity"]
 
 instance GenUnchecked Double where
     genUnchecked = arbitrary
@@ -513,7 +513,7 @@ instance GenValid Double
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Double where
-    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity", read "-0"]
+    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity"]
 
 instance GenUnchecked Integer where
     genUnchecked = arbitrary
@@ -525,6 +525,7 @@ instance GenValid Integer
 instance GenUnchecked Natural where
     genUnchecked = fromInteger . abs <$> genUnchecked
     shrinkUnchecked 0 = []
+    -- Extra case is necessary because 0 - 1 errors for Naturals.
     shrinkUnchecked n = [0 .. n-1]
 
 instance GenValid Natural where
