@@ -434,7 +434,6 @@ instance Validity Float where
         mconcat
             [ declare "The Float is not Nan." $ not (isNaN f)
             , declare "The Float is not infinite." $ not (isInfinite f)
-            , declare "The Float is not zegative zero." $ not (isNegativeZero f)
             ]
 
 -- | NOT trivially valid:
@@ -446,7 +445,6 @@ instance Validity Double where
         mconcat
             [ declare "The Double is not NaN." $ not (isNaN d)
             , declare "The Double is not infinite." $ not (isInfinite d)
-            , declare "The Double is not zegative zero." $ not (isNegativeZero d)
             ]
 
 -- | Trivially valid
