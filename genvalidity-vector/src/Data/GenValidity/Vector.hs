@@ -8,15 +8,22 @@ import Data.Functor ((<$>))
 import Data.GenValidity
 import Data.Validity.Vector ()
 
-import Data.Vector (Vector)
 import qualified Data.Vector as V
+import qualified Data.Vector.Storable as SV
 
-instance GenUnchecked v => GenUnchecked (Vector v) where
+instance GenUnchecked v => GenUnchecked (V.Vector v) where
     genUnchecked = V.fromList <$> genUnchecked
     shrinkUnchecked = fmap V.fromList . shrinkUnchecked . V.toList
 
-instance GenValid v => GenValid (Vector v) where
+instance GenValid v => GenValid (V.Vector v) where
     genValid = V.fromList <$> genValid
 
-instance GenInvalid v => GenInvalid (Vector v) where
+instance GenInvalid v => GenInvalid (V.Vector v) where
     genInvalid = V.fromList <$> genInvalid
+
+instance (SV.Storable e, GenUnchecked e) => GenUnchecked (SV.Vector e) where
+    genUnchecked = SV.fromList <$> genUnchecked
+    shrinkUnchecked = fmap SV.fromList . shrinkUnchecked . SV.toList
+
+instance (SV.Storable e, GenValid e) => GenValid (SV.Vector e) where
+    genValid = SV.fromList <$> genValid
