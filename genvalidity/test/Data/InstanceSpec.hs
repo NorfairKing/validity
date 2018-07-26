@@ -20,6 +20,7 @@ import Data.Word
 import Control.Monad
 
 import Test.Hspec
+import Test.Hspec.Core.QuickCheck (modifyMaxSize, modifyMaxSuccess)
 import Test.QuickCheck
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
@@ -49,7 +50,8 @@ spec = do
     threeTupleTests (Proxy :: Proxy Double)
     threeTests (Proxy :: Proxy Rational)
     threeTupleTests (Proxy :: Proxy Rational)
-    threeTests (Proxy :: Proxy (Either Double Double))
+    modifyMaxSize (`quot` 2) $
+        threeTests (Proxy :: Proxy (Either Double Double))
     threeTests (Proxy :: Proxy (Maybe Double))
     threeTests (Proxy :: Proxy (Maybe (Maybe Double)))
     threeTests (Proxy :: Proxy [Double])
@@ -74,11 +76,11 @@ spec = do
     twoTupleTests (Proxy :: Proxy Pico)
 #if MIN_VERSION_base(4,8,0)
     twoTests (Proxy :: Proxy Natural)
-    
+
     twoTupleTests (Proxy :: Proxy Natural)
-    
+
     twoTests (Proxy :: Proxy (Ratio Integer))
-    
+
     twoTupleTests (Proxy :: Proxy (Ratio Int))
 #endif
 #if MIN_VERSION_base(4,9,0)
@@ -89,20 +91,24 @@ twoTupleTests ::
     => Proxy a
     -> Spec
 twoTupleTests proxy = do
-    twoTests $ (,) <$> proxy <*> proxy
-    twoTests $ (,,) <$> proxy <*> proxy <*> proxy
-    twoTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
-    twoTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
+    modifyMaxSize (`quot` 2) $ twoTests $ (,) <$> proxy <*> proxy
+    modifyMaxSize (`quot` 3) $ twoTests $ (,,) <$> proxy <*> proxy <*> proxy
+    modifyMaxSize (`quot` 4) $
+        twoTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
+    modifyMaxSize (`quot` 5) $
+        twoTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 threeTupleTests ::
        forall a. (Show a, Typeable a, GenValid a, GenInvalid a)
     => Proxy a
     -> Spec
 threeTupleTests proxy = do
-    threeTests $ (,) <$> proxy <*> proxy
-    threeTests $ (,,) <$> proxy <*> proxy <*> proxy
-    threeTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
-    threeTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
+    modifyMaxSize (`quot` 2) $ threeTests $ (,) <$> proxy <*> proxy
+    modifyMaxSize (`quot` 3) $ threeTests $ (,,) <$> proxy <*> proxy <*> proxy
+    modifyMaxSize (`quot` 4) $
+        threeTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
+    modifyMaxSize (`quot` 5) $
+        threeTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 twoTests ::
        forall a. (Show a, Typeable a, GenValid a)
@@ -134,7 +140,8 @@ genUncheckedTest proxy = do
             case prettyValidation (a :: a) of
                 Right v -> seq v True
                 Left err -> seq err True
-    it (unwords
+    modifyMaxSuccess (`quot` 5) $
+     it (unwords
             [ "shrinkUnchecked of"
             , nameOf proxy
             , "only produces values that do not crash while validating"
@@ -162,7 +169,13 @@ genValidTest proxy = do
                         , err
                         , ""
                         ]
-    it (unwords ["shrinkValid of", nameOf proxy, "shrinks to only valid values"]) $
+    modifyMaxSuccess (`quot` 5) $
+        it
+            (unwords
+                 [ "shrinkValid of"
+                 , nameOf proxy
+                 , "shrinks to only valid values"
+                 ]) $
         forAll genValid $ \a ->
             forM_ (shrinkValid a) $ \v ->
                 case prettyValidation (v :: a) of
@@ -175,11 +188,13 @@ genValidTest proxy = do
                             , err
                             , ""
                             ]
-    it (unwords
-            [ "shrinkValid of"
-            , nameOf proxy
-            , "only produces values that do not crash while validating"
-            ]) $
+    modifyMaxSuccess (`quot` 5) $
+        it
+            (unwords
+                 [ "shrinkValid of"
+                 , nameOf proxy
+                 , "only produces values that do not crash while validating"
+                 ]) $
         forAll genValid $ \a ->
             forM_ (shrinkValid a) $ \v ->
                 case prettyValidation (v :: a) of
@@ -199,8 +214,13 @@ genInvalidTest proxy = do
                     unlines
                         ["'validate' reported this value to be valid: ", show a]
                 Left e -> seq e $ pure ()
-    it (unwords
-            ["shrinkInvalid of", nameOf proxy, "shrinks to only invalid values"]) $
+    modifyMaxSuccess (`quot` 5) $
+        it
+            (unwords
+                 [ "shrinkInvalid of"
+                 , nameOf proxy
+                 , "shrinks to only invalid values"
+                 ]) $
         forAll genInvalid $ \a ->
             forM_ (shrinkInvalid a) $ \v ->
                 case prettyValidation (v :: a) of
@@ -211,11 +231,13 @@ genInvalidTest proxy = do
                             , show v
                             ]
                     Left e -> seq e $ pure ()
-    it (unwords
-            [ "shrinkInvalid of"
-            , nameOf proxy
-            , "only produces values that do not crash while validating"
-            ]) $
+    modifyMaxSuccess (`quot` 5) $
+        it
+            (unwords
+                 [ "shrinkInvalid of"
+                 , nameOf proxy
+                 , "only produces values that do not crash while validating"
+                 ]) $
         forAll genInvalid $ \a ->
             forM_ (shrinkInvalid a) $ \v ->
                 case prettyValidation (v :: a) of

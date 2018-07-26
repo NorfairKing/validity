@@ -69,5 +69,6 @@ tests:
     dependencies:
     - base
     - hspec
+    - hspec-core
     - QuickCheck
     - genvalidity
