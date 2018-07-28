@@ -106,11 +106,15 @@ lensSpecOnGen ::
     -> Spec
 lensSpecOnGen l genB genBName shrinkB genS genSName shrinkS = do
     parallel $ do
-        it (unwords ["The first lens law holds for", genBName, "and", genSName]) $
+        it
+            (unwords
+                 ["satisfies the first lens law for", genBName, "and", genSName]) $
             lensLaw1 l genB shrinkB genS shrinkS
-        it (unwords ["The second lens law holds for", genSName]) $
+        it (unwords ["satisfies the second lens law for", genSName]) $
             lensLaw2 l genS shrinkS
-        it (unwords ["The third lens law holds for", genBName, "and", genSName]) $
+        it
+            (unwords
+                 ["satisfies the third lens law for", genBName, "and", genSName]) $
             lensLaw3 l genB shrinkB genS shrinkS
 
 -- | A property combinator for the first lens law:
