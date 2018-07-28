@@ -8,6 +8,7 @@ packages:
 - 'genvalidity-hspec-binary'
 - 'genvalidity-hspec-cereal'
 - 'genvalidity-hspec-hashable'
+- 'genvalidity-hspec-optics'
 - 'genvalidity-path'
 - 'genvalidity-property'
 - 'genvalidity-scientific'
@@ -31,4 +32,4 @@ extra-deps:
   - uuid-1.3.13
   - entropy-0.3.8
   - Cabal-2.0.1.1
-resolver: nightly-2018-06-26
+resolver: nightly-2018-07-26
