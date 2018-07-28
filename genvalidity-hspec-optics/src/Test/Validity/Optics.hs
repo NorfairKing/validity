@@ -4,8 +4,6 @@
 {-# LANGUAGE TypeApplications #-}
 
 -- | Standard test `Spec`s for optics
---
--- You will need @TypeApplications@ to use these.
 module Test.Validity.Optics
     ( lensSpecOnValid
     , lensSpec
@@ -23,7 +21,6 @@ import Data.GenValidity
 
 import Test.Hspec
 import Test.QuickCheck
-import Test.Validity.Utils
 
 -- | Standard test spec for properties lenses for valid values
 --
