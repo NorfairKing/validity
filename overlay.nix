@@ -18,6 +18,7 @@ final:
               "genvalidity-hspec-binary"
               "genvalidity-hspec-cereal"
               "genvalidity-hspec-hashable"
+              "genvalidity-hspec-optics"
               "genvalidity-path"
               "genvalidity-property"
               "genvalidity-scientific"
