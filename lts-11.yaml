@@ -8,6 +8,7 @@ packages:
 - 'genvalidity-hspec-binary'
 - 'genvalidity-hspec-cereal'
 - 'genvalidity-hspec-hashable'
+- 'genvalidity-hspec-optics'
 - 'genvalidity-path'
 - 'genvalidity-property'
 - 'genvalidity-scientific'
@@ -27,4 +28,4 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-resolver: lts-11.14
+resolver: lts-11.18
