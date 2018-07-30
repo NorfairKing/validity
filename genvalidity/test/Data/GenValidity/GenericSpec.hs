@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -42,7 +43,7 @@ genValidstructurallySpec proxy =
     it (unwords ["only generates valid", "\"" ++ nameOf proxy ++ "\"s"]) $
     forAll (genValidStructurally :: Gen a) $ \a ->
         case prettyValidation a of
-            Right _ -> pure ()
+            Right _ -> return ()
             Left err ->
                 expectationFailure $
                 unlines
@@ -71,7 +72,7 @@ shrinkValidstructurallySpec proxy = do
         forAll (genValid :: Gen a) $ \a ->
             forM_ (shrinkValidStructurally a) $ \subA ->
                 case prettyValidation subA of
-                    Right _ -> pure ()
+                    Right _ -> return ()
                     Left err ->
                         expectationFailure $
                         unlines
@@ -84,7 +85,9 @@ shrinkValidstructurallySpec proxy = do
     it (unwords
             ["never shrinks to itself for valid", "\"" ++ nameOf proxy ++ "\"s"]) $
         forAll (genValid :: Gen a) $ \a ->
-            forM_ (shrinkValidStructurally a) $ \subA -> subA `shouldNotBe` a
+            forM_ (shrinkValidStructurally a) $ \subA ->
+                when (subA == a) $
+                expectationFailure $ unlines [show a, "was shrunk to itself."]
 
 nameOf ::
        forall a. Typeable a
@@ -95,7 +98,7 @@ nameOf = show . typeRep
 data MyType =
     MyType Double
            Rational
-    deriving (Show, Eq, Generic)
+    deriving (Show, Eq, Generic, Typeable)
 
 instance Validity MyType
 
