@@ -115,13 +115,13 @@ class GenUnchecked a where
     genUnchecked :: Gen a
     default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
         Gen a
-    genUnchecked = to <$> gGenUnchecked
+    genUnchecked = genericGenUnchecked
 
     shrinkUnchecked :: a -> [a]
     default shrinkUnchecked ::
         (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) =>
         a -> [a]
-    shrinkUnchecked = gShrinkUnchecked
+    shrinkUnchecked = genericShrinkUnchecked
 
 -- | A class of types for which valid values can be generated.
 --
@@ -625,6 +625,9 @@ genListOf func =
         pars <- arbPartition size
         forM pars $ \i -> resize i func
 
+genericGenUnchecked :: (Generic a, GGenUnchecked (Rep a)) => Gen a
+genericGenUnchecked = to <$> gGenUnchecked
+
 class GGenUnchecked f where
     gGenUnchecked :: Gen (f a)
 
@@ -649,8 +652,8 @@ instance (GenUnchecked a) => GGenUnchecked (K1 i a) where
 
 -- | Shrink a term to any of its immediate subterms,
 -- and also recursively shrink all subterms.
-gShrinkUnchecked :: (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
-gShrinkUnchecked x = uncheckedSubterms x ++ uncheckedRecursivelyShrink x
+genericShrinkUnchecked :: (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
+genericShrinkUnchecked x = uncheckedSubterms x ++ uncheckedRecursivelyShrink x
 
 -- | Recursively shrink all immediate uncheckedSubterms.
 uncheckedRecursivelyShrink :: (Generic a, GUncheckedRecursivelyShrink (Rep a)) => a -> [a]
@@ -735,3 +738,31 @@ instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) a where
 instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) b where
   gUncheckedSubtermsIncl (K1 _) = []
 
+
+
+genValidStructurally :: (Validity a, Generic a, GGenValid (Rep a)) => Gen a
+genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
+
+genValidStructurallyWithoutExtraChecking :: (Generic a, GGenValid (Rep a)) => Gen a
+genValidStructurallyWithoutExtraChecking = to <$> gGenValid
+
+class GGenValid f where
+    gGenValid :: Gen (f a)
+
+instance GGenValid U1 where
+    gGenValid = pure U1
+
+instance (GGenValid a, GGenValid b) => GGenValid (a :*: b) where
+    gGenValid = do
+        g1 <- gGenValid
+        g2 <- gGenValid
+        pure $ g1 :*: g2
+
+instance (GGenValid a, GGenValid b) => GGenValid (a :+: b) where
+    gGenValid = oneof [L1 <$> gGenValid, R1 <$> gGenValid]
+
+instance (GGenValid a) => GGenValid (M1 i c a) where
+    gGenValid = M1 <$> gGenValid
+
+instance (GenValid a) => GGenValid (K1 i a) where
+    gGenValid = K1 <$> genValid
