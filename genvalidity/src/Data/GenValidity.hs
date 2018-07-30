@@ -115,13 +115,13 @@ class GenUnchecked a where
     genUnchecked :: Gen a
     default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
         Gen a
-    genUnchecked = to <$> gGenUnchecked
+    genUnchecked = genericGenUnchecked
 
     shrinkUnchecked :: a -> [a]
     default shrinkUnchecked ::
         (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) =>
         a -> [a]
-    shrinkUnchecked = gShrinkUnchecked
+    shrinkUnchecked = genericShrinkUnchecked
 
 -- | A class of types for which valid values can be generated.
 --
@@ -625,6 +625,9 @@ genListOf func =
         pars <- arbPartition size
         forM pars $ \i -> resize i func
 
+genericGenUnchecked :: (Generic a, GGenUnchecked (Rep a)) => Gen a
+genericGenUnchecked = to <$> gGenUnchecked
+
 class GGenUnchecked f where
     gGenUnchecked :: Gen (f a)
 
@@ -649,8 +652,8 @@ instance (GenUnchecked a) => GGenUnchecked (K1 i a) where
 
 -- | Shrink a term to any of its immediate subterms,
 -- and also recursively shrink all subterms.
-gShrinkUnchecked :: (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
-gShrinkUnchecked x = uncheckedSubterms x ++ uncheckedRecursivelyShrink x
+genericShrinkUnchecked :: (Generic a, GUncheckedRecursivelyShrink (Rep a), GUncheckedSubterms (Rep a) a) => a -> [a]
+genericShrinkUnchecked x = uncheckedSubterms x ++ uncheckedRecursivelyShrink x
 
 -- | Recursively shrink all immediate uncheckedSubterms.
 uncheckedRecursivelyShrink :: (Generic a, GUncheckedRecursivelyShrink (Rep a)) => a -> [a]
@@ -735,3 +738,122 @@ instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) a where
 instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) b where
   gUncheckedSubtermsIncl (K1 _) = []
 
+
+genValidStructurally :: (Validity a, Generic a, GGenValid (Rep a)) => Gen a
+genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
+
+genValidStructurallyWithoutExtraChecking :: (Generic a, GGenValid (Rep a)) => Gen a
+genValidStructurallyWithoutExtraChecking = to <$> gGenValid
+
+class GGenValid f where
+    gGenValid :: Gen (f a)
+
+instance GGenValid U1 where
+    gGenValid = pure U1
+
+instance (GGenValid a, GGenValid b) => GGenValid (a :*: b) where
+    gGenValid = do
+        g1 <- gGenValid
+        g2 <- gGenValid
+        pure $ g1 :*: g2
+
+instance (GGenValid a, GGenValid b) => GGenValid (a :+: b) where
+    gGenValid = oneof [L1 <$> gGenValid, R1 <$> gGenValid]
+
+instance (GGenValid a) => GGenValid (M1 i c a) where
+    gGenValid = M1 <$> gGenValid
+
+instance (GenValid a) => GGenValid (K1 i a) where
+    gGenValid = K1 <$> genValid
+
+
+-- | Shrink a term to any of its immediate valid subterms,
+-- and also recursively shrink all subterms.
+shrinkValidStructurally :: (Validity a, Generic a, GValidRecursivelyShrink (Rep a), GValidSubterms (Rep a) a) => a -> [a]
+shrinkValidStructurally = filter isValid . shrinkValidStructurallyWithoutExtraFiltering
+
+shrinkValidStructurallyWithoutExtraFiltering :: (Generic a, GValidRecursivelyShrink (Rep a), GValidSubterms (Rep a) a) => a -> [a]
+shrinkValidStructurallyWithoutExtraFiltering x = structurallyValidSubterms x ++ structurallyValidRecursivelyShrink x
+
+-- | Recursively shrink all immediate structurally valid subterms.
+structurallyValidRecursivelyShrink :: (Generic a, GValidRecursivelyShrink (Rep a)) => a -> [a]
+structurallyValidRecursivelyShrink = map to . gValidRecursivelyShrink . from
+
+class GValidRecursivelyShrink f where
+  gValidRecursivelyShrink :: f a -> [f a]
+
+instance (GValidRecursivelyShrink f, GValidRecursivelyShrink g) => GValidRecursivelyShrink (f :*: g) where
+  gValidRecursivelyShrink (x :*: y) =
+      [x' :*: y' | x' <- gValidRecursivelyShrink x, y' <- gValidRecursivelyShrink y]
+
+instance (GValidRecursivelyShrink f, GValidRecursivelyShrink g) => GValidRecursivelyShrink (f :+: g) where
+  gValidRecursivelyShrink (L1 x) = map L1 (gValidRecursivelyShrink x)
+  gValidRecursivelyShrink (R1 x) = map R1 (gValidRecursivelyShrink x)
+
+instance GValidRecursivelyShrink f => GValidRecursivelyShrink (M1 i c f) where
+  gValidRecursivelyShrink (M1 x) = map M1 (gValidRecursivelyShrink x)
+
+instance GenValid a => GValidRecursivelyShrink (K1 i a) where
+  gValidRecursivelyShrink (K1 x) = map K1 (shrinkValid x)
+
+instance GValidRecursivelyShrink U1 where
+  gValidRecursivelyShrink U1 = []
+
+instance GValidRecursivelyShrink V1 where
+  -- The empty type can't be shrunk to anything.
+  gValidRecursivelyShrink _ = []
+
+
+-- | All immediate validSubterms of a term.
+structurallyValidSubterms :: (Generic a, GValidSubterms (Rep a) a) => a -> [a]
+structurallyValidSubterms = gValidSubterms . from
+
+
+class GValidSubterms f a where
+  gValidSubterms :: f a -> [a]
+
+instance GValidSubterms V1 a where
+  gValidSubterms _ = []
+
+instance GValidSubterms U1 a where
+  gValidSubterms U1 = []
+
+instance (GValidSubtermsIncl f a, GValidSubtermsIncl g a) => GValidSubterms (f :*: g) a where
+  gValidSubterms (l :*: r) = gValidSubtermsIncl l ++ gValidSubtermsIncl r
+
+instance (GValidSubtermsIncl f a, GValidSubtermsIncl g a) => GValidSubterms (f :+: g) a where
+  gValidSubterms (L1 x) = gValidSubtermsIncl x
+  gValidSubterms (R1 x) = gValidSubtermsIncl x
+
+instance GValidSubterms f a => GValidSubterms (M1 i c f) a where
+  gValidSubterms (M1 x) = gValidSubterms x
+
+instance GValidSubterms (K1 i a) b where
+  gValidSubterms (K1 _) = []
+
+
+class GValidSubtermsIncl f a where
+  gValidSubtermsIncl :: f a -> [a]
+
+instance GValidSubtermsIncl V1 a where
+  gValidSubtermsIncl _ = []
+
+instance GValidSubtermsIncl U1 a where
+  gValidSubtermsIncl U1 = []
+
+instance (GValidSubtermsIncl f a, GValidSubtermsIncl g a) => GValidSubtermsIncl (f :*: g) a where
+  gValidSubtermsIncl (l :*: r) = gValidSubtermsIncl l ++ gValidSubtermsIncl r
+
+instance (GValidSubtermsIncl f a, GValidSubtermsIncl g a) => GValidSubtermsIncl (f :+: g) a where
+  gValidSubtermsIncl (L1 x) = gValidSubtermsIncl x
+  gValidSubtermsIncl (R1 x) = gValidSubtermsIncl x
+
+instance GValidSubtermsIncl f a => GValidSubtermsIncl (M1 i c f) a where
+  gValidSubtermsIncl (M1 x) = gValidSubtermsIncl x
+
+-- This is the important case: We've found a term of the same type.
+instance OVERLAPPING_ GValidSubtermsIncl (K1 i a) a where
+  gValidSubtermsIncl (K1 x) = [x]
+
+instance OVERLAPPING_ GValidSubtermsIncl (K1 i a) b where
+  gValidSubtermsIncl (K1 _) = []
