@@ -8,6 +8,8 @@ module Data.GenValidity.GenericSpec
 
 import GHC.Generics (Generic, Rep)
 
+import Control.Monad
+
 import Test.Hspec
 import Test.QuickCheck
 
@@ -24,6 +26,12 @@ spec = do
         genValidstructurallySpec (Proxy :: Proxy (Maybe Double))
         genValidstructurallySpec (Proxy :: Proxy (Either Double Rational))
         genValidstructurallySpec (Proxy :: Proxy MyType)
+    describe "shrinkValidStructurally" $ do
+        shrinkValidstructurallySpec (Proxy :: Proxy Bool)
+        shrinkValidstructurallySpec (Proxy :: Proxy Ordering)
+        shrinkValidstructurallySpec (Proxy :: Proxy (Maybe Double))
+        shrinkValidstructurallySpec (Proxy :: Proxy (Either Double Rational))
+        shrinkValidstructurallySpec (Proxy :: Proxy MyType)
 
 genValidstructurallySpec ::
        forall a.
@@ -31,7 +39,7 @@ genValidstructurallySpec ::
     => Proxy a
     -> Spec
 genValidstructurallySpec proxy =
-    it (unwords ["only generates valid", nameOf proxy]) $
+    it (unwords ["only generates valid", "\"" ++ nameOf proxy ++ "\"s"]) $
     forAll (genValidStructurally :: Gen a) $ \a ->
         case prettyValidation a of
             Right _ -> pure ()
@@ -45,6 +53,39 @@ genValidstructurallySpec proxy =
                     , ""
                     ]
 
+shrinkValidstructurallySpec ::
+       forall a.
+       ( Validity a
+       , Show a
+       , Eq a
+       , Typeable a
+       , Generic a
+       , GenValid a
+       , GValidRecursivelyShrink (Rep a)
+       , GValidSubterms (Rep a) a
+       )
+    => Proxy a
+    -> Spec
+shrinkValidstructurallySpec proxy = do
+    it (unwords ["only shrinks to valid", "\"" ++ nameOf proxy ++ "\"s"]) $
+        forAll (genValid :: Gen a) $ \a ->
+            forM_ (shrinkValidStructurally a) $ \subA ->
+                case prettyValidation subA of
+                    Right _ -> pure ()
+                    Left err ->
+                        expectationFailure $
+                        unlines
+                            [ "'validate' reported this value to be invalid: "
+                            , show subA
+                            , "with explanation"
+                            , err
+                            , "but it should have been valid from shrinking"
+                            ]
+    it (unwords
+            ["never shrinks to itself for valid", "\"" ++ nameOf proxy ++ "\"s"]) $
+        forAll (genValid :: Gen a) $ \a ->
+            forM_ (shrinkValidStructurally a) $ \subA -> subA `shouldNotBe` a
+
 nameOf ::
        forall a. Typeable a
     => Proxy a
@@ -57,3 +98,7 @@ data MyType =
     deriving (Show, Eq, Generic)
 
 instance Validity MyType
+
+instance GenUnchecked MyType
+
+instance GenValid MyType
