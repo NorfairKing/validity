@@ -48,6 +48,7 @@ module Data.Validity
     , annotate
     , delve
     , decorate
+    , decorateList
     , invalid
     , valid
     -- * Utilities
@@ -249,6 +250,13 @@ delve = flip annotate
 decorate :: String -> Validation -> Validation
 decorate = flip annotateValidation
 
+-- | Decorate a piecewise validation of a list with their location in the list
+decorateList :: [a] -> (a -> Validation) -> Validation
+decorateList as func = mconcat $
+  flip map (zip [0..] as) $ \(i, a) ->
+  decorate (unwords ["The element at index", show (i :: Integer), "in the list"]) $
+  func a
+
 -- | Construct a trivially invalid 'Validation'
 --
 -- Example:
@@ -339,17 +347,8 @@ instance ( Validity a
 -- If the empty list should not be considered valid as part of your custom data
 -- type, make sure to write a custom @Validity instance@
 instance Validity a => Validity [a] where
-    validate =
-        mconcat .
-        map
-            (\(ix, e) ->
-                 annotate e $
-                 unwords
-                     [ "The element at index"
-                     , show (ix :: Integer)
-                     , "in the list"
-                     ]) .
-        zip [0 ..]
+    validate = flip decorateList validate
+
 #if MIN_VERSION_base(4,9,0)
 -- | A nonempty list is valid if all the elements are valid.
 --
