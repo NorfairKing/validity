@@ -57,7 +57,16 @@ lensSpecOnValid l =
 --
 -- > lensSpec ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
 lensSpec ::
-       forall s b. (Show b, Eq b, GenUnchecked b, Show s, Eq s, GenUnchecked s)
+       forall s b.
+       ( Show b
+       , Eq b
+       , GenUnchecked b
+       , Validity b
+       , Show s
+       , Eq s
+       , GenUnchecked s
+       , Validity s
+       )
     => Lens s s b b
     -> Spec
 lensSpec l =
@@ -76,7 +85,16 @@ lensSpec l =
 --
 -- > lensSpecOnArbitrary ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
 lensSpecOnArbitrary ::
-       forall s b. (Show b, Eq b, Arbitrary b, Show s, Eq s, Arbitrary s)
+       forall s b.
+       ( Show b
+       , Eq b
+       , Arbitrary b
+       , Validity b
+       , Show s
+       , Eq s
+       , Arbitrary s
+       , Validity s
+       )
     => Lens s s b b
     -> Spec
 lensSpecOnArbitrary l =
@@ -102,7 +120,7 @@ lensSpecOnArbitrary l =
 -- >      "tuples of negative valid doubles"
 -- >      (const [])
 lensSpecOnGen ::
-       (Show b, Eq b, Show s, Eq s)
+       (Show b, Eq b, Validity b, Show s, Eq s, Validity s)
     => Lens s s b b
     -> Gen b
     -> String
@@ -123,6 +141,9 @@ lensSpecOnGen l genB genBName shrinkB genS genSName shrinkS = do
             (unwords
                  ["satisfies the third lens law for", genBName, "and", genSName]) $
             lensLaw3 l genB shrinkB genS shrinkS
+        it (unwords ["gets valid values from", genSName, "values"]) $ lensGettingProducesValidOnGen l genS shrinkS
+        it (unwords ["produces valid values when it is used to set", genBName, "values on", genSName, "values"]) $
+            lensSettingProducesValidOnGen l genB shrinkB genS shrinkS
 
 -- | A property combinator for the first lens law:
 --

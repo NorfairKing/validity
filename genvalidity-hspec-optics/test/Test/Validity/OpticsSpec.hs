@@ -68,9 +68,9 @@ spec = do
             ((,) <$> (negate . abs <$> genValid) <*> (negate . abs <$> genValid))
             (const [])
     describe "myBoolLens" $
-        lensSpec myBoolLens -- For any unchecked value, prefer this version if you can.
+        lensSpecOnValid myBoolLens
     describe "myRationalLens" $
-        lensSpecOnValid myRationalLens -- Only for valid values
+        lensSpecOnValid myRationalLens
 
 data MyRecord = MyRecord
     { myBool :: Bool
