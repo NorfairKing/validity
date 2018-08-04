@@ -610,12 +610,14 @@ genSplit5 n
 
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
 arbPartition :: Int -> Gen [Int]
-arbPartition k
-    | k <= 0 = pure []
-    | otherwise = do
-        first <- choose (1, k)
-        rest <- arbPartition $ k - first
-        return $ first : rest
+arbPartition i = go i >>= shuffle
+  where
+    go k
+      | k <= 0 = pure []
+      | otherwise = do
+          first <- choose (1, k)
+          rest <- arbPartition $ k - first
+          return $ first : rest
 
 -- | A version of @listOf@ that takes size into account more accurately.
 genListOf :: Gen a -> Gen [a]
