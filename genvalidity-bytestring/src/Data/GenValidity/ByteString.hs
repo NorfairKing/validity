@@ -9,12 +9,19 @@ import Data.Validity.ByteString ()
 import Data.Functor ((<$>))
 #endif
 import qualified Data.ByteString as SB
-import Data.ByteString (ByteString)
+import qualified Data.ByteString.Internal as SB
 
-instance GenUnchecked ByteString where
-    genUnchecked = SB.pack <$> genUnchecked
-    shrinkUnchecked = fmap SB.pack . shrinkUnchecked . SB.unpack
+-- TODO what do we do about the foreign pointer?
+instance GenUnchecked SB.ByteString where
+    genUnchecked = do
+        ws <- genUnchecked
+        let SB.PS p o l = SB.pack ws
+        SB.PS p <$> genUnchecked <*> genUnchecked
+    shrinkUnchecked (SB.PS p o l) =
+        [SB.PS p o' l' | (o', l') <- shrinkUnchecked (o, l)]
 
-instance GenValid ByteString
+instance GenValid SB.ByteString where
+    genValid = SB.pack <$> genValid
+    shrinkValid = fmap SB.pack . shrinkValid . SB.unpack
 
-instance GenInvalid ByteString
+instance GenInvalid SB.ByteString

@@ -8,13 +8,13 @@ import Test.QuickCheck
 import Data.GenValidity
 import Data.GenValidity.ByteString ()
 
-import Data.ByteString (ByteString)
+import qualified Data.ByteString as SB (ByteString)
 
 spec :: Spec
 spec = do
     describe "genValid" $
         it "generates valid bytestring" $
-        forAll (genValid :: Gen ByteString) isValid
-    describe "genUnchecked `suchThat` isValid" $
-        it "generates valid bytestring" $
-        forAll ((genUnchecked :: Gen ByteString) `suchThat` isValid) isValid
+        forAll (genValid :: Gen SB.ByteString) isValid
+    describe "genInvalid" $
+        it "generates invalid bytestring" $
+        forAll (genInvalid :: Gen SB.ByteString) isInvalid
