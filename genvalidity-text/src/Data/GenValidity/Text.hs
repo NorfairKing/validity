@@ -10,7 +10,7 @@ import Test.QuickCheck
 
 import Control.Monad
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative (pure)
+import Control.Applicative ((<*>), pure)
 import Data.Functor ((<$>))
 #endif
 import qualified Data.Text as ST
