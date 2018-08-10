@@ -508,14 +508,15 @@ instance GenInvalid Float where
     genInvalid = elements [read "NaN", read "Infinity", read "-Infinity"]
 
 instance GenUnchecked Double where
-    genUnchecked = arbitrary
+    genUnchecked = frequency [(9, genValid), (1, genInvalid)]
 #if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked = shrink
 #else
     shrinkUnchecked _ = []
 #endif
 
-instance GenValid Double
+instance GenValid Double where
+    genValid = arbitrary
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Double where

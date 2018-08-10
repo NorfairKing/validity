@@ -32,8 +32,8 @@ commutativeOnGens op gen s =
 
 -- |
 --
--- prop> commutative ((+) :: Double -> Double -> Double)
--- prop> commutative ((*) :: Double -> Double -> Double)
+-- prop> commutativeOnValids ((+) :: Double -> Double -> Double)
+-- prop> commutativeOnValids ((*) :: Double -> Double -> Double)
 commutativeOnValids :: (Show a, Eq a, GenValid a) => (a -> a -> a) -> Property
 commutativeOnValids op = commutativeOnGens op genValid shrinkValid
 
