@@ -8,6 +8,7 @@ import Data.Validity.ByteString ()
 import Test.QuickCheck
 #if !MIN_VERSION_base(4,8,0)
 import Data.Functor ((<$>))
+import Control.Applicative ((<*>), pure)
 #endif
 import qualified Data.ByteString as SB
 import qualified Data.ByteString.Internal as SB
