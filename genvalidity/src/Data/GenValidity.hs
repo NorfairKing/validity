@@ -81,6 +81,11 @@ import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
+#if !MIN_VERSION_QuickCheck(2,8,0)
+import Data.List (sortBy)
+import Data.Ord (comparing)
+#endif
+
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
 import Control.Monad (forM)
@@ -617,12 +622,22 @@ genSplit5 n
 
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
 arbPartition :: Int -> Gen [Int]
-arbPartition k
-    | k <= 0 = pure []
-    | otherwise = do
-        first <- choose (1, k)
-        rest <- arbPartition $ k - first
-        return $ first : rest
+arbPartition i = go i >>= shuffle
+  where
+    go k
+      | k <= 0 = pure []
+      | otherwise = do
+          first <- choose (1, k)
+          rest <- arbPartition $ k - first
+          return $ first : rest
+
+#if !MIN_VERSION_QuickCheck(2,8,0)
+-- | Generates a random permutation of the given list.
+shuffle :: [a] -> Gen [a]
+shuffle xs = do
+  ns <- vectorOf (length xs) (choose (minBound :: Int, maxBound))
+  return (map snd (sortBy (comparing fst) (zip ns xs)))
+#endif
 
 -- | A version of @listOf@ that takes size into account more accurately.
 genListOf :: Gen a -> Gen [a]
