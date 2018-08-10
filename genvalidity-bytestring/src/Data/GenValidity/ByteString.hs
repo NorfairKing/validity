@@ -18,7 +18,7 @@ import qualified Data.ByteString.Lazy.Internal as LB
 instance GenUnchecked SB.ByteString where
     genUnchecked = do
         ws <- genUnchecked
-        let SB.PS p o l = SB.pack ws
+        let SB.PS p _ _ = SB.pack ws
         SB.PS p <$> genUnchecked <*> genUnchecked
     shrinkUnchecked (SB.PS p o l) =
         [SB.PS p o' l' | (o', l') <- shrinkUnchecked (o, l)]
@@ -34,7 +34,7 @@ instance GenUnchecked LB.ByteString where
         sized $ \n ->
             case n of
                 0 -> pure LB.Empty
-                n -> do
+                _ -> do
                     (a, b) <- genSplit n
                     sb <- resize a genUnchecked
                     lb <- resize b genUnchecked

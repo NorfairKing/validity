@@ -12,7 +12,7 @@ import qualified Data.ByteString.Lazy.Internal as LB
 -- | A 'ByteString' is trivially valid.
 -- TODO there's nothing we can do about the foreign pointer, I think?
 instance Validity SB.ByteString where
-    validate (SB.PS fptr off len) =
+    validate (SB.PS _ off len) =
         mconcat
             [ delve "offset" off
             , delve "length" len

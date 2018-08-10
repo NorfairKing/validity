@@ -18,7 +18,7 @@ spec = do
         forAll (genUnchecked :: Gen SB.ByteString) $ \v ->
             case prettyValidation v of
                 Left e -> seq e True
-                Right v -> seq v True
+                Right v_ -> seq v_ True
     describe "genValid :: Gen SB.ByteString" $
         it "generates valid strict bytestring" $
         forAll (genValid :: Gen SB.ByteString) isValid
@@ -30,7 +30,7 @@ spec = do
         forAll (genUnchecked :: Gen LB.ByteString) $ \v ->
             case prettyValidation v of
                 Left e -> seq e True
-                Right v -> seq v True
+                Right v_ -> seq v_ True
     describe "genValid :: Gen LB.ByteString" $
         it "generates valid lazy bytestring" $
         forAll (genValid :: Gen LB.ByteString) isValid
