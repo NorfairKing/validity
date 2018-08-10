@@ -142,6 +142,12 @@ class (Validity a, GenUnchecked a) =>
     -- data, otherwise your testing may not cover all cases.
     genValid = genUnchecked `suchThat` isValid
 
+    -- | Shrink a valid value.
+    --
+    -- It is important that this shrinking function only shrinks values to valid values.
+    -- If `shrinkValid` ever shrinks a value to an invalid value, the test that is being shrunk for
+    -- might fail for a different reason than for the reason that it originally failed.
+    -- This would lead to very confusing error messages.
     shrinkValid :: a -> [a]
     shrinkValid = filter isValid . shrinkUnchecked
 
