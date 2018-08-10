@@ -141,8 +141,16 @@ lensSpecOnGen l genB genBName shrinkB genS genSName shrinkS = do
             (unwords
                  ["satisfies the third lens law for", genBName, "and", genSName]) $
             lensLaw3 l genB shrinkB genS shrinkS
-        it (unwords ["gets valid values from", genSName, "values"]) $ lensGettingProducesValidOnGen l genS shrinkS
-        it (unwords ["produces valid values when it is used to set", genBName, "values on", genSName, "values"]) $
+        it (unwords ["gets valid values from", genSName, "values"]) $
+            lensGettingProducesValidOnGen l genS shrinkS
+        it
+            (unwords
+                 [ "produces valid values when it is used to set"
+                 , genBName
+                 , "values on"
+                 , genSName
+                 , "values"
+                 ]) $
             lensSettingProducesValidOnGen l genB shrinkB genS shrinkS
 
 -- | A property combinator for the first lens law:
@@ -202,9 +210,7 @@ lensLaw3 l genB shrinkB genS shrinkS =
 --
 -- prop> lensGettingProducesValidOnValid ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
 lensGettingProducesValidOnValid ::
-       (Show s, GenValid s, Show b, GenValid b, Validity b)
-    => Lens s s b b
-    -> Property
+       (Show s, GenValid s, Show b, GenValid b) => Lens s s b b -> Property
 lensGettingProducesValidOnValid l =
     lensGettingProducesValidOnGen l genValid shrinkValid
 
@@ -214,9 +220,7 @@ lensGettingProducesValidOnValid l =
 --
 -- prop> lensGettingProducesValid ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
 lensGettingProducesValid ::
-       (Show s, GenUnchecked s, Show b, GenUnchecked b, Validity b)
-    => Lens s s b b
-    -> Property
+       (Show s, GenUnchecked s, Show b, Validity b) => Lens s s b b -> Property
 lensGettingProducesValid l =
     lensGettingProducesValidOnGen l genUnchecked shrinkUnchecked
 
@@ -226,7 +230,7 @@ lensGettingProducesValid l =
 --
 -- prop> lensGettingProducesValidOnArbitrary ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
 lensGettingProducesValidOnArbitrary ::
-       (Show s, Arbitrary s, Show b, Arbitrary b, Validity b)
+       (Show s, Arbitrary s, Show b,  Validity b)
     => Lens s s b b
     -> Property
 lensGettingProducesValidOnArbitrary l =
