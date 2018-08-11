@@ -9,16 +9,17 @@ import Data.Validity
 
 import qualified Data.ByteString.Builder as SBB
 import qualified Data.ByteString.Lazy as LB
-import Data.Text ()
+import qualified Data.Text as ST
 import qualified Data.Text.Array as A
 import qualified Data.Text.Encoding as E
 import qualified Data.Text.Encoding.Error as E
-import Data.Text.Internal (Text(..))
+import qualified Data.Text.Internal as ST
+import qualified Data.Text.Internal.Lazy as LT
 import qualified Data.Text.Unsafe as U
 
 -- | A text is valid if the internal structure is consistent.
-instance Validity Text where
-    validate t@(Text arr off len) =
+instance Validity ST.Text where
+    validate t@(ST.Text arr off len) =
         mconcat
             [ check (len >= 0) "The length is positive."
             , check (off >= 0) "The offset is positive."
@@ -28,7 +29,7 @@ instance Validity Text where
                   "The offset character is valid UTF16."
                  -- It contains a valid UTF16
             , check
-                  ((== (Right t :: Either E.UnicodeException Text)) $
+                  ((== (Right t :: Either E.UnicodeException ST.Text)) $
                    U.unsafeDupablePerformIO .
                    try .
                    evaluate .
@@ -37,4 +38,14 @@ instance Validity Text where
                    SBB.toLazyByteString . mconcat . map SBB.word16LE $
                    A.toList arr off len)
                   "The bytes can correctly be decoded as UTF16."
+            ]
+
+-- | A lazy text value is valid if all the internal chunks are valid and nonempty
+instance Validity LT.Text where
+    validate LT.Empty = valid
+    validate (LT.Chunk st lt) =
+        mconcat
+            [ delve "The strict chunk" st
+            , declare "The strict chunk is not empty" $ not $ ST.null st
+            , delve "The lazy chunk" lt
             ]
