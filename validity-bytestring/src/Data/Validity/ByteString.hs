@@ -9,7 +9,11 @@ import qualified Data.ByteString.Internal as SB
 import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Internal as LB
 
--- | A 'ByteString' is trivially valid.
+-- | A 'ByteString' is NOT trivially valid.
+--
+-- The offset and the length both need to be positive.
+-- Note that the length does not need to be greater than, or equal to, the offset.
+--
 -- TODO there's nothing we can do about the foreign pointer, I think?
 instance Validity SB.ByteString where
     validate (SB.PS _ off len) =
@@ -18,7 +22,6 @@ instance Validity SB.ByteString where
             , delve "length" len
             , declare "The offset is positive" $ off >= 0
             , declare "The length is positive" $ len >= 0
-            , declare "The length is greater than the offset" $ len >= off
             ]
 
 -- | A lazy 'ByteString' is valid according to its chunks.

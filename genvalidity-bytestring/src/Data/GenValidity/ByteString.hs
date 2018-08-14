@@ -7,18 +7,22 @@ import Data.GenValidity
 import Data.Validity.ByteString ()
 import Test.QuickCheck
 #if !MIN_VERSION_base(4,8,0)
-import Data.Functor ((<$>))
 import Control.Applicative ((<*>), pure)
+import Data.Functor ((<$>))
 #endif
 import qualified Data.ByteString as SB
 import qualified Data.ByteString.Internal as SB
 import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Internal as LB
 
--- TODO what do we do about the foreign pointer?
+-- | WARNING: Unchecked ByteStrings are *seriously* broken.
+-- The pointer may still point to something which is fine, but
+-- the offset and length will most likely be complete nonsense.
+-- This will most-likely lead to segfaults.
 instance GenUnchecked SB.ByteString where
     genUnchecked = do
         ws <- genUnchecked
+        -- TODO what do we do about the foreign pointer?
         let SB.PS p _ _ = SB.pack ws
         SB.PS p <$> genUnchecked <*> genUnchecked
     shrinkUnchecked (SB.PS p o l) =

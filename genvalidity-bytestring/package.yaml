@@ -36,7 +36,8 @@ tests:
     - -fno-warn-name-shadowing
     dependencies:
     - base
-    - hspec
+    - deepseq
     - genvalidity
     - genvalidity-bytestring
     - genvalidity-hspec
+    - hspec
