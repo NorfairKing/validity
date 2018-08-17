@@ -4,7 +4,7 @@ final:
     {
       validityPackages =
             let validityPkg = name:
-                (buildStrictly (final.haskellPackages.callCabal2nix name (../. + "/${name}") {}));
+                (failOnAllWarnings (final.haskellPackages.callCabal2nix name (../. + "/${name}") {}));
             in final.lib.genAttrs [
               "genvalidity"
               "genvalidity-aeson"
