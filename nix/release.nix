@@ -1,4 +1,4 @@
-let pkgs = import (./default.nix);
+let pkgs = import (../default.nix);
 in {
   release = 
     with pkgs.haskellPackages;
