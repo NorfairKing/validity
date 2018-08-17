@@ -69,8 +69,6 @@ matrix:
 
   - env: 
       - BUILD_KIND="nix"
-      - STACK_YAML="lts-2.yaml"
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity"
 
   # Nightly builds are allowed to fail
   - env: 

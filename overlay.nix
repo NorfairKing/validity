@@ -2,12 +2,9 @@ final:
   previous:
     with final.haskell.lib;
     {
-      haskellPackages = previous.haskellPackages.override (old: {
-        overrides = final.lib.composeExtensions (old.overrides or (_: _: {})) (
-
-          self: super:
+      validityPackages =
             let validityPkg = name:
-                (self.callCabal2nix name (./. + "/${name}") {});
+                (buildStrictly (final.haskellPackages.callCabal2nix name (./. + "/${name}") {}));
             in final.lib.genAttrs [
               "genvalidity"
               "genvalidity-aeson"
@@ -38,7 +35,11 @@ final:
               "validity-unordered-containers"
               "validity-uuid"
               "validity-vector"
-            ] validityPkg
+            ] validityPkg;
+
+      haskellPackages = previous.haskellPackages.override (old: {
+        overrides = final.lib.composeExtensions (old.overrides or (_: _: {})) (
+          self: super: final.validityPackages
         );
       });
     }
