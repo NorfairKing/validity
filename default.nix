@@ -1,4 +1,4 @@
-import (import ./nixpkgs.nix) {
-  overlays = [ (import ./overlay.nix) ];
+import (import ./nix/nixpkgs.nix) {
+  overlays = [ (import ./nix/overlay.nix) ];
   config.allowUnfree = true;
 }

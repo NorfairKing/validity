@@ -81,6 +81,11 @@ import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
+#if !MIN_VERSION_QuickCheck(2,8,0)
+import Data.List (sortBy)
+import Data.Ord (comparing)
+#endif
+
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
 import Control.Monad (forM)
@@ -142,6 +147,12 @@ class (Validity a, GenUnchecked a) =>
     -- data, otherwise your testing may not cover all cases.
     genValid = genUnchecked `suchThat` isValid
 
+    -- | Shrink a valid value.
+    --
+    -- It is important that this shrinking function only shrinks values to valid values.
+    -- If `shrinkValid` ever shrinks a value to an invalid value, the test that is being shrunk for
+    -- might fail for a different reason than for the reason that it originally failed.
+    -- This would lead to very confusing error messages.
     shrinkValid :: a -> [a]
     shrinkValid = filter isValid . shrinkUnchecked
 
@@ -502,14 +513,15 @@ instance GenInvalid Float where
     genInvalid = elements [read "NaN", read "Infinity", read "-Infinity"]
 
 instance GenUnchecked Double where
-    genUnchecked = arbitrary
+    genUnchecked = frequency [(9, genValid), (1, genInvalid)]
 #if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked = shrink
 #else
     shrinkUnchecked _ = []
 #endif
 
-instance GenValid Double
+instance GenValid Double where
+    genValid = arbitrary
 
 -- | Either 'NaN' or 'Infinity'.
 instance GenInvalid Double where
@@ -610,12 +622,22 @@ genSplit5 n
 
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
 arbPartition :: Int -> Gen [Int]
-arbPartition k
-    | k <= 0 = pure []
-    | otherwise = do
-        first <- choose (1, k)
-        rest <- arbPartition $ k - first
-        return $ first : rest
+arbPartition i = go i >>= shuffle
+  where
+    go k
+      | k <= 0 = pure []
+      | otherwise = do
+          first <- choose (1, k)
+          rest <- arbPartition $ k - first
+          return $ first : rest
+
+#if !MIN_VERSION_QuickCheck(2,8,0)
+-- | Generates a random permutation of the given list.
+shuffle :: [a] -> Gen [a]
+shuffle xs = do
+  ns <- vectorOf (length xs) (choose (minBound :: Int, maxBound))
+  return (map snd (sortBy (comparing fst) (zip ns xs)))
+#endif
 
 -- | A version of @listOf@ that takes size into account more accurately.
 genListOf :: Gen a -> Gen [a]

@@ -9,9 +9,12 @@ import Data.GenValidity
 
 spec :: Spec
 spec = do
-    describe "upTo" $
+    describe "upTo" $ do
         it "returns only positive integers" $
-        forAll arbitrary $ \n -> forAll (upTo n) (`shouldSatisfy` (>= 0))
+            forAll arbitrary $ \n -> forAll (upTo n) (`shouldSatisfy` (>= 0))
+        it "returns only integers smaller than or equal to the given number" $
+            forAll arbitrary $ \n ->
+                forAll (upTo n) (`shouldSatisfy` (<= (max n 0)))
     describe "genSplit" $ do
         it "returns positive integers" $
             forAll arbitrary $ \i ->
@@ -19,8 +22,44 @@ spec = do
                     a `shouldSatisfy` (>= 0)
                     b `shouldSatisfy` (>= 0)
         it "returns two integers such that the sum is the original integer" $
-            forAll (arbitrary `suchThat` (>= 0)) $ \i ->
-                forAll (genSplit i) $ \(a, b) -> a + b `shouldBe` i
+            forAll arbitrary $ \i ->
+                forAll (genSplit i) $ \(a, b) -> a + b `shouldBe` max 0 i
+    describe "genSplit3" $ do
+        it "returns positive integers" $
+            forAll arbitrary $ \i ->
+                forAll (genSplit3 i) $ \(a, b, c) -> do
+                    a `shouldSatisfy` (>= 0)
+                    b `shouldSatisfy` (>= 0)
+                    c `shouldSatisfy` (>= 0)
+        it "returns three integers such that the sum is the original integer" $
+            forAll arbitrary $ \i ->
+                forAll (genSplit3 i) $ \(a, b, c) ->
+                    a + b + c `shouldBe` max 0 i
+    describe "genSplit4" $ do
+        it "returns positive integers" $
+            forAll arbitrary $ \i ->
+                forAll (genSplit4 i) $ \(a, b, c, d) -> do
+                    a `shouldSatisfy` (>= 0)
+                    b `shouldSatisfy` (>= 0)
+                    c `shouldSatisfy` (>= 0)
+                    d `shouldSatisfy` (>= 0)
+        it "returns four integers such that the sum is the original integer" $
+            forAll arbitrary $ \i ->
+                forAll (genSplit4 i) $ \(a, b, c, d) ->
+                    a + b + c + d `shouldBe` max 0 i
+    describe "genSplit5" $ do
+        it "returns positive integers" $
+            forAll arbitrary $ \i ->
+                forAll (genSplit5 i) $ \(a, b, c, d, e) -> do
+                    a `shouldSatisfy` (>= 0)
+                    b `shouldSatisfy` (>= 0)
+                    c `shouldSatisfy` (>= 0)
+                    d `shouldSatisfy` (>= 0)
+                    e `shouldSatisfy` (>= 0)
+        it "returns four integers such that the sum is the original integer" $
+            forAll arbitrary $ \i ->
+                forAll (genSplit5 i) $ \(a, b, c, d, e) ->
+                    a + b + c + d + e `shouldBe` max 0 i
     describe "arbPartition" $ do
         it "returns an empty list upon strictly negative input" $
             forAll (arbitrary `suchThat` (< 0)) $ \n ->

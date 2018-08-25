@@ -1,6 +1,7 @@
+# Validity and validity-based testing
+
 [![Build Status](https://travis-ci.org/NorfairKing/validity.svg?branch=master)](https://travis-ci.org/NorfairKing/validity)
 
-# Validity and validity-based testing
 
 ## High-level overview
 
