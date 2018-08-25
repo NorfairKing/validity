@@ -67,7 +67,7 @@ matrix:
       - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: 
+  - env:
       - BUILD_KIND="nix"
 
   # Nightly builds are allowed to fail
