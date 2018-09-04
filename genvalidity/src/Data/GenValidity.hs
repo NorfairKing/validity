@@ -544,17 +544,11 @@ instance GenValid Natural where
 #endif
 
 instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
-    genUnchecked = do
-        n <- genUnchecked
-        d <- genUnchecked
-        pure $ n :% d
+    genUnchecked = (:%) <$> genUnchecked <*> genUnchecked
     shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d)]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
-    genValid = do
-      n <- genValid
-      d <- genValid `suchThat` (> 0)
-      pure $ n % d
+    genValid = (%) <$> genValid <*> (genValid `suchThat` (> 0))
     shrinkValid (n :% d) = [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenInvalid (Ratio a)
@@ -657,10 +651,7 @@ instance GGenUnchecked U1 where
     gGenUnchecked = pure U1
 
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :*: b) where
-    gGenUnchecked = do
-        g1 <- gGenUnchecked
-        g2 <- gGenUnchecked
-        pure $ g1 :*: g2
+    gGenUnchecked = (:*:) <$> gGenUnchecked <*> gGenUnchecked
 
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :+: b) where
     gGenUnchecked = oneof [L1 <$> gGenUnchecked, R1 <$> gGenUnchecked]
@@ -686,7 +677,9 @@ class GUncheckedRecursivelyShrink f where
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :*: g) where
   gUncheckedRecursivelyShrink (x :*: y) =
-      [x' :*: y' | x' <- gUncheckedRecursivelyShrink x, y' <- gUncheckedRecursivelyShrink y]
+    ((:*:) <$> gUncheckedRecursivelyShrink x <*> gUncheckedRecursivelyShrink y)
+      ++ [ x' :*: y | x' <- gUncheckedRecursivelyShrink x ]
+      ++ [ x :*: y' | y' <- gUncheckedRecursivelyShrink y ]
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :+: g) where
   gUncheckedRecursivelyShrink (L1 x) = map L1 (gUncheckedRecursivelyShrink x)
@@ -774,10 +767,7 @@ instance GGenValid U1 where
     gGenValid = pure U1
 
 instance (GGenValid a, GGenValid b) => GGenValid (a :*: b) where
-    gGenValid = do
-        g1 <- gGenValid
-        g2 <- gGenValid
-        pure $ g1 :*: g2
+    gGenValid = (:*:) <$> gGenValid <*> gGenValid
 
 instance (GGenValid a, GGenValid b) => GGenValid (a :+: b) where
     gGenValid = oneof [L1 <$> gGenValid, R1 <$> gGenValid]
@@ -806,7 +796,9 @@ class GValidRecursivelyShrink f where
 
 instance (GValidRecursivelyShrink f, GValidRecursivelyShrink g) => GValidRecursivelyShrink (f :*: g) where
   gValidRecursivelyShrink (x :*: y) =
-      [x' :*: y' | x' <- gValidRecursivelyShrink x, y' <- gValidRecursivelyShrink y]
+    ((:*:) <$> gValidRecursivelyShrink x <*> gValidRecursivelyShrink y)
+      ++ [ x' :*: y | x' <- gValidRecursivelyShrink x ]
+      ++ [ x :*: y' | y' <- gValidRecursivelyShrink y ]
 
 instance (GValidRecursivelyShrink f, GValidRecursivelyShrink g) => GValidRecursivelyShrink (f :+: g) where
   gValidRecursivelyShrink (L1 x) = map L1 (gValidRecursivelyShrink x)
