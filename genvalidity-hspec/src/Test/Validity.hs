@@ -216,6 +216,11 @@ module Test.Validity
     , commutativeOnValids
     , commutative
     , commutativeOnArbitrary
+      -- * Show and Read properties
+    , showReadSpecOnValid
+    , showReadSpec
+    , showReadSpecOnArbitrary
+    , showReadSpecOnGen
       -- * Eq properties
     , eqSpecOnValid
     , eqSpecOnInvalid
@@ -265,5 +270,6 @@ import Test.Validity.Operations
 import Test.Validity.Ord
 import Test.Validity.Property
 import Test.Validity.RelativeValidity
+import Test.Validity.Show
 import Test.Validity.Shrinking
 import Test.Validity.Utils
