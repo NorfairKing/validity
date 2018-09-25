@@ -39,6 +39,7 @@ library:
   - Test.Validity.Monad
   - Test.Validity.Monoid
   - Test.Validity.Ord
+  - Test.Validity.ReadShow
   - Test.Validity.RelativeValidity
   - Test.Validity.Shrinking
   - Test.Validity.Utils
