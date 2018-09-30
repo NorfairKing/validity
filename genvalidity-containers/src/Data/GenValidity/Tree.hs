@@ -20,6 +20,8 @@ instance GenUnchecked a => GenUnchecked (Tree a) where
 
 instance GenValid a => GenValid (Tree a) where
     genValid = genTreeOf genValid
+    shrinkValid (Node v ts) =
+        [Node v' ts' | (v', ts') <- shrinkUnchecked (v, ts)]
 
 -- | There should be at least one invalid element, either it's here or it's
 -- further down the tree.
