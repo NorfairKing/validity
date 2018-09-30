@@ -68,6 +68,7 @@ import Data.Validity
 import Data.Fixed (Fixed(..), HasResolution)
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty((:|)))
+import qualified Data.List.NonEmpty as NE
 #endif
 #if MIN_VERSION_base(4,8,0)
 import Data.Word (Word8, Word16, Word32, Word64)
@@ -414,27 +415,22 @@ instance GenValid a => GenValid (Maybe a) where
 instance GenInvalid a => GenInvalid (Maybe a) where
     genInvalid = Just <$> genInvalid
 
-instance GenUnchecked a => GenUnchecked [a] where
-    genUnchecked = genListOf genUnchecked
-    shrinkUnchecked = shrinkList shrinkUnchecked
-
 #if MIN_VERSION_base(4,9,0)
 instance GenUnchecked a => GenUnchecked (NonEmpty a) where
-    genUnchecked = (:|) <$> genUnchecked <*> genUnchecked
+    genUnchecked = genListOf genUnchecked `suchThatMap` NE.nonEmpty
     shrinkUnchecked (v :| vs) = [ e :| es | (e, es) <- shrinkUnchecked (v, vs)]
 
 instance GenValid a => GenValid (NonEmpty a) where
-    genValid = (:|) <$> genValid <*> genValid
+    genValid = genListOf genValid `suchThatMap` NE.nonEmpty
     shrinkValid (v :| vs) = [ e :| es | (e, es) <- shrinkValid (v, vs)]
 
 instance GenInvalid a => GenInvalid (NonEmpty a) where
-    genInvalid = sized $ \n -> do
-      (a, b) <- genSplit n
-      oneof
-        [ (:|) <$> resize a genUnchecked <*> resize b genInvalid
-        , (:|) <$> resize a genInvalid <*> resize b genUnchecked
-        ]
+    genInvalid = genListOf genInvalid `suchThatMap` NE.nonEmpty
 #endif
+
+instance GenUnchecked a => GenUnchecked [a] where
+    genUnchecked = genListOf genUnchecked
+    shrinkUnchecked = shrinkList shrinkUnchecked
 
 -- | If we can generate values of a certain type, we can also generate lists of
 -- them.

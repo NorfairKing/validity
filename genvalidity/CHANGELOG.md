@@ -4,6 +4,7 @@
 
 ### Changed
 
+* Changed 'genValid`, `genUnchecked` and `genInvalid` for NonEmpty to better take the size into account.
 * Sped up `shrinkUnchecked` for `Maybe`
 * Sped up `shrinkValid` for `Maybe`
 * Sped up `shrinkUnchecked` for `Either`
