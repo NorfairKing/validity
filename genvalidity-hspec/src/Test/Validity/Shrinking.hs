@@ -12,6 +12,7 @@ module Test.Validity.Shrinking
     , shrinkValidSpecWithLimit
     , shrinkInvalidSpec
     , shrinkValidPreservesValidOnGenValid
+    , shrinkValidPreservesValidOnGenValidWithLimit
     , shrinkInvalidPreservesInvalidOnGenInvalid
     , shrinkPreservesValidOnGenValid
     , shrinkPreservesInvalidOnGenInvalid
@@ -32,6 +33,8 @@ import Data.Data
 
 import Data.GenValidity
 
+import Control.Monad
+
 import Test.Hspec
 import Test.QuickCheck
 
@@ -50,18 +53,19 @@ shrinkValidSpec ::
     => Spec
 shrinkValidSpec =
     describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $ do
-        it "preserves validity" $ shrinkValidPreservesValidOnGenValid @a
+        it "preserves validity" $
+            forAll (genValid @a) $ \a -> forM_ (shrinkValid a) shouldBeValid
         it "never shrinks to itself for valid values" $
             shrinkValidDoesNotShrinkToItself @a
 
 shrinkValidSpecWithLimit ::
-       forall a. (Show a, Eq a,Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a)
     => Int
     -> Spec
 shrinkValidSpecWithLimit l =
     describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $ do
         it (unwords ["preserves validity for the first", show l, "elements"]) $
-            shrinkValidPreservesValidOnGenValidWithLimit @a l
+            forAll (genValid @a) $ \a -> forM_ (take l $ shrinkValid a) shouldBeValid
         it
             (unwords
                  [ "never shrinks to itself for valid values for the first"
@@ -75,7 +79,9 @@ shrinkInvalidSpec ::
     => Spec
 shrinkInvalidSpec =
     describe ("shrinkInvalid :: " ++ nameOf @(a -> [a])) $ do
-        it "preserves invalidity" $ shrinkInvalidPreservesInvalidOnGenInvalid @a
+        it "preserves invalidity" $
+            forAll (genInvalid @a) $ \a ->
+                forM_ (shrinkInvalid a) shouldBeInvalid
 
 shrinkValidPreservesValidOnGenValid ::
        forall a. (Show a, GenValid a)

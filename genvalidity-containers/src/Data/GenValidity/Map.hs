@@ -48,6 +48,7 @@ instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
 #endif
 instance (Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
     genValid = M.fromList <$> genValid
+    shrinkValid = fmap M.fromList . shrinkValid . M.toList
 #if MIN_VERSION_containers(0,5,9)
 instance (Ord k, GenInvalid k, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid =
