@@ -28,4 +28,4 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-resolver: lts-11.18
+resolver: lts-11.22

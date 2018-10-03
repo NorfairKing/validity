@@ -187,9 +187,7 @@ doesNotShrinkToItself ::
     => Gen a
     -> (a -> [a])
     -> Property
-doesNotShrinkToItself gen s =
-    forAll (scale ((round :: Double -> Int) . log . fromIntegral . max 1) gen) $ \a ->
-        all (/= a) $ s a
+doesNotShrinkToItself gen s = forAll gen $ \a -> all (/= a) $ s a
 
 -- |
 --
@@ -201,5 +199,4 @@ doesNotShrinkToItselfWithLimit ::
     -> Int
     -> Property
 doesNotShrinkToItselfWithLimit gen s l =
-    forAll (scale ((round :: Double -> Int) . log . fromIntegral . max 1) gen) $ \a ->
-        all (/= a) $ take l $ s a
+    forAll gen $ \a -> all (/= a) $ take l $ s a
