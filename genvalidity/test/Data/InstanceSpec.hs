@@ -160,7 +160,10 @@ genUncheckedTest proxy = do
                  , "does not shrink to itself"
                  ]) $
         forAll genValid $ \a ->
-            forM_ (shrinkUnchecked a) $ \a' -> a' `shouldNotBe` (a :: a)
+            forM_ (shrinkUnchecked a) $ \a' ->
+                unless (a /= a') $
+                expectationFailure $
+                unlines ["The value", show( a ::a), "was shrunk to itself"]
 
 genValidTest ::
        forall a. (Show a, Eq a, Typeable a, GenValid a)
@@ -215,7 +218,10 @@ genValidTest proxy = do
             (unwords
                  ["shrinkValid of", nameOf proxy, "does not shrink to itself"]) $
         forAll genValid $ \a ->
-            forM_ (shrinkValid a) $ \a' -> a' `shouldNotBe` (a :: a)
+            forM_ (shrinkValid a) $ \a' ->
+                unless (a /= a') $
+                expectationFailure $
+                unlines ["The value", show (a :: a), "was shrunk to itself"]
 
 genInvalidTest ::
        forall a. (Show a, Typeable a, GenInvalid a)

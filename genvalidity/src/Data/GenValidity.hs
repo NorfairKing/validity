@@ -417,15 +417,27 @@ instance GenInvalid a => GenInvalid (Maybe a) where
 
 #if MIN_VERSION_base(4,9,0)
 instance GenUnchecked a => GenUnchecked (NonEmpty a) where
-    genUnchecked = genListOf genUnchecked `suchThatMap` NE.nonEmpty
+    genUnchecked = do
+      l <- genUnchecked
+      case NE.nonEmpty l of
+        Nothing -> scale (+1) genUnchecked
+        Just ne -> pure ne
     shrinkUnchecked (v :| vs) = [ e :| es | (e, es) <- shrinkUnchecked (v, vs)]
 
 instance GenValid a => GenValid (NonEmpty a) where
-    genValid = genListOf genValid `suchThatMap` NE.nonEmpty
+    genValid = do
+      l <- genValid
+      case NE.nonEmpty l of
+        Nothing -> scale (+1) genValid
+        Just ne -> pure ne
     shrinkValid (v :| vs) = [ e :| es | (e, es) <- shrinkValid (v, vs)]
 
 instance GenInvalid a => GenInvalid (NonEmpty a) where
-    genInvalid = genListOf genInvalid `suchThatMap` NE.nonEmpty
+    genInvalid = do
+      l <- genInvalid
+      case NE.nonEmpty l of
+        Nothing -> scale (+1) genInvalid
+        Just ne -> pure ne
 #endif
 
 instance GenUnchecked a => GenUnchecked [a] where
