@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.6.1.0] - 2018-10-06
+
 ### Changed
 
 * Changed 'genValid`, `genUnchecked` and `genInvalid` for NonEmpty to better take the size into account.
