@@ -20,6 +20,7 @@ instance GenUnchecked a => GenUnchecked (Tree a) where
 
 instance GenValid a => GenValid (Tree a) where
     genValid = genTreeOf genValid
+    shrinkValid (Node v ts) = [Node v' ts' | (v', ts') <- shrinkValid (v, ts)]
 
 -- | There should be at least one invalid element, either it's here or it's
 -- further down the tree.
@@ -32,6 +33,10 @@ instance (GenUnchecked a, GenInvalid a) => GenInvalid (Tree a) where
                 [ Node <$> resize a genInvalid <*> resize b genUnchecked
                 , Node <$> resize a genUnchecked <*> resize b genInvalid
                 ]
+    shrinkInvalid (Node v ts) =
+        if isInvalid v
+            then Node <$> shrinkInvalid v <*> shrinkUnchecked ts
+            else Node <$> shrinkUnchecked v <*> shrinkInvalid ts
 
 -- | Generate a tree of values that are generated as specified.
 --

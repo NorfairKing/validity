@@ -6,9 +6,11 @@ import Test.Hspec
 
 import Data.GenValidity.Tree ()
 import Data.Tree (Tree)
-import Test.Validity.GenValidity
+import Test.Validity
 
 spec :: Spec
 spec = do
     genValidSpec @(Tree Int)
     genValiditySpec @(Tree Double)
+    shrinkValidSpec @(Tree Int)
+    shrinkValiditySpec @(Tree Double)

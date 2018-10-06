@@ -40,6 +40,7 @@ library:
   - Test.Validity.Monoid
   - Test.Validity.Ord
   - Test.Validity.RelativeValidity
+  - Test.Validity.Show
   - Test.Validity.Shrinking
   - Test.Validity.Utils
   dependencies:

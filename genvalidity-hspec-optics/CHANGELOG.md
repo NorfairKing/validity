@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Added
+
+* `shrinkUncheckedDoesNotShrinkToItself`
+* `shrinkUncheckedDoesNotShrinkToItselfWithLimit`
+* `shrinkValidDoesNotShrinkToItself`
+* `shrinkValidDoesNotShrinkToItselfWithLimit`
+* `shrinkInvalidDoesNotShrinkToItself`
+* `shrinkInvalidDoesNotShrinkToItselfWithLimit`
+
+### Changed
+
+* Added the concept that shrinkValid should not shrink to itself to `shrinkValidSpec` and `shrinkValiditySpec`.
+
 ## [0.1.0.0] - 2018-08-25
 
 ### Added

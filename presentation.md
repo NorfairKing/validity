@@ -57,7 +57,6 @@ False -- But why?
 
 ``` haskell
 class Validity a where
-  isValid :: a -> Bool
   validate :: a -> Validation -- Check _why_ it is valid
 ```
 
@@ -173,7 +172,7 @@ property :: (Show a, Arbitrary a) => (a -> Bool) -> Test
 ## Randomised Property Testing with QuickCheck
 
 ``` Haskell
-λ> quickCheck myTest
+λ> quickCheck myProperty
 +++ OK, passed 100 tests.  -- Cool!
 ```
 
@@ -206,7 +205,8 @@ instance GenUnchecked Prime where
 ## Semantics: Any possible value.
 
 ``` Haskell
-instance GenUnchecked MyType -- GHC will figure it out.
+instance GenUnchecked MyType
+  -- ^ GHC will figure it out.
 ```
 
 
@@ -278,23 +278,23 @@ ordSpecOnValid :: ...
 
   Ord Int
     (<=) :: Int -> Int -> Bool
-      is reflexive for "unchecked Int"'s
-      is antisymmetric for "unchecked Int"'s
-      is transitive for "unchecked Int"'s
-      is equivalent to (\a b -> compare a b /= GT) for "unchecked Int"'s
+      is reflexive
+      is antisymmetric
+      is transitive
+      is equivalent to (\a b -> compare a b /= GT)
     (>=) :: Int -> Int -> Bool
-      is reflexive for "unchecked Int"'s
-      is antisymmetric for "unchecked Int"'s
-      is transitive for "unchecked Int"'s
-      is equivalent to (\a b -> compare a b /= LT) for "unchecked Int"'s
+      is reflexive
+      is antisymmetric
+      is transitive
+      is equivalent to (\a b -> compare a b /= LT)
     (<) :: Int -> Int -> Bool
-      is antireflexive for "unchecked Int"'s
-      is transitive for "unchecked Int"'s
-      is equivalent to (\a b -> compare a b == LT) for "unchecked Int"'s
+      is antireflexive
+      is transitive
+      is equivalent to (\a b -> compare a b == LT)
     (>) :: Int -> Int -> Bool
-      is antireflexive for "unchecked Int"'s
-      is transitive for "unchecked Int"'s
-      is equivalent to (\a b -> compare a b == GT) for "unchecked Int"'s
+      is antireflexive
+      is transitive
+      is equivalent to (\a b -> compare a b == GT)
 ```
 
 # Validity-based Testing Spec
@@ -319,13 +319,11 @@ functorSpec @[]
 Functor []
     fmap :: (a -> b) -> [] a -> [] b
       satisfies the first Fuctor law:
-        'fmap id == id' for "[] of ints :: [Int]"
+        'fmap id == id'
       satisfieds the second Functor law:
-        'fmap (f . g) == fmap f . fmap g' for "[] of ints :: [Int]" 's
-        given to "increments :: Int -> Int" and "scalings :: Int -> Int"
+        'fmap (f . g) == fmap f . fmap g'
     (<$) :: a -> [] b -> [] a
       is equivalent to its default implementation
-      for "int :: Int" and "[] of ints :: [Int]"
 ```
 
 # Validity-based Aeson Spec
@@ -346,17 +344,29 @@ jsonSpecOnValid :: ...
 
   JSON Int (unchecked)
     encode :: Int -> Data.ByteString.Lazy.ByteString
-      never fails to encode a "unchecked Int"
+      never fails to encode
     decode :: Int -> Data.ByteString.Lazy.ByteString
-      ensures that encode and decode are
-      inverses for "unchecked Int"'s
+      ensures that encode and decode are inverses
+```
+
+# Validity-based Lens Spec
+
+```
+λ> lensSpecOnValid ((_2) :: Lens' (Double, Double) Double)
+
+  lensSpecOnValid
+    satisfies the first lens law
+    satisfies the second lens law
+    satisfies the third lens law
+    gets valid values
+    produces valid values
 ```
 
 # Cost
 
 ```
 data MyType = MyType Int Text
-  deriving (Generic)
+  deriving (Show, Eq, Generic)
 instance GenUnchecked MyType
 instance Validity MyType
 instance GenValid MyType
@@ -370,4 +380,5 @@ genvalidity-hspec-aeson
 genvalidity-hspec-binary
 genvalidity-hspec-cereal
 genvalidity-hspec-hashable
+genvalidity-hspec-optics
 ```

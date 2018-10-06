@@ -87,7 +87,7 @@ spec = do
     threeTests (Proxy :: Proxy (NonEmpty Double))
 #endif
 twoTupleTests ::
-       forall a. (Show a, Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a)
     => Proxy a
     -> Spec
 twoTupleTests proxy = do
@@ -99,7 +99,7 @@ twoTupleTests proxy = do
         twoTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 threeTupleTests ::
-       forall a. (Show a, Typeable a, GenValid a, GenInvalid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a, GenInvalid a)
     => Proxy a
     -> Spec
 threeTupleTests proxy = do
@@ -111,7 +111,7 @@ threeTupleTests proxy = do
         threeTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 twoTests ::
-       forall a. (Show a, Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a)
     => Proxy a
     -> Spec
 twoTests proxy =
@@ -120,7 +120,7 @@ twoTests proxy =
         genValidTest proxy
 
 threeTests ::
-       forall a. (Show a, Typeable a, GenValid a, GenInvalid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a, GenInvalid a)
     => Proxy a
     -> Spec
 threeTests proxy =
@@ -130,7 +130,7 @@ threeTests proxy =
         genInvalidTest proxy
 
 genUncheckedTest ::
-       forall a. (Show a, Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a)
     => Proxy a
     -> Spec
 genUncheckedTest proxy = do
@@ -141,19 +141,32 @@ genUncheckedTest proxy = do
                 Right v -> seq v True
                 Left err -> seq err True
     modifyMaxSuccess (`quot` 5) $
-     it (unwords
-            [ "shrinkUnchecked of"
-            , nameOf proxy
-            , "only produces values that do not crash while validating"
-            ]) $
+        it
+            (unwords
+                 [ "shrinkUnchecked of"
+                 , nameOf proxy
+                 , "only produces values that do not crash while validating"
+                 ]) $
         forAll genUnchecked $ \a ->
             forM_ (shrinkUnchecked a) $ \v ->
                 case prettyValidation (v :: a) of
                     Right v_ -> seq v_ $ pure () :: IO ()
                     Left err -> seq err $ pure ()
+    modifyMaxSuccess (`quot` 5) $
+        it
+            (unwords
+                 [ "shrinkUnchecked of"
+                 , nameOf proxy
+                 , "does not shrink to itself"
+                 ]) $
+        forAll genValid $ \a ->
+            forM_ (shrinkUnchecked a) $ \a' ->
+                unless (a /= a') $
+                expectationFailure $
+                unlines ["The value", show( a ::a), "was shrunk to itself"]
 
 genValidTest ::
-       forall a. (Show a, Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a)
     => Proxy a
     -> Spec
 genValidTest proxy = do
@@ -200,6 +213,15 @@ genValidTest proxy = do
                 case prettyValidation (v :: a) of
                     Right v_ -> seq v_ $ pure () :: IO ()
                     Left err -> seq err $ pure ()
+    modifyMaxSuccess (`quot` 5) $
+        it
+            (unwords
+                 ["shrinkValid of", nameOf proxy, "does not shrink to itself"]) $
+        forAll genValid $ \a ->
+            forM_ (shrinkValid a) $ \a' ->
+                unless (a /= a') $
+                expectationFailure $
+                unlines ["The value", show (a :: a), "was shrunk to itself"]
 
 genInvalidTest ::
        forall a. (Show a, Typeable a, GenInvalid a)

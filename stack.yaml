@@ -29,7 +29,8 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-resolver: lts-11.14
+resolver: lts-12.11
 extra-deps:
 - hlint-2.0.15
 - extra-1.6.5
+- Cabal-2.0.1.1
