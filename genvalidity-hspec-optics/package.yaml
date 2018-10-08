@@ -1,5 +1,5 @@
 name: genvalidity-hspec-optics
-version: '0.1.0.0'
+version: '0.1.1.0'
 synopsis: Standard spec's for optics
 description: Standard spec's for optics
 category: Testing

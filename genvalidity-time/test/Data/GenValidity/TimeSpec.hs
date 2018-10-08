@@ -29,6 +29,5 @@ spec = do
     genValiditySpec @LocalTime
     shrinkValiditySpec @LocalTime
     genValiditySpec @ZonedTime
-    shrinkValiditySpec @ZonedTime
     genValidSpec @TimeLocale
     shrinkValidSpec @TimeLocale

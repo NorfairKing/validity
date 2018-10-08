@@ -68,6 +68,7 @@ import Data.Validity
 import Data.Fixed (Fixed(..), HasResolution)
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty((:|)))
+import qualified Data.List.NonEmpty as NE
 #endif
 #if MIN_VERSION_base(4,8,0)
 import Data.Word (Word8, Word16, Word32, Word64)
@@ -180,6 +181,9 @@ instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (a, b) where
             a <- resize r genUnchecked
             b <- resize s genUnchecked
             return (a, b)
+    shrinkUnchecked (a, b) = ((,) <$> shrinkUnchecked a <*> shrinkUnchecked b)
+      ++ [ (a', b) | a' <- shrinkUnchecked a ]
+      ++ [ (a, b') | b' <- shrinkUnchecked b ]
 
 instance (GenValid a, GenValid b) => GenValid (a, b) where
     genValid =
@@ -188,6 +192,9 @@ instance (GenValid a, GenValid b) => GenValid (a, b) where
             a <- resize r genValid
             b <- resize s genValid
             return (a, b)
+    shrinkValid (a, b) = ((,) <$> shrinkValid a <*> shrinkValid b)
+      ++ [ (a', b) | a' <- shrinkValid a ]
+      ++ [ (a, b') | b' <- shrinkValid b ]
 
 instance (GenInvalid a, GenInvalid b) => GenInvalid (a, b) where
     genInvalid =
@@ -204,9 +211,13 @@ instance (GenInvalid a, GenInvalid b) => GenInvalid (a, b) where
 
 instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (Either a b) where
     genUnchecked = oneof [Left <$> genUnchecked, Right <$> genUnchecked]
+    shrinkUnchecked (Left a) = Left <$> shrinkUnchecked a
+    shrinkUnchecked (Right b) = Right <$> shrinkUnchecked b
 
 instance (GenValid a, GenValid b) => GenValid (Either a b) where
     genValid = oneof [Left <$> genValid, Right <$> genValid]
+    shrinkValid (Left a) = Left <$> shrinkValid a
+    shrinkValid (Right b) = Right <$> shrinkValid b
 
 -- | This instance ensures that the generated tupse contains at least one invalid element. The other element is unchecked.
 instance (GenInvalid a, GenInvalid b) => GenInvalid (Either a b) where
@@ -221,6 +232,10 @@ instance (GenUnchecked a, GenUnchecked b, GenUnchecked c) =>
             b <- resize s genUnchecked
             c <- resize t genUnchecked
             return (a, b, c)
+    shrinkUnchecked (a, b, c) =
+        [ (a', b', c')
+        | (a', (b', c')) <- shrinkUnchecked (a, (b, c))
+        ]
 
 instance (GenValid a, GenValid b, GenValid c) => GenValid (a, b, c) where
     genValid =
@@ -230,6 +245,10 @@ instance (GenValid a, GenValid b, GenValid c) => GenValid (a, b, c) where
             b <- resize s genValid
             c <- resize t genValid
             return (a, b, c)
+    shrinkValid (a, b, c) =
+        [ (a', b', c')
+        | (a', (b', c')) <- shrinkValid (a, (b, c))
+        ]
 
 -- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
 instance (GenInvalid a, GenInvalid b, GenInvalid c) =>
@@ -262,6 +281,10 @@ instance (GenUnchecked a, GenUnchecked b, GenUnchecked c, GenUnchecked d) =>
             c <- resize t genUnchecked
             d <- resize u genUnchecked
             return (a, b, c, d)
+    shrinkUnchecked (a, b, c, d) =
+        [ (a', b', c', d')
+        | (a', (b', (c', d'))) <- shrinkUnchecked (a, (b, (c, d)))
+        ]
 
 instance (GenValid a, GenValid b, GenValid c, GenValid d) =>
          GenValid (a, b, c, d) where
@@ -273,6 +296,10 @@ instance (GenValid a, GenValid b, GenValid c, GenValid d) =>
             c <- resize t genValid
             d <- resize u genValid
             return (a, b, c, d)
+    shrinkValid (a, b, c, d) =
+        [ (a', b', c', d')
+        | (a', (b', (c', d'))) <- shrinkValid (a, (b, (c, d)))
+        ]
 
 -- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
 instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d) =>
@@ -314,6 +341,10 @@ instance (GenUnchecked a, GenUnchecked b, GenUnchecked c, GenUnchecked d, GenUnc
             d <- resize u genUnchecked
             e <- resize v genUnchecked
             return (a, b, c, d, e)
+    shrinkUnchecked (a, b, c, d, e) =
+        [ (a', b', c', d', e')
+        | (a', (b', (c', (d', e')))) <- shrinkUnchecked (a, (b, (c, (d, e))))
+        ]
 
 instance (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e) =>
          GenValid (a, b, c, d, e) where
@@ -326,6 +357,10 @@ instance (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e) =>
             d <- resize u genValid
             e <- resize v genValid
             return (a, b, c, d, e)
+    shrinkValid (a, b, c, d, e) =
+        [ (a', b', c', d', e')
+        | (a', (b', (c', (d', e')))) <- shrinkValid (a, (b, (c, (d, e))))
+        ]
 
 -- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
 instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d, GenInvalid e) =>
@@ -368,38 +403,52 @@ instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d, GenInvalid e) 
 
 instance GenUnchecked a => GenUnchecked (Maybe a) where
     genUnchecked = oneof [pure Nothing, Just <$> genUnchecked]
+    shrinkUnchecked Nothing = []
+    shrinkUnchecked (Just a) = Nothing : (Just <$> shrinkUnchecked a)
+
 
 instance GenValid a => GenValid (Maybe a) where
     genValid = oneof [pure Nothing, Just <$> genValid]
+    shrinkValid Nothing = []
+    shrinkValid (Just a) = Nothing : (Just <$> shrinkValid a)
 
 instance GenInvalid a => GenInvalid (Maybe a) where
     genInvalid = Just <$> genInvalid
+
+#if MIN_VERSION_base(4,9,0)
+instance GenUnchecked a => GenUnchecked (NonEmpty a) where
+    genUnchecked = do
+      l <- genUnchecked
+      case NE.nonEmpty l of
+        Nothing -> scale (+1) genUnchecked
+        Just ne -> pure ne
+    shrinkUnchecked (v :| vs) = [ e :| es | (e, es) <- shrinkUnchecked (v, vs)]
+
+instance GenValid a => GenValid (NonEmpty a) where
+    genValid = do
+      l <- genValid
+      case NE.nonEmpty l of
+        Nothing -> scale (+1) genValid
+        Just ne -> pure ne
+    shrinkValid (v :| vs) = [ e :| es | (e, es) <- shrinkValid (v, vs)]
+
+instance GenInvalid a => GenInvalid (NonEmpty a) where
+    genInvalid = do
+      l <- genInvalid
+      case NE.nonEmpty l of
+        Nothing -> scale (+1) genInvalid
+        Just ne -> pure ne
+#endif
 
 instance GenUnchecked a => GenUnchecked [a] where
     genUnchecked = genListOf genUnchecked
     shrinkUnchecked = shrinkList shrinkUnchecked
 
-#if MIN_VERSION_base(4,9,0)
-instance GenUnchecked a => GenUnchecked (NonEmpty a) where
-    genUnchecked = (:|) <$> genUnchecked <*> genUnchecked
-    shrinkUnchecked (v :| vs) = [ e :| es | (e, es) <- shrinkUnchecked (v, vs)]
-
-instance GenValid a => GenValid (NonEmpty a) where
-    genValid = (:|) <$> genValid <*> genValid
-
-instance GenInvalid a => GenInvalid (NonEmpty a) where
-    genInvalid = sized $ \n -> do
-      (a, b) <- genSplit n
-      oneof
-        [ (:|) <$> resize a genUnchecked <*> resize b genInvalid
-        , (:|) <$> resize a genInvalid <*> resize b genUnchecked
-        ]
-#endif
-
 -- | If we can generate values of a certain type, we can also generate lists of
 -- them.
 instance GenValid a => GenValid [a] where
     genValid = genListOf genValid
+    shrinkValid = shrinkList shrinkValid
 
 -- | This instance ensures that the generated list contains at least one element
 -- that satisfies 'isInvalid'. The rest is unchecked.
@@ -544,17 +593,11 @@ instance GenValid Natural where
 #endif
 
 instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
-    genUnchecked = do
-        n <- genUnchecked
-        d <- genUnchecked
-        pure $ n :% d
+    genUnchecked = (:%) <$> genUnchecked <*> genUnchecked
     shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d)]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
-    genValid = do
-      n <- genValid
-      d <- genValid `suchThat` (> 0)
-      pure $ n % d
+    genValid = (%) <$> genValid <*> (genValid `suchThat` (> 0))
     shrinkValid (n :% d) = [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenInvalid (Ratio a)
@@ -657,10 +700,7 @@ instance GGenUnchecked U1 where
     gGenUnchecked = pure U1
 
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :*: b) where
-    gGenUnchecked = do
-        g1 <- gGenUnchecked
-        g2 <- gGenUnchecked
-        pure $ g1 :*: g2
+    gGenUnchecked = (:*:) <$> gGenUnchecked <*> gGenUnchecked
 
 instance (GGenUnchecked a, GGenUnchecked b) => GGenUnchecked (a :+: b) where
     gGenUnchecked = oneof [L1 <$> gGenUnchecked, R1 <$> gGenUnchecked]
@@ -686,7 +726,9 @@ class GUncheckedRecursivelyShrink f where
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :*: g) where
   gUncheckedRecursivelyShrink (x :*: y) =
-      [x' :*: y' | x' <- gUncheckedRecursivelyShrink x, y' <- gUncheckedRecursivelyShrink y]
+    ((:*:) <$> gUncheckedRecursivelyShrink x <*> gUncheckedRecursivelyShrink y)
+      ++ [ x' :*: y | x' <- gUncheckedRecursivelyShrink x ]
+      ++ [ x :*: y' | y' <- gUncheckedRecursivelyShrink y ]
 
 instance (GUncheckedRecursivelyShrink f, GUncheckedRecursivelyShrink g) => GUncheckedRecursivelyShrink (f :+: g) where
   gUncheckedRecursivelyShrink (L1 x) = map L1 (gUncheckedRecursivelyShrink x)
@@ -774,10 +816,7 @@ instance GGenValid U1 where
     gGenValid = pure U1
 
 instance (GGenValid a, GGenValid b) => GGenValid (a :*: b) where
-    gGenValid = do
-        g1 <- gGenValid
-        g2 <- gGenValid
-        pure $ g1 :*: g2
+    gGenValid = (:*:) <$> gGenValid <*> gGenValid
 
 instance (GGenValid a, GGenValid b) => GGenValid (a :+: b) where
     gGenValid = oneof [L1 <$> gGenValid, R1 <$> gGenValid]
@@ -806,7 +845,9 @@ class GValidRecursivelyShrink f where
 
 instance (GValidRecursivelyShrink f, GValidRecursivelyShrink g) => GValidRecursivelyShrink (f :*: g) where
   gValidRecursivelyShrink (x :*: y) =
-      [x' :*: y' | x' <- gValidRecursivelyShrink x, y' <- gValidRecursivelyShrink y]
+    ((:*:) <$> gValidRecursivelyShrink x <*> gValidRecursivelyShrink y)
+      ++ [ x' :*: y | x' <- gValidRecursivelyShrink x ]
+      ++ [ x :*: y' | y' <- gValidRecursivelyShrink y ]
 
 instance (GValidRecursivelyShrink f, GValidRecursivelyShrink g) => GValidRecursivelyShrink (f :+: g) where
   gValidRecursivelyShrink (L1 x) = map L1 (gValidRecursivelyShrink x)
