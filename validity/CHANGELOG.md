@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* `NaN`, `+Infinity` and `-Infinity` are now considered valid for both `Double` and `Float`.
+
 ## [0.8.0.0] - 2018-08-25
 
 ### Added
