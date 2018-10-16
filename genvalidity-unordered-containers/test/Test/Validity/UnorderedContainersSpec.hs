@@ -12,6 +12,6 @@ import Test.Validity.GenValidity
 spec :: Spec
 spec = do
     genValidSpec @(HashSet Int)
-    genValiditySpec @(HashSet Double)
-    genValidSpec @(HashMap Int Double)
-    genValiditySpec @(HashMap Double Double)
+    genValiditySpec @(HashSet Rational)
+    genValidSpec @(HashMap Int Rational)
+    genValiditySpec @(HashMap Rational Rational)

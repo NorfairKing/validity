@@ -61,7 +61,7 @@ genValidSpec =
 --
 -- Example usage:
 --
--- > genInvalidSpec @Double
+-- > genInvalidSpec @Rational
 genInvalidSpec ::
        forall a. (Typeable a, Show a, GenInvalid a)
     => Spec
@@ -92,10 +92,10 @@ genValidGeneratesValid = genGeneratesValid @a genValid shrinkValid
 
 -- | @genValid@ only generates invalid data
 --
--- prop> genInvalidGeneratesInvalid @Float
--- prop> genInvalidGeneratesInvalid @Double
--- prop> genInvalidGeneratesInvalid @(Maybe Double)
--- prop> genInvalidGeneratesInvalid @[Double]
+-- prop> genInvalidGeneratesInvalid @Rational
+-- prop> genInvalidGeneratesInvalid @Rational
+-- prop> genInvalidGeneratesInvalid @(Maybe Rational)
+-- prop> genInvalidGeneratesInvalid @[Rational]
 genInvalidGeneratesInvalid ::
        forall a. (Show a, GenInvalid a)
     => Property
