@@ -31,7 +31,7 @@ Assume you have some data type:
 ``` Haskell
 data MyType = MyType
   { myBool :: Bool
-  , myDouble :: Double
+  , myRational :: Rational
   }
 ```
 
@@ -91,7 +91,7 @@ The following few lines are all that you need to get started with validity-based
 ``` Haskell
 data MyType = MyType
   { myBool :: Bool
-  , myDouble :: Double
+  , myRational :: Rational
   } deriving (Show, Eq, Generic)
 
 instance Validity MyType

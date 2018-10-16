@@ -8,7 +8,7 @@ import Test.Validity.Monoid
 
 spec :: Spec
 spec = do
-    monoidSpecOnValid @[Double]
+    monoidSpecOnValid @[Rational]
     monoidSpec @[Int]
     monoidSpecOnArbitrary @[Int]
     monoidSpecOnGen (pure "a") "singleton list of 'a'" (const [])

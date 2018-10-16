@@ -8,6 +8,6 @@ import Test.Validity.GenValidity
 
 spec :: Spec
 spec = do
-    genValiditySpec @Double
-    genValidSpec @Double
-    genInvalidSpec @Double
+    genValiditySpec @Rational
+    genValidSpec @Rational
+    genInvalidSpec @Rational

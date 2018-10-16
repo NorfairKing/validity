@@ -15,19 +15,19 @@ spec = do
     describe "genStructurallyValidMapOf" $
         it "produces valid maps" $
         genGeneratesValid
-            (genStructurallyValidMapOf @Double @Double genValid)
+            (genStructurallyValidMapOf @Rational @Rational genValid)
             (const [])
     describe "genStructurallyValidMapOfInvalidValues" $
         it "produces valid maps" $
         genGeneratesInvalid
-            (genStructurallyValidMapOfInvalidValues @Double @Double)
+            (genStructurallyValidMapOfInvalidValues @Rational @Rational)
             (const [])
 #if MIN_VERSION_containers(0,5,9)
     describe "genStructurallyInvalidMap" $
         it "produces invalid maps" $
         genGeneratesInvalid
-            (genStructurallyInvalidMap @Double @Double)
+            (genStructurallyInvalidMap @Rational @Rational)
             (const [])
 #endif
-    genValidSpec @(Map Int Double)
-    genValiditySpec @(Map Double Double)
+    genValidSpec @(Map Int Rational)
+    genValiditySpec @(Map Rational Rational)

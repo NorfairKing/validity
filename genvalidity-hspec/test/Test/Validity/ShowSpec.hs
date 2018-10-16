@@ -13,9 +13,9 @@ import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-    showReadSpecOnValid @Double
+    showReadSpecOnValid @Rational
     showReadSpec @Int
-    showReadSpecOnArbitrary @Double
+    showReadSpecOnArbitrary @Rational
     showReadSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])
     failsBecause "show and read don't have the correct semantics" $
         showReadSpec @ShowFuncMismatch

@@ -29,7 +29,7 @@ import Test.QuickCheck
 
 -- |
 --
--- prop> shrinkPreservesValidOnGenValid (:[])
+-- prop> shrinkPreservesValidOnGenValid ((:[]) :: Int -> [Int])
 shrinkPreservesValidOnGenValid ::
        forall a. (Show a, GenValid a)
     => (a -> [a])
@@ -38,7 +38,7 @@ shrinkPreservesValidOnGenValid = shrinkingStaysValid genValid
 
 -- |
 --
--- prop> shrinkPreservesInvalidOnGenInvalid (:[])
+-- prop> shrinkPreservesInvalidOnGenInvalid ((:[]) :: Rational -> [Rational])
 shrinkPreservesInvalidOnGenInvalid ::
        forall a. (Show a, GenInvalid a)
     => (a -> [a])
@@ -47,7 +47,7 @@ shrinkPreservesInvalidOnGenInvalid = shrinkingStaysValid genInvalid
 
 -- |
 --
--- prop> shrinkValidPreservesValid (pure 5)
+-- prop> shrinkValidPreservesValid (pure 5 :: Gen Rational)
 shrinkValidPreservesValid ::
        forall a. (Show a, GenValid a)
     => Gen a
@@ -56,7 +56,6 @@ shrinkValidPreservesValid gen = shrinkingStaysValid gen shrinkValid
 
 -- |
 --
--- prop> shrinkInvalidPreservesInvalid (pure (1/0) :: Gen Double)
 shrinkInvalidPreservesInvalid ::
        forall a. (Show a, GenInvalid a)
     => Gen a
@@ -97,7 +96,7 @@ shrinkingStaysInvalid gen s = shrinkingPreserves gen s isInvalid
 
 -- |
 --
--- prop> shrinkingPreserves (pure 5) (:[]) (== 5)
+-- prop> shrinkingPreserves (pure 5 :: Gen Int) (:[]) (== 5)
 shrinkingPreserves ::
        forall a. Show a
     => Gen a
@@ -121,7 +120,7 @@ shrinkingPreservesWithLimit gen s l p =
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItself shrinkUnchecked
+-- prop> shrinkDoesNotShrinkToItself (shrinkUnchecked :: Double -> [Double])
 shrinkDoesNotShrinkToItself ::
        forall a. (Show a, Eq a, GenUnchecked a)
     => (a -> [a])
@@ -130,7 +129,7 @@ shrinkDoesNotShrinkToItself = doesNotShrinkToItself genUnchecked
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItselfWithLimit shrinkUnchecked 100
+-- prop> shrinkDoesNotShrinkToItselfWithLimit (shrinkUnchecked :: Double -> [Double]) 100
 shrinkDoesNotShrinkToItselfWithLimit ::
        forall a. (Show a, Eq a, GenUnchecked a)
     => (a -> [a])
@@ -141,7 +140,7 @@ shrinkDoesNotShrinkToItselfWithLimit =
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItselfOnValid shrinkValid
+-- prop> shrinkDoesNotShrinkToItselfOnValid (shrinkValid ::  Rational -> [Rational])
 shrinkDoesNotShrinkToItselfOnValid ::
        forall a. (Show a, Eq a, GenValid a)
     => (a -> [a])
@@ -150,7 +149,7 @@ shrinkDoesNotShrinkToItselfOnValid = doesNotShrinkToItself genValid
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItselfOnValidWithLimit shrinkValid 100
+-- prop> shrinkDoesNotShrinkToItselfOnValidWithLimit (shrinkValid :: Rational -> [Rational]) 100
 shrinkDoesNotShrinkToItselfOnValidWithLimit ::
        forall a. (Show a, Eq a, GenValid a)
     => (a -> [a])
@@ -161,7 +160,7 @@ shrinkDoesNotShrinkToItselfOnValidWithLimit =
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItselfOnInvalid shrinkInvalid
+-- prop> shrinkDoesNotShrinkToItselfOnInvalid (shrinkInvalid :: Rational -> [Rational])
 shrinkDoesNotShrinkToItselfOnInvalid ::
        forall a. (Show a, Eq a, GenInvalid a)
     => (a -> [a])
@@ -170,7 +169,7 @@ shrinkDoesNotShrinkToItselfOnInvalid = doesNotShrinkToItself genInvalid
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItselfOnInvalidWithLimit shrinkInvalid 100
+-- prop> shrinkDoesNotShrinkToItselfOnInvalidWithLimit (shrinkInvalid :: Rational -> [Rational]) 100
 shrinkDoesNotShrinkToItselfOnInvalidWithLimit ::
        forall a. (Show a, Eq a, GenInvalid a)
     => (a -> [a])
@@ -181,7 +180,7 @@ shrinkDoesNotShrinkToItselfOnInvalidWithLimit =
 
 -- |
 --
--- prop> doesNotShrinkToItself (pure 5) shrinkUnchecked
+-- prop> doesNotShrinkToItself (pure 5 :: Gen Double) shrinkUnchecked
 doesNotShrinkToItself ::
        forall a. (Show a, Eq a)
     => Gen a
@@ -191,7 +190,7 @@ doesNotShrinkToItself gen s = forAll gen $ \a -> all (/= a) $ s a
 
 -- |
 --
--- prop> doesNotShrinkToItselfWithLimit (pure 5) shrinkUnchecked 100
+-- prop> doesNotShrinkToItselfWithLimit (pure 5 :: Gen Double) shrinkUnchecked 100
 doesNotShrinkToItselfWithLimit ::
        forall a. (Show a, Eq a)
     => Gen a

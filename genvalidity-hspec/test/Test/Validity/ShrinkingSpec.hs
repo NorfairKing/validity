@@ -8,21 +8,21 @@ import Test.Validity.Shrinking
 
 spec :: Spec
 spec = do
-    shrinkValiditySpec @Double
+    shrinkValiditySpec @Rational
     shrinkValidSpec @Int
-    shrinkInvalidSpec @Double
+    shrinkInvalidSpec @Rational
     describe "shrinkUncheckedPreservesValidOnGenValid" $ do
-        it "Double" $ shrinkValidPreservesValidOnGenValid @Double
-        it "[Double]" $ shrinkValidPreservesValidOnGenValid @[Double]
+        it "Rational" $ shrinkValidPreservesValidOnGenValid @Rational
+        it "[Rational]" $ shrinkValidPreservesValidOnGenValid @[Rational]
     describe "shrinkValidPreservesValidOnGenValid" $ do
-        it "Double" $ shrinkValidPreservesValidOnGenValid @Double
-        it "[Double]" $ shrinkValidPreservesValidOnGenValid @[Double]
+        it "Rational" $ shrinkValidPreservesValidOnGenValid @Rational
+        it "[Rational]" $ shrinkValidPreservesValidOnGenValid @[Rational]
     describe "shrinkInvalidPreservesInvalidOnGenInvalid" $ do
-        it "Double" $ shrinkInvalidPreservesInvalidOnGenInvalid @Double
-        it "[Double]" $ shrinkInvalidPreservesInvalidOnGenInvalid @[Double]
+        it "Rational" $ shrinkInvalidPreservesInvalidOnGenInvalid @Rational
+        it "[Rational]" $ shrinkInvalidPreservesInvalidOnGenInvalid @[Rational]
     describe "shrinkUncheckedDoesNotShrinkToItself" $ do
         it "Int" $ shrinkUncheckedDoesNotShrinkToItself @Int
         it "[Int]" $ shrinkUncheckedDoesNotShrinkToItself @[Int]
     describe "shrinkValidDoesNotShrinkToItself" $ do
-        it "Double" $ shrinkValidDoesNotShrinkToItself @Double
-        it "[Double]" $ shrinkValidDoesNotShrinkToItself @[Double]
+        it "Rational" $ shrinkValidDoesNotShrinkToItself @Rational
+        it "[Rational]" $ shrinkValidDoesNotShrinkToItself @[Rational]

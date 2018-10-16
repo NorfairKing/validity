@@ -32,9 +32,9 @@ antireflexivityOnGen func gen s = forAllShrink gen s $ antireflexiveOnElem func
 
 -- |
 --
--- prop> antireflexivityOnValid ((<) :: Double -> Double -> Bool)
--- prop> antireflexivityOnValid ((/=) :: Double -> Double -> Bool)
--- prop> antireflexivityOnValid ((>) :: Double -> Double -> Bool)
+-- prop> antireflexivityOnValid ((<) :: Rational -> Rational -> Bool)
+-- prop> antireflexivityOnValid ((/=) :: Rational -> Rational -> Bool)
+-- prop> antireflexivityOnValid ((>) :: Rational -> Rational -> Bool)
 antireflexivityOnValid :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
 antireflexivityOnValid func = antireflexivityOnGen func genValid shrinkValid
 
