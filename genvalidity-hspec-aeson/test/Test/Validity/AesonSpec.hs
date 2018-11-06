@@ -18,6 +18,7 @@ import Test.Validity.Aeson
 spec :: Spec
 spec = do
     jsonSpecOnGen (genListOf $ pure 'a') "sequence of 'a's" (const [])
+    -- jsonSpec @Double DOES NOT HOLD
     jsonSpecOnValid @Rational
     jsonSpec @Int
     jsonSpecOnArbitrary @Int
