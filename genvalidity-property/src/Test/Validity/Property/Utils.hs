@@ -13,9 +13,11 @@ module Test.Validity.Property.Utils
 import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
+
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative (pure)
 #endif
+
 forAllUnchecked ::
        (Show a, GenUnchecked a, Testable prop) => (a -> prop) -> Property
 forAllUnchecked = forAllShrink genUnchecked shrinkUnchecked

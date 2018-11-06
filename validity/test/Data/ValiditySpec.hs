@@ -6,7 +6,7 @@ module Data.ValiditySpec
     ) where
 
 import GHC.Generics (Generic)
-#if !MIN_VERSION_base(4,11,0)
+#if !MIN_VERSION_base(4,7,0)
 import Data.Monoid
 #endif
 import Data.Validity
