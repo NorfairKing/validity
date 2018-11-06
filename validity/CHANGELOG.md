@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.9.0.0] - Unreleased
+
 ### Added
 
 - `prettyValidate`, `validationIsValid`, `prettyValidation`
@@ -9,6 +11,8 @@
 ### Changed
 
 - Renamed `prettyValidation` to `prettyValidate` before adding the new `prettyValidation`.
+
+* `NaN`, `+Infinity` and `-Infinity` are now considered valid for both `Double` and `Float`.
 
 ## [0.8.0.0] - 2018-08-25
 

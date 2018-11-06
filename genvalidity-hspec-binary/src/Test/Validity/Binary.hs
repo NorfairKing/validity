@@ -29,7 +29,7 @@ import Test.Validity.Utils
 --
 -- Example usage:
 --
--- > BinarySpecOnValid @Double
+-- > BinarySpecOnValid @Rational
 binarySpecOnValid ::
        forall a. (Show a, Eq a, Typeable a, GenValid a, Binary a)
     => Spec

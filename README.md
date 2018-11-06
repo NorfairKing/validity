@@ -12,9 +12,9 @@ The `validity-*` packages provides the `Validity` instances for commonly-used pa
 
 Property testing for functions involving types with invariants often requires writing generators that are aware of the validity of the values that they generate.
 The `genvalidity` package provides a general framework to define these generators.
-The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions to generate unchecked values, valid values and invalid values.
+The `GenUnchecked`, `GenValid` and `GenInvalid` type classes provides functions to generate unchecked values, valid values and invalid values respectively.
 
-The `genvalidity-*` packages provides the `GenUnchecked` and `GenValid` instances for commonly-used packages.
+The `genvalidity-*` packages provide the `GenUnchecked` and `GenValid` instances for commonly-used packages.
 
 Property testing of functions involving types which instantiate `Validity`, `GenUnchecked`, `GenValid` and/or `GenInvalid` can be generalised to highly generic functions.
 The `genvalidity-property` and `genvalidity-hspec` provides a large library of combinators that allow for automatic property-test generation.
@@ -31,8 +31,7 @@ Assume you have some data type:
 ``` Haskell
 data MyType = MyType
   { myBool :: Bool
-  , myDouble :: Double
-  }
+  , myRational :: Rational
 ```
 
 #### Step 1: derive `Generic`:
@@ -91,7 +90,7 @@ The following few lines are all that you need to get started with validity-based
 ``` Haskell
 data MyType = MyType
   { myBool :: Bool
-  , myDouble :: Double
+  , myRational :: Rational
   } deriving (Show, Eq, Generic)
 
 instance Validity MyType
@@ -197,7 +196,7 @@ We start by defining some `newtype` wrappers that encapsulate the type on which 
 
 ``` Haskell
 newtype HasPrimeFactorisation
-  -- INVARIANT: (> 1}
+  -- INVARIANT: (> 0}
   = HasPrimeFactorisation Int
 
 newtype Prime
@@ -205,34 +204,26 @@ newtype Prime
   = Prime Int
 
 newtype PrimeFactorisation
-  -- INVARIANT: (not . null) and contains only valid 'Prime's.
+  -- INVARIANT: the contained 'Prime' values are valid.
   = PrimeFactorisation [Prime]
 ```
 
 Here we have written the invariants in comments.
 
 ### Part 1: Explicit invariants
-We can now write functions like these to make the invariants explicit:
-
-``` Haskell
-isValidPrimeFactorisation :: PrimeFactorisation -> Bool
-isValidPrimeFactorisation (PrimeFactorisation is)
-  = not (null is) && isValid is
-```
-
+We can now write functions like these to make the invariants explicit.
 Note that the invariants are inherent to the type.
 This is where the `validity` package comes in.
 It provides a type class `Validity` that allows us to make the invariants explicit:
 
 ``` Haskell
 instance Validity HasPrimeFactorisation where
-    validate (HasPrimeFactorisation i) = check (i > 1) "the contained integer is greater than 1"
+    validate (HasPrimeFactorisation i) = check (i > 0) "the contained integer is greater than 0"
 
 instance Validity Prime where
     validate (Prime i) = check (isPrime i) "the contained integer is a prime"
 
 instance Validity PrimeFactorisation where
-    isValid (PrimeFactorisation ps) = not (null ps) && isValid ps
     validate (PrimeFactorisation ps) = mconcat
         [ check (not (null ps)) "there is at least one prime
         , annotate ps "the contained primes"

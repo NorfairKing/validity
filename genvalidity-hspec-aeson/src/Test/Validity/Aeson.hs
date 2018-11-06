@@ -30,7 +30,7 @@ import Test.Validity.Utils
 --
 -- Example usage:
 --
--- > jsonSpecOnValid @Double
+-- > jsonSpecOnValid @Rational
 jsonSpecOnValid ::
        forall a. (Show a, Eq a, Typeable a, GenValid a, FromJSON a, ToJSON a)
     => Spec

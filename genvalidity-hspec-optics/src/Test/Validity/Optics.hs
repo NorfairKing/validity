@@ -36,7 +36,7 @@ import Test.Validity.Utils
 --
 -- Example usage:
 --
--- > lensSpecOnValid ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
+-- > lensSpecOnValid ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
 lensSpecOnValid ::
        forall s b. (Show b, Eq b, GenValid b, Show s, Eq s, GenValid s)
     => Lens s s b b
@@ -83,7 +83,7 @@ lensSpec l =
 --
 -- Example usage:
 --
--- > lensSpecOnArbitrary ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
+-- > lensSpecOnArbitrary ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
 lensSpecOnArbitrary ::
        forall s b.
        ( Show b
@@ -112,7 +112,7 @@ lensSpecOnArbitrary l =
 -- Example usage:
 --
 -- > lensSpecOnGen
--- >      ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
+-- >      ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
 -- >      (abs <$> genValid)
 -- >      "positive valid doubles"
 -- >      (filter (0.0 >=) . shrinkValid)
@@ -159,7 +159,7 @@ lensSpecOnGen l genB genBName shrinkB genS genSName shrinkS = do
 --
 -- Example usage:
 --
--- prop> lensLaw1 ((_2) :: Lens (Double, Double) (Double, Double) Double Double) genValid shrinkValid genValid shrinkValid
+-- prop> lensLaw1 ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational) genValid shrinkValid genValid shrinkValid
 lensLaw1 ::
        (Show b, Eq b, Show s)
     => Lens s s b b
@@ -178,7 +178,7 @@ lensLaw1 l genB shrinkB genS shrinkS =
 --
 -- Example usage:
 --
--- prop> lensLaw2 ((_2) :: Lens (Double, Double) (Double, Double) Double Double) genValid shrinkValid
+-- prop> lensLaw2 ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational) genValid shrinkValid
 lensLaw2 :: (Show s, Eq s) => Lens s s b b -> Gen s -> (s -> [s]) -> Property
 lensLaw2 l genS shrinkS =
     forAllShrink genS shrinkS $ \s -> set l (view l s) s `shouldBe` s
@@ -189,7 +189,7 @@ lensLaw2 l genS shrinkS =
 --
 -- Example usage:
 --
--- prop> lensLaw3 ((_2) :: Lens (Double, Double) (Double, Double) Double Double) genValid shrinkValid genValid shrinkValid
+-- prop> lensLaw3 ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational) genValid shrinkValid genValid shrinkValid
 lensLaw3 ::
        (Show b, Eq b, Show s, Eq s)
     => Lens s s a b
@@ -208,7 +208,7 @@ lensLaw3 l genB shrinkB genS shrinkS =
 --
 -- Example Usage:
 --
--- prop> lensGettingProducesValidOnValid ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
+-- prop> lensGettingProducesValidOnValid ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
 lensGettingProducesValidOnValid ::
        (Show s, GenValid s, Show b, GenValid b) => Lens s s b b -> Property
 lensGettingProducesValidOnValid l =
@@ -228,7 +228,7 @@ lensGettingProducesValid l =
 --
 -- Example Usage:
 --
--- prop> lensGettingProducesValidOnArbitrary ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
+-- prop> lensGettingProducesValidOnArbitrary ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
 lensGettingProducesValidOnArbitrary ::
        (Show s, Arbitrary s, Show b,  Validity b)
     => Lens s s b b
@@ -242,7 +242,7 @@ lensGettingProducesValidOnArbitrary l =
 --
 -- Example Usage:
 --
--- prop> lensGettingProducesValidOnGen ((_2) :: Lens (Double, Double) (Double, Double) Double Double) genValid shrinkValid
+-- prop> lensGettingProducesValidOnGen ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational) genValid shrinkValid
 lensGettingProducesValidOnGen ::
        (Validity b, Show b, Show s)
     => Lens s s b b
@@ -256,7 +256,7 @@ lensGettingProducesValidOnGen l genS shrinkS =
 --
 -- Example usage:
 --
--- prop> lensSettingProducesValidOnValid ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
+-- prop> lensSettingProducesValidOnValid ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
 lensSettingProducesValidOnValid ::
        (Show s, GenValid s, Show b, GenValid b, Show t, Validity t)
     => Lens s t a b
@@ -285,7 +285,7 @@ lensSettingProducesValid l =
 --
 -- Example usage:
 --
--- prop> lensSettingProducesValidOnArbitrary ((_2) :: Lens (Double, Double) (Double, Double) Double Double)
+-- prop> lensSettingProducesValidOnArbitrary ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
 lensSettingProducesValidOnArbitrary ::
        (Show s, Arbitrary s, Show b, Arbitrary b, Show t, Validity t)
     => Lens s t a b
@@ -299,7 +299,7 @@ lensSettingProducesValidOnArbitrary l =
 --
 -- Example usage:
 --
--- prop> lensSettingProducesValidOnGen ((_2) :: Lens (Double, Double) (Double, Double) Double Double) genValid shrinkValid genValid shrinkValid
+-- prop> lensSettingProducesValidOnGen ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational) genValid shrinkValid genValid shrinkValid
 lensSettingProducesValidOnGen ::
        (Show s, Show b, Show t, Validity t)
     => Lens s t a b

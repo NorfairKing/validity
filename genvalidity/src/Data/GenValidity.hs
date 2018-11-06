@@ -46,6 +46,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE CPP #-}
 #if __GLASGOW_HASKELL__ >= 710
@@ -108,7 +109,7 @@ import Control.Monad (forM)
 --
 -- > {-# LANGUAGE DeriveGeneric #-}
 -- >
--- > data MyType = MyType Double String
+-- > data MyType = MyType Rational String
 -- >     deriving (Show, Eq, Generic)
 -- >
 -- > instance GenUnchecked MyType
@@ -547,34 +548,34 @@ instance GenUnchecked Word64 where
 instance GenValid Word64
 
 instance GenUnchecked Float where
-    genUnchecked = arbitrary
+    genUnchecked = frequency [(9, arbitrary), (1, elements [read "NaN", read "Infinity", read "-Infinity", read "-0"])]
 #if MIN_VERSION_QuickCheck(2,9,2)
-    shrinkUnchecked = shrink
+    shrinkUnchecked f = if
+      | isInfinite f -> []
+      | isNaN f -> []
+      | otherwise -> shrink f
 #else
     shrinkUnchecked _ = []
 #endif
 
 instance GenValid Float where
-    genValid = arbitrary
-
--- | Either 'NaN' or 'Infinity'.
-instance GenInvalid Float where
-    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity"]
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Double where
-    genUnchecked = frequency [(9, genValid), (1, genInvalid)]
+    genUnchecked = frequency [(9, arbitrary), (1, elements [read "NaN", read "Infinity", read "-Infinity", read "-0"])]
 #if MIN_VERSION_QuickCheck(2,9,2)
-    shrinkUnchecked = shrink
+    shrinkUnchecked d = if
+      | isInfinite d -> []
+      | isNaN d -> []
+      | otherwise -> shrink d
 #else
     shrinkUnchecked _ = []
 #endif
 
 instance GenValid Double where
-    genValid = arbitrary
-
--- | Either 'NaN' or 'Infinity'.
-instance GenInvalid Double where
-    genInvalid = elements [read "NaN", read "Infinity", read "-Infinity"]
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Integer where
     genUnchecked = arbitrary

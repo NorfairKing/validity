@@ -61,7 +61,7 @@ leftIdentityOnGen op = leftIdentityOnGenWithEquality op (==)
 
 -- |
 --
--- prop> leftIdentityOnValid (flip ((^) :: Double -> Int -> Double)) 1
+-- prop> leftIdentityOnValid (flip ((^) :: Rational -> Int -> Rational)) 1
 leftIdentityOnValid ::
        (Show a, Eq a, GenValid a) => (b -> a -> a) -> b -> Property
 leftIdentityOnValid op b = leftIdentityOnGen op b genValid shrinkValid
@@ -116,7 +116,7 @@ rightIdentityOnGen op = rightIdentityOnGenWithEquality op (==)
 
 -- |
 --
--- prop> rightIdentityOnValid ((^) :: Double -> Int -> Double) 1
+-- prop> rightIdentityOnValid ((^) :: Rational -> Int -> Rational) 1
 rightIdentityOnValid ::
        (Show a, Eq a, GenValid a) => (a -> b -> a) -> b -> Property
 rightIdentityOnValid op b = rightIdentityOnGen op b genValid shrinkValid
@@ -149,8 +149,8 @@ identityOnGen op e gen s =
 
 -- |
 --
--- prop> identityOnValid ((*) :: Double -> Double -> Double) 1
--- prop> identityOnValid ((+) :: Double -> Double -> Double) 0
+-- prop> identityOnValid ((*) :: Rational -> Rational -> Rational) 1
+-- prop> identityOnValid ((+) :: Rational -> Rational -> Rational) 0
 identityOnValid :: (Show a, Eq a, GenValid a) => (a -> a -> a) -> a -> Property
 identityOnValid op a = identityOnGen op a genValid shrinkValid
 

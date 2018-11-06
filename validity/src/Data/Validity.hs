@@ -51,6 +51,8 @@ module Data.Validity
     , decorateList
     , invalid
     , valid
+    , validateNotNaN
+    , validateNotInfinite
     -- * Utilities
     -- ** Utilities for validity checking
     , isValid
@@ -426,27 +428,19 @@ instance Validity Word32 where
 instance Validity Word64 where
     validate = trivialValidation
 
--- | NOT trivially valid:
---
--- * NaN is not valid.
--- * Infinite values are not valid.
+-- | Trivially valid:
 instance Validity Float where
-    validate f =
-        mconcat
-            [ declare "The Float is not NaN." $ not (isNaN f)
-            , declare "The Float is not infinite." $ not (isInfinite f)
-            ]
+    validate = trivialValidation
 
--- | NOT trivially valid:
---
--- * NaN is not valid.
--- * Infinite values are not valid.
+-- | Trivially valid:
 instance Validity Double where
-    validate d =
-        mconcat
-            [ declare "The Double is not NaN." $ not (isNaN d)
-            , declare "The Double is not infinite." $ not (isInfinite d)
-            ]
+    validate = trivialValidation
+
+validateNotNaN :: RealFloat a => a -> Validation
+validateNotNaN d = declare "The Double is not NaN." $ not (isNaN d)
+
+validateNotInfinite :: RealFloat a => a -> Validation
+validateNotInfinite d = declare "The Double is not infinite." $ not (isInfinite d)
 
 -- | Trivially valid
 --

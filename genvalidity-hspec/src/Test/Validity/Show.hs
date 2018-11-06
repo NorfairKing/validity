@@ -75,7 +75,7 @@ showReadSpecOnGen gen n s =
 
 -- |
 --
--- prop> showReadRoundTripOnValid @Double
+-- prop> showReadRoundTripOnValid @Rational
 showReadRoundTripOnValid ::
        forall a. (Show a, Eq a, Read a, GenValid a)
     => Property
