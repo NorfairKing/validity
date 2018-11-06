@@ -115,7 +115,7 @@ encodeAndDecodeAreInversesOnGen ::
 encodeAndDecodeAreInversesOnGen gen s =
     forAllShrink gen s $ \(a :: a) ->
         case Binary.decodeOrFail (Binary.encode a) of
-            Right (_, _, b) -> a `shouldBe` b
+            Right (_, _, b) -> b `shouldBe` a
             Left (_, _, s_) ->
                 expectationFailure $
                 unwords ["decode of encode is not identity:", s_]
