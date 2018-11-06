@@ -31,7 +31,7 @@
     https://hackage.haskell.org/package/genvalidity ):
 
     > instance Validity Prime where
-    >     validate (Prime n) = isPrime n <?@> "The 'Int' is prime."
+    >     validate (Prime n) = check (isPrime n) "The 'Int' is prime."
 
     If certain typeclass invariants exist, you can make these explicit in the
     validity instance as well.
