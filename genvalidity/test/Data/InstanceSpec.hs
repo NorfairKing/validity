@@ -137,7 +137,7 @@ genUncheckedTest proxy = do
     it (unwords
             ["genUnchecked of", nameOf proxy, "does not crash while validating"]) $
         forAll genUnchecked $ \a ->
-            case prettyValidation (a :: a) of
+            case prettyValidate (a :: a) of
                 Right v -> seq v True
                 Left err -> seq err True
     modifyMaxSuccess (`quot` 5) $
@@ -149,7 +149,7 @@ genUncheckedTest proxy = do
                  ]) $
         forAll genUnchecked $ \a ->
             forM_ (shrinkUnchecked a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right v_ -> seq v_ $ pure () :: IO ()
                     Left err -> seq err $ pure ()
     modifyMaxSuccess (`quot` 5) $
@@ -163,7 +163,7 @@ genUncheckedTest proxy = do
             forM_ (shrinkUnchecked a) $ \a' ->
                 unless (a /= a') $
                 expectationFailure $
-                unlines ["The value", show( a ::a), "was shrunk to itself"]
+                unlines ["The value", show (a :: a), "was shrunk to itself"]
 
 genValidTest ::
        forall a. (Show a, Eq a, Typeable a, GenValid a)
@@ -172,7 +172,7 @@ genValidTest ::
 genValidTest proxy = do
     it (unwords ["genValid of", nameOf proxy, "generates only valid values"]) $
         forAll genValid $ \a ->
-            case prettyValidation (a :: a) of
+            case prettyValidate (a :: a) of
                 Right v -> seq v $ pure ()
                 Left err ->
                     expectationFailure $
@@ -191,7 +191,7 @@ genValidTest proxy = do
                  ]) $
         forAll genValid $ \a ->
             forM_ (shrinkValid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right v_ -> seq v_ $ pure ()
                     Left err ->
                         expectationFailure $
@@ -210,7 +210,7 @@ genValidTest proxy = do
                  ]) $
         forAll genValid $ \a ->
             forM_ (shrinkValid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right v_ -> seq v_ $ pure () :: IO ()
                     Left err -> seq err $ pure ()
     modifyMaxSuccess (`quot` 5) $
@@ -230,7 +230,7 @@ genInvalidTest ::
 genInvalidTest proxy = do
     it (unwords ["genInvalid of", nameOf proxy, "generates only invalid values"]) $
         forAll genInvalid $ \a ->
-            case prettyValidation (a :: a) of
+            case prettyValidate (a :: a) of
                 Right _ ->
                     expectationFailure $
                     unlines
@@ -245,7 +245,7 @@ genInvalidTest proxy = do
                  ]) $
         forAll genInvalid $ \a ->
             forM_ (shrinkInvalid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right _ ->
                         expectationFailure $
                         unlines
@@ -262,7 +262,7 @@ genInvalidTest proxy = do
                  ]) $
         forAll genInvalid $ \a ->
             forM_ (shrinkInvalid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right _ ->
                         expectationFailure $
                         unlines

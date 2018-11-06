@@ -42,7 +42,7 @@ genValidstructurallySpec ::
 genValidstructurallySpec proxy =
     it (unwords ["only generates valid", "\"" ++ nameOf proxy ++ "\"s"]) $
     forAll (genValidStructurally :: Gen a) $ \a ->
-        case prettyValidation a of
+        case prettyValidate a of
             Right _ -> return ()
             Left err ->
                 expectationFailure $
@@ -71,7 +71,7 @@ shrinkValidstructurallySpec proxy = do
     it (unwords ["only shrinks to valid", "\"" ++ nameOf proxy ++ "\"s"]) $
         forAll (genValid :: Gen a) $ \a ->
             forM_ (shrinkValidStructurally a) $ \subA ->
-                case prettyValidation subA of
+                case prettyValidate subA of
                     Right _ -> return ()
                     Left err ->
                         expectationFailure $

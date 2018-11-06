@@ -35,7 +35,7 @@ forAllInvalid = forAllShrink genInvalid shrinkInvalid
 
 shouldBeValid :: (Show a, Validity a) => a -> Expectation
 shouldBeValid a =
-    case prettyValidation a of
+    case prettyValidate a of
         Right _ -> pure ()
         Left err ->
             expectationFailure $
@@ -49,7 +49,7 @@ shouldBeValid a =
 
 shouldBeInvalid :: (Show a, Validity a) => a -> Expectation
 shouldBeInvalid a =
-    case prettyValidation a of
+    case prettyValidate a of
         Right _ ->
             expectationFailure $
             unlines
