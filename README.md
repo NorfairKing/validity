@@ -181,7 +181,7 @@ Input-output examples include the following:
 ```
 
 The problem at hand is well-defined, and it immediately becomes clear that `Int` and `[Int]` are not the best input- and output types for this function.
-A prime factorisation is only defined for integers greater than one, and a prime factorisation is a non-empty list of primes.
+A prime factorisation is only defined for integers greater than zero.
 If we consider all possible values of the input- and output types, there is a lot that can go wrong with this function.
 
 Using static analysis to prove the correctness of this function has two problems.
