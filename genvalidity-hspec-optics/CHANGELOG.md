@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.1.1] - 2018-11-07
+
+### Changed
+
+* Test suite compatibility with `validity >=0.9`, `genvalidity >=0.7` and `genvalidity-property >=0.3`
+
 ## [0.1.1.0] - 2018-10-06
 
 ### Added

@@ -1,5 +1,5 @@
 name: genvalidity-hspec-aeson
-version: '0.3.0.0'
+version: '0.3.0.1'
 synopsis: Standard spec's for aeson-related instances
 description: Standard spec's for aeson-related Instances
 category: Testing
@@ -36,6 +36,9 @@ tests:
     dependencies:
     - base
     - doctest
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec-aeson
   genvalidity-hspec-aeson-test:
     main: Spec.hs
@@ -48,7 +51,9 @@ tests:
     dependencies:
     - aeson
     - base
-    - genvalidity
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-aeson
     - genvalidity-hspec
     - genvalidity-hspec-aeson

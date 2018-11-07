@@ -1,5 +1,5 @@
 name: genvalidity-hspec-hashable
-version: '0.2.0.2'
+version: '0.2.0.3'
 synopsis: Standard spec's for Hashable instances
 description: Standard spec's for Hashable instances
 category: Testing
@@ -39,12 +39,15 @@ tests:
     - -Wall
     dependencies:
     - base
-    - genvalidity
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec
     - genvalidity-hspec-hashable
     - hashable
     - hspec
     - hspec-core
+
   genvalidity-hspec-hashable-doctests:
     main: DocTest.hs
     source-dirs: doctest

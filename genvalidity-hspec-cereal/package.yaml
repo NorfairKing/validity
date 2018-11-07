@@ -1,5 +1,5 @@
 name: genvalidity-hspec-cereal
-version: '0.2.0.2'
+version: '0.2.0.3'
 synopsis: Standard spec's for cereal-related instances
 description: Standard spec's for cereal-related Instances
 category: Testing
@@ -35,7 +35,11 @@ tests:
     dependencies:
     - base
     - doctest
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec-cereal
+
   genvalidity-hspec-cereal-test:
     main: Spec.hs
     source-dirs: test/
@@ -46,5 +50,7 @@ tests:
     - -Wall
     dependencies:
     - base
-    - genvalidity
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec-cereal

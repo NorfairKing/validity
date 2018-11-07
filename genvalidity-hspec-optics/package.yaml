@@ -1,5 +1,5 @@
 name: genvalidity-hspec-optics
-version: '0.1.1.0'
+version: '0.1.1.1'
 synopsis: Standard spec's for optics
 description: Standard spec's for optics
 category: Testing
@@ -34,7 +34,11 @@ tests:
     dependencies:
     - base
     - doctest
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec-optics
+
   genvalidity-hspec-optics-test:
     main: Spec.hs
     source-dirs: test/
@@ -46,6 +50,8 @@ tests:
     dependencies:
     - microlens
     - base
-    - genvalidity
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec
     - genvalidity-hspec-optics

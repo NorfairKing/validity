@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.7.0.0] - 2018-11-07
+
+### Changed
+
 * `genUnchecked` of `Double` and `Float` now generates `NaN`, `+Infinity`, `-Infinity` and `-0` according to the new version of `validity`.
 
 ## [0.6.1.0] - 2018-10-06

@@ -1,5 +1,5 @@
 name: genvalidity-hspec-binary
-version: '0.2.0.2'
+version: '0.2.0.3'
 synopsis: Standard spec's for binary-related Instances
 description: Standard spec's for cereal-related Instances, see https://hackage.haskell.org/package/binary.
 category: Testing
@@ -36,7 +36,11 @@ tests:
     dependencies:
     - base
     - doctest
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec-binary
+
   genvalidity-hspec-binary-test:
     main: Spec.hs
     source-dirs: test/
@@ -47,5 +51,7 @@ tests:
     - -Wall
     dependencies:
     - base
-    - genvalidity
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-property >=0.3
     - genvalidity-hspec-binary

@@ -1,5 +1,5 @@
 name: genvalidity-bytestring
-version: '0.3.0.0'
+version: '0.3.0.1'
 synopsis: GenValidity support for ByteString
 description: Please see README.md
 category: Testing
@@ -37,7 +37,8 @@ tests:
     dependencies:
     - base
     - deepseq
-    - genvalidity
+    - validity >= 0.9
+    - genvalidity >= 0.7
     - genvalidity-bytestring
     - genvalidity-hspec
     - hspec

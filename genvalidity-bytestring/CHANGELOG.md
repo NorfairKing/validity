@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.3.0.1] - 2018-10-07
+
+### Changed
+
+* Test suite compatibility with `validity >= 0.9`
+
 ## [0.3.0.0] - 2018-08-25
 
 ### Added

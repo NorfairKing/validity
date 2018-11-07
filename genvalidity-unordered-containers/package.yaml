@@ -1,5 +1,5 @@
 name: genvalidity-unordered-containers
-version: '0.2.0.3'
+version: '0.2.0.4'
 synopsis: GenValidity support for unordered-containers
 description: Please see README.md
 category: Testing
@@ -38,7 +38,8 @@ tests:
     - -Wall
     dependencies:
     - base >=4.9 && <=5
-    - genvalidity
+    - validity >=0.9
+    - genvalidity >=0.7
     - genvalidity-hspec
     - genvalidity-unordered-containers
     - hspec

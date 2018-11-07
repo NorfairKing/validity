@@ -1,5 +1,5 @@
 name: genvalidity-containers
-version: '0.5.1.0'
+version: '0.5.1.1'
 synopsis: GenValidity support for containers
 description: Please see README.md
 category: Testing
@@ -39,7 +39,8 @@ tests:
     - -Wall
     dependencies:
     - base >=4.9 && <=5
-    - genvalidity
+    - validity >=0.9
+    - genvalidity >=0.7
     - genvalidity-containers
     - genvalidity-hspec
     - hspec

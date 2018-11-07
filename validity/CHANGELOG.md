@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [0.9.0.0] - Unreleased
+## [0.9.0.0] - 2018-10-07
 
 ### Added
 
