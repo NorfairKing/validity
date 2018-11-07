@@ -17,7 +17,7 @@ checkable :: (Validity t, Show t, NFData t) => Gen t -> SpecWith ()
 checkable gen =
     it "generates bytestrings that can be checked for validity" $
     forAll gen $ \v ->
-        case prettyValidation v of
+        case prettyValidate v of
             Left e -> deepseq e True
             Right v_ -> deepseq v_ True
 

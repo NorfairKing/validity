@@ -13,9 +13,11 @@ module Test.Validity.Property.Utils
 import Data.GenValidity
 import Test.Hspec
 import Test.QuickCheck
+
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative (pure)
 #endif
+
 forAllUnchecked ::
        (Show a, GenUnchecked a, Testable prop) => (a -> prop) -> Property
 forAllUnchecked = forAllShrink genUnchecked shrinkUnchecked
@@ -35,7 +37,7 @@ forAllInvalid = forAllShrink genInvalid shrinkInvalid
 
 shouldBeValid :: (Show a, Validity a) => a -> Expectation
 shouldBeValid a =
-    case prettyValidation a of
+    case prettyValidate a of
         Right _ -> pure ()
         Left err ->
             expectationFailure $
@@ -49,7 +51,7 @@ shouldBeValid a =
 
 shouldBeInvalid :: (Show a, Validity a) => a -> Expectation
 shouldBeInvalid a =
-    case prettyValidation a of
+    case prettyValidate a of
         Right _ ->
             expectationFailure $
             unlines

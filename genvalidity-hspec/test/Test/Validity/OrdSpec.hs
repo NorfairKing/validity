@@ -10,8 +10,8 @@ import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-    ordSpecOnValid @Double
-    failsBecause "NaN >= NaN is False" $ ordSpecOnInvalid @Double
+    ordSpecOnValid @Rational
+    failsBecause "NaN >= NaN is False" $ ordSpec @Double
     ordSpec @Int
     ordSpecOnArbitrary @Int
     ordSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])

@@ -31,7 +31,7 @@
     https://hackage.haskell.org/package/genvalidity ):
 
     > instance Validity Prime where
-    >     validate (Prime n) = isPrime n <?@> "The 'Int' is prime."
+    >     validate (Prime n) = check (isPrime n) "The 'Int' is prime."
 
     If certain typeclass invariants exist, you can make these explicit in the
     validity instance as well.
@@ -51,6 +51,8 @@ module Data.Validity
     , decorateList
     , invalid
     , valid
+    , validateNotNaN
+    , validateNotInfinite
     -- * Utilities
     -- ** Utilities for validity checking
     , isValid
@@ -61,6 +63,8 @@ module Data.Validity
     , Validation(..)
     , ValidationChain(..)
     , checkValidity
+    , validationIsValid
+    , prettyValidate
     , prettyValidation
     -- * Re-exports
     , Monoid(..)
@@ -424,27 +428,19 @@ instance Validity Word32 where
 instance Validity Word64 where
     validate = trivialValidation
 
--- | NOT trivially valid:
---
--- * NaN is not valid.
--- * Infinite values are not valid.
+-- | Trivially valid:
 instance Validity Float where
-    validate f =
-        mconcat
-            [ declare "The Float is not NaN." $ not (isNaN f)
-            , declare "The Float is not infinite." $ not (isInfinite f)
-            ]
+    validate = trivialValidation
 
--- | NOT trivially valid:
---
--- * NaN is not valid.
--- * Infinite values are not valid.
+-- | Trivially valid:
 instance Validity Double where
-    validate d =
-        mconcat
-            [ declare "The Double is not NaN." $ not (isNaN d)
-            , declare "The Double is not infinite." $ not (isInfinite d)
-            ]
+    validate = trivialValidation
+
+validateNotNaN :: RealFloat a => a -> Validation
+validateNotNaN d = declare "The Double is not NaN." $ not (isNaN d)
+
+validateNotInfinite :: RealFloat a => a -> Validation
+validateNotInfinite d = declare "The Double is not infinite." $ not (isInfinite d)
 
 -- | Trivially valid
 --
@@ -547,12 +543,30 @@ checkValidity a =
         Validation [] -> Right a
         Validation errs -> Left errs
 
--- | validate a given value, and return a nice error if the value is invalid.
-prettyValidation :: Validity a => a -> Either String a
-prettyValidation a =
-    case checkValidity a of
-        Right a_ -> Right a_
-        Left errs -> Left $ intercalate "\n" $ map (errCascade . toStrings) errs
+-- | Check if a 'Validation' concerns a valid value.
+validationIsValid :: Validation -> Bool
+validationIsValid v = case v of
+    Validation [] -> True
+    _ -> False
+
+-- | Validate a given value
+--
+-- This function will return a nice error if the value is invalid.
+-- It will return the original value in 'Right' if it was valid,
+-- as evidence that it has been validated.
+prettyValidate :: Validity a => a -> Either String a
+prettyValidate a = case prettyValidation $ validate a of
+    Just e -> Left e
+    Nothing -> Right a
+
+-- | Render a `Validation` in a somewhat pretty way.
+--
+-- This function will return 'Nothing' if the 'Validation' concerned a valid value.
+prettyValidation :: Validation -> Maybe String
+prettyValidation v =
+    case v of
+        Validation [] -> Nothing
+        Validation errs -> Just $ intercalate "\n" $ map (errCascade . toStrings) errs
   where
     toStrings (Violated s) = ["Violated: " ++ s]
     toStrings (Location s vc) = s : toStrings vc

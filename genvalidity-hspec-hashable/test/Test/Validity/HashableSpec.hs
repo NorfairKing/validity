@@ -16,7 +16,8 @@ import Test.Validity.Hashable
 
 spec :: Spec
 spec = do
-    hashableSpecOnValid @Double
+    hashableSpecOnValid @Rational
+    -- hashableSpecOnValid @Double DOES NOT HOLD
     hashableSpec @Int
     hashableSpecOnArbitrary @Int
     hashableSpec @HashableValid

@@ -13,9 +13,9 @@ import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-    eqSpecOnValid @Double
+    eqSpecOnValid @Rational
     eqSpec @Int
-    failsBecause "reflexivity does not hold for NaN" $ eqSpecOnInvalid @Double
+    -- eqSpec @Double DOES NOT HOLD because of NaN
     eqSpecOnArbitrary @Int
     eqSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])
     failsBecause "(/=) and (==) don't have opposite semantics" $

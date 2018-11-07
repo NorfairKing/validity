@@ -44,17 +44,17 @@ spec = do
     twoTests (Proxy :: Proxy Int32)
     twoTests (Proxy :: Proxy Int64)
     twoTests (Proxy :: Proxy Integer)
-    threeTests (Proxy :: Proxy Float)
-    threeTupleTests (Proxy :: Proxy Float)
-    threeTests (Proxy :: Proxy Double)
-    threeTupleTests (Proxy :: Proxy Double)
+    twoTests (Proxy :: Proxy Float)
+    twoTupleTests (Proxy :: Proxy Float)
+    twoTests (Proxy :: Proxy Double)
+    twoTupleTests (Proxy :: Proxy Double)
     threeTests (Proxy :: Proxy Rational)
     threeTupleTests (Proxy :: Proxy Rational)
     modifyMaxSize (`quot` 2) $
-        threeTests (Proxy :: Proxy (Either Double Double))
-    threeTests (Proxy :: Proxy (Maybe Double))
-    threeTests (Proxy :: Proxy (Maybe (Maybe Double)))
-    threeTests (Proxy :: Proxy [Double])
+        threeTests (Proxy :: Proxy (Either Rational Rational))
+    threeTests (Proxy :: Proxy (Maybe Rational))
+    threeTests (Proxy :: Proxy (Maybe (Maybe Rational)))
+    threeTests (Proxy :: Proxy [Rational])
     threeTests (Proxy :: Proxy (Ratio Integer))
     threeTests (Proxy :: Proxy (Ratio Integer))
     threeTupleTests (Proxy :: Proxy (Ratio Integer))
@@ -84,7 +84,7 @@ spec = do
     twoTupleTests (Proxy :: Proxy (Ratio Int))
 #endif
 #if MIN_VERSION_base(4,9,0)
-    threeTests (Proxy :: Proxy (NonEmpty Double))
+    threeTests (Proxy :: Proxy (NonEmpty Rational))
 #endif
 twoTupleTests ::
        forall a. (Show a, Eq a, Typeable a, GenValid a)
@@ -137,7 +137,7 @@ genUncheckedTest proxy = do
     it (unwords
             ["genUnchecked of", nameOf proxy, "does not crash while validating"]) $
         forAll genUnchecked $ \a ->
-            case prettyValidation (a :: a) of
+            case prettyValidate (a :: a) of
                 Right v -> seq v True
                 Left err -> seq err True
     modifyMaxSuccess (`quot` 5) $
@@ -149,7 +149,7 @@ genUncheckedTest proxy = do
                  ]) $
         forAll genUnchecked $ \a ->
             forM_ (shrinkUnchecked a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right v_ -> seq v_ $ pure () :: IO ()
                     Left err -> seq err $ pure ()
     modifyMaxSuccess (`quot` 5) $
@@ -163,7 +163,7 @@ genUncheckedTest proxy = do
             forM_ (shrinkUnchecked a) $ \a' ->
                 unless (a /= a') $
                 expectationFailure $
-                unlines ["The value", show( a ::a), "was shrunk to itself"]
+                unlines ["The value", show (a :: a), "was shrunk to itself"]
 
 genValidTest ::
        forall a. (Show a, Eq a, Typeable a, GenValid a)
@@ -172,7 +172,7 @@ genValidTest ::
 genValidTest proxy = do
     it (unwords ["genValid of", nameOf proxy, "generates only valid values"]) $
         forAll genValid $ \a ->
-            case prettyValidation (a :: a) of
+            case prettyValidate (a :: a) of
                 Right v -> seq v $ pure ()
                 Left err ->
                     expectationFailure $
@@ -191,7 +191,7 @@ genValidTest proxy = do
                  ]) $
         forAll genValid $ \a ->
             forM_ (shrinkValid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right v_ -> seq v_ $ pure ()
                     Left err ->
                         expectationFailure $
@@ -210,7 +210,7 @@ genValidTest proxy = do
                  ]) $
         forAll genValid $ \a ->
             forM_ (shrinkValid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right v_ -> seq v_ $ pure () :: IO ()
                     Left err -> seq err $ pure ()
     modifyMaxSuccess (`quot` 5) $
@@ -230,7 +230,7 @@ genInvalidTest ::
 genInvalidTest proxy = do
     it (unwords ["genInvalid of", nameOf proxy, "generates only invalid values"]) $
         forAll genInvalid $ \a ->
-            case prettyValidation (a :: a) of
+            case prettyValidate (a :: a) of
                 Right _ ->
                     expectationFailure $
                     unlines
@@ -245,7 +245,7 @@ genInvalidTest proxy = do
                  ]) $
         forAll genInvalid $ \a ->
             forM_ (shrinkInvalid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right _ ->
                         expectationFailure $
                         unlines
@@ -262,7 +262,7 @@ genInvalidTest proxy = do
                  ]) $
         forAll genInvalid $ \a ->
             forM_ (shrinkInvalid a) $ \v ->
-                case prettyValidation (v :: a) of
+                case prettyValidate (v :: a) of
                     Right _ ->
                         expectationFailure $
                         unlines

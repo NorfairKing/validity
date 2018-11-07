@@ -11,6 +11,6 @@ import Test.Validity
 spec :: Spec
 spec = do
     genValidSpec @(Tree Int)
-    genValiditySpec @(Tree Double)
+    genValiditySpec @(Tree Rational)
     shrinkValidSpec @(Tree Int)
-    shrinkValiditySpec @(Tree Double)
+    shrinkValiditySpec @(Tree Rational)

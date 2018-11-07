@@ -15,17 +15,17 @@ spec = do
     describe "genStructurallyValidSetOf" $
         it "produces valid sets" $
         genGeneratesValid
-            (genStructurallyValidSetOf @Double genValid)
+            (genStructurallyValidSetOf @Rational genValid)
             (const [])
     describe "genStructurallyValidSetOfInvalidValues" $
         it "produces valid sets" $
         genGeneratesInvalid
-            (genStructurallyValidSetOfInvalidValues @Double)
+            (genStructurallyValidSetOfInvalidValues @Rational)
             (const [])
 #if MIN_VERSION_containers(0,5,9)
     describe "genStructurallyInvalidSet" $
         it "produces invalid sets" $
-        genGeneratesInvalid (genStructurallyInvalidSet @Double) (const [])
+        genGeneratesInvalid (genStructurallyInvalidSet @Rational) (const [])
 #endif
     genValidSpec @(Set Int)
-    genValiditySpec @(Set Double)
+    genValiditySpec @(Set Rational)

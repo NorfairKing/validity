@@ -32,12 +32,12 @@ reflexivityOnGen func gen s = forAllShrink gen s $ reflexiveOnElem func
 
 -- |
 --
--- prop> reflexivityOnValid ((<=) :: Double -> Double -> Bool)
--- prop> reflexivityOnValid ((==) :: Double -> Double -> Bool)
--- prop> reflexivityOnValid ((>=) :: Double -> Double -> Bool)
--- prop> reflexivityOnValid (Data.List.isPrefixOf :: [Double] -> [Double] -> Bool)
--- prop> reflexivityOnValid (Data.List.isSuffixOf :: [Double] -> [Double] -> Bool)
--- prop> reflexivityOnValid (Data.List.isInfixOf :: [Double] -> [Double] -> Bool)
+-- prop> reflexivityOnValid ((<=) :: Rational -> Rational -> Bool)
+-- prop> reflexivityOnValid ((==) :: Rational -> Rational -> Bool)
+-- prop> reflexivityOnValid ((>=) :: Rational -> Rational -> Bool)
+-- prop> reflexivityOnValid (Data.List.isPrefixOf :: [Rational] -> [Rational] -> Bool)
+-- prop> reflexivityOnValid (Data.List.isSuffixOf :: [Rational] -> [Rational] -> Bool)
+-- prop> reflexivityOnValid (Data.List.isInfixOf :: [Rational] -> [Rational] -> Bool)
 reflexivityOnValid :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
 reflexivityOnValid func = reflexivityOnGen func genValid shrinkValid
 
