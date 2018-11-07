@@ -3,6 +3,7 @@
 *.css
 *.js
 *.html
+result*
 
 dist
 dist-*
