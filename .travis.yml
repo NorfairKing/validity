@@ -9,7 +9,7 @@ matrix:
   include:
   - env:
       - BUILD_KIND="stack"
-      - STACK_YAML="stack.yaml"
+      - STACK_YAML="../stack.yaml"
     addons: {apt: {packages: [libgmp-dev]}}
 
   - env:

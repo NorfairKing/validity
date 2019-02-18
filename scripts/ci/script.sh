@@ -6,8 +6,8 @@ case $BUILD_KIND in
   stack)
     if [[ "$STACK_YAML" != "" ]]
     then
-      stack --no-terminal --stack-yaml "$STACK_YAML" build --haddock --pedantic
-      stack --no-terminal --stack-yaml "$STACK_YAML" test --pedantic $TEST_PKGS
+      stack --no-terminal --stack-yaml "stack/$STACK_YAML" build --haddock --pedantic
+      stack --no-terminal --stack-yaml "stack/$STACK_YAML" test --pedantic $TEST_PKGS
     else
       if [[ "$RESOLVER" != "" ]]
       then

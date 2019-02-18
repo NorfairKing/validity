@@ -6,8 +6,8 @@ case $BUILD_KIND in
   stack)
     if [[ "$STACK_YAML" != "" ]]
     then
-      stack setup --stack-yaml "$STACK_YAML"
-      stack build --only-snapshot --stack-yaml "$STACK_YAML"
+      stack setup --stack-yaml "stack/$STACK_YAML"
+      stack build --only-snapshot --stack-yaml "stack/$STACK_YAML"
     else
       if [[ "$RESOLVER" != "" ]]
       then
