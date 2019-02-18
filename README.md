@@ -4,6 +4,12 @@
 
 ## Why?
 
+> Make write correct software cheaper.
+
+- Cheap properties
+- Free generators
+- Free shrinking
+
 ### Cheap properties
 
 - Property Combinators:
