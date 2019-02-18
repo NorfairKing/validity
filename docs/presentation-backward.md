@@ -16,7 +16,7 @@ data Tag = Tag
  
 
 
-doSomethingUseful :: TagName -> TagName
+doSomethingUseful :: Tag -> Tag
 
 spec :: Spec
 spec = 
@@ -40,7 +40,7 @@ instance Validity Tag where
 instance GenUnchecked Tag
 instance GenValid Tag
 
-doSomethingUseful :: TagName -> TagName
+doSomethingUseful :: Tag -> Tag
 
 spec :: Spec
 spec = 
