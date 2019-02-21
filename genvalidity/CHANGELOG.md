@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.7.0.1] - 2019-02-21
+
+### Changed
+
+* Sped up the shrinking test suite.
+
 ## [0.7.0.0] - 2018-11-07
 
 ### Changed
