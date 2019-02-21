@@ -461,12 +461,19 @@ instance Validity Natural where
 #endif
 -- | Valid if the contained numbers are valid and the denominator is
 -- strictly positive.
-instance (Num a, Ord a, Validity a) => Validity (Ratio a) where
+instance (Validity a, Ord a, Num a, Integral a) => Validity (Ratio a) where
     validate (n :% d) =
         mconcat
             [ annotate n "The numerator"
             , annotate d "The denominator"
             , declare "The denominator is strictly positive." $ d > 0
+            , declare "The ratio is normalised" $
+                case d of
+                  0 -> False
+                  _ ->
+                    let g = gcd n d
+                        n' :% d' = (n `quot` g) :% (d `quot` g)
+                    in n' :% d' == n :% d
             ]
 
 -- | Valid according to the contained 'Integer'.

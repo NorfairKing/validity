@@ -50,7 +50,8 @@ spec = do
     twoTupleTests (Proxy :: Proxy Double)
     threeTests (Proxy :: Proxy Rational)
     threeTupleTests (Proxy :: Proxy Rational)
-    modifyMaxSize (`quot` 2) $
+    modifyMaxSuccess (`quot` 2) $
+        modifyMaxSize (`quot` 2) $
         threeTests (Proxy :: Proxy (Either Rational Rational))
     threeTests (Proxy :: Proxy (Maybe Rational))
     threeTests (Proxy :: Proxy (Maybe (Maybe Rational)))
@@ -91,11 +92,15 @@ twoTupleTests ::
     => Proxy a
     -> Spec
 twoTupleTests proxy = do
-    modifyMaxSize (`quot` 2) $ twoTests $ (,) <$> proxy <*> proxy
-    modifyMaxSize (`quot` 3) $ twoTests $ (,,) <$> proxy <*> proxy <*> proxy
-    modifyMaxSize (`quot` 4) $
+    modifyMaxSuccess (`quot` 2) $
+        modifyMaxSize (`quot` 2) $ twoTests $ (,) <$> proxy <*> proxy
+    modifyMaxSuccess (`quot` 3) $
+        modifyMaxSize (`quot` 3) $ twoTests $ (,,) <$> proxy <*> proxy <*> proxy
+    modifyMaxSuccess (`quot` 4) $
+        modifyMaxSize (`quot` 4) $
         twoTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
-    modifyMaxSize (`quot` 5) $
+    modifyMaxSuccess (`quot` 5) $
+        modifyMaxSize (`quot` 5) $
         twoTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 threeTupleTests ::
@@ -103,11 +108,16 @@ threeTupleTests ::
     => Proxy a
     -> Spec
 threeTupleTests proxy = do
-    modifyMaxSize (`quot` 2) $ threeTests $ (,) <$> proxy <*> proxy
-    modifyMaxSize (`quot` 3) $ threeTests $ (,,) <$> proxy <*> proxy <*> proxy
-    modifyMaxSize (`quot` 4) $
+    modifyMaxSuccess (`quot` 2) $
+        modifyMaxSize (`quot` 2) $ threeTests $ (,) <$> proxy <*> proxy
+    modifyMaxSuccess (`quot` 3) $
+        modifyMaxSize (`quot` 3) $
+        threeTests $ (,,) <$> proxy <*> proxy <*> proxy
+    modifyMaxSuccess (`quot` 4) $
+        modifyMaxSize (`quot` 4) $
         threeTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
-    modifyMaxSize (`quot` 5) $
+    modifyMaxSuccess (`quot` 5) $
+        modifyMaxSize (`quot` 5) $
         threeTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 twoTests ::

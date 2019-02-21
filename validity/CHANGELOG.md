@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.9.0.1] - 2018-12-05
+
+### Changed
+
+* The validity instance of `Ratio a` now disallows unnormalised values.
+  So `0 %: 1` is valid, but `0 %: 2` is not.
+
 ## [0.9.0.0] - 2018-10-07
 
 ### Added

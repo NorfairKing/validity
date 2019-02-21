@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.2.2] - 2019-01-09
+
+### Changed
+
+* Fixed a forward incompatibility with hspec 2.6.x.
+
 ## [0.3.0.1] - 2018-10-07
 
 ### Changed

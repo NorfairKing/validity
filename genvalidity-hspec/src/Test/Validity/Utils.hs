@@ -80,6 +80,9 @@ failsBecause s = mapSpecTree' go
             Item
                 { itemRequirement = s
                 , itemLocation = Nothing
+#if MIN_VERSION_hspec_core(2,6,0)
+                , itemIsFocused = False
+#endif
 #if MIN_VERSION_hspec_core(2,5,0)
                 , itemIsParallelizable = Nothing
 #else
