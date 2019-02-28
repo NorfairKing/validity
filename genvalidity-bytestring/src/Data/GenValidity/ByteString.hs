@@ -15,10 +15,17 @@ import qualified Data.ByteString.Internal as SB
 import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Internal as LB
 
--- | WARNING: Unchecked ByteStrings are *seriously* broken.
+-- | WARNING: Unchecked ByteStrings are __seriously__ broken.
+--
 -- The pointer may still point to something which is fine, but
 -- the offset and length will most likely be complete nonsense.
 -- This will most-likely lead to segfaults.
+--
+-- This means that 'genUnchecked' will generate seriously broken 'ByteString' values.
+-- This is __intended__. If you need valid 'ByteString' values, use 'GenValid' instead.
+--
+-- Make sure to not use any test suite combinators or property combinators that involve
+-- 'GenInvalid' (like 'genValiditySpec') on types that contain 'ByteString' values.
 instance GenUnchecked SB.ByteString where
     genUnchecked = do
         ws <- genUnchecked
@@ -28,6 +35,10 @@ instance GenUnchecked SB.ByteString where
     shrinkUnchecked (SB.PS p o l) =
         [SB.PS p o' l' | (o', l') <- shrinkUnchecked (o, l)]
 
+-- |
+--
+-- > genValid = SB.pack <$> genValid
+-- > shrinkValid = fmap SB.pack . shrinkValid . SB.unpack
 instance GenValid SB.ByteString where
     genValid = SB.pack <$> genValid
     shrinkValid = fmap SB.pack . shrinkValid . SB.unpack
