@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.2.3] - 2019-02-28
+
+### Changed
+
+* Clearer docs
+
 ## [0.6.2.2] - 2019-01-09
 
 ### Changed

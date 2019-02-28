@@ -1,5 +1,5 @@
 name: genvalidity-hspec
-version: '0.6.2.2'
+version: '0.6.2.3'
 synopsis: Standard spec's for GenValidity instances
 description: ! 'Note: There are companion packages for this library:
 

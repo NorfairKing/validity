@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.3.0.2] - 2019-02-28
+
+### Changed
+
+* Clearer documentation
+
 ## [0.3.0.1] - 2018-10-07
 
 ### Changed
