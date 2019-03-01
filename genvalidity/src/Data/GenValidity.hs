@@ -154,7 +154,7 @@ import Data.GenValidity.Utils
 --         'genericGenUnchecked' does.
 --         This means that all sub-parts should be  generated using 'genUnchecked'.
 --         Make sure to generate any possible value, valid or not, that can exist at runtime
---         even when taking the existance of 'unsafeCoerce' into account.
+--         even when taking the existance of 'Unsafe.Coerce.unsafeCoerce' into account.
 --
 -- === Warning: Invalid values can be funky
 --
@@ -230,7 +230,7 @@ class (Validity a, GenUnchecked a) =>
 
 -- | A class of types for which invalid values can be generated.
 --
--- === How to instantiate 'GenValid'
+-- === How to instantiate 'GenInvalid'
 --
 -- __Step 1__: Realise that you probably do not want to.
 --             It makes no sense, and serves no purpose, to instantiate 'GenInvalid' for types
@@ -804,8 +804,8 @@ instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) b where
   gUncheckedSubtermsIncl (K1 _) = []
 
 
--- | Generate a valid value by generating all the sub parts,
--- and trying that until a valid value has been generating
+-- | Generate a valid value by generating all the sub parts using the 'Generic' instance,
+-- and trying that until a valid value has been generated
 --
 -- > genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
 --
@@ -815,7 +815,7 @@ instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) b where
 genValidStructurally :: (Validity a, Generic a, GGenValid (Rep a)) => Gen a
 genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
 
--- | Generate a valid value by generating all the sub parts,
+-- | Generate a valid value by generating all the sub parts using the 'Generic' instance,
 --
 -- This generator is _not_ guaranteed to generate a valid value.
 --
