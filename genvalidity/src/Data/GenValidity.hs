@@ -109,11 +109,6 @@ import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
-#if !MIN_VERSION_QuickCheck(2,8,0)
-import Data.List (sortBy)
-import Data.Ord (comparing)
-#endif
-
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
 #else
@@ -160,8 +155,9 @@ import Data.GenValidity.Utils
 --
 -- Some types have serious validity constraints. See 'Text' or 'ByteString' for example.
 -- These can behave very strangely when they are not valid.
--- In that case, __do not override' GenUnchecked' to generate only valid values__.
--- Instead, use 'GenValid' (see below) instead.
+-- In that case, __do not override 'GenUnchecked' such that 'genUnchecked' only generates valid values__.
+-- In that case, do not override 'genUnchecked' at all.
+-- Instead, use 'genValid' from 'GenValid' (see below) instead.
 class GenUnchecked a where
     genUnchecked :: Gen a
     default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>

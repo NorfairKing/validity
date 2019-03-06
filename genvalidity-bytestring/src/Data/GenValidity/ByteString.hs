@@ -73,8 +73,8 @@ instance GenUnchecked LB.ByteString where
                     sb <- resize a genUnchecked
                     lb <- resize b genUnchecked
                     pure $ LB.Chunk sb lb
-    shrinkUnchecked lb =
-        case lb of
+    shrinkUnchecked lb_ =
+        case lb_ of
             LB.Empty -> []
             (LB.Chunk sb lb) ->
                 LB.Empty :
