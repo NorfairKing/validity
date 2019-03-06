@@ -499,7 +499,7 @@ instance GenValid a => GenValid (Maybe a) where
 instance GenInvalid a => GenInvalid (Maybe a) where
     genInvalid = Just <$> genInvalid
     shrinkInvalid Nothing = [] -- Should not happen
-    shrinkInvalid (Just a) = Just <$> shrinkInvalid a -- Should not happen
+    shrinkInvalid (Just a) = Just <$> shrinkInvalid a
 
 #if MIN_VERSION_base(4,9,0)
 instance GenUnchecked a => GenUnchecked (NonEmpty a) where

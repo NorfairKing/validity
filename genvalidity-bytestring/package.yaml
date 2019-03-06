@@ -22,7 +22,7 @@ library:
   - base >=4.7 && <5
   - validity >=0.5
   - validity-bytestring >=0.4
-  - genvalidity >=0.5
+  - genvalidity >=0.8
 
 tests:
   genvalidity-bytestring-test:
