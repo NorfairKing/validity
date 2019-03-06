@@ -12,6 +12,7 @@ import Data.GenValidity.ByteString ()
 
 import qualified Data.ByteString as SB (ByteString)
 import qualified Data.ByteString.Lazy as LB (ByteString)
+import qualified Data.ByteString.Short as Short (ShortByteString)
 
 checkable :: (Validity t, Show t, NFData t) => Gen t -> SpecWith ()
 checkable gen =
@@ -38,3 +39,11 @@ spec = do
            showable (genValid :: Gen LB.ByteString)
            it "generates valid lazy bytestring" $
                forAll (genValid :: Gen LB.ByteString) isValid
+    describe "genUnchecked :: Gen Short.ShortByteString" $ do
+        checkable (genUnchecked :: Gen Short.ShortByteString)
+        showable (genUnchecked :: Gen Short.ShortByteString)
+    describe "genValid :: Gen Short.ShortByteString" $ do
+        checkable (genValid :: Gen Short.ShortByteString)
+        showable (genValid :: Gen Short.ShortByteString)
+        it "generates valid lazy bytestring" $
+            forAll (genValid :: Gen Short.ShortByteString) isValid

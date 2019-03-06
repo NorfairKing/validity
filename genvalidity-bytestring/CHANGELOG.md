@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.4.1.0] - 2019-03-06
+
+### Added
+
+* 'GenUnchecked' and 'GenValid' for 'ShortByteString'
+
 ## [0.4.0.0] - 2019-03-06
 
 ### Added

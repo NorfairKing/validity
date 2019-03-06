@@ -14,6 +14,7 @@ import qualified Data.ByteString as SB
 import qualified Data.ByteString.Internal as SB
 import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Internal as LB
+import qualified Data.ByteString.Short as Short
 
 instance GenUnchecked SB.ByteString where
     genUnchecked =
@@ -83,3 +84,11 @@ instance GenUnchecked LB.ByteString where
 instance GenValid LB.ByteString where
     genValid = LB.pack <$> genValid
     shrinkValid = fmap LB.pack . shrinkValid . LB.unpack
+
+instance GenInvalid LB.ByteString
+
+instance GenUnchecked Short.ShortByteString where
+    genUnchecked = Short.pack <$> genValid
+    shrinkUnchecked = fmap Short.pack . shrinkUnchecked . Short.unpack
+
+instance GenValid Short.ShortByteString
