@@ -53,7 +53,7 @@ instance (Ord v, GenUnchecked v, GenInvalid v) => GenInvalid (Set v) where
         oneof
             [genStructurallyValidSetOfInvalidValues, genStructurallyInvalidSet]
 #else
-instance (Ord v, GenInvalid v) => GenInvalid (Set v) where
+instance (Ord v, GenUnchecked v, GenInvalid v) => GenInvalid (Set v) where
     genInvalid = genStructurallyValidSetOfInvalidValues
 #endif
 genStructurallyValidSetOf :: Ord v => Gen v -> Gen (Set v)

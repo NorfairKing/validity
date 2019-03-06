@@ -55,7 +55,7 @@ instance (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => 
         oneof
             [genStructurallyValidMapOfInvalidValues, genStructurallyInvalidMap]
 #else
-instance (Ord k, GenInvalid k, GenInvalid v) => GenInvalid (Map k v) where
+instance (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid = genStructurallyValidMapOfInvalidValues
 #endif
 genStructurallyValidMapOf :: Ord k => Gen (k, v) -> Gen (Map k v)
