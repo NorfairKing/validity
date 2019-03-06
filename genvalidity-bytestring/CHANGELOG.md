@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.4.0.0] - 2019-03-06
+
+### Changed
+
+* The 'genUnchecked' instance of 'Strict.ByteString' and 'Lazy.ByteString' now `error` instead of generating values that segfault.
+
 ## [0.3.0.2] - 2019-02-28
 
 ### Changed

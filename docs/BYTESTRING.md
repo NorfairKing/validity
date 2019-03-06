@@ -30,7 +30,7 @@ See https://github.com/NorfairKing/validity/blob/master/docs/BYTESTRING.md
     ```
     instance GenValid FooBar
     ```
-  
+
   Then override `genValid` using `genValidStructurally`.
 
 ## History
@@ -51,7 +51,7 @@ The `GenInvalid` instance have been removed as well.
 - Many things can go wrong when the old version of `genUnchecked :: Gen ByteString` (or `shrinkUnchecked`) is used,
   and `genUnchecked :: Gen ByteString` can be used unknowingly in many situations.
   For example, consider this code:
-  
+
   ``` Haskell
   data MyType = MyType ByteString Bool
     deriving (Show, Eq, Generic)
