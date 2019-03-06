@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.8.0.0] - 2019-03-06
+
+### Added
+
+* 'shrinkTuple'
+
+### Changed
+
+* Removed the 'GenUnchecked' constraint for 'GenValid' and 'GenInvalid'.
+
 ## [0.7.0.2] - 2019-02-28
 
 ### Added

@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.5.0.0] - 2019-03-06
+
+### Changed
+
+* Removed the 'GenUnchecked' instance for both strict and lazy `ByteString`s
+
 ## [0.4.0.0] - 2019-03-06
 
 ### Changed

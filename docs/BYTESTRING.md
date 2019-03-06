@@ -42,6 +42,9 @@ values that were significantly dangerous (to the point where they would cause se
 From version `0.4.0.0` of `genvalidity-bytestring`, these instances call `error` instead.
 The `GenInvalid` instance have been removed as well.
 
+As of version `0.5.0.0` of `genvalidity-bytestring`, which was enabled by version `0.8.0.0` of `genvalidity`,
+the `GenUnchecked` instance of `ByteString`s has been removed entirely.
+
 ## Considerations
 
 - Unchecked `ByteString`s cannot be shown because that would cause a segfaults.
@@ -75,3 +78,4 @@ The `GenInvalid` instance have been removed as well.
   ```
 
   In the new situation with the `error` implementation, a user will not get any segfaults but instead a nice error message, pointing them to this document.
+  In the most recent situation, the `GenUnchecked` instance has been removed entirely.
