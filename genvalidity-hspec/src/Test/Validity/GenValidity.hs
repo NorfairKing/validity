@@ -31,6 +31,9 @@ import Test.Validity.Utils
 -- In general it is a good idea to add this spec to your test suite if you
 -- write a custom implementation of @genValid@ or @genInvalid@.
 --
+-- __It is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken. (For example, ByteString)__
+-- In that case you probably want 'genValidSpec'.
+--
 -- Example usage:
 --
 -- > genValiditySpec @Int
@@ -42,6 +45,9 @@ genValiditySpec = do
     genInvalidSpec @a
 
 -- | A @Spec@ that specifies that @genValid@ only generates valid data.
+--
+-- In general it is a good idea to add this spec to your test suite if you
+-- write a custom implementation of @genValid@.
 --
 -- Example usage:
 --
@@ -58,6 +64,8 @@ genValidSpec =
             forAllShrink genValid shrinkValid $ shouldBeValid @a
 
 -- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
+--
+-- Note that it is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken. (For example, ByteString)
 --
 -- Example usage:
 --
