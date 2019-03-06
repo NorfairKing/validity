@@ -88,7 +88,7 @@ spec = do
     threeTests (Proxy :: Proxy (NonEmpty Rational))
 #endif
 twoTupleTests ::
-       forall a. (Show a, Eq a, Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a)
     => Proxy a
     -> Spec
 twoTupleTests proxy = do
@@ -104,7 +104,7 @@ twoTupleTests proxy = do
         twoTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 threeTupleTests ::
-       forall a. (Show a, Eq a, Typeable a, GenValid a, GenInvalid a)
+       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a, GenInvalid a)
     => Proxy a
     -> Spec
 threeTupleTests proxy = do
@@ -121,7 +121,7 @@ threeTupleTests proxy = do
         threeTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 twoTests ::
-       forall a. (Show a, Eq a, Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a)
     => Proxy a
     -> Spec
 twoTests proxy =
@@ -130,7 +130,7 @@ twoTests proxy =
         genValidTest proxy
 
 threeTests ::
-       forall a. (Show a, Eq a, Typeable a, GenValid a, GenInvalid a)
+       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a, GenInvalid a)
     => Proxy a
     -> Spec
 threeTests proxy =
@@ -140,7 +140,7 @@ threeTests proxy =
         genInvalidTest proxy
 
 genUncheckedTest ::
-       forall a. (Show a, Eq a, Typeable a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a)
     => Proxy a
     -> Spec
 genUncheckedTest proxy = do

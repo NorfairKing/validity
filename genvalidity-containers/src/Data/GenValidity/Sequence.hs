@@ -18,6 +18,8 @@ instance GenUnchecked v => GenUnchecked (Seq v) where
 
 instance GenValid v => GenValid (Seq v) where
     genValid = S.fromList <$> genValid
+    shrinkValid = fmap S.fromList . shrinkValid . toList
 
-instance GenInvalid v => GenInvalid (Seq v) where
+instance (GenUnchecked v, GenInvalid v) => GenInvalid (Seq v) where
     genInvalid = S.fromList <$> genInvalid
+    shrinkInvalid = fmap S.fromList . shrinkInvalid . toList

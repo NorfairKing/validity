@@ -172,6 +172,8 @@ failsOnInvalid2 ::
        , Show b
        , Show c
        , Show (f c)
+       , GenUnchecked a
+       , GenUnchecked b
        , GenInvalid a
        , GenInvalid b
        , CanFail f

@@ -50,7 +50,7 @@ instance (Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
     genValid = M.fromList <$> genValid
     shrinkValid = fmap M.fromList . shrinkValid . M.toList
 #if MIN_VERSION_containers(0,5,9)
-instance (Ord k, GenInvalid k, GenInvalid v) => GenInvalid (Map k v) where
+instance (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid =
         oneof
             [genStructurallyValidMapOfInvalidValues, genStructurallyInvalidMap]
@@ -72,7 +72,7 @@ genStructurallyValidMapOf g =
 -- Note: M.fromList <$> genInvalid does not work because of this line in the Data.Map documentation:
 -- ' If the list contains more than one value for the same key, the last value for the key is retained.'
 genStructurallyValidMapOfInvalidValues ::
-       (Ord k, GenInvalid k, GenInvalid v) => Gen (Map k v)
+       (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => Gen (Map k v)
 genStructurallyValidMapOfInvalidValues =
     sized $ \n -> do
         (k, v, m) <- genSplit3 n
