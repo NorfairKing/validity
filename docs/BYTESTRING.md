@@ -15,3 +15,36 @@ From version `0.4.0.0` of `genvalidity-bytestring`, these instances call `error`
 The `GenInvalid` instance have been removed as well.
 
 ## Considerations
+
+- Unchecked `ByteString`s are checkable for validity.
+- Unchecked `ByteString`s cannot be shows because that would cause a segfaults.
+- Unchecked `ByteString`s cannot be compared for equality (or ordering) because that would cause segfaults.
+- This means that there is no real reason to ever generate an unchecked `ByteString`.
+
+- Many things can go wrong when the old version of `genUnchecked :: Gen ByteString` (or `shrinkUnchecked`) is used,
+  and `genUnchecked :: Gen ByteString` can be used unknowingly in many situations.
+  For example, consider this code:
+  
+  ``` Haskell
+  data MyType = MyType ByteString Bool
+    deriving (Show, Eq, Generic)
+  instance Validity MyType
+  instance GenUnchecked MyType
+  instance GenValid MyType
+  ```
+
+  When `genValid :: Gen MyType` is called, that's equivalent to calling the following:
+
+  ``` Haskell
+  (MyType <$> genUnchecked <*> genUnchecked) `suchThat` isValid
+  ```
+
+  That means that this generator could segfault, and even if the generator doesn't, the test most likely will.
+
+  In the case where your custom type contains a `ByteString`, you always want to override `GenValid`, even if it is just with `genValidStructurally` such that `genValid` becomes the following:
+
+  ``` Haskell
+  (MyType <$> genValid <*> genValid) `suchThat` isValid
+  ```
+
+  In the new situation with the `error` implementation, a user will not get any segfaults but instead a nice error message, pointing them to this document.

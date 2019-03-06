@@ -149,7 +149,7 @@ import Data.GenValidity.Utils
 --         'genericGenUnchecked' does.
 --         This means that all sub-parts should be  generated using 'genUnchecked'.
 --         Make sure to generate any possible value, valid or not, that can exist at runtime
---         even when taking the existance of 'Unsafe.Coerce.unsafeCoerce' into account.
+--         even when taking the existence of 'Unsafe.Coerce.unsafeCoerce' into account.
 --
 -- === Warning: Invalid values can be funky
 --
