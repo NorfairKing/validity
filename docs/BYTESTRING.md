@@ -44,8 +44,7 @@ The `GenInvalid` instance have been removed as well.
 
 ## Considerations
 
-- Unchecked `ByteString`s are checkable for validity.
-- Unchecked `ByteString`s cannot be shows because that would cause a segfaults.
+- Unchecked `ByteString`s cannot be shown because that would cause a segfaults.
 - Unchecked `ByteString`s cannot be compared for equality (or ordering) because that would cause segfaults.
 - This means that there is no real reason to ever generate an unchecked `ByteString`.
 
