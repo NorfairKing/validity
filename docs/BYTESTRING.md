@@ -4,6 +4,34 @@ title: The ByteString Situation
 
 This document discusses the `GenUnchecked` instance for `ByteString`.
 
+## What to do if an error message points you to this document
+
+If you are reading this, you probably saw this error message:
+
+``` Haskell
+Data.GenValidity.ByteString.genUnchecked :: Strict.ByteString
+You probably do not want to use this.
+You probably want to use 'genValid' instead.
+See https://github.com/NorfairKing/validity/blob/master/docs/BYTESTRING.md
+```
+
+- If you see this message because you used `genUnchecked :: Gen ByteString`, use `genValid :: Gen ByteString` instead.
+
+- If you see this message because you used `genValid :: Gen FooBar` where `FooBar` is a custom type of your own making, then ask yourself the following question:
+
+  Is your situation as follows?
+
+  - You derived `GenUnchecked` using `Generic` like this:
+    ```
+    instance GenUnchecked FooBar
+    ```
+
+  - You implemented `GenValid` using its default method:
+    ```
+    instance GenValid FooBar
+    ```
+  
+  Then override `genValid` using `genValidStructurally`.
 
 ## History
 
