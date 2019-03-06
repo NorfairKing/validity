@@ -42,14 +42,15 @@ import Test.Validity.Shrinking.Property
 import Test.Validity.Utils
 
 shrinkValiditySpec ::
-       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a, GenInvalid a)
+       forall a.
+       (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a, GenInvalid a)
     => Spec
 shrinkValiditySpec = do
     shrinkValidSpec @a
     shrinkInvalidSpec @a
 
 shrinkValidSpec ::
-       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a)
     => Spec
 shrinkValidSpec =
     describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $ do
@@ -65,7 +66,8 @@ shrinkValidSpecWithLimit ::
 shrinkValidSpecWithLimit l =
     describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $ do
         it (unwords ["preserves validity for the first", show l, "elements"]) $
-            forAll (genValid @a) $ \a -> forM_ (take l $ shrinkValid a) shouldBeValid
+            forAll (genValid @a) $ \a ->
+                forM_ (take l $ shrinkValid a) shouldBeValid
         it
             (unwords
                  [ "never shrinks to itself for valid values for the first"
@@ -109,15 +111,16 @@ shrinkUncheckedDoesNotShrinkToItself =
     shrinkDoesNotShrinkToItself @a shrinkUnchecked
 
 shrinkValidDoesNotShrinkToItself ::
-       forall a. (Show a, Eq a, GenUnchecked a, GenValid a)
+       forall a. (Show a, Eq a, GenValid a)
     => Property
-shrinkValidDoesNotShrinkToItself = shrinkDoesNotShrinkToItself @a shrinkValid
+shrinkValidDoesNotShrinkToItself =
+    shrinkDoesNotShrinkToItselfOnValid @a shrinkValid
 
 shrinkInvalidDoesNotShrinkToItself ::
        forall a. (Show a, Eq a, GenUnchecked a, GenInvalid a)
     => Property
 shrinkInvalidDoesNotShrinkToItself =
-    shrinkDoesNotShrinkToItself @a shrinkInvalid
+    shrinkDoesNotShrinkToItselfOnInvalid @a shrinkInvalid
 
 shrinkInvalidDoesNotShrinkToItselfWithLimit ::
        forall a. (Show a, Eq a, GenUnchecked a, GenInvalid a)
