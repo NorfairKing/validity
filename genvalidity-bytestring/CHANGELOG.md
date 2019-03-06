@@ -4,6 +4,11 @@
 
 ## [0.4.0.0] - 2019-03-06
 
+### Added
+
+* genTrulyUncheckedStrictByteString
+* shrinkTrulyUncheckedStrictByteString
+
 ### Changed
 
 * The 'genUnchecked' instance of 'Strict.ByteString' and 'Lazy.ByteString' now `error` instead of generating values that segfault.
