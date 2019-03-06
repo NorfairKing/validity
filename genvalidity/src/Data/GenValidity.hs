@@ -41,6 +41,9 @@
     >         case myFunction input of
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
+
+    Definitely also look at the genvalidity-property and genvalidity-hspec packages
+    for more info on how to use this package.
     -}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -157,7 +160,7 @@ import Data.GenValidity.Utils
 -- These can behave very strangely when they are not valid.
 -- In that case, __do not override 'GenUnchecked' such that 'genUnchecked' only generates valid values__.
 -- In that case, do not override 'genUnchecked' at all.
--- Instead, use 'genValid' from 'GenValid' (see below) instead.
+-- Instead, use 'genValid' from 'GenValid' (see below) instead and consider not instantiating 'GenUnchecked' at all.
 class GenUnchecked a where
     genUnchecked :: Gen a
     default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
