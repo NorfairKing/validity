@@ -273,9 +273,7 @@ instance (GenValid a, GenValid b) => GenValid (a, b) where
             a <- resize r genValid
             b <- resize s genValid
             return (a, b)
-    shrinkValid (a, b) = ((,) <$> shrinkValid a <*> shrinkValid b)
-      ++ [ (a', b) | a' <- shrinkValid a ]
-      ++ [ (a, b') | b' <- shrinkValid b ]
+    shrinkValid = shrinkTuple shrinkValid shrinkValid
 
 instance (GenUnchecked a, GenInvalid a, GenUnchecked b, GenInvalid b) => GenInvalid (a, b) where
     genInvalid =
