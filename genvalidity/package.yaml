@@ -1,5 +1,5 @@
 name: genvalidity
-version: '0.7.0.1'
+version: '0.7.0.2'
 synopsis: Testing utilities for the validity library
 description: ! 'Note: There are companion instance packages for this library:
 

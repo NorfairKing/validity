@@ -2,16 +2,25 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 -- | To use the 'Spec' functions in this module, you will need @TypeApplications@.
+--
+--
+-- The most interesting functions in this module for most uses are:
+--
+-- * 'genValidSpec'
+-- * 'eqSpecOnValid'
+-- * 'ordSpecOnValid'
+-- * 'producesValidsOnValids'
+-- * 'forAllValid'
+-- * 'shouldBeValid'
 module Test.Validity
-    ( module Data.GenValidity
-    , forAllUnchecked
+    ( -- * Writing properties
+      -- ** Cheap generation with shrinking
+      forAllUnchecked
     , forAllValid
     , forAllInvalid
+      -- ** Cheap assertions
     , shouldBeValid
     , shouldBeInvalid
-      -- * Tests for Arbitrary instances involving Validity
-    , arbitrarySpec
-    , arbitraryGeneratesOnlyValid
       -- * Tests for GenValidity instances
     , genValiditySpec
     , genValidSpec
@@ -33,6 +42,9 @@ module Test.Validity
     , shrinkingStaysValid
     , shrinkingStaysInvalid
     , shrinkingPreserves
+      -- * Tests for Arbitrary instances involving Validity
+    , arbitrarySpec
+    , arbitraryGeneratesOnlyValid
       -- * Tests for RelativeValidity instances
     , relativeValiditySpec
     , relativeValidityImpliesValidA
@@ -253,6 +265,8 @@ module Test.Validity
     , monadSpec
     , monadSpecOnArbitrary
     , monadSpecOnGens
+      -- * Re-exports
+    , module Data.GenValidity
     ) where
 
 import Data.GenValidity

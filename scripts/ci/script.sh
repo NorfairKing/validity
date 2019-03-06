@@ -20,7 +20,7 @@ case $BUILD_KIND in
     fi
     ;;
   nix)
-    nix-build nix/release.nix --no-out-link
+    nix-build --no-out-link
     ;;
   *)
     echo "Unknown build kind."

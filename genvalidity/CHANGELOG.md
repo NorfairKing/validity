@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.7.0.2] - 2019-02-28
+
+### Added
+
+* 'shrinkT4'
+
+### Changed
+
+* Clearer docs
+
 ## [0.7.0.1] - 2019-02-21
 
 ### Changed

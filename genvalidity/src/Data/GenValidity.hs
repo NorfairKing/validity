@@ -60,8 +60,34 @@
 #endif
 
 module Data.GenValidity
-    ( module Data.Validity
-    , module Data.GenValidity
+    ( GenUnchecked(..)
+    , GenValid(..)
+    , GenInvalid(..)
+
+    -- * Helper functions
+    , genValidStructurally
+    , genValidStructurallyWithoutExtraChecking
+    , shrinkValidStructurally
+    , shrinkValidStructurallyWithoutExtraFiltering
+    , module Data.GenValidity.Utils
+
+    -- * Re-exports
+    , module Data.Validity
+
+    -- * The Generics magic
+    , genericGenUnchecked
+    , GGenUnchecked(..)
+    , genericShrinkUnchecked
+    , uncheckedRecursivelyShrink
+    , GUncheckedRecursivelyShrink(..)
+    , uncheckedSubterms
+    , GUncheckedSubterms(..)
+    , GUncheckedSubtermsIncl(..)
+    , GGenValid(..)
+    , GValidRecursivelyShrink(..)
+    , structurallyValidSubterms
+    , GValidSubterms(..)
+    , GValidSubtermsIncl(..)
     ) where
 
 import Data.Validity
@@ -83,24 +109,23 @@ import GHC.Real (Ratio(..))
 
 import Test.QuickCheck hiding (Fixed)
 
-#if !MIN_VERSION_QuickCheck(2,8,0)
-import Data.List (sortBy)
-import Data.Ord (comparing)
-#endif
-
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
-import Control.Monad (forM)
 #else
 import Control.Applicative ((<*>), (<$>), pure)
-import Control.Monad (forM)
 #endif
+
+import Data.GenValidity.Utils
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A class of types for which truly arbitrary values can be generated.
 --
--- === Automatic instances with 'Generic'
+-- === How to instantiate 'GenUnchecked'
+--
+-- __Step 1__: Try to instantiate 'GenUnchecked' via 'Generic'.
+--         __this is probably what you want__
+--
 -- An instance of this class can be made automatically if the type in question
 -- has a 'Generic' instance. This instance will try to use 'genUnchecked' to
 -- generate all structural sub-parts of the value that is being generated.
@@ -118,6 +143,21 @@ import Control.Monad (forM)
 --
 -- > instance GenUnchecked MyType where
 -- >     genUnchecked = MyType <$> genUnchecked <*> genUnchecked
+--
+--
+-- __Step 2__: If an instatiation via 'Generic' is not possible, then you should emulate what
+--         'genericGenUnchecked' does.
+--         This means that all sub-parts should be  generated using 'genUnchecked'.
+--         Make sure to generate any possible value, valid or not, that can exist at runtime
+--         even when taking the existence of 'Unsafe.Coerce.unsafeCoerce' into account.
+--
+-- === Warning: Invalid values can be funky
+--
+-- Some types have serious validity constraints. See 'Text' or 'ByteString' for example.
+-- These can behave very strangely when they are not valid.
+-- In that case, __do not override 'GenUnchecked' such that 'genUnchecked' only generates valid values__.
+-- In that case, do not override 'genUnchecked' at all.
+-- Instead, use 'genValid' from 'GenValid' (see below) instead.
 class GenUnchecked a where
     genUnchecked :: Gen a
     default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
@@ -132,11 +172,32 @@ class GenUnchecked a where
 
 -- | A class of types for which valid values can be generated.
 --
+-- === How to instantiate 'GenValid'
+--
+-- __Step 1__: Try to instantiate 'GenValid' without overriding any functions.
+--             It is possible that, if few values are valid or if validity
+--             checking is expensive, that the resulting generator is too slow.
+--             In that case, go to Step 2.
+--
+-- __Step 2__: Try to instantiate 'GenValid' using the helper functions via 'Generic'
+--             This involves using 'genValidStructurally' to override 'genValid' and
+--             using 'shrinkValidStructurally' to override 'shrinkValid'.
+--             __Every time you override 'genValid', you should also override 'shrinkValid'__
+--
+-- __Step 3__: If the above is not possible due to lack of a 'Generic' instance,
+--             then you should emulate what 'genValidStructurally' does.
+--             This means that all sub-parts should be generated using 'genValid'.
+--             Make sure to generate any possible valid value, but only valid values.
+--
+-- === A note about 'Arbitrary'
+--
 -- If you also write @Arbitrary@ instances for @GenValid@ types, it may be
--- best to simply write @arbitrary = genValid@.
+-- best to simply use
+--
+-- > arbitrary = genValid
+-- > shrink = shrinkValid
 class (Validity a, GenUnchecked a) =>
       GenValid a where
-    genValid :: Gen a
     -- | Generate a valid datum, this should cover all possible valid values in
     -- the type
     --
@@ -147,9 +208,14 @@ class (Validity a, GenUnchecked a) =>
     -- To speed up testing, it may be a good idea to implement this yourself.
     -- If you do, make sure that it is possible to generate all possible valid
     -- data, otherwise your testing may not cover all cases.
+    genValid :: Gen a
     genValid = genUnchecked `suchThat` isValid
 
     -- | Shrink a valid value.
+    --
+    -- The default implementation is as follows:
+    --
+    -- >  shrinkValid = filter isValid . shrinkUnchecked
     --
     -- It is important that this shrinking function only shrinks values to valid values.
     -- If `shrinkValid` ever shrinks a value to an invalid value, the test that is being shrunk for
@@ -159,6 +225,18 @@ class (Validity a, GenUnchecked a) =>
     shrinkValid = filter isValid . shrinkUnchecked
 
 -- | A class of types for which invalid values can be generated.
+--
+-- === How to instantiate 'GenInvalid'
+--
+-- __Step 1__: Realise that you probably do not want to.
+--             It makes no sense, and serves no purpose, to instantiate 'GenInvalid' for types
+--             which contain no invalid values. (In fact, the default implementation will go into
+--             an infinite loop for such types.)
+--             You should only instantiate 'GenInvalid' if you explicitly want to use it
+--             to write tests that deal with invalid values, or if you are writing a container
+--             for parametric values.
+--
+-- __Step 2__: Instantiate 'GenInvalid' without overriding any functions.
 class (Validity a, GenUnchecked a) =>
       GenInvalid a where
     genInvalid :: Gen a
@@ -609,88 +687,6 @@ instance HasResolution a => GenUnchecked (Fixed a) where
 
 instance HasResolution a => GenValid (Fixed a)
 
-shrinkT2
-  :: (a -> [a])
-  -> (a, a) -> [(a, a)]
-shrinkT2 s (a, b) = (,) <$> s a <*> s b
-
-shrinkT3
-  :: (a -> [a])
-  -> (a, a, a) -> [(a, a, a)]
-shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
-
-
--- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
-upTo :: Int -> Gen Int
-upTo n
-    | n <= 0 = pure 0
-    | otherwise = choose (0, n)
-
--- | 'genSplit a' generates a tuple '(b, c)' such that 'b + c' equals 'a'.
-genSplit :: Int -> Gen (Int, Int)
-genSplit n
-    | n < 0 = pure (0, 0)
-    | otherwise = do
-        i <- choose (0, n)
-        let j = n - i
-        pure (i, j)
-
--- | 'genSplit3 a' generates a triple '(b, c, d)' such that 'b + c + d' equals 'a'.
-genSplit3 :: Int -> Gen (Int, Int, Int)
-genSplit3 n
-    | n < 0 = pure (0, 0, 0)
-    | otherwise = do
-        (a, z) <- genSplit n
-        (b, c) <- genSplit z
-        return (a, b, c)
-
--- | 'genSplit4 a' generates a quadruple '(b, c, d, e)' such that 'b + c + d + e' equals 'a'.
-genSplit4 :: Int -> Gen (Int, Int, Int, Int)
-genSplit4 n
-    | n < 0 = pure (0, 0, 0, 0)
-    | otherwise = do
-        (y, z) <- genSplit n
-        (a, b) <- genSplit y
-        (c, d) <- genSplit z
-        return (a, b, c, d)
-
--- | 'genSplit5 a' generates a quadruple '(b, c, d, e, f)' such that 'b + c + d + e + f' equals 'a'.
-genSplit5 :: Int -> Gen (Int, Int, Int, Int, Int)
-genSplit5 n
-    | n < 0 = pure (0, 0, 0, 0, 0)
-    | otherwise = do
-        (y, z) <- genSplit n
-        (a, b, c) <- genSplit3 y
-        (d, e) <- genSplit z
-        return (a, b, c, d, e)
-
--- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
-arbPartition :: Int -> Gen [Int]
-arbPartition i = go i >>= shuffle
-  where
-    go k
-      | k <= 0 = pure []
-      | otherwise = do
-          first <- choose (1, k)
-          rest <- arbPartition $ k - first
-          return $ first : rest
-
-#if !MIN_VERSION_QuickCheck(2,8,0)
--- | Generates a random permutation of the given list.
-shuffle :: [a] -> Gen [a]
-shuffle xs = do
-  ns <- vectorOf (length xs) (choose (minBound :: Int, maxBound))
-  return (map snd (sortBy (comparing fst) (zip ns xs)))
-#endif
-
--- | A version of @listOf@ that takes size into account more accurately.
-genListOf :: Gen a -> Gen [a]
-genListOf func =
-    sized $ \n -> do
-        size <- upTo n
-        pars <- arbPartition size
-        forM pars $ \i -> resize i func
-
 genericGenUnchecked :: (Generic a, GGenUnchecked (Rep a)) => Gen a
 genericGenUnchecked = to <$> gGenUnchecked
 
@@ -804,9 +800,24 @@ instance OVERLAPPING_ GUncheckedSubtermsIncl (K1 i a) b where
   gUncheckedSubtermsIncl (K1 _) = []
 
 
+-- | Generate a valid value by generating all the sub parts using the 'Generic' instance,
+-- and trying that until a valid value has been generated
+--
+-- > genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
+--
+-- This is probably the function that you are looking for.
+-- If you do use this function to override `genValid`, you probably also want to use
+-- 'shrinkValidStructurally' to override 'shrinkValid'.
 genValidStructurally :: (Validity a, Generic a, GGenValid (Rep a)) => Gen a
 genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
 
+-- | Generate a valid value by generating all the sub parts using the 'Generic' instance,
+--
+-- This generator is _not_ guaranteed to generate a valid value.
+--
+-- This is probably _not_ the function that you are looking for when overriding
+-- `genValid` _unless_ the type in question has no _extra_ validity constraints on top of
+-- the validity of its sub parts.
 genValidStructurallyWithoutExtraChecking :: (Generic a, GGenValid (Rep a)) => Gen a
 genValidStructurallyWithoutExtraChecking = to <$> gGenValid
 
@@ -830,10 +841,22 @@ instance (GenValid a) => GGenValid (K1 i a) where
 
 
 -- | Shrink a term to any of its immediate valid subterms,
--- and also recursively shrink all subterms.
+-- and also recursively shrink all subterms, and then filtering out the results that are not valid.
+--
+-- > shrinkValidStructurally = filter isValid . shrinkValidStructurallyWithoutExtraFiltering
+--
+-- This is probably the function that you are looking for.
 shrinkValidStructurally :: (Validity a, Generic a, GValidRecursivelyShrink (Rep a), GValidSubterms (Rep a) a) => a -> [a]
 shrinkValidStructurally = filter isValid . shrinkValidStructurallyWithoutExtraFiltering
 
+-- | Shrink a term to any of its immediate valid subterms,
+-- and also recursively shrink all subterms.
+--
+-- This shrinking function is _not_ guaranteed to shrink to valid values.
+--
+-- This is probably _not_ the function that you are looking for when overriding
+-- `shrinkValid` _unless_ the type in question has no _extra_ validity constraints on top of
+-- the validity of its sub parts.
 shrinkValidStructurallyWithoutExtraFiltering :: (Generic a, GValidRecursivelyShrink (Rep a), GValidSubterms (Rep a) a) => a -> [a]
 shrinkValidStructurallyWithoutExtraFiltering x = structurallyValidSubterms x ++ structurallyValidRecursivelyShrink x
 
