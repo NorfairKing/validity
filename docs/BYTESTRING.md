@@ -2,7 +2,7 @@
 title: The ByteString Situation
 ---
 
-This document discusses the `GenUnchecked` instance for `ByteString`.
+This document discusses the `GenUnchecked` instance for `ByteString` and `Text`.
 
 ## What to do if an error message points you to this document
 

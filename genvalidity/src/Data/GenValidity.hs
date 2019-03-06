@@ -147,6 +147,9 @@ import Data.GenValidity.Utils
 -- > instance GenUnchecked MyType where
 -- >     genUnchecked = MyType <$> genUnchecked <*> genUnchecked
 --
+-- If this is not possible because there is no 'GenUnchecked' instance available for one of the
+-- sub-parts of your type, __then do not instantiate 'GenUnchecked' for your type__.
+-- Just continue with 'GenValid' instead.
 --
 -- __Step 2__: If an instatiation via 'Generic' is not possible, then you should emulate what
 --         'genericGenUnchecked' does.
@@ -156,7 +159,7 @@ import Data.GenValidity.Utils
 --
 -- === Warning: Invalid values can be funky
 --
--- Some types have serious validity constraints. See 'Text' or 'ByteString' for example.
+-- Some types have serious validity constraints. See 'Rational' for example.
 -- These can behave very strangely when they are not valid.
 -- In that case, __do not override 'GenUnchecked' such that 'genUnchecked' only generates valid values__.
 -- In that case, do not override 'genUnchecked' at all.
@@ -178,6 +181,8 @@ class GenUnchecked a where
 -- === How to instantiate 'GenValid'
 --
 -- __Step 1__: Try to instantiate 'GenValid' without overriding any functions.
+--             This is only possible if your type has a 'GenUnchecked' instance.
+--             If it doesn't, go to step 2.
 --             It is possible that, if few values are valid or if validity
 --             checking is expensive, that the resulting generator is too slow.
 --             In that case, go to Step 2.
