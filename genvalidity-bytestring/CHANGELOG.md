@@ -11,7 +11,8 @@
 
 ### Changed
 
-* Removed the 'GenUnchecked' instance for both strict and lazy `ByteString`s
+* Removed the 'GenUnchecked' and 'GenInvalid' instances for both strict and lazy `ByteString`s
+* Poisoned those two instances as well.
 
 ## [0.4.1.0] - 2019-03-06
 

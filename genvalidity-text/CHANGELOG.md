@@ -7,6 +7,7 @@
 ### Changed
 
 * Removed the 'GenUnchecked' and 'GenInvalid' instance for Text.
+* Poisoned those two instances as well.
 * Removed an 'upTo' from the implementation of 'GenValid Text'.
   It should generate better sized Text now.
 
