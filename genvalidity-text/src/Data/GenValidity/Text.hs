@@ -1,6 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
-
+#if MIN_VERSION_base(4,9,0)
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE UndecidableInstances #-}
+#endif
 module Data.GenValidity.Text where
 
 import Data.GenValidity
@@ -14,14 +18,22 @@ import Data.Functor ((<$>))
 import qualified Data.Text as ST
 import qualified Data.Text.Internal.Lazy as LT
 import qualified Data.Text.Lazy as LT
-
+#if MIN_VERSION_base(4,9,0)
+import GHC.TypeLits
+#endif
 instance GenValid ST.Text where
     genValid =
         sized $ \n -> do
             chars <- resize n $ genListOf arbitrary
             return $ ST.pack chars
     shrinkValid = fmap ST.pack . shrinkValid . ST.unpack
-
+#if MIN_VERSION_base(4,9,0)
+-- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
+instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.Text.Text is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
+         GenUnchecked ST.Text where
+    genUnchecked = error "unreachable"
+    shrinkUnchecked = error "unreachable"
+#endif
 instance GenValid LT.Text where
     genValid =
         sized $ \n ->
@@ -33,7 +45,13 @@ instance GenValid LT.Text where
                     lt <- resize b genValid
                     pure $ LT.Chunk st lt
     shrinkValid = fmap LT.fromChunks . shrinkValid . LT.toChunks
-
+#if MIN_VERSION_base(4,9,0)
+-- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
+instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.Text.Lazy.Text is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
+         GenUnchecked LT.Text where
+    genUnchecked = error "unreachable"
+    shrinkUnchecked = error "unreachable"
+#endif
 -- | 'textStartingWith c' generates a 'Text' value that starts with 'c'.
 textStartingWith :: Char -> Gen ST.Text
 textStartingWith c =

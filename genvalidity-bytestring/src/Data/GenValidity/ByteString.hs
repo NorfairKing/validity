@@ -1,6 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
-
+#if MIN_VERSION_base(4,9,0)
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE UndecidableInstances #-}
+#endif
 module Data.GenValidity.ByteString where
 
 import Data.GenValidity
@@ -15,7 +19,9 @@ import qualified Data.ByteString.Internal as SB
 import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Internal as LB
 import qualified Data.ByteString.Short as Short
-
+#if MIN_VERSION_base(4,9,0)
+import GHC.TypeLits
+#endif
 -- |
 --
 -- > genValid = SB.pack <$> genValid
@@ -23,7 +29,13 @@ import qualified Data.ByteString.Short as Short
 instance GenValid SB.ByteString where
     genValid = SB.pack <$> genValid
     shrinkValid = fmap SB.pack . shrinkValid . SB.unpack
-
+#if MIN_VERSION_base(4,9,0)
+-- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
+instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.ByteString.ByteString is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
+         GenUnchecked SB.ByteString where
+    genUnchecked = error "unreachable"
+    shrinkUnchecked = error "unreachable"
+#endif
 -- | WARNING: Unchecked ByteStrings are __seriously__ broken.
 --
 -- The pointer may still point to something which is fine, but
@@ -49,7 +61,13 @@ shrinkTrulyUncheckedStrictByteString (SB.PS p o l) =
 instance GenValid LB.ByteString where
     genValid = LB.pack <$> genValid
     shrinkValid = fmap LB.pack . shrinkValid . LB.unpack
-
+#if MIN_VERSION_base(4,9,0)
+-- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
+instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.ByteString.Lazy.ByteString is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
+         GenUnchecked LB.ByteString where
+    genUnchecked = error "unreachable"
+    shrinkUnchecked = error "unreachable"
+#endif
 -- | WARNING: Unchecked ByteStrings are __seriously__ broken.
 --
 -- See 'genTrulyUncheckedStrictByteString'
@@ -77,7 +95,6 @@ shrinkTrulyUncheckedLazyByteString lb_ =
                       shrinkTrulyUncheckedLazyByteString
                       (sb, lb)
             ]
-
 
 instance GenUnchecked Short.ShortByteString where
     genUnchecked = Short.pack <$> genValid
