@@ -25,6 +25,7 @@ module Data.GenValidity.Utils
     , shuffle
     , genListOf
       -- ** Helper functions for implementing shrinking functions
+    , shrinkTuple
     , shrinkT2
     , shrinkT3
     , shrinkT4
@@ -113,6 +114,12 @@ genListOf func =
         size <- upTo n
         pars <- arbPartition size
         forM pars $ \i -> resize i func
+
+shrinkTuple :: (a -> [a]) -> (b -> [b]) -> (a, b) -> [(a, b)]
+shrinkTuple sa sb (a, b) =
+  ((,) <$> sa a <*> sb b)
+  ++ [ (a', b) | a' <- sa a ]
+  ++ [ (a, b') | b' <- sb b ]
 
 -- | Turn a shrinking function into a function that shrinks tuples.
 shrinkT2 :: (a -> [a]) -> (a, a) -> [(a, a)]

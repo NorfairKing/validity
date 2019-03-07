@@ -7,56 +7,20 @@ import Data.GenValidity
 import Data.Validity.Text ()
 
 import Test.QuickCheck
-
-import Control.Monad
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<*>), pure)
 import Data.Functor ((<$>))
 #endif
 import qualified Data.Text as ST
-import qualified Data.Text.Array as A
-import qualified Data.Text.Internal as ST
 import qualified Data.Text.Internal.Lazy as LT
-
-instance GenUnchecked ST.Text where
-    genUnchecked =
-        sized $ \n -> do
-            size <- upTo n
-            arr <-
-                do ins <- replicateM size arbitrary
-                   return $
-                       A.run $ do
-                           arr <- A.new size
-                           forM_ (zip [0 ..] ins) $ uncurry $ A.unsafeWrite arr
-                           return arr
-            off <- upTo $ max 0 (size - 1)
-            let len = size - off
-            pure $ ST.Text arr off len
-    shrinkUnchecked _ = []
+import qualified Data.Text.Lazy as LT
 
 instance GenValid ST.Text where
     genValid =
         sized $ \n -> do
-            size <- upTo n
-            chars <- resize size $ genListOf arbitrary
+            chars <- resize n $ genListOf arbitrary
             return $ ST.pack chars
     shrinkValid = fmap ST.pack . shrinkValid . ST.unpack
-
-instance GenInvalid ST.Text
-
-instance GenUnchecked LT.Text where
-    genUnchecked =
-        sized $ \n ->
-            case n of
-                0 -> pure LT.Empty
-                _ -> do
-                    (a, b) <- genSplit n
-                    st <- resize a genUnchecked
-                    lt <- resize b genUnchecked
-                    pure $ LT.Chunk st lt
-    shrinkUnchecked LT.Empty = []
-    shrinkUnchecked (LT.Chunk st lt) =
-        [LT.Chunk st' lt' | (st', lt') <- shrinkUnchecked (st, lt)]
 
 instance GenValid LT.Text where
     genValid =
@@ -68,8 +32,7 @@ instance GenValid LT.Text where
                     st <- ST.cons <$> genValid <*> resize a genValid
                     lt <- resize b genValid
                     pure $ LT.Chunk st lt
-
-instance GenInvalid LT.Text
+    shrinkValid = fmap LT.fromChunks . shrinkValid . LT.toChunks
 
 -- | 'textStartingWith c' generates a 'Text' value that starts with 'c'.
 textStartingWith :: Char -> Gen ST.Text

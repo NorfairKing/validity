@@ -1,5 +1,5 @@
 name: genvalidity-containers
-version: '0.5.1.1'
+version: '0.6.0.0'
 synopsis: GenValidity support for containers
 description: Please see README.md
 category: Testing
@@ -7,7 +7,7 @@ author: Tom Sydney Kerckhove
 maintainer:
 - syd.kerckhove@gmail.com
 - nick.van.den.broeck666@gmail.com
-copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2019 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
@@ -24,7 +24,7 @@ library:
   dependencies:
   - base <5
   - QuickCheck
-  - genvalidity >=0.5
+  - genvalidity >=0.8
   - validity >=0.5
   - validity-containers >=0.3
 

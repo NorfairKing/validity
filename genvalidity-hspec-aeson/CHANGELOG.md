@@ -1,20 +1,7 @@
 # Changelog
 
-## [0.6.2.1] - 2018-10-07
+## [0.3.1.0] - 2019-03-06
 
 ### Changed
 
-* Compatibility with validity >=0.9, genvalidity >=0.7 and genvalidity-property >=0.3
-
-## [0.6.2.0] - 2018-10-06
-
-### Added
-
-* `showReadSpecOnValid`
-* `showReadSpec`
-* `showReadSpecOnArbitrary`
-* `showReadSpecOnGen`
-* `showReadRoundTripOnValid`
-* `showReadRoundTrip`
-* `showReadRoundTripOnArbitrary`
-* `showReadRoundTripOnGen`
+* Test suite compatibility with genvalidity >=0.8

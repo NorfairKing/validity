@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0.0] - 2019-03-06
+
+### Changed
+
+* Fixed compatibility with genvalidity >=0.8
+
 ## [0.6.2.3] - 2019-02-28
 
 ### Changed

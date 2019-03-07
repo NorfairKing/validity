@@ -32,9 +32,9 @@ newtype ForShow =
 
 instance Validity ForShow
 
-instance GenUnchecked ForShow
-
-instance GenValid ForShow
+instance GenValid ForShow where
+    genValid = genValidStructurally
+    shrinkValid = shrinkValidStructurally
 
 instance FromJSON ForShow
 

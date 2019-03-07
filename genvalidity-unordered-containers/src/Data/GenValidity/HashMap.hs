@@ -22,8 +22,9 @@ instance (Hashable k, Eq k, GenUnchecked k, GenUnchecked v) =>
 instance (Hashable k, Eq k, GenValid k, GenValid v) =>
          GenValid (HashMap k v) where
     genValid = HM.fromList <$> genValid
+    shrinkValid = fmap HM.fromList . shrinkValid . HM.toList
 
-instance (Hashable k, Eq k, GenInvalid k, GenInvalid v) =>
+instance (Hashable k, Eq k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) =>
          GenInvalid (HashMap k v) where
     genInvalid =
         sized $ \n -> do

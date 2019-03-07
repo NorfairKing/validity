@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.5.0.0] - 2019-03-06
+
+### Added
+
+* genTrulyUncheckedLazyByteString
+* shrinkTrulyUncheckedLazyByteString
+
+### Changed
+
+* Removed the 'GenUnchecked' instance for both strict and lazy `ByteString`s
+
 ## [0.4.1.0] - 2019-03-06
 
 ### Added

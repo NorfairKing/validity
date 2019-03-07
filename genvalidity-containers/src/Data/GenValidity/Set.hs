@@ -46,13 +46,14 @@ instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
 #endif
 instance (Ord v, GenValid v) => GenValid (Set v) where
     genValid = S.fromList <$> genValid
+    shrinkValid = fmap S.fromList . shrinkValid . S.toList
 #if MIN_VERSION_containers(0,5,9)
-instance (Ord v, GenInvalid v) => GenInvalid (Set v) where
+instance (Ord v, GenUnchecked v, GenInvalid v) => GenInvalid (Set v) where
     genInvalid =
         oneof
             [genStructurallyValidSetOfInvalidValues, genStructurallyInvalidSet]
 #else
-instance (Ord v, GenInvalid v) => GenInvalid (Set v) where
+instance (Ord v, GenUnchecked v, GenInvalid v) => GenInvalid (Set v) where
     genInvalid = genStructurallyValidSetOfInvalidValues
 #endif
 genStructurallyValidSetOf :: Ord v => Gen v -> Gen (Set v)
@@ -68,7 +69,7 @@ genStructurallyValidSetOf g =
 
 -- Note: M.fromList <$> genInvalid does not work because of this line in the Data.Set documentation:
 -- ' If the list contains more than one value for the same key, the last value for the key is retained.'
-genStructurallyValidSetOfInvalidValues :: (Ord v, GenInvalid v) => Gen (Set v)
+genStructurallyValidSetOfInvalidValues :: (Ord v, GenUnchecked v, GenInvalid v) => Gen (Set v)
 genStructurallyValidSetOfInvalidValues =
     sized $ \n -> do
         (v, m) <- genSplit n

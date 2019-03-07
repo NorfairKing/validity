@@ -45,23 +45,20 @@ showLazyTextDebug (LT.Chunk st lt) =
         [ "A chuck with this strict text:"
         , showTextDebug st
         , "and this rest of the lazy text:"
-        , showLazyTextDebug lt, ""
+        , showLazyTextDebug lt
+        , ""
         ]
 
 spec :: Spec
 spec = do
     describe "Strict Text" $ do
-        genValiditySpec @ST.Text
+        genValidSpec @ST.Text
         describe "genValid" $ do
             it "is always empty when resized to 0" $
                 forAll (resize 0 genValid) (`shouldSatisfy` ST.null)
             it "generates valid text" $
                 forAll (genValid) $ \t ->
                     unless (isValid t) $ expectationFailure $ showTextDebug t
-        describe "genUnchecked `suchThat` isValid" $
-            it "generates valid text" $
-            forAll ((genUnchecked :: Gen ST.Text) `suchThat` isValid) $ \t ->
-                unless (isValid t) $ expectationFailure $ showTextDebug t
         describe "textStartingWith" $ do
             it "is never empty" $
                 forAll arbitrary $ \c ->
@@ -93,7 +90,7 @@ spec = do
                 forAll (textWithoutAnyOf cs) $ \text ->
                     ST.unpack text `shouldNotSatisfy` (\t -> any (`elem` t) cs)
     describe "Lazy Text" $ do
-        genValiditySpec @LT.Text
+        genValidSpec @LT.Text
         describe "genValid" $ do
             it "is always empty when resized to 0" $
                 forAll (resize 0 genValid) (`shouldSatisfy` LT.null)
@@ -101,7 +98,3 @@ spec = do
                 forAll (genValid) $ \t ->
                     unless (isValid t) $
                     expectationFailure $ showLazyTextDebug t
-        describe "genUnchecked `suchThat` isValid" $
-            it "generates valid text" $
-            forAll ((genUnchecked :: Gen LT.Text) `suchThat` isValid) $ \t ->
-                unless (isValid t) $ expectationFailure $ showLazyTextDebug t

@@ -1,5 +1,5 @@
 name: genvalidity-hspec
-version: '0.6.2.3'
+version: '0.7.0.0'
 synopsis: Standard spec's for GenValidity instances
 description: ! 'Note: There are companion packages for this library:
 
@@ -19,7 +19,7 @@ author: Tom Sydney Kerckhove
 maintainer:
 - syd.kerckhove@gmail.com
 - nick.van.den.broeck666@gmail.com
-copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2019 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
@@ -45,7 +45,7 @@ library:
   - Test.Validity.Utils
   dependencies:
   - base >=4.9 && <5
-  - genvalidity >=0.5
+  - genvalidity >=0.8
   - genvalidity-property >=0.2
   - hspec
   - transformers

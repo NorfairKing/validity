@@ -31,7 +31,7 @@ import Test.Validity.Utils
 -- In general it is a good idea to add this spec to your test suite if you
 -- write a custom implementation of @genValid@ or @genInvalid@.
 --
--- __It is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken. (For example, ByteString)__
+-- __It is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken.__
 -- In that case you probably want 'genValidSpec'.
 --
 -- Example usage:
@@ -65,7 +65,7 @@ genValidSpec =
 
 -- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
 --
--- Note that it is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken. (For example, ByteString)
+-- Note that it is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken.
 --
 -- Example usage:
 --

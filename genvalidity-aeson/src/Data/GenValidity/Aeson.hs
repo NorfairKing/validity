@@ -17,27 +17,6 @@ import Data.Aeson
 
 import Test.QuickCheck
 
-instance GenUnchecked Value where
-    genUnchecked =
-        oneof
-            [ Object <$> genUnchecked
-            , Array <$> genUnchecked
-            , String <$> genUnchecked
-            , Number <$> genUnchecked
-            , Bool <$> genUnchecked
-            , pure Null
-            ]
-    shrinkUnchecked (Object hm) =
-        (Object <$> shrinkUnchecked hm) ++
-        toList hm ++ concatMap shrinkUnchecked (toList hm)
-    shrinkUnchecked (Array a) =
-        (Array <$> shrinkUnchecked a) ++
-        toList a ++ concatMap shrinkUnchecked (toList a)
-    shrinkUnchecked (String s) = String <$> shrinkUnchecked s
-    shrinkUnchecked (Number s) = Number <$> shrinkUnchecked s
-    shrinkUnchecked (Bool s) = Bool <$> shrinkUnchecked s
-    shrinkUnchecked Null = []
-
 instance GenValid Value where
     genValid =
         oneof
@@ -48,8 +27,13 @@ instance GenValid Value where
             , Bool <$> genValid
             , pure Null
             ]
-
-instance GenInvalid Value where
-    genInvalid =
-        oneof
-            [Object <$> genInvalid, Array <$> genInvalid, String <$> genInvalid]
+    shrinkValid (Object hm) =
+        (Object <$> shrinkValid hm) ++
+        toList hm ++ concatMap shrinkValid (toList hm)
+    shrinkValid (Array a) =
+        (Array <$> shrinkValid a) ++
+        toList a ++ concatMap shrinkValid (toList a)
+    shrinkValid (String s) = String <$> shrinkValid s
+    shrinkValid (Number s) = Number <$> shrinkValid s
+    shrinkValid (Bool s) = Bool <$> shrinkValid s
+    shrinkValid Null = []

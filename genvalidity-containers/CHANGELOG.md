@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.6.0.0] - 2019-03-06
+
+### Changed
+
+* Fixed type signatures to be compatible with genvalidity >=0.8
+
 ## [0.5.1.1] - 2018-11-07
 
 ### Changed
