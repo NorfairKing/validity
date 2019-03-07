@@ -42,8 +42,7 @@ import Test.Validity.Shrinking.Property
 import Test.Validity.Utils
 
 shrinkValiditySpec ::
-       forall a.
-       (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a, GenInvalid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a, GenInvalid a)
     => Spec
 shrinkValiditySpec = do
     shrinkValidSpec @a
@@ -117,7 +116,7 @@ shrinkValidDoesNotShrinkToItself =
     shrinkDoesNotShrinkToItselfOnValid @a shrinkValid
 
 shrinkInvalidDoesNotShrinkToItself ::
-       forall a. (Show a, Eq a, GenUnchecked a, GenInvalid a)
+       forall a. (Show a, Eq a, GenInvalid a)
     => Property
 shrinkInvalidDoesNotShrinkToItself =
     shrinkDoesNotShrinkToItselfOnInvalid @a shrinkInvalid
