@@ -9,4 +9,4 @@ import Data.GenValidity.Aeson ()
 import Test.Validity.GenValidity
 
 spec :: Spec
-spec = genValiditySpec @Value
+spec = genValidSpec @Value

@@ -8,6 +8,7 @@ import qualified Data.ByteString as SB
 import qualified Data.ByteString.Internal as SB
 import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Internal as LB
+import qualified Data.ByteString.Short as Short
 
 -- | A 'ByteString' is NOT trivially valid.
 --
@@ -32,3 +33,9 @@ instance Validity LB.ByteString where
         go _ LB.Empty = valid
         go i (LB.Chunk sb lb) =
             mconcat [delve (unwords ["Chunk number", show i]) sb, go (i + 1) lb]
+
+-- | Trivially valid
+--
+-- My guess is that short bytestrings are not trivially valid but there is no way to access the internals.
+instance Validity Short.ShortByteString where
+    validate = trivialValidation

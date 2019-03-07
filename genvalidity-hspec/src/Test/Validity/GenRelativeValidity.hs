@@ -40,6 +40,7 @@ genRelativeValiditySpec ::
        , Typeable b
        , Show a
        , Show b
+       , GenUnchecked b
        , GenValid b
        , GenRelativeValid a b
        , GenRelativeInvalid a b
@@ -79,6 +80,7 @@ genRelativeInvalidSpec ::
        , Show a
        , Show b
        , GenValid a
+       , GenUnchecked b
        , GenValid b
        , RelativeValidity a b
        , GenRelativeInvalid a b

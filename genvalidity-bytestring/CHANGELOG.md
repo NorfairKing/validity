@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [0.5.0.0] - 2019-03-06
+
+### Added
+
+* genTrulyUncheckedLazyByteString
+* shrinkTrulyUncheckedLazyByteString
+
+### Changed
+
+* Removed the 'GenUnchecked' and 'GenInvalid' instances for both strict and lazy `ByteString`s
+* Poisoned those two instances as well.
+
+## [0.4.1.0] - 2019-03-06
+
+### Added
+
+* 'GenUnchecked' and 'GenValid' for 'ShortByteString'
+
 ## [0.4.0.0] - 2019-03-06
 
 ### Added

@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.4.1.0] - 2019-02-28
+
+### Added
+
+* `Validity` instance for `ShortByteString`s
+
 ## [0.4.0.0] - 2018-08-25
 
 ### Added

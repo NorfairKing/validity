@@ -1,6 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
-
+#if MIN_VERSION_base(4,9,0)
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE UndecidableInstances #-}
+#endif
 module Data.GenValidity.ByteString where
 
 import Data.GenValidity
@@ -14,25 +18,10 @@ import qualified Data.ByteString as SB
 import qualified Data.ByteString.Internal as SB
 import qualified Data.ByteString.Lazy as LB
 import qualified Data.ByteString.Lazy.Internal as LB
-
-instance GenUnchecked SB.ByteString where
-    genUnchecked =
-        error $
-        unlines
-            [ "Data.GenValidity.ByteString.genUnchecked :: Strict.ByteString"
-            , "You probably do not want to use this."
-            , "You probably want to use 'genValid' instead."
-            , "See https://github.com/NorfairKing/validity/blob/master/docs/BYTESTRING.md"
-            ]
-    shrinkUnchecked =
-        error $
-        unlines
-            [ "Data.GenValidity.ByteString.shrinkUnchecked :: Strict.ByteString -> [Strict.ByteString]"
-            , "You probably do not want to use this."
-            , "You probably want to use 'shrinkValid' instead."
-            , "See https://github.com/NorfairKing/validity/blob/master/docs/BYTESTRING.md"
-            ]
-
+import qualified Data.ByteString.Short as Short
+#if MIN_VERSION_base(4,9,0)
+import GHC.TypeLits
+#endif
 -- |
 --
 -- > genValid = SB.pack <$> genValid
@@ -40,7 +29,13 @@ instance GenUnchecked SB.ByteString where
 instance GenValid SB.ByteString where
     genValid = SB.pack <$> genValid
     shrinkValid = fmap SB.pack . shrinkValid . SB.unpack
-
+#if MIN_VERSION_base(4,9,0)
+-- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
+instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.ByteString.ByteString is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
+         GenUnchecked SB.ByteString where
+    genUnchecked = error "unreachable"
+    shrinkUnchecked = error "unreachable"
+#endif
 -- | WARNING: Unchecked ByteStrings are __seriously__ broken.
 --
 -- The pointer may still point to something which is fine, but
@@ -63,23 +58,46 @@ shrinkTrulyUncheckedStrictByteString :: SB.ByteString -> [SB.ByteString]
 shrinkTrulyUncheckedStrictByteString (SB.PS p o l) =
     [SB.PS p o' l' | (o', l') <- shrinkUnchecked (o, l)]
 
-instance GenUnchecked LB.ByteString where
-    genUnchecked =
-        sized $ \n ->
-            case n of
-                0 -> pure LB.Empty
-                _ -> do
-                    (a, b) <- genSplit n
-                    sb <- resize a genUnchecked
-                    lb <- resize b genUnchecked
-                    pure $ LB.Chunk sb lb
-    shrinkUnchecked lb_ =
-        case lb_ of
-            LB.Empty -> []
-            (LB.Chunk sb lb) ->
-                LB.Empty :
-                [LB.Chunk sb' lb' | (sb', lb') <- shrinkUnchecked (sb, lb)]
-
 instance GenValid LB.ByteString where
     genValid = LB.pack <$> genValid
     shrinkValid = fmap LB.pack . shrinkValid . LB.unpack
+#if MIN_VERSION_base(4,9,0)
+-- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
+instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.ByteString.Lazy.ByteString is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
+         GenUnchecked LB.ByteString where
+    genUnchecked = error "unreachable"
+    shrinkUnchecked = error "unreachable"
+#endif
+-- | WARNING: Unchecked ByteStrings are __seriously__ broken.
+--
+-- See 'genTrulyUncheckedStrictByteString'
+genTrulyUncheckedLazyByteString :: Gen LB.ByteString
+genTrulyUncheckedLazyByteString =
+    sized $ \n ->
+        case n of
+            0 -> pure LB.Empty
+            _ -> do
+                (a, b) <- genSplit n
+                sb <- resize a genTrulyUncheckedStrictByteString
+                lb <- resize b genTrulyUncheckedLazyByteString
+                pure $ LB.Chunk sb lb
+
+shrinkTrulyUncheckedLazyByteString :: LB.ByteString -> [LB.ByteString]
+shrinkTrulyUncheckedLazyByteString lb_ =
+    case lb_ of
+        LB.Empty -> []
+        (LB.Chunk sb lb) ->
+            LB.Empty :
+            [ LB.Chunk sb' lb'
+            | (sb', lb') <-
+                  shrinkTuple
+                      shrinkTrulyUncheckedStrictByteString
+                      shrinkTrulyUncheckedLazyByteString
+                      (sb, lb)
+            ]
+
+instance GenUnchecked Short.ShortByteString where
+    genUnchecked = Short.pack <$> genValid
+    shrinkUnchecked = fmap Short.pack . shrinkUnchecked . Short.unpack
+
+instance GenValid Short.ShortByteString

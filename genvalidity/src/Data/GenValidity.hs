@@ -41,6 +41,9 @@
     >         case myFunction input of
     >             Nothing -> return () -- Can happen
     >             Just output -> output `shouldSatisfy` isValid
+
+    Definitely also look at the genvalidity-property and genvalidity-hspec packages
+    for more info on how to use this package.
     -}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -144,6 +147,9 @@ import Data.GenValidity.Utils
 -- > instance GenUnchecked MyType where
 -- >     genUnchecked = MyType <$> genUnchecked <*> genUnchecked
 --
+-- If this is not possible because there is no 'GenUnchecked' instance available for one of the
+-- sub-parts of your type, __then do not instantiate 'GenUnchecked' for your type__.
+-- Just continue with 'GenValid' instead.
 --
 -- __Step 2__: If an instatiation via 'Generic' is not possible, then you should emulate what
 --         'genericGenUnchecked' does.
@@ -153,11 +159,11 @@ import Data.GenValidity.Utils
 --
 -- === Warning: Invalid values can be funky
 --
--- Some types have serious validity constraints. See 'Text' or 'ByteString' for example.
+-- Some types have serious validity constraints. See 'Rational' for example.
 -- These can behave very strangely when they are not valid.
 -- In that case, __do not override 'GenUnchecked' such that 'genUnchecked' only generates valid values__.
 -- In that case, do not override 'genUnchecked' at all.
--- Instead, use 'genValid' from 'GenValid' (see below) instead.
+-- Instead, use 'genValid' from 'GenValid' (see below) instead and consider not instantiating 'GenUnchecked' at all.
 class GenUnchecked a where
     genUnchecked :: Gen a
     default genUnchecked :: (Generic a, GGenUnchecked (Rep a)) =>
@@ -175,6 +181,8 @@ class GenUnchecked a where
 -- === How to instantiate 'GenValid'
 --
 -- __Step 1__: Try to instantiate 'GenValid' without overriding any functions.
+--             This is only possible if your type has a 'GenUnchecked' instance.
+--             If it doesn't, go to step 2.
 --             It is possible that, if few values are valid or if validity
 --             checking is expensive, that the resulting generator is too slow.
 --             In that case, go to Step 2.
@@ -196,8 +204,7 @@ class GenUnchecked a where
 --
 -- > arbitrary = genValid
 -- > shrink = shrinkValid
-class (Validity a, GenUnchecked a) =>
-      GenValid a where
+class Validity a => GenValid a where
     -- | Generate a valid datum, this should cover all possible valid values in
     -- the type
     --
@@ -209,6 +216,7 @@ class (Validity a, GenUnchecked a) =>
     -- If you do, make sure that it is possible to generate all possible valid
     -- data, otherwise your testing may not cover all cases.
     genValid :: Gen a
+    default genValid :: GenUnchecked a => Gen a
     genValid = genUnchecked `suchThat` isValid
 
     -- | Shrink a valid value.
@@ -222,6 +230,7 @@ class (Validity a, GenUnchecked a) =>
     -- might fail for a different reason than for the reason that it originally failed.
     -- This would lead to very confusing error messages.
     shrinkValid :: a -> [a]
+    default shrinkValid :: GenUnchecked a => a -> [a]
     shrinkValid = filter isValid . shrinkUnchecked
 
 -- | A class of types for which invalid values can be generated.
@@ -237,8 +246,7 @@ class (Validity a, GenUnchecked a) =>
 --             for parametric values.
 --
 -- __Step 2__: Instantiate 'GenInvalid' without overriding any functions.
-class (Validity a, GenUnchecked a) =>
-      GenInvalid a where
+class Validity a => GenInvalid a where
     genInvalid :: Gen a
     -- | Generate an invalid datum, this should cover all possible invalid
     -- values
@@ -248,9 +256,11 @@ class (Validity a, GenUnchecked a) =>
     -- To speed up testing, it may be a good idea to implement this yourself.
     -- If you do, make sure that it is possible to generate all possible
     -- invalid data, otherwise your testing may not cover all cases.
+    default genInvalid :: GenUnchecked a => Gen a
     genInvalid = genUnchecked `suchThat` isInvalid
 
     shrinkInvalid :: a -> [a]
+    default shrinkInvalid :: GenUnchecked a => a -> [a]
     shrinkInvalid = filter isInvalid . shrinkUnchecked
 
 instance (GenUnchecked a, GenUnchecked b) => GenUnchecked (a, b) where
@@ -271,11 +281,9 @@ instance (GenValid a, GenValid b) => GenValid (a, b) where
             a <- resize r genValid
             b <- resize s genValid
             return (a, b)
-    shrinkValid (a, b) = ((,) <$> shrinkValid a <*> shrinkValid b)
-      ++ [ (a', b) | a' <- shrinkValid a ]
-      ++ [ (a, b') | b' <- shrinkValid b ]
+    shrinkValid = shrinkTuple shrinkValid shrinkValid
 
-instance (GenInvalid a, GenInvalid b) => GenInvalid (a, b) where
+instance (GenUnchecked a, GenInvalid a, GenUnchecked b, GenInvalid b) => GenInvalid (a, b) where
     genInvalid =
         sized $ \n -> do
             (r, s) <- genSplit n
@@ -301,6 +309,8 @@ instance (GenValid a, GenValid b) => GenValid (Either a b) where
 -- | This instance ensures that the generated tupse contains at least one invalid element. The other element is unchecked.
 instance (GenInvalid a, GenInvalid b) => GenInvalid (Either a b) where
     genInvalid = oneof [Left <$> genInvalid, Right <$> genInvalid]
+    shrinkInvalid (Left v) = Left <$> shrinkInvalid v
+    shrinkInvalid (Right v) = Right <$> shrinkInvalid v
 
 instance (GenUnchecked a, GenUnchecked b, GenUnchecked c) =>
          GenUnchecked (a, b, c) where
@@ -330,7 +340,8 @@ instance (GenValid a, GenValid b, GenValid c) => GenValid (a, b, c) where
         ]
 
 -- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
-instance (GenInvalid a, GenInvalid b, GenInvalid c) =>
+instance ( GenUnchecked a, GenUnchecked b, GenUnchecked c
+         , GenInvalid a, GenInvalid b, GenInvalid c) =>
          GenInvalid (a, b, c) where
     genInvalid =
         sized $ \n -> do
@@ -381,7 +392,8 @@ instance (GenValid a, GenValid b, GenValid c, GenValid d) =>
         ]
 
 -- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
-instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d) =>
+instance ( GenUnchecked a, GenUnchecked b, GenUnchecked c, GenUnchecked d
+         , GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d) =>
          GenInvalid (a, b, c, d) where
     genInvalid =
         sized $ \n -> do
@@ -442,7 +454,8 @@ instance (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e) =>
         ]
 
 -- | This instance ensures that the generated triple contains at least one invalid element. The other two are unchecked.
-instance (GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d, GenInvalid e) =>
+instance ( GenUnchecked a, GenUnchecked b, GenUnchecked c, GenUnchecked d, GenUnchecked e
+         , GenInvalid a, GenInvalid b, GenInvalid c, GenInvalid d, GenInvalid e) =>
          GenInvalid (a, b, c, d, e) where
     genInvalid =
         sized $ \n -> do
@@ -493,6 +506,8 @@ instance GenValid a => GenValid (Maybe a) where
 
 instance GenInvalid a => GenInvalid (Maybe a) where
     genInvalid = Just <$> genInvalid
+    shrinkInvalid Nothing = [] -- Should not happen
+    shrinkInvalid (Just a) = Just <$> shrinkInvalid a
 
 #if MIN_VERSION_base(4,9,0)
 instance GenUnchecked a => GenUnchecked (NonEmpty a) where
@@ -511,7 +526,7 @@ instance GenValid a => GenValid (NonEmpty a) where
         Just ne -> pure ne
     shrinkValid (v :| vs) = [ e :| es | (e, es) <- shrinkValid (v, vs)]
 
-instance GenInvalid a => GenInvalid (NonEmpty a) where
+instance (GenUnchecked a, GenInvalid a) => GenInvalid (NonEmpty a) where
     genInvalid = do
       l <- genInvalid
       case NE.nonEmpty l of
@@ -531,7 +546,7 @@ instance GenValid a => GenValid [a] where
 
 -- | This instance ensures that the generated list contains at least one element
 -- that satisfies 'isInvalid'. The rest is unchecked.
-instance GenInvalid a => GenInvalid [a] where
+instance (GenUnchecked a, GenInvalid a) => GenInvalid [a] where
     genInvalid =
         sized $ \n -> do
             (x, y, z) <- genSplit3 n
@@ -679,7 +694,7 @@ instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
     genValid = (%) <$> genValid <*> (genValid `suchThat` (> 0))
     shrinkValid (n :% d) = [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
 
-instance (Integral a, Num a, Ord a, GenValid a) => GenInvalid (Ratio a)
+instance (Integral a, Num a, Ord a, Validity a, GenUnchecked a) => GenInvalid (Ratio a)
 
 instance HasResolution a => GenUnchecked (Fixed a) where
     genUnchecked = MkFixed <$> genUnchecked

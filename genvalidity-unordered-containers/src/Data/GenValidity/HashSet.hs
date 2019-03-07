@@ -18,6 +18,8 @@ instance (Hashable v, Eq v, GenUnchecked v) => GenUnchecked (HashSet v) where
 
 instance (Hashable v, Eq v, GenValid v) => GenValid (HashSet v) where
     genValid = HS.fromList <$> genValid
+    shrinkValid = fmap HS.fromList . shrinkValid . HS.toList
 
-instance (Hashable v, Eq v, GenInvalid v) => GenInvalid (HashSet v) where
+instance (Hashable v, Eq v, GenUnchecked v, GenInvalid v) => GenInvalid (HashSet v) where
     genInvalid = HS.fromList <$> genInvalid
+    shrinkInvalid = fmap HS.fromList . shrinkInvalid . HS.toList
