@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.4.0.0] - 2019-03-08
+
+### Changed
+
+* Compatibility with genvalidity >=0.8
+
 ## [0.3.0.0] - 2018-11-07
 
 ### Changed
