@@ -28,4 +28,4 @@ packages:
 - '../validity-unordered-containers'
 - '../validity-uuid'
 - '../validity-vector'
-resolver: nightly-2019-02-20
+resolver: nightly-2019-03-08
