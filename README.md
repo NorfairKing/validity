@@ -2,38 +2,38 @@
 
 [![Build Status](https://travis-ci.org/NorfairKing/validity.svg?branch=master)](https://travis-ci.org/NorfairKing/validity)
 
-| package  | hackage  |
-|---|---|
-| validity  | [![Hackage](https://img.shields.io/hackage/v/validity.svg)](https://hackage.haskell.org/package/validity) |
-| validity-aeson |  [![Hackage](https://img.shields.io/hackage/v/validity-aeson.svg)](https://hackage.haskell.org/package/validity-aeson) |
-| validity-bytestring |  [![Hackage](https://img.shields.io/hackage/v/validity-bytestring.svg)](https://hackage.haskell.org/package/validity-bytestring) |
-| validity-containers |  [![Hackage](https://img.shields.io/hackage/v/validity-containers.svg)](https://hackage.haskell.org/package/validity-containers) |
-| validity-path |  [![Hackage](https://img.shields.io/hackage/v/validity-path.svg)](https://hackage.haskell.org/package/validity-path) |
-| validity-primitive |  [![Hackage](https://img.shields.io/hackage/v/validity-primitive.svg)](https://hackage.haskell.org/package/validity-primitive) |
-| validity-scientific |  [![Hackage](https://img.shields.io/hackage/v/validity-scientific.svg)](https://hackage.haskell.org/package/validity-scientific) |
-| validity-text |  [![Hackage](https://img.shields.io/hackage/v/validity-text.svg)](https://hackage.haskell.org/package/validity-text) |
-| validity-time |  [![Hackage](https://img.shields.io/hackage/v/validity-time.svg)](https://hackage.haskell.org/package/validity-time) |
-| validity-unordered-containers |  [![Hackage](https://img.shields.io/hackage/v/validity-unordered-containers.svg)](https://hackage.haskell.org/package/validity-unordered-containers) |
-| validity-uuid |  [![Hackage](https://img.shields.io/hackage/v/validity-uuid.svg)](https://hackage.haskell.org/package/validity-uuid) |
-| validity-vector |  [![Hackage](https://img.shields.io/hackage/v/validity-vector.svg)](https://hackage.haskell.org/package/validity-vector) |
-| genvalidity |  [![Hackage](https://img.shields.io/hackage/v/genvalidity.svg)](https://hackage.haskell.org/package/genvalidity) |
-| genvalidity-aeson | [![Hackage](https://img.shields.io/hackage/v/genvalidity-aeson.svg)](https://hackage.haskell.org/package/genvalidity-aeson) |
-| genvalidity-bytestring |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-bytestring.svg)](https://hackage.haskell.org/package/genvalidity-bytestring) |
-| genvalidity-containers |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-containers.svg)](https://hackage.haskell.org/package/genvalidity-containers) |
-| genvalidity-path |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-path.svg)](https://hackage.haskell.org/package/genvalidity-path) |
-| genvalidity-property |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-property.svg)](https://hackage.haskell.org/package/genvalidity-property) |
-| genvalidity-scientific |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-scientific.svg)](https://hackage.haskell.org/package/genvalidity-scientific) |
-| genvalidity-text |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-text.svg)](https://hackage.haskell.org/package/genvalidity-text) |
-| genvalidity-time |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-time.svg)](https://hackage.haskell.org/package/genvalidity-time) |
-| genvalidity-unordered-containers |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-unordered-containers.svg)](https://hackage.haskell.org/package/genvalidity-unordered-containers) |
-| genvalidity-uuid |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-uuid.svg)](https://hackage.haskell.org/package/genvalidity-uuid) |
-| genvalidity-vector |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-vector.svg)](https://hackage.haskell.org/package/genvalidity-vector) |
-| genvalidity-hspec |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec.svg)](https://hackage.haskell.org/package/genvalidity-hspec) |
-| genvalidity-hspec-aeson |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-aeson.svg)](https://hackage.haskell.org/package/genvalidity-hspec-aeson) |
-| genvalidity-hspec-binary |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-binary.svg)](https://hackage.haskell.org/package/genvalidity-hspec-binary) |
-| genvalidity-hspec-cereal |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-cereal.svg)](https://hackage.haskell.org/package/genvalidity-hspec-cereal) |
-| genvalidity-hspec-hashable |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-hashable.svg)](https://hackage.haskell.org/package/genvalidity-hspec-hashable) |
-| genvalidity-hspec-optics | [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-optics.svg)](https://hackage.haskell.org/package/genvalidity-hspec-optics) |
+| Package  | Hackage  | Stackage |
+|---|---|---|
+| validity  | [![Hackage](https://img.shields.io/hackage/v/validity.svg)](https://hackage.haskell.org/package/validity) | [![Stackage](https://www.stackage.org/package/validity/badge/lts)](https://www.stackage.org/package/validity)  |
+| validity-aeson |  [![Hackage](https://img.shields.io/hackage/v/validity-aeson.svg)](https://hackage.haskell.org/package/validity-aeson) | [![Stackage](https://www.stackage.org/package/validity-aeson/badge/lts)](https://www.stackage.org/package/validity-aeson) |
+| validity-bytestring |  [![Hackage](https://img.shields.io/hackage/v/validity-bytestring.svg)](https://hackage.haskell.org/package/validity-bytestring) | [![Stackage](https://www.stackage.org/package/validity-bytestring/badge/lts)](https://www.stackage.org/package/validity-bytestring) |
+| validity-containers |  [![Hackage](https://img.shields.io/hackage/v/validity-containers.svg)](https://hackage.haskell.org/package/validity-containers) | [![Stackage](https://www.stackage.org/package/validity-containers/badge/lts)](https://www.stackage.org/package/validity-containers) |
+| validity-path |  [![Hackage](https://img.shields.io/hackage/v/validity-path.svg)](https://hackage.haskell.org/package/validity-path) | [![Stackage](https://www.stackage.org/package/validity-path/badge/lts)](https://www.stackage.org/package/validity-path) |
+| validity-primitive |  [![Hackage](https://img.shields.io/hackage/v/validity-primitive.svg)](https://hackage.haskell.org/package/validity-primitive) | [![Stackage](https://www.stackage.org/package/validity-primitive/badge/lts)](https://www.stackage.org/package/validity-primitive) |
+| validity-scientific |  [![Hackage](https://img.shields.io/hackage/v/validity-scientific.svg)](https://hackage.haskell.org/package/validity-scientific) | [![Stackage](https://www.stackage.org/package/validity-scientific/badge/lts)](https://www.stackage.org/package/validity-scientific) |
+| validity-text |  [![Hackage](https://img.shields.io/hackage/v/validity-text.svg)](https://hackage.haskell.org/package/validity-text) | [![Stackage](https://www.stackage.org/package/validity-text/badge/lts)](https://www.stackage.org/package/validity-text) |
+| validity-time |  [![Hackage](https://img.shields.io/hackage/v/validity-time.svg)](https://hackage.haskell.org/package/validity-time) | [![Stackage](https://www.stackage.org/package/validity-time/badge/lts)](https://www.stackage.org/package/validity-time) |
+| validity-unordered-containers |  [![Hackage](https://img.shields.io/hackage/v/validity-unordered-containers.svg)](https://hackage.haskell.org/package/validity-unordered-containers) | [![Stackage](https://www.stackage.org/package/validity-unordered-containers/badge/lts)](https://www.stackage.org/package/validity-unordered-containers) |
+| validity-uuid |  [![Hackage](https://img.shields.io/hackage/v/validity-uuid.svg)](https://hackage.haskell.org/package/validity-uuid) | [![Stackage](https://www.stackage.org/package/validity-uuid/badge/lts)](https://www.stackage.org/package/validity-uuid) |
+| validity-vector |  [![Hackage](https://img.shields.io/hackage/v/validity-vector.svg)](https://hackage.haskell.org/package/validity-vector) | [![Stackage](https://www.stackage.org/package/validity-vector/badge/lts)](https://www.stackage.org/package/validity-vector) |
+| genvalidity |  [![Hackage](https://img.shields.io/hackage/v/genvalidity.svg)](https://hackage.haskell.org/package/genvalidity) | [![Stackage](https://www.stackage.org/package/genvalidity/badge/lts)](https://www.stackage.org/package/genvalidity) |
+| genvalidity-aeson | [![Hackage](https://img.shields.io/hackage/v/genvalidity-aeson.svg)](https://hackage.haskell.org/package/genvalidity-aeson) | [![Stackage](https://www.stackage.org/package/genvalidity-aeson/badge/lts)](https://www.stackage.org/package/genvalidity-aeson) |
+| genvalidity-bytestring |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-bytestring.svg)](https://hackage.haskell.org/package/genvalidity-bytestring) | [![Stackage](https://www.stackage.org/package/genvalidity-bytestring/badge/lts)](https://www.stackage.org/package/genvalidity-bytestring) |
+| genvalidity-containers |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-containers.svg)](https://hackage.haskell.org/package/genvalidity-containers) | [![Stackage](https://www.stackage.org/package/genvalidity-containers/badge/lts)](https://www.stackage.org/package/genvalidity-containers) |
+| genvalidity-path |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-path.svg)](https://hackage.haskell.org/package/genvalidity-path) | [![Stackage](https://www.stackage.org/package/genvalidity-path/badge/lts)](https://www.stackage.org/package/genvalidity-path) |
+| genvalidity-property |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-property.svg)](https://hackage.haskell.org/package/genvalidity-property) | [![Stackage](https://www.stackage.org/package/genvalidity-property/badge/lts)](https://www.stackage.org/package/genvalidity-property) |
+| genvalidity-scientific |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-scientific.svg)](https://hackage.haskell.org/package/genvalidity-scientific) | [![Stackage](https://www.stackage.org/package/genvalidity-scientific/badge/lts)](https://www.stackage.org/package/genvalidity-scientific) |
+| genvalidity-text |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-text.svg)](https://hackage.haskell.org/package/genvalidity-text) | [![Stackage](https://www.stackage.org/package/genvalidity-text/badge/lts)](https://www.stackage.org/package/genvalidity-text) |
+| genvalidity-time |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-time.svg)](https://hackage.haskell.org/package/genvalidity-time) | [![Stackage](https://www.stackage.org/package/genvalidity-time/badge/lts)](https://www.stackage.org/package/genvalidity-time) |
+| genvalidity-unordered-containers |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-unordered-containers.svg)](https://hackage.haskell.org/package/genvalidity-unordered-containers) | [![Stackage](https://www.stackage.org/package/genvalidity-unordered-containers/badge/lts)](https://www.stackage.org/package/genvalidity-unordered-containers) |
+| genvalidity-uuid |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-uuid.svg)](https://hackage.haskell.org/package/genvalidity-uuid) | [![Stackage](https://www.stackage.org/package/genvalidity-uuid/badge/lts)](https://www.stackage.org/package/genvalidity-uuid) |
+| genvalidity-vector |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-vector.svg)](https://hackage.haskell.org/package/genvalidity-vector) | [![Stackage](https://www.stackage.org/package/genvalidity-vector/badge/lts)](https://www.stackage.org/package/genvalidity-vector) |
+| genvalidity-hspec |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec.svg)](https://hackage.haskell.org/package/genvalidity-hspec) | [![Stackage](https://www.stackage.org/package/genvalidity-hspec/badge/lts)](https://www.stackage.org/package/genvalidity-hspec) |
+| genvalidity-hspec-aeson |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-aeson.svg)](https://hackage.haskell.org/package/genvalidity-hspec-aeson) | [![Stackage](https://www.stackage.org/package/genvalidity-hspec-aeson/badge/lts)](https://www.stackage.org/package/genvalidity-hspec-aeson) |
+| genvalidity-hspec-binary |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-binary.svg)](https://hackage.haskell.org/package/genvalidity-hspec-binary) | [![Stackage](https://www.stackage.org/package/genvalidity-hspec-binary/badge/lts)](https://www.stackage.org/package/genvalidity-hspec-binary) |
+| genvalidity-hspec-cereal |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-cereal.svg)](https://hackage.haskell.org/package/genvalidity-hspec-cereal) | [![Stackage](https://www.stackage.org/package/genvalidity-hspec-cereal/badge/lts)](https://www.stackage.org/package/genvalidity-hspec-cereal) |
+| genvalidity-hspec-hashable |  [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-hashable.svg)](https://hackage.haskell.org/package/genvalidity-hspec-hashable) | [![Stackage](https://www.stackage.org/package/genvalidity-hspec-hashable/badge/lts)](https://www.stackage.org/package/genvalidity-hspec-hashable) |
+| genvalidity-hspec-optics | [![Hackage](https://img.shields.io/hackage/v/genvalidity-hspec-optics.svg)](https://hackage.haskell.org/package/genvalidity-hspec-optics) | [![Stackage](https://www.stackage.org/package/genvalidity-hspec-optics/badge/lts)](https://www.stackage.org/package/genvalidity-hspec-optics) |
 
 
 ## Why?
