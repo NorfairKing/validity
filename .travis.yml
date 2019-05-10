@@ -19,7 +19,12 @@ matrix:
 
   - env:
       - BUILD_KIND="stack"
-      - STACK_YAML="lts-13.yaml"
+      - STACK_YAML="lts-13_8.6.5.yaml"
+    addons: {apt: {packages: [libgmp-dev]}}
+
+  - env:
+      - BUILD_KIND="stack"
+      - STACK_YAML="lts-13_8.6.4.yaml"
     addons: {apt: {packages: [libgmp-dev]}}
 
   - env:
