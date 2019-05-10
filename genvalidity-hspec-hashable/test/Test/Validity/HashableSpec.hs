@@ -1,5 +1,6 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE CPP #-}
 
 -- | Standard 'Spec's for 'Hashable' instances.
 --
@@ -17,7 +18,9 @@ import Test.Validity.Hashable
 spec :: Spec
 spec = do
     hashableSpecOnValid @Rational
-    -- hashableSpecOnValid @Double DOES NOT HOLD
+#if MIN_VERSION_hashable(1,3,0)
+    hashableSpecOnValid @Double
+#endif
     hashableSpec @Int
     hashableSpecOnArbitrary @Int
     hashableSpec @HashableValid
