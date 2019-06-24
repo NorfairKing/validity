@@ -10,9 +10,20 @@ import GHC.Generics (Generic)
 import Data.Monoid
 #endif
 import Data.Validity
-import GHC.Real (Ratio(..))
+import GHC.Real (Ratio(..), infinity, notANumber)
 
 import Test.Hspec
+
+newtype NormalisedRatio a = NormalisedRatio (Ratio a)
+    deriving (Show, Eq, Generic)
+
+instance (Validity a, Integral a) => Validity (NormalisedRatio a) where
+    validate nr@(NormalisedRatio r) = mconcat
+        [ genericValidate nr
+        , validateRatioNotNaN r
+        , validateRatioNotInfinite r
+        , validateRatioNormalised r
+        ]
 
 data Wrong
     = Wrong
@@ -32,8 +43,24 @@ data GeneratedValidity =
 
 instance Validity GeneratedValidity
 
+
 spec :: Spec
 spec = do
+    describe "NormalisedRatio" $ do
+        it "says that NaN is invalid" $
+          NormalisedRatio notANumber `shouldSatisfy` (not . isValid)
+        it "says that +Inf is invalid" $
+          NormalisedRatio infinity `shouldSatisfy` (not . isValid)
+        it "says that -Inf is invalid" $
+          NormalisedRatio (- infinity) `shouldSatisfy` (not . isValid)
+        it "says that these non-normalised numbers are invalid" $ do
+          NormalisedRatio ((5 :: Integer) :% 5) `shouldSatisfy` (not . isValid)
+          NormalisedRatio ((1 :: Integer) :% (-5)) `shouldSatisfy` (not . isValid)
+          NormalisedRatio ((6 :: Integer) :% 2) `shouldSatisfy` (not . isValid)
+          NormalisedRatio ((2 :: Integer) :% 6) `shouldSatisfy` (not . isValid)
+          NormalisedRatio ((2 :: Integer) :% 0) `shouldSatisfy` (not . isValid)
+          NormalisedRatio ((0 :: Integer) :% 5) `shouldSatisfy` (not . isValid)
+          NormalisedRatio ((0 :: Integer) :% 0) `shouldSatisfy` (not . isValid)
     describe "Wrong" $ do
         it "says Wrong is invalid" $ Wrong `shouldSatisfy` (not . isValid)
         it "says Fine is valid" $ Fine `shouldSatisfy` isValid

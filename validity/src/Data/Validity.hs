@@ -53,6 +53,9 @@ module Data.Validity
     , valid
     , validateNotNaN
     , validateNotInfinite
+    , validateRatioNotNaN
+    , validateRatioNotInfinite
+    , validateRatioNormalised
     -- * Utilities
     -- ** Utilities for validity checking
     , isValid
@@ -95,7 +98,7 @@ import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
 #endif
-import GHC.Real (Ratio(..))
+import GHC.Real (Ratio(..), notANumber, infinity, reduce)
 
 -- | A class of types that have additional invariants defined upon them
 
@@ -437,10 +440,26 @@ instance Validity Double where
     validate = trivialValidation
 
 validateNotNaN :: RealFloat a => a -> Validation
-validateNotNaN d = declare "The Double is not NaN." $ not (isNaN d)
+validateNotNaN d = declare "The RealFloat is not NaN." $ not (isNaN d)
 
 validateNotInfinite :: RealFloat a => a -> Validation
-validateNotInfinite d = declare "The Double is not infinite." $ not (isInfinite d)
+validateNotInfinite d = declare "The RealFloat is not infinite." $ not (isInfinite d)
+
+validateRatioNotNaN :: Integral a => Ratio a -> Validation
+validateRatioNotNaN r = declare "The Ratio is not NaN." $
+  case r of
+    (0 :% 0) -> False
+    _ -> True
+
+validateRatioNotInfinite :: Integral a => Ratio a -> Validation
+validateRatioNotInfinite r = declare "The Ratio is not infinite." $
+  case r of
+    (1 :% 0) -> False
+    ((-1) :% 0) -> False
+    _ -> True
+
+validateRatioNormalised :: Integral a => Ratio a -> Validation
+validateRatioNormalised r@(n :% d) = declare "The Ratio is normalised." $ reduce n d == r
 
 -- | Trivially valid
 --

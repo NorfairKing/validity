@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Changed
+
+* The contents of the error message when using `validateNotNan` or `validateNotInfinite` is now more accurate.
+
+### Added
+
+* `validateRatioNotNan`
+* `validateRatioNotInfinite`
+* `validateRatioNormalised`
+
 ## [0.9.0.1] - 2018-12-05
 
 ### Changed
