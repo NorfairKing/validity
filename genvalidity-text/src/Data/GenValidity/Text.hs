@@ -22,10 +22,7 @@ import qualified Data.Text.Lazy as LT
 import GHC.TypeLits
 #endif
 instance GenValid ST.Text where
-    genValid =
-        sized $ \n -> do
-            chars <- resize n $ genListOf arbitrary
-            return $ ST.pack chars
+    genValid = ST.pack <$> genValid
     shrinkValid = fmap ST.pack . shrinkValid . ST.unpack
 #if MIN_VERSION_base(4,9,0)
 -- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
@@ -82,7 +79,7 @@ textWithoutAny c = textWithoutAnyOf [c]
 -- | 'textWithoutAnyOf c' generates a 'Text' value that does not contain any character in 'ls'.
 textWithoutAnyOf :: String -> Gen ST.Text
 textWithoutAnyOf cs =
-    ST.pack <$> genListOf (arbitrary `suchThat` (`notElem` cs))
+    ST.pack <$> genListOf (genValid `suchThat` (`notElem` cs))
 
 -- | 'textAllCaps' generates a 'Text' value with only upper-case characters.
 textAllCaps :: Gen ST.Text
