@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+* Changed `GenValid Char` to ignore sizes.
+
 ## [0.8.0.0] - 2019-03-06
 
 ### Added

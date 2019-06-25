@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.7.0.0] - 2019-06-26
+
+* Updated the 'GenValid Text' instance to use 'genValid :: Gen Char' instead of 'arbitrary :: Gen Char'.
+
+### Changed
+
 ## [0.6.0.0] - 2019-03-06
 
 ### Changed
