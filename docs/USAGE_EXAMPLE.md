@@ -137,3 +137,38 @@ describe "prime" $ do
   it "produces valid output when it succeeds" $ do
     validIfSucceeds prime
 ```
+
+### Overriding automatic instances
+
+For product types, the automatically derived instances will assume that the product is valid if all the fields are valid.
+There may be further requirements.
+
+```Haskell
+data MyType = MyType
+  { myBool :: Bool
+  , myRational :: Rational
+  } deriving (Show, Eq, Generic)
+  
+instance Validity MyType
+```
+
+The derived instance is equivalent to the following:
+
+```Haskell
+instance Validity MyType where
+  validate mt = genericValidate mt
+```
+
+This can be extended.
+For example, if `myBool` should indicate whether `myRational` is nonnegative (>= 0), the following instance might be appropriate.
+
+```Haskell
+instance Validity MyType where
+  validate mt = mconcat
+    -- Test invariant above
+    [ declare "myBool indicates whether myRational is nonnegative" $
+        myBool mt `xor` (myRational mt < 0)
+    -- Use of 'decorate' is optional
+    , decorate "MyType fields themselves are valid" $ genericValidate mt
+    ]
+```
