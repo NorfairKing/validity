@@ -561,7 +561,7 @@ constructValidUnsafe p =
 -- in the form of a list of 'ValidationChain's, or it returns 'Right' with the
 -- input value, as evidence that it is valid.
 --
--- Note: You map want to use 'prettyValidation' instead, if you want to
+-- Note: You may want to use 'prettyValidation' instead, if you want to
 -- display these 'ValidationChain's to a user.
 checkValidity :: Validity a => a -> Either [ValidationChain] a
 checkValidity a =
