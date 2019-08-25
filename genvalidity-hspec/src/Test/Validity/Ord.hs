@@ -111,6 +111,7 @@ ordSpecOnGen gen genname s =
             fungestr = geTypeStr @a
             funltstr = ltTypeStr @a
             fungtstr = gtTypeStr @a
+            minmaxtstr = genDescr @(a->a->a)
             cmple = (<=) @a
             cmpge = (>=) @a
             cmplt = (<) @a
@@ -221,3 +222,19 @@ ordSpecOnGen gen genname s =
                          , name ++ "\"" ++ "'s"
                          ]) $
                     equivalentOnGens2 cmpgt (\a b -> compare a b == GT) gen2 s2
+            describe (minmaxtstr "min") $ do
+                it
+                    (unwords
+                         [ "is equivalent to (\\a b -> if a <= b then a else b) for"
+                         , "\"" ++ genname
+                         , name ++ "\"" ++ "'s"
+                         ]) $
+                    equivalentOnGens2 min (\a b -> if a <= b then a else b) gen2 s2
+            describe (minmaxtstr "max") $ do
+                it
+                    (unwords
+                         [ "is equivalent to (\\a b -> if a >= b then a else b) for"
+                         , "\"" ++ genname
+                         , name ++ "\"" ++ "'s"
+                         ]) $
+                    equivalentOnGens2 max (\a b -> if a >= b then a else b) gen2 s2
