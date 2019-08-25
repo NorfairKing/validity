@@ -111,6 +111,12 @@ ordSpecOnGen gen genname s =
             fungestr = geTypeStr @a
             funltstr = ltTypeStr @a
             fungtstr = gtTypeStr @a
+            minmaxtstr = genDescr @(a->a->a)
+            itProp s = it $ unwords
+                [ s
+                  , "\"" ++ genname
+                  , name ++ "\"" ++ "'s"
+                ]
             cmple = (<=) @a
             cmpge = (>=) @a
             cmplt = (<) @a
@@ -120,104 +126,40 @@ ordSpecOnGen gen genname s =
             s2 = shrinkT2 s
         describe ("Ord " ++ name) $ do
             describe funlestr $ do
-                it
-                    (unwords
-                         [ "is reflexive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is reflexive for" $
                     reflexivityOnGen cmple gen s
-                it
-                    (unwords
-                         [ "is antisymmetric for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is antisymmetric for" $
                     antisymmetryOnGens cmple gen2 s
-                it
-                    (unwords
-                         [ "is transitive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is transitive for" $
                     transitivityOnGens cmple gen3 s
-                it
-                    (unwords
-                         [ "is equivalent to (\\a b -> compare a b /= GT) for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is equivalent to (\\a b -> compare a b /= GT) for" $
                     equivalentOnGens2 cmple (\a b -> compare a b /= GT) gen2 s2
             describe fungestr $ do
-                it
-                    (unwords
-                         [ "is reflexive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is reflexive for" $
                     reflexivityOnGen cmpge gen s
-                it
-                    (unwords
-                         [ "is antisymmetric for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is antisymmetric for" $
                     antisymmetryOnGens cmpge gen2 s
-                it
-                    (unwords
-                         [ "is transitive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is transitive for" $
                     transitivityOnGens cmpge gen3 s
-                it
-                    (unwords
-                         [ "is equivalent to (\\a b -> compare a b /= LT) for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is equivalent to (\\a b -> compare a b /= LT) for" $
                     equivalentOnGens2 cmpge (\a b -> compare a b /= LT) gen2 s2
             describe funltstr $ do
-                it
-                    (unwords
-                         [ "is antireflexive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is antireflexive for" $
                     antireflexivityOnGen cmplt gen s
-                it
-                    (unwords
-                         [ "is transitive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is transitive for" $
                     transitivityOnGens cmplt gen3 s
-                it
-                    (unwords
-                         [ "is equivalent to (\\a b -> compare a b == LT) for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is equivalent to (\\a b -> compare a b == LT) for" $
                     equivalentOnGens2 cmplt (\a b -> compare a b == LT) gen2 s2
             describe fungtstr $ do
-                it
-                    (unwords
-                         [ "is antireflexive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is antireflexive for" $
                     antireflexivityOnGen cmpgt gen s
-                it
-                    (unwords
-                         [ "is transitive for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is transitive for" $
                     transitivityOnGens cmpgt gen3 s
-                it
-                    (unwords
-                         [ "is equivalent to (\\a b -> compare a b == GT) for"
-                         , "\"" ++ genname
-                         , name ++ "\"" ++ "'s"
-                         ]) $
+                itProp "is equivalent to (\\a b -> compare a b == GT) for" $
                     equivalentOnGens2 cmpgt (\a b -> compare a b == GT) gen2 s2
+            describe (minmaxtstr "min") $ do
+                itProp "is equivalent to (\\a b -> if a <= b then a else b) for" $
+                    equivalentOnGens2 min (\a b -> if a <= b then a else b) gen2 s2
+            describe (minmaxtstr "max") $ do
+                itProp "is equivalent to (\\a b -> if a >= b then a else b) for" $
+                    equivalentOnGens2 max (\a b -> if a >= b then a else b) gen2 s2
