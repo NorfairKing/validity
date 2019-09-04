@@ -126,3 +126,10 @@ shrinkValid :: MyType -> [MyType] -- Free access to a _valid_ shrinking function
 - [Usage example](docs/USAGE_EXAMPLE.md)
 - [Fully worked example](docs/FULLY_WORKED_EXAMPLE.md)
 - [High-level package overview](docs/PACKAGE_OVERVIEW.md)
+
+
+## Sponsor this project
+
+Validity is free and open-source software.
+Building it takes time, energy and money.
+Please consider supporting the project at https://cs-syd.eu/support .
