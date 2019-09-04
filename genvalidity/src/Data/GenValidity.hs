@@ -574,7 +574,7 @@ instance GenUnchecked Ordering where
 instance GenValid Ordering
 
 instance GenUnchecked Char where
-    genUnchecked = arbitrary
+    genUnchecked = choose (minBound, maxBound)
     shrinkUnchecked = shrink
 
 instance GenValid Char

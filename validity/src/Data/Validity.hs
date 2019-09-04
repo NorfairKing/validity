@@ -98,7 +98,7 @@ import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
 #endif
-import GHC.Real (Ratio(..), notANumber, infinity, reduce)
+import GHC.Real (Ratio(..), reduce)
 
 -- | A class of types that have additional invariants defined upon them
 
