@@ -96,7 +96,7 @@ genInvalidSpec =
 genValidGeneratesValid ::
        forall a. (Show a, GenValid a)
     => Property
-genValidGeneratesValid = genGeneratesValid @a genValid shrinkValid
+genValidGeneratesValid = genGeneratesValid @a genValid
 
 -- | @genValid@ only generates invalid data
 --
@@ -107,4 +107,4 @@ genValidGeneratesValid = genGeneratesValid @a genValid shrinkValid
 genInvalidGeneratesInvalid ::
        forall a. (Show a, GenInvalid a)
     => Property
-genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid shrinkInvalid
+genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid

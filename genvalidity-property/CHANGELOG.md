@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+* Removed nonsense shrinking from `genGeneratesValid` and `genGeneratesInvalid`.
+
 ## [0.4.0.0] - 2019-03-08
 
 ### Changed

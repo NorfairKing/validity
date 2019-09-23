@@ -42,4 +42,4 @@ arbitrarySpec = do
 arbitraryGeneratesOnlyValid ::
        forall a. (Show a, Validity a, Arbitrary a)
     => Property
-arbitraryGeneratesOnlyValid = genGeneratesValid @a arbitrary shrink
+arbitraryGeneratesOnlyValid = genGeneratesValid @a arbitrary

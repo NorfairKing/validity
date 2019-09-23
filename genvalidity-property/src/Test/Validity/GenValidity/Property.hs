@@ -17,14 +17,12 @@ import Test.QuickCheck
 genGeneratesValid ::
        forall a. (Show a, Validity a)
     => Gen a
-    -> (a -> [a])
     -> Property
-genGeneratesValid gen s = forAllShrink gen s (`shouldSatisfy` isValid)
+genGeneratesValid gen = forAll gen (`shouldSatisfy` isValid)
 
 -- | The given generator generates only invalid data points
 genGeneratesInvalid ::
        forall a. (Show a, Validity a)
     => Gen a
-    -> (a -> [a])
     -> Property
-genGeneratesInvalid gen s = forAllShrink gen s (`shouldSatisfy` isInvalid)
+genGeneratesInvalid gen = forAll gen (`shouldSatisfy` isInvalid)
