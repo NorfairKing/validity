@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.7.0.2] - 2019-09-23
+
+* Removed nonsense shrinking from `genValidSpec` and `genInvalidSpec`.
+
 ## [0.7.0.1] - 2019-09-23
 
 * Removed nonsense shrinking from `arbitraryGeneratesOnlyValid`, `genValidGeneratesValid` and `genInvalidGeneratesInvalid`.

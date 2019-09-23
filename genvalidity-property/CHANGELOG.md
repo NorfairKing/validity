@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.5.0.1] - 2019-09-23
+
+### Changed
+
+* Removed a redundant import to have a clean warning-free build
+
 ## [0.5.0.0] - 2019-09-23
 
 ### Changed

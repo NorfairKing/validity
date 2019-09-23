@@ -30,8 +30,6 @@ module Test.Validity.Functions.CanFail
 
 import Data.GenValidity
 
-import Text.Show.Pretty (ppShow)
-
 import Test.Hspec
 import Test.QuickCheck
 

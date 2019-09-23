@@ -42,5 +42,6 @@ tests:
     - validity >=0.9
     - genvalidity >=0.7
     - genvalidity-containers
+    - genvalidity-property >=0.5
     - genvalidity-hspec
     - hspec
