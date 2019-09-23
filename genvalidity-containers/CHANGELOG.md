@@ -1,9 +1,10 @@
 # Changelog
 
-## [0.6.0.1] - 2019-09-23
+## [0.7.0.0] - 2019-09-23
 
 ### Changed
 
+* Compatibility with validity-containers >=0.5
 * Test suite compatibility with genvalidity-property >=0.5
 
 ## [0.6.0.0] - 2019-03-06

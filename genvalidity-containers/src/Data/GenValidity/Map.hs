@@ -22,7 +22,7 @@ import qualified Data.Map.Internal as Internal
 #endif
 
 #if MIN_VERSION_containers(0,5,9)
-instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
+instance (Show k, Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
     genUnchecked =
         sized $ \n ->
             case n of
@@ -42,20 +42,20 @@ instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
         | (s', k', a', m1', m2') <- shrinkUnchecked (s, k, a, m1, m2)
         ]
 #else
-instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
+instance (Show k, Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
     genUnchecked = M.fromList <$> genUnchecked
     shrinkUnchecked = fmap M.fromList . shrinkUnchecked . M.toList
 #endif
-instance (Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
+instance (Show k, Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
     genValid = M.fromList <$> genValid
     shrinkValid = fmap M.fromList . shrinkValid . M.toList
 #if MIN_VERSION_containers(0,5,9)
-instance (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
+instance (Show k, Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid =
         oneof
             [genStructurallyValidMapOfInvalidValues, genStructurallyInvalidMap]
 #else
-instance (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
+instance (Show k, Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid = genStructurallyValidMapOfInvalidValues
 #endif
 genStructurallyValidMapOf :: Ord k => Gen (k, v) -> Gen (Map k v)
@@ -87,7 +87,7 @@ genStructurallyValidMapOfInvalidValues =
         oneof [go genInvalid genUnchecked, go genUnchecked genInvalid]
 #if MIN_VERSION_containers(0,5,9)
 genStructurallyInvalidMap ::
-       (Ord k, GenUnchecked k, GenUnchecked v) => Gen (Map k v)
+       (Show k, Ord k, GenUnchecked k, GenUnchecked v) => Gen (Map k v)
 genStructurallyInvalidMap = do
     v <- genUnchecked
     if M.valid v
