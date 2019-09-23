@@ -1,5 +1,2 @@
-let pkgs =
-      import (import ./nix/nixpkgs.nix) {
-      overlays = [ (import ./nix/overlay.nix) ];
-    };
+let pkgs = import ./nix/pkgs.nix;
 in pkgs.validityPackages

@@ -4,7 +4,7 @@ final:
     {
       validityPackages =
             let validityPkg = name:
-                (failOnAllWarnings (final.haskellPackages.callCabal2nix name (../. + "/${name}") {}));
+                (failOnAllWarnings (final.haskellPackages.callCabal2nix name (final.gitignoreSource (../. + "/${name}")) {}));
             in final.lib.genAttrs [
               "genvalidity"
               "genvalidity-aeson"
@@ -30,6 +30,7 @@ final:
               "validity-bytestring"
               "validity-containers"
               "validity-path"
+              "validity-primitive"
               "validity-scientific"
               "validity-text"
               "validity-time"
