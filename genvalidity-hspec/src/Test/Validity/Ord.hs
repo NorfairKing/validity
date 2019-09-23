@@ -112,8 +112,8 @@ ordSpecOnGen gen genname s =
             funltstr = ltTypeStr @a
             fungtstr = gtTypeStr @a
             minmaxtstr = genDescr @(a->a->a)
-            itProp s = it $ unwords
-                [ s
+            itProp s_ = it $ unwords
+                [ s_
                   , "\"" ++ genname
                   , name ++ "\"" ++ "'s"
                 ]
