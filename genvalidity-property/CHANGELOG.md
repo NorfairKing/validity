@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.5.0.0] - 2019-09-23
+
+### Changed
+
+* Started using `pretty-show` for the output of `validIfSucceeds`, `validIfSucceedsOnGens2` and `validIfSucceedsOnValids3`
+* Started using `pretty-show` for the output of `shouldBeValid` and `shouldBeInvalid`.
+* Gave `genGeneratesValid` and `genGeneratesInvalid` much nicer output.
+* Removed nonsense shrinking from `genGeneratesValid` and `genGeneratesInvalid`.
+
 ## [0.4.0.0] - 2019-03-08
 
 ### Changed

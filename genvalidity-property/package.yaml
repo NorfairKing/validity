@@ -1,5 +1,5 @@
 name: genvalidity-property
-version: '0.4.0.0'
+version: '0.5.0.0'
 synopsis: Standard properties for functions on `Validity` types
 description: Standard properties for functions on `Validity` types
 category: Testing
@@ -41,6 +41,7 @@ library:
   - genvalidity >=0.7
   - QuickCheck
   - hspec >=2.1
+  - pretty-show
 
 tests:
   genvalidity-property-doctests:
