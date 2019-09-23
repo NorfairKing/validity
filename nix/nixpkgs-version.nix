@@ -2,6 +2,6 @@
 # nix-prefetch-url --unpack https://github.com/NixOS/nixpkgs/archive/07723f14bb132f6d65c74b953bef39cd80457273.tar.gz
 
 {
-  rev    = "82d2c663b4dffbd635ed694bcc301284987b8097";
-  sha256 = "1yqa0binyj8c5sighi7is9kv7j1890sssbjqxslfq7jc02xxmglh";
+  rev    = "e04435a773d268f0510258f19aa60d1760302359";
+  sha256 = "0iz3hmqflihv408lxfrv1ikyx1d726cwqzzn02f50riyda8gfcj9";
 }
