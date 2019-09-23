@@ -41,6 +41,7 @@ library:
   - genvalidity >=0.7
   - QuickCheck
   - hspec >=2.1
+  - pretty-show
 
 tests:
   genvalidity-property-doctests:

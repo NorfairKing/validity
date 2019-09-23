@@ -18,6 +18,8 @@ import Test.QuickCheck
 import Control.Applicative (pure)
 #endif
 
+import Text.Show.Pretty (ppShow)
+
 forAllUnchecked ::
        (Show a, GenUnchecked a, Testable prop) => (a -> prop) -> Property
 forAllUnchecked = forAllShrink genUnchecked shrinkUnchecked
@@ -44,7 +46,9 @@ shouldBeValid a =
             unlines
                 [ "'validate' reported this value to be invalid: "
                 , show a
-                , "with explanation"
+                , "pretty version:"
+                , ppShow a
+                , "with explanation:"
                 , err
                 , ""
                 ]
@@ -57,6 +61,8 @@ shouldBeInvalid a =
             unlines
                 [ "'validate' reported this value to be valid: "
                 , show a
+                , "pretty version:"
+                , ppShow a
                 , "where we expected it to be invalid"
                 ]
         Left _ -> pure ()
