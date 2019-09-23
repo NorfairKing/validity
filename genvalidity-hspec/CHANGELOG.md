@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.0.1] - 2019-09-23
+
 * Removed nonsense shrinking from `arbitraryGeneratesOnlyValid`, `genValidGeneratesValid` and `genInvalidGeneratesInvalid`.
 
 ## [0.7.0.0] - 2019-03-06
