@@ -74,6 +74,9 @@ module Data.GenValidity
     , shrinkValidStructurallyWithoutExtraFiltering
     , module Data.GenValidity.Utils
 
+    -- * Strange, possibly useful functions
+    , genUtf16SurrogateCodePoint
+
     -- * Re-exports
     , module Data.Validity
 
@@ -106,6 +109,7 @@ import Data.Word (Word8, Word16, Word32, Word64)
 import Data.Word (Word, Word8, Word16, Word32, Word64)
 #endif
 import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Char (chr)
 import Data.Ratio ((%))
 import GHC.Generics
 import GHC.Real (Ratio(..))
@@ -574,8 +578,11 @@ instance GenUnchecked Ordering where
 instance GenValid Ordering
 
 instance GenUnchecked Char where
-    genUnchecked = choose (minBound, maxBound)
+    genUnchecked = frequency [(9, choose (minBound, maxBound)), (1, genUtf16SurrogateCodePoint)]
     shrinkUnchecked = shrink
+
+genUtf16SurrogateCodePoint :: Gen Char
+genUtf16SurrogateCodePoint = chr <$> oneof [choose (0xD800, 0xDBFF), choose (0xDC00, 0xDFFF)]
 
 instance GenValid Char
 

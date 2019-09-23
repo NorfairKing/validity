@@ -1,9 +1,14 @@
 # Changelog
 
-## [Unreleased]
+## [0.9.0.0] - 2019-09-23
+
+### Added
+
+* `genUtf16SurrogateCodePoint`
 
 ### Changed
 
+* Changed `GenValid Char` to generate UTF16 surrogate codepoints 10% of the time
 * Changed `GenValid Char` to ignore sizes.
 
 ## [0.8.0.0] - 2019-03-06
