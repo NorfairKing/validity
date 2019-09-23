@@ -10,19 +10,20 @@ module Test.Validity.GenValidity.Property
 
 import Data.GenValidity
 
-import Test.Hspec
 import Test.QuickCheck
+
+import Test.Validity.Property.Utils
 
 -- | The given generator generates only valid data points
 genGeneratesValid ::
        forall a. (Show a, Validity a)
     => Gen a
     -> Property
-genGeneratesValid gen = forAll gen (`shouldSatisfy` isValid)
+genGeneratesValid gen = forAll gen shouldBeValid
 
 -- | The given generator generates only invalid data points
 genGeneratesInvalid ::
        forall a. (Show a, Validity a)
     => Gen a
     -> Property
-genGeneratesInvalid gen = forAll gen (`shouldSatisfy` isInvalid)
+genGeneratesInvalid gen = forAll gen shouldBeInvalid
