@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.8.0.0] - 2019-09-23
+
+### Changed
+
+* No longer require a 'Show' instance of the map's key for `GenUnchecked`
+
 ## [0.7.0.0] - 2019-09-23
 
 ### Changed

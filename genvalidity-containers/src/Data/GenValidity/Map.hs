@@ -22,7 +22,7 @@ import qualified Data.Map.Internal as Internal
 #endif
 
 #if MIN_VERSION_containers(0,5,9)
-instance (Show k, Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
+instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
     genUnchecked =
         sized $ \n ->
             case n of
