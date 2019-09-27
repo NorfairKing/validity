@@ -51,8 +51,14 @@ module Data.Validity
     , decorateList
     , invalid
     , valid
+    -- ** Helpers for specific types
+    -- *** Char
+    , validateCharNotUtf16SurrogateCodePoint
+    , isUtf16SurrogateCodePoint
+    -- *** RealFloat (Double)
     , validateNotNaN
     , validateNotInfinite
+    -- *** Ratio
     , validateRatioNotNaN
     , validateRatioNotInfinite
     , validateRatioNormalised
@@ -88,6 +94,8 @@ import Data.Maybe (fromMaybe)
 import Data.Monoid
 import Data.Ratio
 #endif
+import Data.Bits ((.&.))
+import Data.Char (Char, ord)
 import Data.Int (Int16, Int32, Int64, Int8)
 #if MIN_VERSION_base(4,8,0)
 import Data.Word (Word16, Word32, Word64, Word8)
@@ -390,6 +398,13 @@ instance Validity Ordering where
 -- | Trivially valid
 instance Validity Char where
     validate = trivialValidation
+
+validateCharNotUtf16SurrogateCodePoint :: Char -> Validation
+validateCharNotUtf16SurrogateCodePoint c =
+  declare "The character is not a UTF16 surrogate codepoint" $ not $ isUtf16SurrogateCodePoint c
+
+isUtf16SurrogateCodePoint :: Char -> Bool
+isUtf16SurrogateCodePoint c = ord c .&. 0x1ff800 == 0xd800
 
 -- | Trivially valid
 instance Validity Int where

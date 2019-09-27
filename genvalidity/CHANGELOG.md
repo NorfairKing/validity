@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+* Tests for `genUtf16SurrogateCodePoint`
+
 ## [0.9.0.0] - 2019-09-23
 
 ### Added
