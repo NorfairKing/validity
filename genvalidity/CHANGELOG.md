@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.9.0.1] - 2019-09-27
+
 ### Changed
 
 * Tests for `genUtf16SurrogateCodePoint`
