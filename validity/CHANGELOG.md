@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.9.0.2] - 2019-09-27
+
+### Added
+
+* `isUtf16SurrogateCodePoint` and `validateCharNotUtf16SurrogateCodePoint`
+
 ### Changed
 
 * The contents of the error message when using `validateNotNan` or `validateNotInfinite` is now more accurate.

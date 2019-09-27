@@ -24,6 +24,7 @@ import qualified System.FilePath as FilePath
 -- * Its path is not '.'
 #endif
 -- * Its path does not contain '..'.
+-- * The path contains no UTF16 Surrogate codepoints
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Abs File) where
     validate p@(Path fp) =
@@ -38,6 +39,7 @@ instance Validity (Path Abs File) where
             , declare "The path does not equal \".\"" $ fp /= "."
 #endif
             , declare "The path does not contain '..'." $ not (".." `isInfixOf` fp)
+            , decorate "The path contains no UTF16 Surrogate codepoints" $ decorateList fp validateCharNotUtf16SurrogateCodePoint
             , declare "The path can be identically parsed as an absolute file path." $
               parseAbsFile fp == Just p
             ]
@@ -54,6 +56,7 @@ instance Validity (Path Abs File) where
 #endif
 -- * Its path is not '.'
 -- * Its path does not contain '..'.
+-- * The path contains no UTF16 Surrogate codepoints
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Rel File) where
     validate p@(Path fp) =
@@ -69,6 +72,7 @@ instance Validity (Path Rel File) where
             , declare "The path does not end in /." $ not ("/." `isSuffixOf` fp)
 #endif
             , declare "The path does not contain '..'." $ not (".." `isInfixOf` fp)
+            , decorate "The path contains no UTF16 Surrogate codepoints" $ decorateList fp validateCharNotUtf16SurrogateCodePoint
             , declare "The path can be identically parsed as a relative file path." $
               parseRelFile fp == Just p
             ]
@@ -79,6 +83,7 @@ instance Validity (Path Rel File) where
 -- * Its path has a trailing path separator
 -- * Its path is valid according to 'System.FilePath's definition.
 -- * Its path does not contain '..'.
+-- * The path contains no UTF16 Surrogate codepoints
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Abs Dir) where
     validate p@(Path fp) =
@@ -89,6 +94,7 @@ instance Validity (Path Abs Dir) where
             , declare "System.FilePath considers the path valid." $
               FilePath.isValid fp
             , declare "The path does not contain '..'." $ not (".." `isInfixOf` fp)
+            , decorate "The path contains no UTF16 Surrogate codepoints" $ decorateList fp validateCharNotUtf16SurrogateCodePoint
             , declare "The path can be identically parsed as an absolute directory path." $
               parseAbsDir fp == Just p
             ]
@@ -103,6 +109,7 @@ instance Validity (Path Abs Dir) where
 -- * Its path is not '.'
 #endif
 -- * Its path does not contain '..'.
+-- * The path contains no UTF16 Surrogate codepoints
 -- * Parsing the path and rendering it again results in the same path.
 instance Validity (Path Rel Dir) where
     validate p@(Path fp) =
@@ -118,6 +125,7 @@ instance Validity (Path Rel Dir) where
             , declare "The path does not equal \".\"" $ fp /= "."
 #endif
             , declare "The path does not contain '..'." $ not (".." `isInfixOf` fp)
+            , decorate "The path contains no UTF16 Surrogate codepoints" $ decorateList fp validateCharNotUtf16SurrogateCodePoint
             , declare "The path can be identically parsed as a relative directory path." $
               parseRelDir fp == Just p
             ]
