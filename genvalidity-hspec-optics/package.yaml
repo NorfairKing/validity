@@ -1,7 +1,7 @@
 name: genvalidity-hspec-optics
 version: '0.1.1.1'
-synopsis: Standard spec's for optics
-description: Standard spec's for optics
+synopsis: Standard spec's for lens
+description: Standard spec's for lens (van Laarhoven encoding)
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer:
