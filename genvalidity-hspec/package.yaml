@@ -48,7 +48,7 @@ library:
   dependencies:
   - base >=4.9 && <5
   - genvalidity >=0.8
-  - genvalidity-property >=0.2
+  - genvalidity-property >=0.5
   - hspec
   - transformers
   - validity >=0.5
