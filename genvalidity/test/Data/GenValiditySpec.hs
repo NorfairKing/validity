@@ -1,6 +1,6 @@
 module Data.GenValiditySpec
-    ( spec
-    ) where
+  ( spec
+  ) where
 
 import Test.Hspec
 import Test.QuickCheck
