@@ -128,7 +128,7 @@ genSplit8 n
         return (a, b, c, d, e, f, g, h)
 
 
--- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n'.
+-- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 arbPartition :: Int -> Gen [Int]
 arbPartition 0 = pure []
 arbPartition i = genLen i >>= go i
@@ -136,9 +136,13 @@ arbPartition i = genLen i >>= go i
     genLen :: Int -> Gen Int
     genLen maxLen = round . invT (fromIntegral maxLen) <$> choose (0, 1)
 
+    -- Use a triangle distribution for generating the
+    -- length of the list
+    -- with minimum length '0', mode length '2'
+    -- and given max length.
     invT :: Double -> Double -> Double
     invT maxLen u =
-      let a = 1
+      let a = 0
           b = maxLen
           c = 2
           fc = (c - a) / (b - a)
@@ -151,8 +155,11 @@ arbPartition i = genLen i >>= go i
     go size len = do
       us <- replicateM len $ choose (0, 1)
       let invs = map (invE 0.25) us
+      -- Rescale the sizes to (approximately) sum to the given size.
       pure $ map (round . (* (fromIntegral size / sum invs))) invs
 
+    -- Use an exponential distribution for generating the
+    -- sizes in the partition.
     invE :: Double -> Double -> Double
     invE lambda u = - log (1 - u) / lambda
 
@@ -180,8 +187,7 @@ genNonEmptyOf gen = do
 genListOf :: Gen a -> Gen [a]
 genListOf func =
     sized $ \n -> do
-        size <- upTo n
-        pars <- arbPartition size
+        pars <- arbPartition n
         forM pars $ \i -> resize i func
 
 shrinkTuple :: (a -> [a]) -> (b -> [b]) -> (a, b) -> [(a, b)]
