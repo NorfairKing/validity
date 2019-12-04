@@ -18,6 +18,7 @@ library:
   dependencies:
   - QuickCheck
   - criterion
+  - deepseq
   - genvalidity
 
 benchmarks:
