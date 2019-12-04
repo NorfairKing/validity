@@ -51,6 +51,7 @@ benchmarks:
     dependencies:
     - base
     - genvalidity-path
+    - genvalidity-criterion
     - criterion
     - path
     - QuickCheck

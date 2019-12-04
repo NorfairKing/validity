@@ -5,14 +5,14 @@
 module Main where
 
 import Data.Map (Map)
-import Data.Set (Set)
 import Data.Sequence (Seq)
+import Data.Set (Set)
 import Data.Tree (Forest, Tree)
-
-import Data.GenValidity.Containers
 
 import Criterion.Main as Criterion
 
+
+import Data.GenValidity.Containers ()
 import Data.GenValidity.Criterion
 
 main :: IO ()
