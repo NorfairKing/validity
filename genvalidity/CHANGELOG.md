@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.9.1.0] - 2019-12-04
+
+### Added
+
+* `genSplit6`, `genSplit7`, `genSplit8`
+* `genNonEmptyOf`
+
+### Changed
+
+* Changed `arbPartition` to generate nicer partitions.
+  This influences `genListOf` and `genTreeOf` and the
+  instances for all collections as well.
+
 ## [0.9.0.1] - 2019-09-27
 
 ### Changed

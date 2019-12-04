@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.8.0.1] - 2019-12-04
+
+### Changed
+
+* Changed the way trees are generated.
+  They will no longer be as top-heavy or under-sized.
+
 ## [0.8.0.0] - 2019-09-23
 
 ### Changed
