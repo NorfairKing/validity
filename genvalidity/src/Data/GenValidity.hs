@@ -101,7 +101,6 @@ import Data.Validity
 import Data.Fixed (Fixed(..), HasResolution)
 #if MIN_VERSION_base(4,9,0)
 import Data.List.NonEmpty (NonEmpty((:|)))
-import qualified Data.List.NonEmpty as NE
 #endif
 #if MIN_VERSION_base(4,8,0)
 import Data.Word (Word8, Word16, Word32, Word64)
@@ -515,27 +514,15 @@ instance GenInvalid a => GenInvalid (Maybe a) where
 
 #if MIN_VERSION_base(4,9,0)
 instance GenUnchecked a => GenUnchecked (NonEmpty a) where
-    genUnchecked = do
-      l <- genUnchecked
-      case NE.nonEmpty l of
-        Nothing -> scale (+1) genUnchecked
-        Just ne -> pure ne
+    genUnchecked = genNonEmptyOf genUnchecked
     shrinkUnchecked (v :| vs) = [ e :| es | (e, es) <- shrinkUnchecked (v, vs)]
 
 instance GenValid a => GenValid (NonEmpty a) where
-    genValid = do
-      l <- genValid
-      case NE.nonEmpty l of
-        Nothing -> scale (+1) genValid
-        Just ne -> pure ne
+    genValid = genNonEmptyOf genValid
     shrinkValid (v :| vs) = [ e :| es | (e, es) <- shrinkValid (v, vs)]
 
 instance (GenUnchecked a, GenInvalid a) => GenInvalid (NonEmpty a) where
-    genInvalid = do
-      l <- genInvalid
-      case NE.nonEmpty l of
-        Nothing -> scale (+1) genInvalid
-        Just ne -> pure ne
+    genInvalid = genNonEmptyOf genInvalid
 #endif
 
 instance GenUnchecked a => GenUnchecked [a] where
