@@ -3,7 +3,6 @@
 module Main where
 
 import Criterion.Main
-import Test.QuickCheck
 
 import Path
 
