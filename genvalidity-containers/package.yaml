@@ -1,5 +1,5 @@
 name: genvalidity-containers
-version: '0.8.0.0'
+version: '0.8.0.1'
 synopsis: GenValidity support for containers
 description: Please see README.md
 category: Testing
