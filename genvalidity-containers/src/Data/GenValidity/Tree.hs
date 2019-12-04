@@ -7,7 +7,7 @@ import Control.Applicative ((<*>))
 import Data.Functor ((<$>))
 #endif
 import Data.GenValidity
-import Data.List.NonEmpty (NonEmpty(..), (<|))
+import Data.List.NonEmpty (NonEmpty(..))
 import qualified Data.List.NonEmpty as NE
 import Data.Validity.Tree ()
 
@@ -43,8 +43,7 @@ instance (GenUnchecked a, GenInvalid a) => GenInvalid (Tree a) where
 --
 -- This takes the size parameter much better into account
 genTreeOf :: Gen a -> Gen (Tree a)
-genTreeOf func =
-  sized $ \n -> do
+genTreeOf func = do
     ne <- genNonEmptyOf func
     turnIntoTree ne
  where
