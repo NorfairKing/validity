@@ -29,7 +29,9 @@ main =
     , genValidBench @(Maybe Int)
     , genValidBench @(Either Int Int)
     , genValidBench @[Int]
+    , genValidBench @[[Int]]
     , genValidBench @(NonEmpty Int)
+    , genValidBench @(NonEmpty (NonEmpty Int))
     , genValidBench @(Ratio Int)
     , genValidBench @Int8
     , genValidBench @Int16
