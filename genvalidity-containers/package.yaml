@@ -13,6 +13,7 @@ github: NorfairKing/validity
 extra-source-files:
 - CHANGELOG.md
 dependencies:
+- base >=4.9 && <=5
 - containers
 
 library:
@@ -24,7 +25,6 @@ library:
   - Data.GenValidity.Set
   - Data.GenValidity.Tree
   dependencies:
-  - base <5
   - QuickCheck
   - genvalidity >=0.8
   - validity >=0.5
@@ -40,10 +40,21 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - base >=4.9 && <=5
     - validity >=0.9
     - genvalidity >=0.7
     - genvalidity-containers >=0.5
     - genvalidity-property >=0.5
     - genvalidity-hspec
     - hspec
+
+benchmarks:
+  genvalidity-containers-bench:
+    main: Main.hs
+    source-dirs: bench/
+    ghc-options:
+    - -Wall
+    dependencies:
+    - QuickCheck
+    - criterion
+    - genvalidity-containers
+    - genvalidity-criterion

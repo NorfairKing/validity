@@ -26,6 +26,7 @@ module Data.GenValidity.Utils
     , genSplit8
     , arbPartition
     , shuffle
+    , genListLength
     , genListOf
 #if MIN_VERSION_base(4,9,0)
     , genNonEmptyOf
@@ -131,25 +132,8 @@ genSplit8 n
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 arbPartition :: Int -> Gen [Int]
 arbPartition 0 = pure []
-arbPartition i = genLen i >>= go i
+arbPartition i = genListLengthWithSize i >>= go i
   where
-    genLen :: Int -> Gen Int
-    genLen maxLen = round . invT (fromIntegral maxLen) <$> choose (0, 1)
-
-    -- Use a triangle distribution for generating the
-    -- length of the list
-    -- with minimum length '0', mode length '2'
-    -- and given max length.
-    invT :: Double -> Double -> Double
-    invT maxLen u =
-      let a = 0
-          b = maxLen
-          c = 2
-          fc = (c - a) / (b - a)
-      in if u < fc
-        then a + sqrt (u * (b - a) * (c - a) )
-        else b - sqrt ((1 - u) * (b - a) * (b - c))
-
 
     go :: Int -> Int -> Gen [Int]
     go size len = do
@@ -179,6 +163,29 @@ genNonEmptyOf gen = do
     Nothing -> scale (+1) $ genNonEmptyOf gen
     Just ne -> pure ne
 #endif
+
+-- Uses 'genListLengthWithSize' with the size parameter
+genListLength :: Gen Int
+genListLength = sized genListLengthWithSize
+
+-- Generate a list length with the given size
+genListLengthWithSize :: Int -> Gen Int
+genListLengthWithSize maxLen = round . invT (fromIntegral maxLen) <$> choose (0, 1)
+  where
+    -- Use a triangle distribution for generating the
+    -- length of the list
+    -- with minimum length '0', mode length '2'
+    -- and given max length.
+    invT :: Double -> Double -> Double
+    invT m u =
+      let a = 0
+          b = m
+          c = 2
+          fc = (c - a) / (b - a)
+      in if u < fc
+        then a + sqrt (u * (b - a) * (c - a) )
+        else b - sqrt ((1 - u) * (b - a) * (b - c))
+
 
 -- | A version of @listOf@ that takes size into account more accurately.
 --

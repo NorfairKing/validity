@@ -4,12 +4,13 @@ final:
     {
       validityPackages =
             let validityPkg = name:
-                (failOnAllWarnings (final.haskellPackages.callCabal2nix name (final.gitignoreSource (../. + "/${name}")) {}));
+                doBenchmark (failOnAllWarnings (final.haskellPackages.callCabal2nix name (final.gitignoreSource (../. + "/${name}")) {}));
             in final.lib.genAttrs [
               "genvalidity"
               "genvalidity-aeson"
               "genvalidity-bytestring"
               "genvalidity-containers"
+              "genvalidity-criterion"
               "genvalidity-hspec"
               "genvalidity-hspec-aeson"
               "genvalidity-hspec-binary"

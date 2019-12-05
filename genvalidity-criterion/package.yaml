@@ -1,0 +1,34 @@
+name: genvalidity-criterion
+version: '0.0.0.0'
+synopsis: Criterion benchmarks for generators
+category: Validity
+author: Tom Sydney Kerckhove
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2019 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+
+dependencies:
+- base >=4.7 && <5
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.GenValidity.Criterion
+  dependencies:
+  - QuickCheck
+  - criterion
+  - deepseq
+  - genvalidity
+
+benchmarks:
+  genvalidity-criterion-bench:
+    main: Main.hs
+    source-dirs: bench/
+    ghc-options:
+    - -Wall
+    dependencies:
+    - QuickCheck
+    - criterion
+    - genvalidity
+    - genvalidity-criterion
