@@ -33,6 +33,8 @@ instance GenValid MyType
 
 Again, the implementation is generated because `MyType` instantiates `Generic`.
 
+(Use `genValidStructurally` and `shrinkValidStructurally` if `GenUnchecked` is disabled.)
+
 ### Step 4: Write simple instance tests using test suite combinators:
 
 ``` Haskell
