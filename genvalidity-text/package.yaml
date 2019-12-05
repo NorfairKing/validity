@@ -1,5 +1,5 @@
 name: genvalidity-text
-version: '0.7.0.0'
+version: '0.7.0.1'
 synopsis: GenValidity support for Text
 description: Please see README.md
 category: Testing
@@ -11,6 +11,7 @@ copyright: ! 'Copyright: (c) 2016-2019 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 dependencies:
+- base >=4.7 && <5
 - text
 - QuickCheck
 
@@ -19,11 +20,11 @@ library:
   exposed-modules:
   - Data.GenValidity.Text
   dependencies:
-  - base >=4.7 && <5
+  - array
+  - genvalidity >=0.5
+  - random
   - validity >=0.5
   - validity-text >=0.3
-  - genvalidity >=0.5
-  - array
 
 tests:
   genvalidity-text-test:
@@ -36,8 +37,20 @@ tests:
     - -Wall
     - -fno-warn-name-shadowing
     dependencies:
-    - base
     - hspec
     - genvalidity
     - genvalidity-text
     - genvalidity-hspec
+
+benchmarks:
+  genvalidity-text-bench:
+    main: Main.hs
+    source-dirs: bench/
+    ghc-options:
+    - -Wall
+    dependencies:
+    - QuickCheck
+    - criterion
+    - genvalidity
+    - genvalidity-criterion
+    - genvalidity-text
