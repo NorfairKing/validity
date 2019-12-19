@@ -129,6 +129,12 @@ shrinkValid :: MyType -> [MyType] -- Free access to a _valid_ shrinking function
 - [High-level package overview](docs/PACKAGE_OVERVIEW.md)
 
 
+## Cachix cache
+
+There is a [cachix](https://cachix.org) cache for this project.
+
+To use it, use `cachix use validity` or add the appropriate details to your nixos configuration. 
+
 ## Sponsor this project
 
 Validity is free and open-source software.
