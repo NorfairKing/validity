@@ -10,10 +10,10 @@ jobs:
     - uses: cachix/install-nix-action@v6
     - uses: cachix/cachix-action@v2
       with:
-        name: smos
+        name: validity
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - uses: cachix/cachix-action@v2
       with:
-        name: smos
+        name: validity
         file: nix/release.nix
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
