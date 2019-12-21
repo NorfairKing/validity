@@ -45,6 +45,6 @@ nameOf ::
   => String
 nameOf =
   let s = show $ typeRep (Proxy @a)
-  in if ' ' `elem` s
-  then "(" <> s <> ")"
-  else s
+   in if ' ' `elem` s
+        then "(" ++ s ++ ")"
+        else s
