@@ -91,12 +91,6 @@ matrix:
       - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: 
-      - BUILD_KIND="stack"
-      - STACK_YAML="lts-2.yaml"
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity"
-    addons: {apt: {packages: [libgmp-dev]}}
-
   - env:
       - BUILD_KIND="nix"
 
