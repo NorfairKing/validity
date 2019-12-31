@@ -39,7 +39,9 @@ tests:
     - validity >=0.9
     - genvalidity >=0.7
     - genvalidity-property >=0.3
+    - genvalidity-hspec
     - genvalidity-hspec-aeson
+
   genvalidity-hspec-aeson-test:
     main: Spec.hs
     source-dirs: test/
@@ -49,13 +51,14 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
+    - QuickCheck
     - aeson
     - base
-    - validity >=0.9
     - genvalidity >=0.7
-    - genvalidity-property >=0.3
     - genvalidity-aeson
     - genvalidity-hspec
     - genvalidity-hspec-aeson
+    - genvalidity-property >=0.3
     - genvalidity-text
     - text
+    - validity >=0.9

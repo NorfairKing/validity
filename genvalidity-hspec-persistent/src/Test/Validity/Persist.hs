@@ -80,10 +80,15 @@ persistSpecOnGen gen genname s =
 -- |
 --
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Bool arbitrary shrink
+--
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Bool genUnchecked shrinkUnchecked
+--
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Bool genValid shrinkValid
+--
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int arbitrary shrink
+--
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int genUnchecked shrinkUnchecked
+--
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int genValid shrinkValid
 fromPersistValueAndToPersistValueAreInversesOnGen ::
      (Show a, Eq a, PersistField a) => Gen a -> (a -> [a]) -> Property

@@ -42,7 +42,7 @@ instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
         | (s', k', a', m1', m2') <- shrinkUnchecked (s, k, a, m1, m2)
         ]
 #else
-instance (Show k, Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
+instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
     genUnchecked = M.fromList <$> genUnchecked
     shrinkUnchecked = fmap M.fromList . shrinkUnchecked . M.toList
 #endif

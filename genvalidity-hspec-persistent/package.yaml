@@ -35,10 +35,14 @@ tests:
     dependencies:
     - base
     - doctest
-    - validity >=0.9
     - genvalidity >=0.7
-    - genvalidity-property >=0.3
+    - genvalidity-hspec
     - genvalidity-hspec-persistent
+    - genvalidity-property >=0.3
+    - persistent
+    - text
+    - validity >=0.9
+
   genvalidity-hspec-persistent-test:
     main: Spec.hs
     source-dirs: test/
@@ -48,12 +52,13 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - persistent
+    - QuickCheck
     - base
-    - validity >=0.9
     - genvalidity >=0.7
-    - genvalidity-property >=0.3
     - genvalidity-hspec
     - genvalidity-hspec-persistent
+    - genvalidity-property >=0.3
     - genvalidity-text
+    - persistent
     - text
+    - validity >=0.9

@@ -13,17 +13,11 @@ github: NorfairKing/validity
 extra-source-files:
 - CHANGELOG.md
 dependencies:
-- base >=4.9 && <=5
+- base <=5
 - containers
 
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.GenValidity.Containers
-  - Data.GenValidity.Map
-  - Data.GenValidity.Sequence
-  - Data.GenValidity.Set
-  - Data.GenValidity.Tree
   dependencies:
   - QuickCheck
   - genvalidity >=0.8

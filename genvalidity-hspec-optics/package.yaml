@@ -32,12 +32,14 @@ tests:
     source-dirs: doctest
     ghc-options: -threaded
     dependencies:
+    - QuickCheck
     - base
     - doctest
-    - validity >=0.9
     - genvalidity >=0.7
-    - genvalidity-property >=0.3
     - genvalidity-hspec-optics
+    - genvalidity-property >=0.3
+    - microlens
+    - validity >=0.9
 
   genvalidity-hspec-optics-test:
     main: Spec.hs

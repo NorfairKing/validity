@@ -4,10 +4,8 @@ synopsis: Standard properties for functions on `Validity` types
 description: Standard properties for functions on `Validity` types
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer:
-- syd.kerckhove@gmail.com
-- nick.van.den.broeck666@gmail.com
-copyright: ! 'Copyright: (c) 2016-2018 Tom Sydney Kerckhove'
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2016-2019 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 extra-source-files:
@@ -15,28 +13,6 @@ extra-source-files:
 
 library:
   source-dirs: src
-  exposed-modules:
-  - Test.Validity.Functions
-  - Test.Validity.Functions.CanFail
-  - Test.Validity.Functions.Equivalence
-  - Test.Validity.Functions.Idempotence
-  - Test.Validity.Functions.Inverse
-  - Test.Validity.Functions.Validity
-  - Test.Validity.GenValidity.Property
-  - Test.Validity.Operations
-  - Test.Validity.Operations.Associativity
-  - Test.Validity.Operations.Commutativity
-  - Test.Validity.Operations.Identity
-  - Test.Validity.Property
-  - Test.Validity.Property.Utils
-  - Test.Validity.Relations
-  - Test.Validity.Relations.Antireflexivity
-  - Test.Validity.Relations.Antisymmetry
-  - Test.Validity.Relations.Reflexivity
-  - Test.Validity.Relations.Symmetry
-  - Test.Validity.Relations.Transitivity
-  - Test.Validity.Shrinking.Property
-  - Test.Validity.Types
   dependencies:
   - base >=4.7 && <5
   - validity >=0.9
@@ -51,6 +27,7 @@ tests:
     source-dirs: doctest
     ghc-options: -threaded
     dependencies:
+    - QuickCheck
     - base
     - doctest
     - genvalidity-property

@@ -35,10 +35,11 @@ tests:
     dependencies:
     - base
     - doctest
-    - validity >=0.9
     - genvalidity >=0.7
-    - genvalidity-property >=0.3
+    - genvalidity-hspec
     - genvalidity-hspec-cereal
+    - genvalidity-property >=0.3
+    - validity >=0.9
 
   genvalidity-hspec-cereal-test:
     main: Spec.hs
@@ -49,8 +50,9 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
+    - QuickCheck
     - base
-    - validity >=0.9
     - genvalidity >=0.7
-    - genvalidity-property >=0.3
     - genvalidity-hspec-cereal
+    - genvalidity-property >=0.3
+    - validity >=0.9

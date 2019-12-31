@@ -53,6 +53,8 @@ tests:
     source-dirs: doctest
     ghc-options: -threaded
     dependencies:
+    - QuickCheck
     - base
     - doctest
     - genvalidity-hspec-hashable
+    - hashable
