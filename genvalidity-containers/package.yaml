@@ -13,7 +13,7 @@ github: NorfairKing/validity
 extra-source-files:
 - CHANGELOG.md
 dependencies:
-- base <=5
+- base >=4.9 && <=5
 - containers
 
 library:

@@ -67,30 +67,6 @@ matrix:
       - STACK_YAML="lts-7.yaml"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: 
-      - BUILD_KIND="stack"
-      - STACK_YAML="lts-6.yaml"
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
-    addons: {apt: {packages: [libgmp-dev]}}
-
-  - env: 
-      - BUILD_KIND="stack"
-      - STACK_YAML="lts-5.yaml"
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
-    addons: {apt: {packages: [libgmp-dev]}}
-
-  - env: 
-      - BUILD_KIND="stack"
-      - STACK_YAML="lts-4.yaml"
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
-    addons: {apt: {packages: [libgmp-dev]}}
-
-  - env: 
-      - BUILD_KIND="stack"
-      - STACK_YAML="lts-3.yaml"
-      - TEST_PKGS="validity validity-bytestring validity-containers validity-text validity-time validity-uuid genvalidity genvalidity-property"
-    addons: {apt: {packages: [libgmp-dev]}}
-
   - env:
       - BUILD_KIND="nix"
 

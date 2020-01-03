@@ -95,7 +95,7 @@ import Data.Monoid
 import Data.Ratio
 #endif
 import Data.Bits ((.&.))
-import Data.Char (Char, ord)
+import Data.Char (ord)
 import Data.Int (Int16, Int32, Int64, Int8)
 #if MIN_VERSION_base(4,8,0)
 import Data.Word (Word16, Word32, Word64, Word8)
