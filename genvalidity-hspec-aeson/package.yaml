@@ -29,19 +29,6 @@ library:
   - bytestring
 
 tests:
-  genvalidity-hspec-aeson-doctests:
-    main: DocTest.hs
-    source-dirs: doctest
-    ghc-options: -threaded
-    dependencies:
-    - base
-    - doctest
-    - validity >=0.9
-    - genvalidity >=0.7
-    - genvalidity-property >=0.3
-    - genvalidity-hspec
-    - genvalidity-hspec-aeson
-
   genvalidity-hspec-aeson-test:
     main: Spec.hs
     source-dirs: test/

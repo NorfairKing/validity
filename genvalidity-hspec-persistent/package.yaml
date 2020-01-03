@@ -28,21 +28,6 @@ library:
   - text
 
 tests:
-  genvalidity-hspec-persistent-doctests:
-    main: DocTest.hs
-    source-dirs: doctest
-    ghc-options: -threaded
-    dependencies:
-    - base
-    - doctest
-    - genvalidity >=0.7
-    - genvalidity-hspec
-    - genvalidity-hspec-persistent
-    - genvalidity-property >=0.3
-    - persistent
-    - text
-    - validity >=0.9
-
   genvalidity-hspec-persistent-test:
     main: Spec.hs
     source-dirs: test/

@@ -28,19 +28,6 @@ library:
   - deepseq
 
 tests:
-  genvalidity-hspec-cereal-doctests:
-    main: DocTest.hs
-    source-dirs: doctest
-    ghc-options: -threaded
-    dependencies:
-    - base
-    - doctest
-    - genvalidity >=0.7
-    - genvalidity-hspec
-    - genvalidity-hspec-cereal
-    - genvalidity-property >=0.3
-    - validity >=0.9
-
   genvalidity-hspec-cereal-test:
     main: Spec.hs
     source-dirs: test/

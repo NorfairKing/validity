@@ -29,19 +29,6 @@ library:
   - genvalidity-hspec >=0.6
 
 tests:
-  genvalidity-hspec-binary-doctests:
-    main: DocTest.hs
-    source-dirs: doctest
-    ghc-options: -threaded
-    dependencies:
-    - QuickCheck
-    - base
-    - doctest
-    - validity >=0.9
-    - genvalidity >=0.7
-    - genvalidity-property >=0.3
-    - genvalidity-hspec-binary
-
   genvalidity-hspec-binary-test:
     main: Spec.hs
     source-dirs: test/

@@ -27,20 +27,6 @@ library:
   - genvalidity-hspec
 
 tests:
-  genvalidity-hspec-optics-doctests:
-    main: DocTest.hs
-    source-dirs: doctest
-    ghc-options: -threaded
-    dependencies:
-    - QuickCheck
-    - base
-    - doctest
-    - genvalidity >=0.7
-    - genvalidity-hspec-optics
-    - genvalidity-property >=0.3
-    - microlens
-    - validity >=0.9
-
   genvalidity-hspec-optics-test:
     main: Spec.hs
     source-dirs: test/
