@@ -36,10 +36,8 @@ description: ! 'Note: There are companion instance packages for this library:
 '
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer:
-- syd.kerckhove@gmail.com
-- nick.van.den.broeck666@gmail.com
-copyright: ! 'Copyright: (c) 2016-2019 Tom Sydney Kerckhove'
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 

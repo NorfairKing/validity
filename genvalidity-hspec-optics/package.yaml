@@ -4,10 +4,8 @@ synopsis: Standard spec's for lens
 description: Standard spec's for lens (van Laarhoven encoding)
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer:
-- syd.kerckhove@gmail.com
-- nick.van.den.broeck666@gmail.com
-copyright: ! 'Copyright: (c) 2018 Tom Sydney Kerckhove'
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2018-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 homepage: http://cs-syd.eu

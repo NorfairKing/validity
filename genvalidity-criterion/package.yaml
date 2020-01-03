@@ -4,7 +4,7 @@ synopsis: Criterion benchmarks for generators
 category: Validity
 author: Tom Sydney Kerckhove
 maintainer: syd.kerckhove@gmail.com
-copyright: ! 'Copyright: (c) 2019 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2018-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 

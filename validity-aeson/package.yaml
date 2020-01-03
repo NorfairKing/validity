@@ -4,10 +4,8 @@ synopsis: Validity instances for aeson
 description: Please see README.md
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer:
-- syd.kerckhove@gmail.com
-- nick.van.den.broeck666@gmail.com
-copyright: ! 'Copyright: (c) 2017-2018 Tom Sydney Kerckhove'
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2017-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 

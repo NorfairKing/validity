@@ -4,10 +4,8 @@ synopsis: Standard spec's for persistent-related instances
 description: Standard spec's for persistent-related Instances
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer:
-- syd.kerckhove@gmail.com
-- nick.van.den.broeck666@gmail.com
-copyright: ! 'Copyright: (c) 2019 Tom Sydney Kerckhove'
+maintainer: syd.kerckhove@gmail.com
+copyright: ! 'Copyright: (c) 2019-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 homepage: http://cs-syd.eu
