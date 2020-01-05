@@ -1,2 +1,2 @@
-let pkgs = import ./nix/pkgs.nix;
+let pkgs = import ./nix/pkgs.nix {};
 in pkgs.validityPackages
