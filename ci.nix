@@ -13,7 +13,10 @@ let
   mkTarget = name: ps:
       pkgs.stdenv.mkDerivation {
         name = name;
-        buildCommand = pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList copyPackage ps);
+        buildCommand = ''
+          mkdir $out
+
+        '' + pkgs.lib.concatStringsSep "\n" (pkgs.lib.mapAttrsToList copyPackage ps);
       };
   mkCi = version:
     let
