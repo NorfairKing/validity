@@ -1,5 +1,7 @@
+{ pkgsf ? import ./nixpkgs.nix {}
+}:
 let pkgs =
-      import (import ./nixpkgs.nix) {
+      import pkgsf {
       overlays = [
         ( import ./gitignore-src.nix )  
         ( import ./overlay.nix )
