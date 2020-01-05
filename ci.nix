@@ -8,7 +8,7 @@ let
     "lts-13_19"
   ];
   copyPackage = pkgName: pkgPath: ''
-    cp ${pkgPath} $out/${pkgName}
+    cp -r ${pkgPath} $out/${pkgName}
   '';
   mkTarget = name: ps:
       pkgs.stdenv.mkDerivation {
