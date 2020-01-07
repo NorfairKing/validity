@@ -1,24 +1,22 @@
 name: genvalidity-hspec-cereal
 version: '0.2.0.3'
 synopsis: Standard spec's for cereal-related instances
-description: Standard spec's for cereal-related Instances
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 homepage: http://cs-syd.eu
 dependencies:
+- base >=4.9 && <=5
+- cereal
 - hspec
 
 library:
   source-dirs: src/
   ghc-options: -Wall
-  exposed-modules:
-  - Test.Validity.Cereal
   dependencies:
-  - base >=4.9 && <=5
   - genvalidity-hspec >=0.6
   - genvalidity >=0.5
   - cereal
@@ -36,7 +34,6 @@ tests:
     - -Wall
     dependencies:
     - QuickCheck
-    - base
     - genvalidity >=0.7
     - genvalidity-hspec-cereal
     - genvalidity-property >=0.3

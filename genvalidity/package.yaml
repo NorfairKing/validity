@@ -36,18 +36,17 @@ description: ! 'Note: There are companion instance packages for this library:
 '
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 
+dependencies:
+- base >=4.7 && <5
+
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.GenValidity
-  - Data.GenRelativeValidity
   dependencies:
-  - base >=4.7 && <5
   - validity >=0.9
   - QuickCheck >=2.7
   when:
@@ -63,9 +62,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     - -Wall
-    - -fno-warn-name-shadowing
     dependencies:
-    - base
     - hspec
     - hspec-core
     - QuickCheck

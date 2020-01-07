@@ -1,18 +1,17 @@
 name: validity-primitive
 version: '0.0.0.0'
 synopsis: Validity instances for primitive
-description: Please see README.md
 category: Validity
 author: Nick Van den Broeck
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2017-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 dependencies:
 - base >=4.7 && <5
 - validity >=0.5
 - primitive
+
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.Validity.Primitive

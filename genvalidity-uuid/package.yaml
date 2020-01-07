@@ -1,23 +1,21 @@
 name: genvalidity-uuid
 version: '0.1.0.2'
 synopsis: GenValidity support for UUID
-description: Please see README.md
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2017-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 dependencies:
+- base >=4.7 && <5
 - QuickCheck
 - uuid
 
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.GenValidity.UUID
   dependencies:
-  - base >=4.7 && <5
   - genvalidity >=0.5
   - validity >=0.5
   - validity-uuid >=0.0

@@ -3,21 +3,19 @@ version: '0.0.0.0'
 synopsis: Criterion benchmarks for generators
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2018-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 
 dependencies:
 - base <5
+- criterion
 
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.GenValidity.Criterion
   dependencies:
   - QuickCheck
-  - criterion
   - deepseq
   - genvalidity
 
@@ -29,6 +27,5 @@ benchmarks:
     - -Wall
     dependencies:
     - QuickCheck
-    - criterion
     - genvalidity
     - genvalidity-criterion

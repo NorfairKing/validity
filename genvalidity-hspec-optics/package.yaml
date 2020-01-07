@@ -4,7 +4,7 @@ synopsis: Standard spec's for lens
 description: Standard spec's for lens (van Laarhoven encoding)
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2018-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
@@ -15,8 +15,6 @@ dependencies:
 library:
   source-dirs: src/
   ghc-options: -Wall
-  exposed-modules:
-  - Test.Validity.Optics
   dependencies:
   - base >=4.9 && <=5
   - genvalidity >=0.5

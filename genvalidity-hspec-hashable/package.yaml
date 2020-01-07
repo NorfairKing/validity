@@ -4,22 +4,20 @@ synopsis: Standard spec's for Hashable instances
 description: Standard spec's for Hashable instances
 category: Testing
 author: Nick Van den Broeck
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: 2017-2020 Tom Sydney Kerckhove
 license: MIT
 github: NorfairKing/validity
 extra-source-files:
 - README.md
 dependencies:
+- base >=4.9 && <5
 - hashable >=1.2
 - QuickCheck
 
 library:
   source-dirs: src
-  exposed-modules:
-  - Test.Validity.Hashable
   dependencies:
-  - base >=4.9 && <5
   - validity >=0.5
   - genvalidity-hspec >=0.6
   - genvalidity >=0.5
@@ -36,7 +34,6 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - base
     - validity >=0.9
     - genvalidity >=0.7
     - genvalidity-property >=0.3

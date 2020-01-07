@@ -4,24 +4,22 @@ synopsis: Standard spec's for binary-related Instances
 description: Standard spec's for cereal-related Instances, see https://hackage.haskell.org/package/binary.
 category: Testing
 author: Nick Van den Broeck
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: 2017-2020 Tom Sydney Kerckhove
 license: MIT
 github: NorfairKing/validity
 extra-source-files:
 - README.md
 dependencies:
+- base >=4.9 && <=5
 - hspec
+- binary
 
 library:
   source-dirs: src/
   ghc-options: -Wall
-  exposed-modules:
-  - Test.Validity.Binary
   dependencies:
-  - base >=4.9 && <=5
   - QuickCheck
-  - binary
   - deepseq
   - genvalidity >=0.5
   - genvalidity-hspec >=0.6
@@ -36,7 +34,6 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - base
     - validity >=0.9
     - genvalidity >=0.7
     - genvalidity-property >=0.3

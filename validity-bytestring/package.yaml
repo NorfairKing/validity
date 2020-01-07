@@ -4,15 +4,15 @@ synopsis: Validity instances for bytestring
 description: Please see README.md
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 dependencies:
 - base >=4.7 && <5
 - validity >=0.5
 - bytestring
+
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.Validity.ByteString

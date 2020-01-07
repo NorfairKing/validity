@@ -1,24 +1,20 @@
 name: validity-containers
 version: '0.5.0.0'
 synopsis: Validity instances for containers
-description: Please see README.md
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 extra-source-files:
 - CHANGELOG.md
+
 dependencies:
 - base >=4.7 && <5
 - validity >=0.5
 - containers
+
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.Validity.Containers
-  - Data.Validity.Tree
-  - Data.Validity.Map
-  - Data.Validity.Sequence
-  - Data.Validity.Set

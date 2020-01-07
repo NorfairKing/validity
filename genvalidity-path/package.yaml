@@ -1,22 +1,22 @@
 name: genvalidity-path
 version: '0.3.0.2'
 synopsis: GenValidity support for Path
-description: Please see README.md
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
+dependencies:
+- base >=4.7 && <5
+- path >=0.5
+
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.GenValidity.Path
   dependencies:
-  - base >=4.7 && <5
   - validity-path >=0.3
   - genvalidity >=0.5
-  - path >=0.5
   - QuickCheck
 
 tests:
@@ -28,13 +28,10 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     - -Wall
-    - -fno-warn-name-shadowing
     dependencies:
-    - base
     - genvalidity-path
     - hspec
     - genvalidity-hspec
-    - path
 
 benchmarks:
   genvalidity-path-bench:
@@ -45,12 +42,9 @@ benchmarks:
     - -rtsopts
     - -with-rtsopts=-N
     - -Wall
-    - -fno-warn-name-shadowing
     dependencies:
-    - base
     - genvalidity-path
     - genvalidity-criterion
     - criterion
-    - path
     - QuickCheck
     - genvalidity

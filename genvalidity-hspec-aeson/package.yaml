@@ -1,10 +1,9 @@
 name: genvalidity-hspec-aeson
 version: '0.3.1.0'
 synopsis: Standard spec's for aeson-related instances
-description: Standard spec's for aeson-related Instances
 category: Testing
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
@@ -12,13 +11,13 @@ homepage: http://cs-syd.eu
 dependencies:
 - hspec
 
+dependencies:
+- base >=4.9 && <=5
+
 library:
   source-dirs: src/
   ghc-options: -Wall
-  exposed-modules:
-  - Test.Validity.Aeson
   dependencies:
-  - base >=4.9 && <=5
   - genvalidity-hspec >=0.6
   - genvalidity >=0.5
   - aeson
@@ -38,7 +37,6 @@ tests:
     dependencies:
     - QuickCheck
     - aeson
-    - base
     - genvalidity >=0.7
     - genvalidity-aeson
     - genvalidity-hspec

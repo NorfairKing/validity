@@ -39,17 +39,16 @@ description: ! 'For more info, see <https://github.com/NorfairKing/validity the 
 '
 category: Validity
 author: Tom Sydney Kerckhove
-maintainer: syd.kerckhove@gmail.com
+maintainer: syd@cs-syd.eu
 copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 dependencies:
 - base >=4.7 && <5
+
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.RelativeValidity
-  - Data.Validity
   when:
   - condition: impl(ghc >=8.0.0)
     ghc-options: -Wno-redundant-constraints
@@ -64,6 +63,5 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - base
     - hspec
     - validity
