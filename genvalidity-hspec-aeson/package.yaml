@@ -9,10 +9,8 @@ license: MIT
 github: NorfairKing/validity
 homepage: http://cs-syd.eu
 dependencies:
-- hspec
-
-dependencies:
 - base >=4.9 && <=5
+- hspec
 
 library:
   source-dirs: src/
