@@ -3,6 +3,7 @@ packages:
 - '../genvalidity-aeson'
 - '../genvalidity-bytestring'
 - '../genvalidity-containers'
+- '../genvalidity-criterion'
 - '../genvalidity-hspec'
 - '../genvalidity-hspec-aeson'
 - '../genvalidity-hspec-binary'
@@ -29,4 +30,4 @@ packages:
 - '../validity-unordered-containers'
 - '../validity-uuid'
 - '../validity-vector'
-resolver: nightly-2019-09-21
+resolver: nightly-2020-01-19
