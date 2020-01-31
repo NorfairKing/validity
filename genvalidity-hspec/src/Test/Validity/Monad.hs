@@ -116,10 +116,10 @@ monadSpecWithInts gen =
         (unwords [nameOf @f, "of ints"])
         ((+) <$> genUnchecked)
         "increments"
-        (do s <- abs <$> genUnchecked
+        (do s <- genListLength
             pure $ \b -> unGen gen (mkQCGen b) s)
         "perturbations using the int"
-        (do s <- abs <$> genUnchecked
+        (do s <- genListLength
             pure $ \b -> unGen gen (mkQCGen $ 2 * b) s)
         "perturbations using the double the int"
         (pure <$> ((+) <$> genUnchecked))

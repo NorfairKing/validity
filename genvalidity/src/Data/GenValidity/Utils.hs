@@ -1,10 +1,11 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE CPP #-}
 #if __GLASGOW_HASKELL__ >= 710
 #define OVERLAPPING_ {-# OVERLAPPING #-}
 #else
@@ -36,9 +37,12 @@ module Data.GenValidity.Utils
     , shrinkT2
     , shrinkT3
     , shrinkT4
+    , genIntX
+    , genWordX
     ) where
 
 import Test.QuickCheck hiding (Fixed)
+import System.Random
 #if !MIN_VERSION_QuickCheck(2,8,0)
 import Data.List (sortBy)
 import Data.Ord (comparing)
@@ -214,3 +218,47 @@ shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
 -- | Turn a shrinking function into a function that shrinks quadruples.
 shrinkT4 :: (a -> [a]) -> (a, a, a, a) -> [(a, a, a, a)]
 shrinkT4 s (a, b, c, d) = (,,,) <$> s a <*> s b <*> s c <*> s d
+
+-- | Generate Int, Int8, Int16, Int32 and Int64 values smartly.
+--
+-- * Some at the border
+-- * Some around zero
+-- * Mostly uniformly
+genIntX :: forall a. (Integral a, Bounded a, Random a) => Gen a
+genIntX =
+  frequency
+    [ (1, extreme)
+    , (1, small)
+    , (8, uniform)
+    ]
+  where
+    extreme :: Gen a
+    extreme = sized $ \s -> oneof
+      [ choose (maxBound - fromIntegral s, maxBound)
+      , choose (minBound, minBound + fromIntegral s)
+      ]
+    small :: Gen a
+    small = sized $ \s -> choose (- fromIntegral s, fromIntegral s)
+    uniform :: Gen a
+    uniform = choose (minBound, maxBound)
+
+-- | Generate Word, Word8, Word16, Word32 and Word64 values smartly.
+--
+-- * Some at the border
+-- * Some around zero
+-- * Mostly uniformly
+genWordX :: forall a. (Integral a, Bounded a, Random a) => Gen a
+genWordX =
+  frequency
+    [ (1, extreme)
+    , (1, small)
+    , (8, uniform)
+    ]
+  where
+    extreme :: Gen a
+    extreme = sized $ \s ->
+      choose (maxBound - fromIntegral s, maxBound)
+    small :: Gen a
+    small = sized $ \s -> choose (0, fromIntegral s)
+    uniform :: Gen a
+    uniform = choose (minBound, maxBound)

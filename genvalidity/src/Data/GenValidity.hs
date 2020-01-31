@@ -550,19 +550,25 @@ instance GenUnchecked () where
     genUnchecked = arbitrary
     shrinkUnchecked = shrink
 
-instance GenValid ()
+instance GenValid () where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Bool where
     genUnchecked = arbitrary
     shrinkUnchecked = shrink
 
-instance GenValid Bool
+instance GenValid Bool where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Ordering where
     genUnchecked = arbitrary
     shrinkUnchecked = shrink
 
-instance GenValid Ordering
+instance GenValid Ordering where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Char where
     genUnchecked = frequency [(9, choose (minBound, maxBound)), (1, genUtf16SurrogateCodePoint)]
@@ -571,68 +577,89 @@ instance GenUnchecked Char where
 genUtf16SurrogateCodePoint :: Gen Char
 genUtf16SurrogateCodePoint = chr <$> oneof [choose (0xD800, 0xDBFF), choose (0xDC00, 0xDFFF)]
 
-instance GenValid Char
+instance GenValid Char where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Int where
-    genUnchecked = arbitrary
+    genUnchecked = genIntX
     shrinkUnchecked = shrink
 
-instance GenValid Int
+instance GenValid Int where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
+
 instance GenUnchecked Int8 where
-    genUnchecked = arbitrary
+    genUnchecked = genIntX
     shrinkUnchecked = shrink
 
-instance GenValid Int8
+instance GenValid Int8 where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Int16 where
-    genUnchecked = arbitrary
+    genUnchecked = genIntX
     shrinkUnchecked = shrink
 
-instance GenValid Int16
+instance GenValid Int16 where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Int32 where
-    genUnchecked = arbitrary
+    genUnchecked = genIntX
     shrinkUnchecked = shrink
 
-instance GenValid Int32
+instance GenValid Int32 where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Int64 where
-    genUnchecked = arbitrary
+    genUnchecked = genIntX
     shrinkUnchecked = shrink
 
 instance GenValid Int64 where
-    genValid = arbitrary
-    shrinkValid = shrink
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Word where
-    genUnchecked = arbitrary
+    genUnchecked = genWordX
     shrinkUnchecked = shrink
 
-instance GenValid Word
+instance GenValid Word where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Word8 where
-    genUnchecked = arbitrary
+    genUnchecked = genWordX
     shrinkUnchecked = shrink
 
-instance GenValid Word8
+instance GenValid Word8 where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Word16 where
-    genUnchecked = arbitrary
+    genUnchecked = genWordX
     shrinkUnchecked = shrink
 
-instance GenValid Word16
+instance GenValid Word16 where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Word32 where
-    genUnchecked = arbitrary
+    genUnchecked = genWordX
     shrinkUnchecked = shrink
 
-instance GenValid Word32
+instance GenValid Word32 where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Word64 where
-    genUnchecked = arbitrary
+    genUnchecked = genWordX
     shrinkUnchecked = shrink
 
-instance GenValid Word64
+instance GenValid Word64 where
+    genValid = genUnchecked
+    shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Float where
     genUnchecked = frequency [(9, arbitrary), (1, elements [read "NaN", read "Infinity", read "-Infinity", read "-0"])]
@@ -685,8 +712,11 @@ instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
     shrinkUnchecked (n :% d) = [n' :% d' | (n', d') <- shrinkUnchecked (n, d)]
 
 instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
-    genValid = (%) <$> genValid <*> (genValid `suchThat` (> 0))
-    shrinkValid (n :% d) = [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
+    genValid = (do
+      n <- genValid
+      d <- (genValid `suchThat` (> 0))
+      pure $ n :% d) `suchThat` ((== valid) . validateRatioNormalised)
+    shrinkValid (n :% d) = filter isValid [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
 
 instance (Integral a, Num a, Ord a, Validity a, GenUnchecked a) => GenInvalid (Ratio a)
 

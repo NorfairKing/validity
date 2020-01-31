@@ -3,6 +3,7 @@ packages:
 - '../genvalidity-aeson'
 - '../genvalidity-bytestring'
 - '../genvalidity-containers'
+- '../genvalidity-criterion'
 - '../genvalidity-hspec'
 - '../genvalidity-hspec-aeson'
 - '../genvalidity-hspec-binary'

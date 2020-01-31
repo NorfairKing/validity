@@ -1,9 +1,6 @@
 let
   pkgs = import ./nix/pkgs.nix {};
   versions = [
-    "lts-11_16"
-    "lts-12_14"
-    "lts-12_23"
     "lts-13_11"
     "lts-13_19"
   ];

@@ -30,4 +30,8 @@ packages:
 - '../validity-unordered-containers'
 - '../validity-uuid'
 - '../validity-vector'
-resolver: nightly-2020-01-19
+resolver: nightly-2020-02-04
+nix:
+  pure: true
+  packages:
+    - zlib
