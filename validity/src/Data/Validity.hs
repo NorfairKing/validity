@@ -106,7 +106,7 @@ import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
 #endif
-import GHC.Real (Ratio(..), reduce)
+import GHC.Real (Ratio(..))
 
 -- | A class of types that have additional invariants defined upon them
 
@@ -474,7 +474,15 @@ validateRatioNotInfinite r = declare "The Ratio is not infinite." $
     _ -> True
 
 validateRatioNormalised :: Integral a => Ratio a -> Validation
-validateRatioNormalised r@(n :% d) = declare "The Ratio is normalised." $ reduce n d == r
+validateRatioNormalised (n :% d) = declare "The Ratio is normalised." $
+  case d of
+    0 -> False
+    _ ->
+      let g = gcd n d
+          gcdOverflows = g < 0
+          n' :% d' = (n `quot` g) :% (d `quot` g)
+          valueIsNormalised = n' :% d' == n :% d
+      in not gcdOverflows && valueIsNormalised
 
 -- | Trivially valid
 --
@@ -496,18 +504,12 @@ instance Validity Natural where
 -- | Valid if the contained numbers are valid and the denominator is
 -- strictly positive.
 instance (Validity a, Ord a, Num a, Integral a) => Validity (Ratio a) where
-    validate (n :% d) =
+    validate r@(n :% d) =
         mconcat
             [ annotate n "The numerator"
             , annotate d "The denominator"
             , declare "The denominator is strictly positive." $ d > 0
-            , declare "The ratio is normalised" $
-                case d of
-                  0 -> False
-                  _ ->
-                    let g = gcd n d
-                        n' :% d' = (n `quot` g) :% (d `quot` g)
-                    in n' :% d' == n :% d
+            , validateRatioNormalised r
             ]
 
 -- | Valid according to the contained 'Integer'.

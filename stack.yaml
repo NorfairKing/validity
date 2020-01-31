@@ -1,3 +1,4 @@
+resolver: lts-14.22
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
@@ -31,4 +32,9 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-resolver: lts-14.20
+nix:
+  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/3b5f3d1cb181cd91a5a1ce1d220fef6ffd998c6a.tar.gz" ]
+  add-gc-roots: true
+  pure: true
+  packages:
+  - zlib

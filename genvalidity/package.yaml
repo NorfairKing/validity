@@ -49,6 +49,7 @@ library:
   dependencies:
   - validity >=0.9
   - QuickCheck >=2.7
+  - random
   when:
   - condition: impl(ghc >=8.0.0)
     ghc-options: -Wno-redundant-constraints

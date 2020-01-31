@@ -60,7 +60,7 @@ spec = do
     threeTests (Proxy :: Proxy (Ratio Integer))
     threeTupleTests (Proxy :: Proxy (Ratio Integer))
     threeTests (Proxy :: Proxy (Ratio Int))
-    threeTupleTests (Proxy :: Proxy (Ratio Int))
+    -- threeTupleTests (Proxy :: Proxy (Ratio Int))
     twoTests (Proxy :: Proxy Uni)
     twoTupleTests (Proxy :: Proxy Uni)
     twoTests (Proxy :: Proxy Deci)
@@ -81,8 +81,6 @@ spec = do
     twoTupleTests (Proxy :: Proxy Natural)
 
     twoTests (Proxy :: Proxy (Ratio Integer))
-
-    twoTupleTests (Proxy :: Proxy (Ratio Int))
 #endif
 #if MIN_VERSION_base(4,9,0)
     threeTests (Proxy :: Proxy (NonEmpty Rational))
@@ -94,14 +92,6 @@ twoTupleTests ::
 twoTupleTests proxy = do
     modifyMaxSuccess (`quot` 2) $
         modifyMaxSize (`quot` 2) $ twoTests $ (,) <$> proxy <*> proxy
-    modifyMaxSuccess (`quot` 3) $
-        modifyMaxSize (`quot` 3) $ twoTests $ (,,) <$> proxy <*> proxy <*> proxy
-    modifyMaxSuccess (`quot` 4) $
-        modifyMaxSize (`quot` 4) $
-        twoTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
-    modifyMaxSuccess (`quot` 5) $
-        modifyMaxSize (`quot` 5) $
-        twoTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 threeTupleTests ::
        forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a, GenInvalid a)
@@ -110,15 +100,6 @@ threeTupleTests ::
 threeTupleTests proxy = do
     modifyMaxSuccess (`quot` 2) $
         modifyMaxSize (`quot` 2) $ threeTests $ (,) <$> proxy <*> proxy
-    modifyMaxSuccess (`quot` 3) $
-        modifyMaxSize (`quot` 3) $
-        threeTests $ (,,) <$> proxy <*> proxy <*> proxy
-    modifyMaxSuccess (`quot` 4) $
-        modifyMaxSize (`quot` 4) $
-        threeTests $ (,,,) <$> proxy <*> proxy <*> proxy <*> proxy
-    modifyMaxSuccess (`quot` 5) $
-        modifyMaxSize (`quot` 5) $
-        threeTests $ (,,,,) <$> proxy <*> proxy <*> proxy <*> proxy <*> proxy
 
 twoTests ::
        forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a)
