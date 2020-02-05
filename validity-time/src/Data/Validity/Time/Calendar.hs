@@ -8,4 +8,12 @@ import Data.Time.Calendar
 
 -- | Valid according to the 'Integer' it contains.
 instance Validity Day where
-    validate = delve "toModifiedJulianDay" . toModifiedJulianDay
+  validate d@(ModifiedJulianDay i) =
+    mconcat
+      [ delve "toModifiedJulianDay" i
+      , declare "The day happened after the beginning of time" $
+        d > beginningOfTime
+      ]
+
+beginningOfTime :: Day
+beginningOfTime = ModifiedJulianDay $ -((138 * (10 ^ 8)) * 356)
