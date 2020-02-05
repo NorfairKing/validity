@@ -16,4 +16,4 @@ instance Validity Day where
       ]
 
 beginningOfTime :: Day
-beginningOfTime = ModifiedJulianDay $ -((138 * (10 ^ 8)) * 356)
+beginningOfTime = ModifiedJulianDay $ -((138 * (10 ^ (8 :: Integer))) * 356)
