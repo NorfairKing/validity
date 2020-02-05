@@ -4,25 +4,28 @@ module Test.Validity.ShrinkingSpec where
 
 import Test.Hspec
 
+import Data.Int
+import Data.Ratio
+
 import Test.Validity.Shrinking
 
 spec :: Spec
 spec = do
-    shrinkValiditySpec @Rational
-    shrinkValidSpec @Int
-    shrinkInvalidSpec @Rational
-    describe "shrinkUncheckedPreservesValidOnGenValid" $ do
-        it "Rational" $ shrinkValidPreservesValidOnGenValid @Rational
-        it "[Rational]" $ shrinkValidPreservesValidOnGenValid @[Rational]
-    describe "shrinkValidPreservesValidOnGenValid" $ do
-        it "Rational" $ shrinkValidPreservesValidOnGenValid @Rational
-        it "[Rational]" $ shrinkValidPreservesValidOnGenValid @[Rational]
-    describe "shrinkInvalidPreservesInvalidOnGenInvalid" $ do
-        it "Rational" $ shrinkInvalidPreservesInvalidOnGenInvalid @Rational
-        it "[Rational]" $ shrinkInvalidPreservesInvalidOnGenInvalid @[Rational]
-    describe "shrinkUncheckedDoesNotShrinkToItself" $ do
-        it "Int" $ shrinkUncheckedDoesNotShrinkToItself @Int
-        it "[Int]" $ shrinkUncheckedDoesNotShrinkToItself @[Int]
-    describe "shrinkValidDoesNotShrinkToItself" $ do
-        it "Rational" $ shrinkValidDoesNotShrinkToItself @Rational
-        it "[Rational]" $ shrinkValidDoesNotShrinkToItself @[Rational]
+  shrinkValiditySpec @(Ratio Int8)
+  shrinkValidSpec @Int
+  shrinkInvalidSpec @(Ratio Int8)
+  describe "shrinkUncheckedPreservesValidOnGenValid" $ do
+    it "Ordering" $ shrinkValidPreservesValidOnGenValid @Ordering
+    it "[Ordering]" $ shrinkValidPreservesValidOnGenValid @[Ordering]
+  describe "shrinkValidPreservesValidOnGenValid" $ do
+    it "Ordering" $ shrinkValidPreservesValidOnGenValid @Ordering
+    it "[Ordering]" $ shrinkValidPreservesValidOnGenValid @[Ordering]
+  describe "shrinkInvalidPreservesInvalidOnGenInvalid" $ do
+    it "Ordering" $ shrinkInvalidPreservesInvalidOnGenInvalid @(Ratio Int8)
+    it "[Ordering]" $ shrinkInvalidPreservesInvalidOnGenInvalid @[Ratio Int8]
+  describe "shrinkUncheckedDoesNotShrinkToItself" $ do
+    it "Int" $ shrinkUncheckedDoesNotShrinkToItself @Int
+    it "[Int]" $ shrinkUncheckedDoesNotShrinkToItself @[Int]
+  describe "shrinkValidDoesNotShrinkToItself" $ do
+    it "Ordering" $ shrinkValidDoesNotShrinkToItself @Ordering
+    it "[Ordering]" $ shrinkValidDoesNotShrinkToItself @[Ordering]

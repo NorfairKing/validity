@@ -1,8 +1,8 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Data.GenValidity.ScientificSpec
-    ( spec
-    ) where
+  ( spec
+  ) where
 
 import Test.Hspec
 import Test.Validity
@@ -13,5 +13,5 @@ import Data.Scientific
 
 spec :: Spec
 spec = do
-    genValidSpec @Scientific
-    shrinkValidSpec @Scientific
+  genValidSpec @Scientific
+    -- shrinkValidSpec @Scientific

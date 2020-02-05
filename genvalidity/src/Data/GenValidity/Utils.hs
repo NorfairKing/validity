@@ -42,6 +42,7 @@ module Data.GenValidity.Utils
     , genFloat
     , genDouble
     , genFloatX
+    , genInteger
     ) where
 
 import Test.QuickCheck hiding (Fixed)
@@ -344,3 +345,18 @@ genFloatX func =
     -- Not really uniform, but good enough
     reallyUniform :: Gen a
     reallyUniform = func <$> choose (minBound, maxBound)
+
+genInteger :: Gen Integer
+genInteger = sized $ \s -> oneof $
+  (if s >= 10 then (genBiggerInteger :) else id)
+    [ genIntSizedInteger
+    , small
+    ]
+  where
+    small = sized $ \s ->  choose (- toInteger s, toInteger s)
+    genIntSizedInteger = toInteger <$> (genIntX :: Gen Int)
+    genBiggerInteger = sized $ \s ->do
+      (a, b) <- genSplit s
+      ai <- resize a genIntSizedInteger
+      bi <- resize b genInteger
+      pure $ ai * bi
