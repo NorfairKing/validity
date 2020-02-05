@@ -662,7 +662,7 @@ instance GenValid Word64 where
     shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Float where
-    genUnchecked = frequency [(9, arbitrary), (1, elements [read "NaN", read "Infinity", read "-Infinity", read "-0"])]
+    genUnchecked = genFloat
 #if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked f = if
       | isInfinite f -> []
@@ -677,7 +677,7 @@ instance GenValid Float where
     shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Double where
-    genUnchecked = frequency [(9, arbitrary), (1, elements [read "NaN", read "Infinity", read "-Infinity", read "-0"])]
+    genUnchecked = genDouble
 #if MIN_VERSION_QuickCheck(2,9,2)
     shrinkUnchecked d = if
       | isInfinite d -> []

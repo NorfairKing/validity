@@ -39,10 +39,15 @@ module Data.GenValidity.Utils
     , shrinkT4
     , genIntX
     , genWordX
+    , genFloat
+    , genDouble
+    , genFloatX
     ) where
 
 import Test.QuickCheck hiding (Fixed)
 import System.Random
+import GHC.Float
+import Data.Ratio
 #if !MIN_VERSION_QuickCheck(2,8,0)
 import Data.List (sortBy)
 import Data.Ord (comparing)
@@ -262,3 +267,80 @@ genWordX =
     small = sized $ \s -> choose (0, fromIntegral s)
     uniform :: Gen a
     uniform = choose (minBound, maxBound)
+
+-- | See 'genFloatX'
+genFloat :: Gen Float
+genFloat = genFloatX castWord32ToFloat
+
+-- | See 'genFloatX'
+genDouble :: Gen Double
+genDouble = genFloatX castWord64ToDouble
+
+-- | Generate floating point numbers smartly:
+--
+-- * Some denormalised
+-- * Some around zero
+-- * Some around the bounds
+-- * Some by encoding an Integer and an Int to a floating point number.
+-- * Some accross the entire range
+-- * Mostly uniformly via the bitrepresentation
+--
+-- The function parameter is to go from the bitrepresentation to the floating point value.
+genFloatX
+  :: forall a w. (Read a, RealFloat a, Bounded w, Random w)
+  => (w -> a)
+  -> Gen a
+genFloatX func =
+  frequency
+    [ (1, denormalised)
+    , (1, small)
+    , (1, aroundBounds)
+    , (1, viaEncoding)
+    , (1, uniformViaEncoding)
+    , (5, reallyUniform)
+    ]
+  where
+    denormalised :: Gen a
+    denormalised =
+      elements
+        [ read "NaN"
+        , read "Infinity"
+        , read "-Infinity"
+        , read "-0"
+        ]
+    -- This is what Quickcheck does,
+    -- but inlined so QuickCheck cannot change
+    -- it behind the scenes in the future.
+    small :: Gen a
+    small = sized $ \n -> do
+      let n' = toInteger n
+      let precision = 9999999999999 :: Integer
+      b <- choose (1, precision)
+      a <- choose ((-n') * b, n' * b)
+      pure (fromRational (a % b))
+    upperSignificand :: Integer
+    upperSignificand = floatRadix (0.0 :: a) ^ floatDigits (0.0 :: a)
+    lowerSignificand :: Integer
+    lowerSignificand = - upperSignificand
+    (lowerExponent, upperExponent) = floatRange (0.0 :: a)
+    aroundBounds :: Gen a
+    aroundBounds = do
+      s <- sized $ \n -> oneof
+        [ choose (lowerSignificand, lowerSignificand + fromIntegral n)
+        , choose (upperSignificand - fromIntegral n, upperSignificand)
+        ]
+      e <- sized $ \n -> oneof
+        [ choose (lowerExponent, lowerExponent + n)
+        , choose (upperExponent - n, upperExponent)
+        ]
+      pure $ encodeFloat s e
+    viaEncoding :: Gen a
+    viaEncoding = encodeFloat <$> arbitrary <*> genIntX
+    uniformViaEncoding :: Gen a
+    uniformViaEncoding = do
+      s <- choose (lowerSignificand, upperSignificand)
+      e <- choose $ floatRange (0.0 :: a)
+      pure $ encodeFloat s e
+    -- Not really uniform, but good enough
+    reallyUniform :: Gen a
+    reallyUniform = func <$> choose (minBound, maxBound)
