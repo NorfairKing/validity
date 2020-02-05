@@ -692,7 +692,7 @@ instance GenValid Double where
     shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Integer where
-    genUnchecked = arbitrary
+    genUnchecked = genInteger
     shrinkUnchecked = shrink
 
 instance GenValid Integer
@@ -700,8 +700,7 @@ instance GenValid Integer
 #if MIN_VERSION_base(4,8,0)
 instance GenUnchecked Natural where
     genUnchecked = fromInteger . abs <$> genUnchecked
-    shrinkUnchecked 0 = []
-    shrinkUnchecked n = [0 .. n-1]
+    shrinkUnchecked = fmap (fromInteger . abs) . shrinkUnchecked . toInteger
 
 instance GenValid Natural where
     genValid = fromInteger . abs <$> genValid
