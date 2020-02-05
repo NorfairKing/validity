@@ -356,7 +356,8 @@ genInteger = sized $ \s -> oneof $
     small = sized $ \s ->  choose (- toInteger s, toInteger s)
     genIntSizedInteger = toInteger <$> (genIntX :: Gen Int)
     genBiggerInteger = sized $ \s ->do
-      (a, b) <- genSplit s
+      (a, b, c) <- genSplit3 s
       ai <- resize a genIntSizedInteger
       bi <- resize b genInteger
-      pure $ ai * bi
+      ci <- resize c genIntSizedInteger
+      pure $ ai * bi + ci
