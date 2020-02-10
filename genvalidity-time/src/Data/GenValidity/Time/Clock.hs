@@ -14,41 +14,46 @@ import Data.Validity.Time.Clock ()
 import Test.QuickCheck
 
 instance GenUnchecked UniversalTime where
-    genUnchecked = ModJulianDate <$> genUnchecked
-    shrinkUnchecked = fmap ModJulianDate . shrinkUnchecked . getModJulianDate
+  genUnchecked = ModJulianDate <$> genUnchecked
+  shrinkUnchecked = fmap ModJulianDate . shrinkUnchecked . getModJulianDate
 
 instance GenValid UniversalTime where
-    genValid = ModJulianDate <$> genValid
+  genValid = ModJulianDate <$> genValid
 
 instance GenUnchecked DiffTime where
-    genUnchecked = picosecondsToDiffTime <$> genUnchecked
+  genUnchecked = picosecondsToDiffTime <$> genUnchecked
 #if MIN_VERSION_time(1,6,0)
-    shrinkUnchecked =
-        fmap picosecondsToDiffTime . shrinkUnchecked . diffTimeToPicoseconds
+  shrinkUnchecked =
+    fmap picosecondsToDiffTime . shrinkUnchecked . diffTimeToPicoseconds
 #else
-    shrinkUnchecked = const []
+  shrinkUnchecked = const []
 #endif
 instance GenValid DiffTime where
-    genValid = picosecondsToDiffTime <$> genValid
+  genValid = picosecondsToDiffTime <$> genValid
 
 instance GenUnchecked UTCTime where
-    genUnchecked = UTCTime <$> genUnchecked <*> genUnchecked
-    shrinkUnchecked (UTCTime d dt) =
-        [UTCTime d' dt' | (d', dt') <- shrinkUnchecked (d, dt)]
+  genUnchecked = UTCTime <$> genUnchecked <*> genUnchecked
+  shrinkUnchecked (UTCTime d dt) =
+    [UTCTime d' dt' | (d', dt') <- shrinkUnchecked (d, dt)]
 
 instance GenValid UTCTime where
-    genValid =
-        UTCTime <$> genValid <*>
-        (genValid `suchThat` (>= 0) `suchThat` (<= 86400))
+  genValid =
+    UTCTime <$> genValid <*> (fromIntegral <$> choose (0 :: Int, 86400))
 
 instance GenInvalid UTCTime
-
+#if MIN_VERSION_time(1,9,1)
 instance GenUnchecked NominalDiffTime where
-    genUnchecked = diffUTCTime <$> genUnchecked <*> genUnchecked
-#if MIN_VERSION_time(1,9,0)
-    shrinkUnchecked =
-        fmap secondsToNominalDiffTime . shrinkUnchecked . nominalDiffTimeToSeconds
+  genUnchecked = secondsToNominalDiffTime <$> genUnchecked
 #else
-    shrinkUnchecked = const []
+instance GenUnchecked NominalDiffTime where
+  genUnchecked = diffUTCTime <$> genUnchecked <*> genUnchecked
 #endif
-instance GenValid NominalDiffTime
+#if MIN_VERSION_time(1,9,0)
+  shrinkUnchecked =
+    fmap secondsToNominalDiffTime . shrinkUnchecked . nominalDiffTimeToSeconds
+#else
+  shrinkUnchecked = const []
+#endif
+instance GenValid NominalDiffTime where
+  genValid = genUnchecked
+  shrinkValid = shrinkUnchecked

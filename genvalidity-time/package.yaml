@@ -1,5 +1,5 @@
 name: genvalidity-time
-version: '0.2.1.2'
+version: '0.3.0.0'
 synopsis: GenValidity support for time
 description: Please see README.md
 category: Testing
@@ -32,3 +32,17 @@ tests:
     - genvalidity-time
     - hspec
     - genvalidity-hspec
+
+benchmarks:
+  genvalidity-time-bench:
+    main: Main.hs
+    source-dirs: bench
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - criterion
+    - genvalidity-time
+    - genvalidity-criterion

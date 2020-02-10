@@ -46,4 +46,5 @@ main =
     , genValidBench @Float
     , genValidBench @Double
     , genValidBench @(Fixed E12)
+    , genValidBench @String
     ]
