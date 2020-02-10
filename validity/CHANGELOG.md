@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.9.0.3] - 2020-02-10
+
+### Changed
+
+* Improved the 'validateRatioNormalised' to not crash on certain extreme values.
+
 ## [0.9.0.2] - 2019-09-27
 
 ### Added

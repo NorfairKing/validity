@@ -1,5 +1,5 @@
 name: genvalidity-hspec-aeson
-version: '0.3.1.0'
+version: '0.3.1.1'
 synopsis: Standard spec's for aeson-related instances
 category: Testing
 author: Tom Sydney Kerckhove

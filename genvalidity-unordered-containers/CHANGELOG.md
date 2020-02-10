@@ -2,11 +2,17 @@
 
 ## [Unreleased]
 
-## [0.3.0.0] - 2019-03-06
-
-* Compatibility with genvalidity >=0.8
+## [0.3.0.1] - 2020-02-10
 
 ### Changed
+
+* Improved the cabal file
+
+## [0.3.0.0] - 2019-03-06
+
+### Changed
+
+* Compatibility with genvalidity >=0.8
 
 ## [0.2.0.4] - 2018-11-07
 

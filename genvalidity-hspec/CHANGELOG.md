@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [0.7.0.3] - 2020-02-10
+
+### Changed
+
+* Removed doctests
+* Improved the cabal file
+* Fixed the `monadSpec` to not generate the list length using `genUnchecked`
+
 ## [0.7.0.2] - 2019-09-23
 
 * Removed nonsense shrinking from `genValidSpec` and `genInvalidSpec`.

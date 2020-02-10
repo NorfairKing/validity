@@ -34,9 +34,13 @@ import Test.QuickCheck.Property
 import Test.Validity.Property.Utils
 
 nameOf ::
-       forall a. Typeable a
-    => String
-nameOf = show $ typeRep (Proxy @a)
+     forall a. Typeable a
+  => String
+nameOf =
+  let s = show $ typeRep (Proxy @a)
+   in if ' ' `elem` s
+        then "(" ++ s ++ ")"
+        else s
 
 genDescr ::
        forall a. Typeable a

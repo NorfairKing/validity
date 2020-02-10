@@ -1,5 +1,5 @@
 name: genvalidity-hspec-persistent
-version: '0.0.0.0'
+version: '0.0.0.1'
 synopsis: Standard spec's for persistent-related instances
 category: Testing
 author: Tom Sydney Kerckhove

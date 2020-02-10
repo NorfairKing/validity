@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.4.1.1] - 2020-02-10
+
+### Changed
+
+* Improved the cabal file
+
 ## [0.4.1.0] - 2019-02-28
 
 ### Added

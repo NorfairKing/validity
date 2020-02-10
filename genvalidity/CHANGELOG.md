@@ -2,6 +2,42 @@
 
 ## [Unreleased]
 
+## [0.10.0.0] - 2020-02-10
+
+### Added
+
+* `Data.GenValidity.Utils.genIntX`
+* `Data.GenValidity.Utils.genWordX`
+* `Data.GenValidity.Utils.genFloat`
+* `Data.GenValidity.Utils.genDouble`
+* `Data.GenValidity.Utils.genFloatX`
+* `Data.GenValidity.Utils.genInteger`
+
+
+### Changed
+
+* Improved the cabal file
+* Sped up the 'genValid' generators for the following types
+  * ()
+  * Bool
+  * Ordering
+  * Char
+  * Int, Int8, Int16, Int32, Int64
+  * Word, Word8, Word16, Word32, Word64
+  * Float, Double
+* Improved the generators of
+  * Int, Int8, Int16, Int32, Int64
+    Now also generates extreme values, but mostly uniform values.
+  * Word, Word8, Word16, Word32, Word64
+    Now also generates extreme values, but mostly uniform values.
+  * Float, Double
+    Now also generates values around the bounds, but mostly uniform values.
+  * Natural, Integer
+    Now also generates numbers larger than can be contained in a single Word/Int.
+  * Ratio
+    Fixed a bug: no longer generates invalid ratios for fixed-sized numerators
+* Removed a lot of shrinking tests
+
 ## [0.9.1.0] - 2019-12-04
 
 ### Added

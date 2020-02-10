@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [0.8.0.2] - 2020-02-10
+
+### Changed
+
+* Improved the cabal file
+* Removed the show constraint for keys on 'GenUnchecked (Map k v)'
+* Removed the shrinking tests for trees
+
 ## [0.8.0.1] - 2019-12-04
 
 ### Changed

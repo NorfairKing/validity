@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0.1] - 2020-02-10
+
+### Changed
+
+* Improved the cabal file
+
 ## [0.4.0.0] - 2019-09-27
 
 ### Changed

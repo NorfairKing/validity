@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.5.0.2] - 2020-02-10
+
+### Changed
+
+* Removed the doctests
+* Improved the cabal file
+
 ## [0.5.0.1] - 2019-09-23
 
 ### Changed

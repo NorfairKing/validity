@@ -1,5 +1,5 @@
 name: validity-bytestring
-version: '0.4.1.0'
+version: '0.4.1.1'
 synopsis: Validity instances for bytestring
 description: Please see README.md
 category: Validity

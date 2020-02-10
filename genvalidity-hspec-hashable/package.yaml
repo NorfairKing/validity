@@ -1,5 +1,5 @@
 name: genvalidity-hspec-hashable
-version: '0.2.0.4'
+version: '0.2.0.5'
 synopsis: Standard spec's for Hashable instances
 description: Standard spec's for Hashable instances
 category: Testing

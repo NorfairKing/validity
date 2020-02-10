@@ -133,7 +133,7 @@ shrinkValid :: MyType -> [MyType] -- Free access to a _valid_ shrinking function
 
 There is a [cachix](https://cachix.org) cache for this project.
 
-To use it, use `cachix use validity` or add the appropriate details to your nixos configuration. 
+To use it, use `cachix use validity` or add the appropriate details to your nixos configuration.
 
 ## Sponsor this project
 

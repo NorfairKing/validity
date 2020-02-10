@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0.5] - 2020-02-10
+
+### Changed
+
+* Removed the doctests
+* Improved the cabal file
+
+
 ## [0.2.0.4] - 2019-05-10
 
 ### Changed

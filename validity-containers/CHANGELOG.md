@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0.1] - 2019-09-23
+
+### Changed
+
+* Improved the cabal file
+* Used `++` instead of `<>` for a string, for compatibility purposes
+
 ## [0.5.0.0] - 2019-09-23
 
 ### Added

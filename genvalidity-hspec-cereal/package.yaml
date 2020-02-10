@@ -1,5 +1,5 @@
 name: genvalidity-hspec-cereal
-version: '0.2.0.3'
+version: '0.2.0.4'
 synopsis: Standard spec's for cereal-related instances
 category: Testing
 author: Tom Sydney Kerckhove
