@@ -4,6 +4,7 @@ module Test.Validity.PersistSpec where
 
 import Test.Hspec
 
+-- import Numeric.Natural
 import Data.GenValidity
 import Test.Validity.Persist
 
@@ -14,3 +15,4 @@ spec = do
   persistSpecOnValid @Rational
   persistSpec @Int
   persistSpecOnArbitrary @Int
+  -- persistSpecOnValid @Natural -- DOES NOT HOLD
