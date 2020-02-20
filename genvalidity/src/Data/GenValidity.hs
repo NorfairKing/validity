@@ -112,6 +112,7 @@ import Data.Char (chr)
 import Data.Ratio ((%))
 import GHC.Generics
 import GHC.Real (Ratio(..))
+import Control.Monad (guard)
 
 import Test.QuickCheck hiding (Fixed)
 
@@ -714,8 +715,13 @@ instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
     genValid = (do
       n <- genValid
       d <- (genValid `suchThat` (> 0))
-      pure $ n :% d) `suchThat` ((== valid) . validateRatioNormalised)
-    shrinkValid (n :% d) = filter isValid [n' % d' | (n', d') <- shrinkValid (n, d), d' > 0]
+      pure $ n :% d) `suchThat` isValid
+    shrinkValid (n :% d) = do
+      (n', d') <- shrinkValid (n, d)
+      guard $ d' > 0
+      let candidate = n' :% d'
+      guard $ isValid candidate
+      pure $ n' % d'
 
 instance (Integral a, Num a, Ord a, Validity a, GenUnchecked a) => GenInvalid (Ratio a)
 

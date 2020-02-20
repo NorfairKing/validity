@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.10.0.1] - 2020-02-20
+
+### Changed
+
+* Fixed a bug where shrinking ratios of bounded types would crash if the minimum bound was in the numerator.
+
 ## [0.10.0.0] - 2020-02-10
 
 ### Added
