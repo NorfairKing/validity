@@ -3,6 +3,7 @@ let
   versions = [
     "lts-13_11"
     "lts-13_19"
+    "lts-14_23"
   ];
   copyPackage = pkgName: pkgPath: ''
     cp -r ${pkgPath} $out/${pkgName}
