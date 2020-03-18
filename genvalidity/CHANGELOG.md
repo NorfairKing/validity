@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.10.0.2] - 2020-03-18
+
+### Changed
+
+* Better lower bound for genvalidity
+
 ## [0.10.0.1] - 2020-02-20
 
 ### Changed
