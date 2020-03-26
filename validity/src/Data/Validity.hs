@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MagicHash #-}
 {-# LANGUAGE TypeOperators #-}
 #if MIN_VERSION_base(4,9,0)
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
@@ -97,6 +98,8 @@ import Data.Ratio
 import Data.Bits ((.&.))
 import Data.Char (ord)
 import Data.Int (Int16, Int32, Int64, Int8)
+import GHC.Int (Int8(..), Int16(..), Int32(..))
+import GHC.Exts (isTrue#, (<#), (>=#))
 #if MIN_VERSION_base(4,8,0)
 import Data.Word (Word16, Word32, Word64, Word8)
 #else
@@ -412,15 +415,27 @@ instance Validity Int where
 
 -- | Trivially valid
 instance Validity Int8 where
-    validate = trivialValidation
+    validate (I8# i#) =
+      mconcat
+        [ declare "The contained integer is smaller than 128" $ isTrue# (i# <# 128#)
+        , declare "The contained integer is greater than or equal to -128" $ isTrue# (i# >=# -128#)
+        ]
 
 -- | Trivially valid
 instance Validity Int16 where
-    validate = trivialValidation
+    validate (I16# i#) =
+      mconcat
+        [ declare "The contained integer is smaller than 128" $ isTrue# (i# <# 32768#)
+        , declare "The contained integer is greater than or equal to -128" $ isTrue# (i# >=# -32768#)
+        ]
 
 -- | Trivially valid
 instance Validity Int32 where
-    validate = trivialValidation
+    validate (I32# i#) =
+      mconcat
+        [ declare "The contained integer is smaller than 128" $ isTrue# (i# <# 2147483648#)
+        , declare "The contained integer is greater than or equal to -128" $ isTrue# (i# >=# -2147483648#)
+        ]
 
 -- | Trivially valid
 instance Validity Int64 where

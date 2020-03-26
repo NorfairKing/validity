@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE MagicHash #-}
 {-# LANGUAGE CPP #-}
 
 module Data.ValiditySpec
@@ -11,6 +12,7 @@ import Data.Monoid
 #endif
 import Data.Maybe
 import Data.Validity
+import GHC.Int (Int16(..), Int32(..), Int8(..))
 import GHC.Real (Ratio(..), infinity, notANumber)
 
 import Test.Hspec
@@ -47,6 +49,16 @@ instance Validity GeneratedValidity
 
 spec :: Spec
 spec = do
+  describe "Small numbers" $ do
+    describe "Validity Int8" $ do
+      it "Says that Int# 200 is invalid" $ isValid (I8# 200#) `shouldBe` False
+      it "Says that Int# -200 is invalid" $ isValid (I8# (-200#)) `shouldBe` False
+    describe "Validity Int16" $ do
+      it "Says that Int# 4000 is invalid" $ isValid (I16# 40000#) `shouldBe` False
+      it "Says that Int# -4000 is invalid" $ isValid (I16# (-40000#)) `shouldBe` False
+    describe "Validity Int32" $ do
+      it "Says that Int# 2200000000 is invalid" $ isValid (I16# 2200000000#) `shouldBe` False
+      it "Says that Int# -2200000000 is invalid" $ isValid (I16# (-2200000000#)) `shouldBe` False
   describe "Weird Chars" $ do
     describe "isUtf16SurrogateCodePoint" $ do
       it "Says that a is a valid char" $ isUtf16SurrogateCodePoint 'a' `shouldBe` False
@@ -59,12 +71,16 @@ spec = do
   describe "Ratio" $ do
     it "says that 0 is valid" $ NormalisedRatio (0 :% 1 :: Ratio Int) `shouldSatisfy` isValid
     it "says that 1 is valid" $ NormalisedRatio (1 :% 1 :: Ratio Int) `shouldSatisfy` isValid
-    it "says that minBound is valid" $ NormalisedRatio (minBound :% 1 :: Ratio Int) `shouldSatisfy` isValid
-    it "says that maxBound is valid" $ NormalisedRatio (maxBound :% 1 :: Ratio Int) `shouldSatisfy` isValid
-    it "says that maxBound / minBound is invalid" $ NormalisedRatio (maxBound :% minBound :: Ratio Int) `shouldSatisfy` (not . isValid)
-    it "says that minBound / maxBound is invalid" $ NormalisedRatio (minBound :% maxBound :: Ratio Int) `shouldSatisfy` (not . isValid)
-
-    it "says that minBound / 2957808295740799111 is valid" $ NormalisedRatio (minBound :% (2957808295740799111) :: Ratio Int) `shouldSatisfy` isValid
+    it "says that minBound is valid" $
+      NormalisedRatio (minBound :% 1 :: Ratio Int) `shouldSatisfy` isValid
+    it "says that maxBound is valid" $
+      NormalisedRatio (maxBound :% 1 :: Ratio Int) `shouldSatisfy` isValid
+    it "says that maxBound / minBound is invalid" $
+      NormalisedRatio (maxBound :% minBound :: Ratio Int) `shouldSatisfy` (not . isValid)
+    it "says that minBound / maxBound is invalid" $
+      NormalisedRatio (minBound :% maxBound :: Ratio Int) `shouldSatisfy` (not . isValid)
+    it "says that minBound / 2957808295740799111 is valid" $
+      NormalisedRatio (minBound :% (2957808295740799111) :: Ratio Int) `shouldSatisfy` isValid
   describe "NormalisedRatio" $ do
     it "says that NaN is invalid" $ NormalisedRatio notANumber `shouldSatisfy` (not . isValid)
     it "says that +Inf is invalid" $ NormalisedRatio infinity `shouldSatisfy` (not . isValid)
