@@ -1,5 +1,5 @@
 name: genvalidity-uuid
-version: '0.1.0.3'
+version: '0.1.0.4'
 synopsis: GenValidity support for UUID
 category: Testing
 author: Tom Sydney Kerckhove
@@ -36,3 +36,17 @@ tests:
     - genvalidity-hspec
     - genvalidity-uuid
     - hspec
+
+benchmarks:
+  genvalidity-uuid-bench:
+    main: Main.hs
+    source-dirs: bench/
+    ghc-options:
+    - -Wall
+    dependencies:
+    - QuickCheck
+    - criterion
+    - genvalidity
+    - genvalidity-criterion
+    - genvalidity-uuid
+
