@@ -1,33 +1,35 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE MagicHash #-}
-{-# LANGUAGE CPP #-}
+
+-- {-# LANGUAGE CPP #-}
 
 module Data.ValiditySpec
-  ( spec
-  ) where
+  ( spec,
+  )
+where
 
-import GHC.Generics (Generic)
-#if !MIN_VERSION_base(4,7,0)
-import Data.Monoid
-#endif
+-- #if !MIN_VERSION_base(4,7,0)
+-- import Data.Monoid
+-- #endif
 import Data.Maybe
 import Data.Validity
-import GHC.Int (Int16(..), Int32(..), Int8(..))
-import GHC.Real (Ratio(..), infinity, notANumber)
-
+import GHC.Generics (Generic)
+import GHC.Int (Int16 (..), Int32 (..), Int8 (..))
+import GHC.Real (Ratio (..), infinity, notANumber)
+import GHC.Word (Word16 (..), Word32 (..), Word8 (..))
 import Test.Hspec
 
-newtype NormalisedRatio a =
-  NormalisedRatio (Ratio a)
+newtype NormalisedRatio a
+  = NormalisedRatio (Ratio a)
   deriving (Show, Eq, Generic)
 
 instance (Validity a, Integral a) => Validity (NormalisedRatio a) where
   validate nr@(NormalisedRatio r) =
     mconcat
-      [ genericValidate nr
-      , validateRatioNotNaN r
-      , validateRatioNotInfinite r
-      , validateRatioNormalised r
+      [ genericValidate nr,
+        validateRatioNotNaN r,
+        validateRatioNotInfinite r,
+        validateRatioNormalised r
       ]
 
 data Wrong
@@ -41,8 +43,8 @@ instance Validity Wrong where
       Wrong -> invalid "Wrong"
       Fine -> valid
 
-data GeneratedValidity =
-  G Rational Rational
+data GeneratedValidity
+  = G Rational Rational
   deriving (Show, Eq, Generic)
 
 instance Validity GeneratedValidity
@@ -57,8 +59,14 @@ spec = do
       it "Says that Int# 4000 is invalid" $ isValid (I16# 40000#) `shouldBe` False
       it "Says that Int# -4000 is invalid" $ isValid (I16# (-40000#)) `shouldBe` False
     describe "Validity Int32" $ do
-      it "Says that Int# 2200000000 is invalid" $ isValid (I16# 2200000000#) `shouldBe` False
-      it "Says that Int# -2200000000 is invalid" $ isValid (I16# (-2200000000#)) `shouldBe` False
+      it "Says that Int# 2200000000 is invalid" $ isValid (I32# 2200000000#) `shouldBe` False
+      it "Says that Int# -2200000000 is invalid" $ isValid (I32# (-2200000000#)) `shouldBe` False
+    describe "Validity Word8" $ do
+      it "Says that Word# 300 is invalid" $ isValid (W8# 300##) `shouldBe` False
+    describe "Validity Word16" $ do
+      it "Says that Word# 80000 is invalid" $ isValid (W16# 80000##) `shouldBe` False
+    describe "Validity Word32" $ do
+      it "Says that Word# 4800000000 is invalid" $ isValid (W32# 4800000000##) `shouldBe` False
   describe "Weird Chars" $ do
     describe "isUtf16SurrogateCodePoint" $ do
       it "Says that a is a valid char" $ isUtf16SurrogateCodePoint 'a' `shouldBe` False
@@ -84,7 +92,7 @@ spec = do
   describe "NormalisedRatio" $ do
     it "says that NaN is invalid" $ NormalisedRatio notANumber `shouldSatisfy` (not . isValid)
     it "says that +Inf is invalid" $ NormalisedRatio infinity `shouldSatisfy` (not . isValid)
-    it "says that -Inf is invalid" $ NormalisedRatio (-infinity) `shouldSatisfy` (not . isValid)
+    it "says that -Inf is invalid" $ NormalisedRatio (- infinity) `shouldSatisfy` (not . isValid)
     it "says that these non-normalised numbers are invalid" $ do
       NormalisedRatio ((5 :: Integer) :% 5) `shouldSatisfy` (not . isValid)
       NormalisedRatio ((1 :: Integer) :% (-5)) `shouldSatisfy` (not . isValid)

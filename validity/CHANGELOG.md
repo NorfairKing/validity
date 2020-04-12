@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.10.0.0] - 2020-04-12
+
+### Changed
+
+* Made it so that Word8, Word16, Word32 and Int8, Int16, Int32 are no longer trivially valid.
+
 ## [0.9.0.3] - 2020-02-10
 
 ### Changed

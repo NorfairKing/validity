@@ -2,6 +2,7 @@
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MagicHash #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -43,11 +44,18 @@ module Data.GenValidity.Utils
     , genDouble
     , genFloatX
     , genInteger
+    , genUncheckedInt
+    , shrinkUncheckedInt
+    , genUncheckedWord
+    , shrinkUncheckedWord
     ) where
 
 import Test.QuickCheck hiding (Fixed)
 import System.Random
 import GHC.Float
+import GHC.Int (Int(..))
+import GHC.Word (Word(..))
+import GHC.Exts (Word#, Int#)
 import Data.Ratio
 #if !MIN_VERSION_QuickCheck(2,8,0)
 import Data.List (sortBy)
@@ -361,3 +369,19 @@ genInteger = sized $ \s -> oneof $
       bi <- resize b genInteger
       ci <- resize c genIntSizedInteger
       pure $ ai * bi + ci
+
+genUncheckedInt :: (Int# -> a) -> Gen a
+genUncheckedInt func = do
+  (I# i#) <- genIntX
+  pure $ func i#
+
+shrinkUncheckedInt :: (Int -> a) -> (a -> Int) -> a -> [a]
+shrinkUncheckedInt fromInt toInt = fmap fromInt . shrink . toInt
+
+genUncheckedWord :: (Word# -> a) -> Gen a
+genUncheckedWord func = do
+  (W# w#) <- genWordX
+  pure $ func w#
+
+shrinkUncheckedWord :: (Word -> a) -> (a -> Word) -> a -> [a]
+shrinkUncheckedWord fromWord toWord = fmap fromWord . shrink . toWord

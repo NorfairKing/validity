@@ -97,14 +97,16 @@ import Data.Ratio
 #endif
 import Data.Bits ((.&.))
 import Data.Char (ord)
-import Data.Int (Int16, Int32, Int64, Int8)
+import Data.Int (Int64)
 import GHC.Int (Int8(..), Int16(..), Int32(..))
 import GHC.Exts (isTrue#, (<#), (>=#))
 #if MIN_VERSION_base(4,8,0)
-import Data.Word (Word16, Word32, Word64, Word8)
+import GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 #else
-import Data.Word (Word, Word16, Word32, Word64, Word8)
+import Data.Word (Word)
+import GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 #endif
+import GHC.Exts (ltWord#)
 import GHC.Generics
 #if MIN_VERSION_base(4,8,0)
 import GHC.Natural
@@ -413,28 +415,28 @@ isUtf16SurrogateCodePoint c = ord c .&. 0x1ff800 == 0xd800
 instance Validity Int where
     validate = trivialValidation
 
--- | Trivially valid
+-- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Int8 where
     validate (I8# i#) =
       mconcat
-        [ declare "The contained integer is smaller than 128" $ isTrue# (i# <# 128#)
+        [ declare "The contained integer is smaller than 2^7 = 128" $ isTrue# (i# <# 128#)
         , declare "The contained integer is greater than or equal to -128" $ isTrue# (i# >=# -128#)
         ]
 
--- | Trivially valid
+-- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Int16 where
     validate (I16# i#) =
       mconcat
-        [ declare "The contained integer is smaller than 128" $ isTrue# (i# <# 32768#)
-        , declare "The contained integer is greater than or equal to -128" $ isTrue# (i# >=# -32768#)
+        [ declare "The contained integer is smaller than 2^15 = 32768" $ isTrue# (i# <# 32768#)
+        , declare "The contained integer is greater than or equal to -32768" $ isTrue# (i# >=# -32768#)
         ]
 
--- | Trivially valid
+-- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Int32 where
     validate (I32# i#) =
       mconcat
-        [ declare "The contained integer is smaller than 128" $ isTrue# (i# <# 2147483648#)
-        , declare "The contained integer is greater than or equal to -128" $ isTrue# (i# >=# -2147483648#)
+        [ declare "The contained integer is smaller than 2^31 = 2147483648" $ isTrue# (i# <# 2147483648#)
+        , declare "The contained integer is greater than or equal to -2147483648" $ isTrue# (i# >=# -2147483648#)
         ]
 
 -- | Trivially valid
@@ -445,17 +447,20 @@ instance Validity Int64 where
 instance Validity Word where
     validate = trivialValidation
 
--- | Trivially valid
+-- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Word8 where
-    validate = trivialValidation
+    validate (W8# w#) =
+      declare "The contained integer is smaller than 2^8 = 256" $ isTrue# (w# `ltWord#` 256##)
 
--- | Trivially valid
+-- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Word16 where
-    validate = trivialValidation
+    validate (W16# w#) =
+      declare "The contained integer is smaller than 2^16 = 65536" $ isTrue# (w# `ltWord#` 65536##)
 
--- | Trivially valid
+-- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Word32 where
-    validate = trivialValidation
+    validate (W32# w#) =
+      declare "The contained integer is smaller than 2^32 = 4294967296" $ isTrue# (w# `ltWord#` 4294967296##)
 
 -- | Trivially valid
 instance Validity Word64 where

@@ -48,6 +48,7 @@
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MagicHash #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE TypeOperators #-}
@@ -103,11 +104,14 @@ import Data.Fixed (Fixed(..), HasResolution)
 import Data.List.NonEmpty (NonEmpty((:|)))
 #endif
 #if MIN_VERSION_base(4,8,0)
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word64)
+import GHC.Word (Word8(..), Word16(..), Word32(..), Word(..))
 #else
-import Data.Word (Word, Word8, Word16, Word32, Word64)
+import Data.Word (Word, Word64)
+import GHC.Word (Word8(..), Word16(..), Word32(..), Word(..))
 #endif
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int64)
+import GHC.Int (Int8(..), Int16(..), Int32(..), Int(..))
 import Data.Char (chr)
 import Data.Ratio ((%))
 import GHC.Generics
@@ -591,28 +595,28 @@ instance GenValid Int where
     shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Int8 where
-    genUnchecked = genIntX
-    shrinkUnchecked = shrink
+    genUnchecked = genUncheckedInt (I8#)
+    shrinkUnchecked = shrinkUncheckedInt (\(I# i#) -> I8# i#) (\(I8# i#) -> I# i#)
 
 instance GenValid Int8 where
-    genValid = genUnchecked
-    shrinkValid = shrinkUnchecked
+    genValid = genIntX
+    shrinkValid = shrink
 
 instance GenUnchecked Int16 where
-    genUnchecked = genIntX
-    shrinkUnchecked = shrink
+    genUnchecked = genUncheckedInt (I16#)
+    shrinkUnchecked = shrinkUncheckedInt (\(I# i#) -> I16# i#) (\(I16# i#) -> I# i#)
 
 instance GenValid Int16 where
-    genValid = genUnchecked
-    shrinkValid = shrinkUnchecked
+    genValid = genIntX
+    shrinkValid = shrink
 
 instance GenUnchecked Int32 where
-    genUnchecked = genIntX
-    shrinkUnchecked = shrink
+    genUnchecked = genUncheckedInt (I32#)
+    shrinkUnchecked = shrinkUncheckedInt (\(I# i#) -> I32# i#) (\(I32# i#) -> I# i#)
 
 instance GenValid Int32 where
-    genValid = genUnchecked
-    shrinkValid = shrinkUnchecked
+    genValid = genIntX
+    shrinkValid = shrink
 
 instance GenUnchecked Int64 where
     genUnchecked = genIntX
@@ -631,28 +635,28 @@ instance GenValid Word where
     shrinkValid = shrinkUnchecked
 
 instance GenUnchecked Word8 where
-    genUnchecked = genWordX
-    shrinkUnchecked = shrink
+    genUnchecked = genUncheckedWord (W8#)
+    shrinkUnchecked = shrinkUncheckedWord (\(W# w#) -> W8# w#) (\(W8# w#) -> W# w#)
 
 instance GenValid Word8 where
-    genValid = genUnchecked
-    shrinkValid = shrinkUnchecked
+    genValid = genWordX
+    shrinkValid = shrink
 
 instance GenUnchecked Word16 where
-    genUnchecked = genWordX
-    shrinkUnchecked = shrink
+    genUnchecked = genUncheckedWord (W16#)
+    shrinkUnchecked = shrinkUncheckedWord (\(W# w#) -> W16# w#) (\(W16# w#) -> W# w#)
 
 instance GenValid Word16 where
-    genValid = genUnchecked
-    shrinkValid = shrinkUnchecked
+    genValid = genWordX
+    shrinkValid = shrink
 
 instance GenUnchecked Word32 where
-    genUnchecked = genWordX
-    shrinkUnchecked = shrink
+    genUnchecked = genUncheckedWord (W32#)
+    shrinkUnchecked = shrinkUncheckedWord (\(W# w#) -> W32# w#) (\(W32# w#) -> W# w#)
 
 instance GenValid Word32 where
-    genValid = genUnchecked
-    shrinkValid = shrinkUnchecked
+    genValid = genWordX
+    shrinkValid = shrink
 
 instance GenUnchecked Word64 where
     genUnchecked = genWordX
