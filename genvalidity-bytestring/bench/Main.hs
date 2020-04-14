@@ -8,9 +8,8 @@ import Criterion.Main as Criterion
 import Data.ByteString as Strict
 import Data.ByteString.Lazy as Lazy
 import Data.GenValidity
-import Data.GenValidity.ByteString
+import Data.GenValidity.ByteString ()
 import Data.GenValidity.Criterion
-import Test.QuickCheck
 
 main :: IO ()
 main =
