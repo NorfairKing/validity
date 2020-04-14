@@ -21,7 +21,7 @@ main =
         ],
       bgroup
         "Approaches"
-        [ genBench "SB.pack <$> genValid" (Strict.pack <$> genValid),
-          genBench "LB.pack <$> genValid" (Lazy.pack <$> genValid)
+        [ genBenchSizes "SB.pack <$> genValid" (Strict.pack <$> genValid),
+          genBenchSizes "LB.pack <$> genValid" (Lazy.pack <$> genValid)
         ]
     ]

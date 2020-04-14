@@ -16,5 +16,5 @@ main =
   Criterion.defaultMain
     [ genValidBench @UUID,
       genUncheckedBench @UUID,
-      genBench "valid UUID via genUnchecked" ((genUnchecked `suchThat` isValid) :: Gen UUID)
+      genBenchSizes "valid UUID via genUnchecked" ((genUnchecked `suchThat` isValid) :: Gen UUID)
     ]

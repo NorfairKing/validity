@@ -20,13 +20,15 @@ main =
   Criterion.defaultMain
     [ bgroup
         "Instances"
-        [genBench "Strict.Text" (genValid @Strict.Text), genBench "Lazy.Text" (genValid @Lazy.Text)]
+        [ genBenchSizes "Strict.Text" (genValid @Strict.Text)
+        , genBenchSizes "Lazy.Text" (genValid @Lazy.Text)
+        ]
     , bgroup
         "Approaches"
-        [ genBench "via list (old version)" $ Strict.pack <$> genValid
-        , genBench "genText" genText
-        , genBench "genTextBy genValid" $ genTextBy genValid
-        , genBench "genTextBy (choose (minBound, maxBound)) (currently in use)" $
+        [ genBenchSizes "via list (old version)" $ Strict.pack <$> genValid
+        , genBenchSizes "genText" genText
+        , genBenchSizes "genTextBy genValid" $ genTextBy genValid
+        , genBenchSizes "genTextBy (choose (minBound, maxBound)) (currently in use)" $
           genTextBy (choose (minBound, maxBound))
         ]
     ]
