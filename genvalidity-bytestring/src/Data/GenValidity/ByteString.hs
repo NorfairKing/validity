@@ -9,7 +9,11 @@ module Data.GenValidity.ByteString where
 
 import Data.GenValidity
 import Data.Validity.ByteString ()
+import System.Random as Random
 import Test.QuickCheck
+import Test.QuickCheck.Gen
+import Test.QuickCheck.Random
+import Data.Word (Word8)
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<*>), pure)
 import Data.Functor ((<$>))
@@ -27,7 +31,7 @@ import GHC.TypeLits
 -- > genValid = SB.pack <$> genValid
 -- > shrinkValid = fmap SB.pack . shrinkValid . SB.unpack
 instance GenValid SB.ByteString where
-    genValid = SB.pack <$> genValid
+    genValid = genStrictByteStringBy genValid
     shrinkValid = fmap SB.pack . shrinkValid . SB.unpack
 #if MIN_VERSION_base(4,9,0)
 -- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
@@ -36,6 +40,18 @@ instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.ByteS
     genUnchecked = error "unreachable"
     shrinkUnchecked = error "unreachable"
 #endif
+
+genStrictByteStringBy :: Gen Word8 -> Gen SB.ByteString
+genStrictByteStringBy (MkGen word8Func) = do
+  len <- genListLength
+  MkGen $ \qcgen size ->
+    let go :: QCGen -> Maybe (Word8, QCGen)
+        go qcg =
+          let (qc1, qc2) = Random.split qcg
+           in Just (word8Func qc1 size, qc2)
+     in fst $ SB.unfoldrN len go qcgen
+
+
 -- | WARNING: Unchecked ByteStrings are __seriously__ broken.
 --
 -- The pointer may still point to something which is fine, but
@@ -59,7 +75,7 @@ shrinkTrulyUncheckedStrictByteString (SB.PS p o l) =
     [SB.PS p o' l' | (o', l') <- shrinkUnchecked (o, l)]
 
 instance GenValid LB.ByteString where
-    genValid = LB.pack <$> genValid
+    genValid = genLazyByteStringBy genValid
     shrinkValid = fmap LB.pack . shrinkValid . LB.unpack
 #if MIN_VERSION_base(4,9,0)
 -- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
@@ -68,6 +84,19 @@ instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.ByteS
     genUnchecked = error "unreachable"
     shrinkUnchecked = error "unreachable"
 #endif
+
+genLazyByteStringBy :: Gen Word8 -> Gen LB.ByteString
+genLazyByteStringBy gen = genLazyByteStringByStrictByteString (genStrictByteStringBy gen)
+
+genLazyByteStringByStrictByteString :: Gen SB.ByteString -> Gen LB.ByteString
+genLazyByteStringByStrictByteString gen =
+  sized $ \s -> do
+    ss <- arbPartition s
+    go ss
+  where
+    go [] = pure LB.Empty
+    go (s:ss) = LB.Chunk <$> resize s gen <*> go ss
+
 -- | WARNING: Unchecked ByteStrings are __seriously__ broken.
 --
 -- See 'genTrulyUncheckedStrictByteString'
