@@ -14,6 +14,7 @@ where
 import Data.Maybe
 import Data.Validity
 import GHC.Generics (Generic)
+import GHC.Exts (Char(..), chr#)
 import GHC.Int (Int16 (..), Int32 (..), Int8 (..))
 import GHC.Real (Ratio (..), infinity, notANumber)
 import GHC.Word (Word16 (..), Word32 (..), Word8 (..))
@@ -67,15 +68,22 @@ spec = do
       it "Says that Word# 80000 is invalid" $ isValid (W16# 80000##) `shouldBe` False
     describe "Validity Word32" $ do
       it "Says that Word# 4800000000 is invalid" $ isValid (W32# 4800000000##) `shouldBe` False
-  describe "Weird Chars" $ do
-    describe "isUtf16SurrogateCodePoint" $ do
-      it "Says that a is a valid char" $ isUtf16SurrogateCodePoint 'a' `shouldBe` False
-      it "Says that \\55810 is an invalid char" $ isUtf16SurrogateCodePoint '\55810' `shouldBe` True
-    describe "validateCharNotUtf16SurrogateCodePoint" $ do
-      it "Says that a is a valid char" $
-        prettyValidation (validateCharNotUtf16SurrogateCodePoint 'a') `shouldSatisfy` isNothing
-      it "Says that \\55810 is an invalid char" $
-        prettyValidation (validateCharNotUtf16SurrogateCodePoint '\55810') `shouldSatisfy` isJust
+  describe "Chars" $ do
+    describe "Small" $ do
+      describe "Validity Char" $ do
+        it "Says that 2147483647 is invalid" $ isValid (C# (chr# 2147483647#)) `shouldBe` False
+        it "Says that a negative char is invalid" $ isValid (C# (chr# -1#)) `shouldBe` False
+        it "Says that a very positive char is invalid" $ isValid (C# (chr# 9223372036854775807#)) `shouldBe` False
+        it "Says that a very negative char is invalid" $ isValid (C# (chr# -9223372036854775808#)) `shouldBe` False
+    describe "Weird" $ do
+      describe "isUtf16SurrogateCodePoint" $ do
+        it "Says that a is a valid char" $ isUtf16SurrogateCodePoint 'a' `shouldBe` False
+        it "Says that \\55810 is an invalid char" $ isUtf16SurrogateCodePoint '\55810' `shouldBe` True
+      describe "validateCharNotUtf16SurrogateCodePoint" $ do
+        it "Says that a is a valid char" $
+          prettyValidation (validateCharNotUtf16SurrogateCodePoint 'a') `shouldSatisfy` isNothing
+        it "Says that \\55810 is an invalid char" $
+          prettyValidation (validateCharNotUtf16SurrogateCodePoint '\55810') `shouldSatisfy` isJust
   describe "Ratio" $ do
     it "says that 0 is valid" $ NormalisedRatio (0 :% 1 :: Ratio Int) `shouldSatisfy` isValid
     it "says that 1 is valid" $ NormalisedRatio (1 :% 1 :: Ratio Int) `shouldSatisfy` isValid
