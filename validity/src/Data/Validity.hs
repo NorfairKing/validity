@@ -99,7 +99,7 @@ import Data.Bits ((.&.))
 import Data.Char (ord)
 import Data.Int (Int64)
 import GHC.Int (Int8(..), Int16(..), Int32(..))
-import GHC.Exts (isTrue#, (<#), (>=#))
+import GHC.Exts (Char(..), ord#, isTrue#, (<=#), (>=#), (<#), (>=#))
 #if MIN_VERSION_base(4,8,0)
 import GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
 #else
@@ -402,7 +402,10 @@ instance Validity Ordering where
 
 -- | Trivially valid
 instance Validity Char where
-    validate = trivialValidation
+    validate (C# c#) = mconcat
+      [ declare "The contained value is positive" $ isTrue# (ord# c# >=# 0#)
+      , declare "The contained value is smaller than 0x10FFFF = 1114111" $ isTrue# (ord# c# <=# 1114111#)
+      ]
 
 validateCharNotUtf16SurrogateCodePoint :: Char -> Validation
 validateCharNotUtf16SurrogateCodePoint c =
@@ -420,7 +423,7 @@ instance Validity Int8 where
     validate (I8# i#) =
       mconcat
         [ declare "The contained integer is smaller than 2^7 = 128" $ isTrue# (i# <# 128#)
-        , declare "The contained integer is greater than or equal to -128" $ isTrue# (i# >=# -128#)
+        , declare "The contained integer is greater than or equal to -2^7 = -128" $ isTrue# (i# >=# -128#)
         ]
 
 -- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
@@ -428,7 +431,7 @@ instance Validity Int16 where
     validate (I16# i#) =
       mconcat
         [ declare "The contained integer is smaller than 2^15 = 32768" $ isTrue# (i# <# 32768#)
-        , declare "The contained integer is greater than or equal to -32768" $ isTrue# (i# >=# -32768#)
+        , declare "The contained integer is greater than or equal to -2^15 = -32768" $ isTrue# (i# >=# -32768#)
         ]
 
 -- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
@@ -436,7 +439,7 @@ instance Validity Int32 where
     validate (I32# i#) =
       mconcat
         [ declare "The contained integer is smaller than 2^31 = 2147483648" $ isTrue# (i# <# 2147483648#)
-        , declare "The contained integer is greater than or equal to -2147483648" $ isTrue# (i# >=# -2147483648#)
+        , declare "The contained integer is greater than or equal to -2^31 = -2147483648" $ isTrue# (i# >=# -2147483648#)
         ]
 
 -- | Trivially valid
