@@ -2,7 +2,21 @@
 
 ## [Unreleased]
 
-## [0.5.0.1] - 2020-02-10a
+## [0.6.0.0] - 2020-04-17
+
+### Added
+
+* genStrictByteStringBy
+* genLazyByteStringBy
+* genLazyByteStringByStrictByteString
+* Benchmarks for the generators
+
+### Changed
+
+* Strict Bytestrings are now generated up to 4x faster.
+* Lazy Bytestrings are now generated to usually have multiple chunks.
+
+## [0.5.0.1] - 2020-02-10
 
 * Improved the cabal file
 
