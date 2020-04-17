@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.0.0] - 2020-04-17
+
+### Changed
+
+* Made it so that Char is no longer trivially valid.
+
 ## [0.10.0.0] - 2020-04-12
 
 ### Changed
