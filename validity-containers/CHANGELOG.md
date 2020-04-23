@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0.2] - 2020-04-23
+
+### Changed
+
+* Exposed `decorateMap` from `Data.Validity.Containers`
+
 ## [0.5.0.1] - 2019-09-23
 
 ### Changed
