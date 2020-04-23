@@ -1,6 +1,15 @@
-module Data.Validity.Containers where
+{-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 
-import Data.Validity.Map as Containers
-import Data.Validity.Sequence as Containers ()
-import Data.Validity.Set as Containers ()
-import Data.Validity.Tree as Containers ()
+module Data.Validity.Containers
+  ( module Data.Validity.Map,
+    module Data.Validity.Sequence,
+    module Data.Validity.Set,
+    module Data.Validity.Tree,
+  )
+where
+
+import Data.Validity.Map
+import Data.Validity.Sequence
+import Data.Validity.Set
+import Data.Validity.Tree
