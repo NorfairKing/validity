@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0.3] - 2020-04-23
+
+### Changed
+
+* The same as 0.5.0.2, but now it actually works.
+
+## [0.5.0.2] - 2020-04-23
+
+### Changed
+
+* Exposed `decorateMap` from `Data.Validity.Containers`
+
 ## [0.5.0.1] - 2019-09-23
 
 ### Changed
