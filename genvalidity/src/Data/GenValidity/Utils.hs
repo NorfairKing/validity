@@ -304,9 +304,8 @@ genFloatX func =
     [ (1, denormalised)
     , (1, small)
     , (1, aroundBounds)
-    , (1, viaEncoding)
     , (1, uniformViaEncoding)
-    , (5, reallyUniform)
+    , (6, reallyUniform)
     ]
   where
     denormalised :: Gen a
@@ -343,8 +342,6 @@ genFloatX func =
         , choose (upperExponent - n, upperExponent)
         ]
       pure $ encodeFloat s e
-    viaEncoding :: Gen a
-    viaEncoding = encodeFloat <$> arbitrary <*> genIntX
     uniformViaEncoding :: Gen a
     uniformViaEncoding = do
       s <- choose (lowerSignificand, upperSignificand)

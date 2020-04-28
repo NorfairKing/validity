@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.0.1] - 2020-04-28
+
+### Changed
+
+* Got rid of some unnecessary extra special values in the generator for double
+
 ## [0.11.0.0] - 2020-04-12
 
 ### Changed
