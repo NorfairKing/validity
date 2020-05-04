@@ -9,14 +9,16 @@ module Data.GenValidity.Criterion
     genValidBench,
     genBenchSizes,
     genBench,
+    genBenchSized,
   )
 where
 
 import Control.DeepSeq
 import Criterion
 import Data.GenValidity
+import Test.QuickCheck.Gen
+import Test.QuickCheck.Random
 import Data.Typeable
-import Test.QuickCheck
 
 -- | Benchmarks for both genUnchecked and genValid
 genValidityBench ::
@@ -44,13 +46,17 @@ genValidBench = genBenchSizes (unwords ["genValid", nameOf @a]) (genValid @a)
 genBenchSizes :: NFData a => String -> Gen a -> Benchmark
 genBenchSizes name gen =
   bgroup name $
-    let bi i = genBench ("size " <> show i) (resize i gen)
-     in [bi 8, bi 16, bi 32, bi 64]
+    let bi i = genBenchSized ("size " <> show i) i gen
+     in [bi 15, bi 30]
 
--- | Benchmarks a generator with a given name
+-- | Benchmarks a generator with a given name with the default size: 30
 genBench :: NFData a => String -> Gen a -> Benchmark
-genBench name gen =
-  bench name $ nfIO $ generate gen
+genBench name = genBenchSized name 30
+
+-- | Benchmarks a generator with a given name and size
+genBenchSized :: NFData a => String -> Int -> Gen a -> Benchmark
+genBenchSized name size (MkGen genFunc) =
+  bench name $ nf (\seed -> genFunc seed size) (mkQCGen 42)
 
 nameOf ::
   forall a.
