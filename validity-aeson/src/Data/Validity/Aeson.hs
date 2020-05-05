@@ -3,6 +3,7 @@
 module Data.Validity.Aeson where
 
 import Data.Aeson
+import Data.Aeson.Types
 import Data.Validity
 import Data.Validity.HashMap ()
 import Data.Validity.Scientific ()
@@ -17,3 +18,20 @@ instance Validity Value where
     validate (Number s) = annotate s "Number"
     validate (Bool b) = annotate b "Bool"
     validate Null = valid
+
+-- | Modify a parser to fail on invalid results.
+parseJSONValid :: Validity a => Parser a -> Parser a
+parseJSONValid p = do
+  r <- p
+  case prettyValidate r of
+    Left err -> fail $ unwords ["Parsed value is not valid:", err]
+    Right r' -> pure r'
+
+-- | Modify a parsing function to fail on invalid results.
+--
+-- Easy to use with the `withX` helper functions:
+--
+-- > parseJSON = parseJSONValidwith . withObject "MyThing" $ \o ->
+-- >   MyThing <$> ...
+parseJSONValidWith :: Validity a => (value -> Parser a) -> (value -> Parser a)
+parseJSONValidWith func v = parseJSONValid $ func v

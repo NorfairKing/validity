@@ -1,5 +1,5 @@
 name: validity-aeson
-version: '0.2.0.3'
+version: '0.2.0.4'
 synopsis: Validity instances for aeson
 category: Validity
 author: Tom Sydney Kerckhove
@@ -10,12 +10,29 @@ github: NorfairKing/validity
 
 dependencies:
 - base >=4.7 && <5
-- aeson
-- validity >=0.5
-- validity-text >=0.3
-- validity-unordered-containers >=0.1
-- validity-vector >=0.1
-- validity-scientific >=0.2
 
 library:
   source-dirs: src
+  dependencies:
+  - base >=4.7 && <5
+  - aeson
+  - validity >=0.5
+  - validity-text >=0.3
+  - validity-unordered-containers >=0.1
+  - validity-vector >=0.1
+  - validity-scientific >=0.2
+
+tests:
+  validity-aeson-test:
+    main: Spec.hs
+    source-dirs: test/
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - aeson
+    - hspec
+    - validity
+    - validity-aeson
