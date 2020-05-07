@@ -48,7 +48,7 @@ library:
   source-dirs: src
   dependencies:
   - validity >=0.9
-  - QuickCheck >=2.7
+  - QuickCheck >= 2.12
   - random
   when:
   - condition: impl(ghc >=8.0.0)

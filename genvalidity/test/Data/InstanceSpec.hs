@@ -46,6 +46,18 @@ spec = do
   twoTests (Proxy :: Proxy Integer)
   twoTests (Proxy :: Proxy Float)
   twoTupleTests (Proxy :: Proxy Float)
+  -- Regression tests
+  describe "shrinkUnchecked Float" $ do
+    let sf :: Float -> Spec
+        sf f = it (unwords ["Does not shrink" , show f , "to itself"]) $ f `shouldNotSatisfy` (`elem` shrinkUnchecked f)
+
+    sf (-2.1393704e20)
+    sf 1.2223988e-12
+    sf 2.7896812e10
+  describe "shrinkUnchecked Double" $ do
+    let sd :: Double -> Spec
+        sd d = it (unwords ["Does not shrink" , show d , "to itself"]) $ d `shouldNotSatisfy` (`elem` shrinkUnchecked d)
+    sd (-1.032730679986007e18)
   twoTests (Proxy :: Proxy Double)
   twoTupleTests (Proxy :: Proxy Double)
   threeTests (Proxy :: Proxy (Ratio Int))
