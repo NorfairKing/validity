@@ -2,9 +2,24 @@ name: "Nix Build"
 on:
   pull_request:
   push:
+    branches: [development, master]
 jobs:
-  tests:
-    runs-on: ubuntu-latest
+  build:
+    name: ${{ matrix.lts }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          # For some reason these builds get cancelled automatically
+          # - maxos-latest
+        lts:
+          - lts-13_11
+          - lts-13_19
+          - lts-14_23
+          - lts-15_03
+          - current
     steps:
     - uses: actions/checkout@v2
     - uses: cachix/install-nix-action@v8
@@ -15,5 +30,4 @@ jobs:
       with:
         name: validity
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-    - run: nix-build default.nix
-    - run: nix-build ci.nix
+    - run: nix-build ci.nix -A ${{ matrix.lts }}
