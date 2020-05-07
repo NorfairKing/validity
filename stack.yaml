@@ -33,7 +33,7 @@ packages:
 - 'validity-uuid'
 - 'validity-vector'
 nix:
-  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/3b5f3d1cb181cd91a5a1ce1d220fef6ffd998c6a.tar.gz" ]
+  path: [ "nixpkgs=(import ./nix/nixpkgs.nix)" ]
   add-gc-roots: true
   pure: true
   packages:
