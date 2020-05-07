@@ -38,3 +38,4 @@ nix:
   pure: true
   packages:
   - zlib
+  - haskellPackages.hpack
