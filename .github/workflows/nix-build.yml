@@ -6,17 +6,14 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: cachix/install-nix-action@v6
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v8
     - name: free disk space
       run: |
         sudo rm -rf /opt
-    - uses: cachix/cachix-action@v3
+    - uses: cachix/cachix-action@v6
       with:
         name: validity
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-    - uses: cachix/cachix-action@v3
-      with:
-        name: validity
-        file: ci.nix
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: nix-build default.nix
+    - run: nix-build ci.nix

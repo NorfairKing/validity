@@ -52,7 +52,7 @@ module Data.GenValidity.Utils
 
 import Test.QuickCheck hiding (Fixed)
 import System.Random
-import GHC.Float
+import GHC.Float (castWord32ToFloat, castWord64ToDouble)
 import GHC.Int (Int(..))
 import GHC.Word (Word(..))
 import GHC.Exts (Word#, Int#)
