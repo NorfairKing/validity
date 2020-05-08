@@ -12,12 +12,12 @@ import Data.Validity.Vector ()
 
 -- | A 'Value' is valid if the recursive components are valid.
 instance Validity Value where
-    validate (Object o) = annotate o "Object"
-    validate (Array a) = annotate a "Array"
-    validate (String t) = annotate t "String"
-    validate (Number s) = annotate s "Number"
-    validate (Bool b) = annotate b "Bool"
-    validate Null = valid
+  validate (Object o) = annotate o "Object"
+  validate (Array a) = annotate a "Array"
+  validate (String t) = annotate t "String"
+  validate (Number s) = annotate s "Number"
+  validate (Bool b) = annotate b "Bool"
+  validate Null = valid
 
 -- | Modify a parser to fail on invalid results.
 parseJSONValid :: Validity a => Parser a -> Parser a
@@ -31,7 +31,7 @@ parseJSONValid p = do
 --
 -- Easy to use with the `withX` helper functions:
 --
--- > parseJSON = parseJSONValidwith . withObject "MyThing" $ \o ->
+-- > parseJSON = parseJSONValidWith . withObject "MyThing" $ \o ->
 -- >   MyThing <$> ...
 parseJSONValidWith :: Validity a => (value -> Parser a) -> (value -> Parser a)
 parseJSONValidWith func v = parseJSONValid $ func v
