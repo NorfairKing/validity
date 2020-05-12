@@ -19,6 +19,7 @@ final:
               "genvalidity-hspec-optics"
               "genvalidity-hspec-persistent"
               "genvalidity-path"
+              "genvalidity-persistent"
               "genvalidity-property"
               "genvalidity-scientific"
               "genvalidity-text"
