@@ -31,6 +31,7 @@ final:
               "validity-bytestring"
               "validity-containers"
               "validity-path"
+              "validity-persistent"
               "validity-primitive"
               "validity-scientific"
               "validity-text"

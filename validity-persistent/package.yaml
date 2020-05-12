@@ -1,0 +1,20 @@
+name: validity-persistent
+version: '0.0.0.0'
+synopsis: Validity instances for persistent-related types
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd@cs-syd.eu
+copyright: ! 'Copyright: (c) 2020 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+homepage: http://cs-syd.eu
+dependencies:
+- base >=4.9 && <=5
+- hspec
+- persistent
+
+library:
+  source-dirs: src/
+  ghc-options: -Wall
+  dependencies:
+  - validity
