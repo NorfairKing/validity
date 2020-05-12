@@ -1,0 +1,52 @@
+name: genvalidity-persistent
+version: '0.0.0.0'
+synopsis: GenValidity support for Persistent
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd@cs-syd.eu
+copyright: ! 'Copyright: (c) 2020 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+
+dependencies:
+- base >=4.7 && <5
+- persistent >=0.5
+
+library:
+  source-dirs: src
+  dependencies:
+  - validity-persistent
+  - genvalidity
+
+tests:
+  genvalidity-persistent-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - genvalidity
+    - genvalidity-hspec
+    - genvalidity-persistent
+    - hspec
+    - persistent-template
+
+benchmarks:
+  genvalidity-persistent-bench:
+    main: Main.hs
+    source-dirs: bench
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - criterion
+    - deepseq
+    - genvalidity
+    - genvalidity-criterion
+    - genvalidity-persistent
+    - persistent-template
