@@ -12,8 +12,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          # For some reason these builds get cancelled automatically
-          # - maxos-latest
+          - macos-latest
         lts:
           - lts-13_11
           - lts-13_19
