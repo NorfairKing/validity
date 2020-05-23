@@ -59,7 +59,7 @@ shrinkValidSpec =
             shrinkValidDoesNotShrinkToItself @a
 
 shrinkValidSpecWithLimit ::
-       forall a. (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a)
+       forall a. (Show a, Eq a, Typeable a, GenValid a)
     => Int
     -> Spec
 shrinkValidSpecWithLimit l =
@@ -122,18 +122,18 @@ shrinkInvalidDoesNotShrinkToItself =
     shrinkDoesNotShrinkToItselfOnInvalid @a shrinkInvalid
 
 shrinkInvalidDoesNotShrinkToItselfWithLimit ::
-       forall a. (Show a, Eq a, GenUnchecked a, GenInvalid a)
+       forall a. (Show a, Eq a, GenInvalid a)
     => Int
     -> Property
 shrinkInvalidDoesNotShrinkToItselfWithLimit =
-    shrinkDoesNotShrinkToItselfWithLimit @a shrinkInvalid
+    shrinkDoesNotShrinkToItselfOnInvalidWithLimit @a shrinkInvalid
 
 shrinkValidDoesNotShrinkToItselfWithLimit ::
-       forall a. (Show a, Eq a, GenUnchecked a, GenValid a)
+       forall a. (Show a, Eq a, GenValid a)
     => Int
     -> Property
 shrinkValidDoesNotShrinkToItselfWithLimit =
-    shrinkDoesNotShrinkToItselfWithLimit @a shrinkValid
+    shrinkDoesNotShrinkToItselfOnValidWithLimit @a shrinkValid
 
 shrinkUncheckedDoesNotShrinkToItselfWithLimit ::
        forall a. (Show a, Eq a, GenUnchecked a)

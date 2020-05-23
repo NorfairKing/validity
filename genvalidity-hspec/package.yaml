@@ -29,6 +29,9 @@ dependencies:
 
 library:
   source-dirs: src
+  ghc-options:
+  - -Wall
+  - -fwarn-redundant-constraints
   dependencies:
   - genvalidity >=0.8
   - genvalidity-property >=0.5
