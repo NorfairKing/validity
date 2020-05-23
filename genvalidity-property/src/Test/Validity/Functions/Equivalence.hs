@@ -48,7 +48,7 @@ import Test.QuickCheck
 import Test.Validity.Types
 
 equivalentOnGen ::
-       (Show a, Eq a, Show b, Eq b)
+       (Show a, Show b, Eq b)
     => (a -> b)
     -> (a -> b)
     -> Gen a
@@ -57,14 +57,14 @@ equivalentOnGen ::
 equivalentOnGen f g gen s = forAllShrink gen s $ \a -> f a `shouldBe` g a
 
 equivalentOnValid ::
-       (Show a, Eq a, GenValid a, Show b, Eq b)
+       (Show a, GenValid a, Show b, Eq b)
     => (a -> b)
     -> (a -> b)
     -> Property
 equivalentOnValid f g = equivalentOnGen f g genValid shrinkValid
 
 equivalent ::
-       (Show a, Eq a, GenUnchecked a, Show b, Eq b)
+       (Show a, GenUnchecked a, Show b, Eq b)
     => (a -> b)
     -> (a -> b)
     -> Property
@@ -74,7 +74,7 @@ equivalent f g = equivalentOnGen f g genUnchecked shrinkUnchecked
 --
 -- prop> equivalentOnArbitrary ((* 2) . (+ 1)) ((+ 2) . (* 2) :: Int -> Int)
 equivalentOnArbitrary ::
-       (Show a, Eq a, Arbitrary a, Show b, Eq b)
+       (Show a, Arbitrary a, Show b, Eq b)
     => (a -> b)
     -> (a -> b)
     -> Property
@@ -115,7 +115,7 @@ equivalentOnArbitrary2 ::
 equivalentOnArbitrary2 f g = equivalentOnGens2 f g arbitrary shrink
 
 equivalentWhenFirstSucceedsOnGen ::
-       (Show a, Eq a, Show b, Eq b, CanFail f)
+       (Show a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> b)
     -> Gen a
@@ -128,7 +128,7 @@ equivalentWhenFirstSucceedsOnGen f g gen s =
             Just r -> r `shouldBe` g a
 
 equivalentWhenFirstSucceedsOnValid ::
-       (Show a, Eq a, GenValid a, Show b, Eq b, CanFail f)
+       (Show a, GenValid a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> b)
     -> Property
@@ -136,7 +136,7 @@ equivalentWhenFirstSucceedsOnValid f g =
     equivalentWhenFirstSucceedsOnGen f g genValid shrinkValid
 
 equivalentWhenFirstSucceedsOnArbitrary ::
-       (Show a, Eq a, Arbitrary a, Show b, Eq b, CanFail f)
+       (Show a, Arbitrary a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> b)
     -> Property
@@ -144,7 +144,7 @@ equivalentWhenFirstSucceedsOnArbitrary f g =
     equivalentWhenFirstSucceedsOnGen f g arbitrary shrink
 
 equivalentWhenFirstSucceeds ::
-       (Show a, Eq a, GenUnchecked a, Show b, Eq b, CanFail f)
+       (Show a, GenUnchecked a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> b)
     -> Property
@@ -152,7 +152,7 @@ equivalentWhenFirstSucceeds f g =
     equivalentWhenFirstSucceedsOnGen f g genUnchecked shrinkUnchecked
 
 equivalentWhenFirstSucceedsOnGens2 ::
-       (Show a, Eq a, Show b, Eq b, Show c, Eq c, CanFail f)
+       (Show a, Show b, Show c, Eq c, CanFail f)
     => (a -> b -> f c)
     -> (a -> b -> c)
     -> Gen (a, b)
@@ -166,10 +166,8 @@ equivalentWhenFirstSucceedsOnGens2 f g gen s =
 
 equivalentWhenFirstSucceedsOnValids2 ::
        ( Show a
-       , Eq a
        , GenValid a
        , Show b
-       , Eq b
        , GenValid b
        , Show c
        , Eq c
@@ -183,10 +181,8 @@ equivalentWhenFirstSucceedsOnValids2 f g =
 
 equivalentWhenFirstSucceedsOnArbitrary2 ::
        ( Show a
-       , Eq a
        , Arbitrary a
        , Show b
-       , Eq b
        , Arbitrary b
        , Show c
        , Eq c
@@ -200,10 +196,8 @@ equivalentWhenFirstSucceedsOnArbitrary2 f g =
 
 equivalentWhenFirstSucceeds2 ::
        ( Show a
-       , Eq a
        , GenUnchecked a
        , Show b
-       , Eq b
        , GenUnchecked b
        , Show c
        , Eq c
@@ -216,7 +210,7 @@ equivalentWhenFirstSucceeds2 f g =
     equivalentWhenFirstSucceedsOnGens2 f g genUnchecked shrinkUnchecked
 
 equivalentWhenSecondSucceedsOnGen ::
-       (Show a, Eq a, Show b, Eq b, CanFail f)
+       (Show a, Show b, Eq b, CanFail f)
     => (a -> b)
     -> (a -> f b)
     -> Gen a
@@ -229,7 +223,7 @@ equivalentWhenSecondSucceedsOnGen f g gen s =
             Just r -> r `shouldBe` f a
 
 equivalentWhenSecondSucceedsOnValid ::
-       (Show a, Eq a, GenValid a, Show b, Eq b, CanFail f)
+       (Show a, GenValid a, Show b, Eq b, CanFail f)
     => (a -> b)
     -> (a -> f b)
     -> Property
@@ -237,7 +231,7 @@ equivalentWhenSecondSucceedsOnValid f g =
     equivalentWhenSecondSucceedsOnGen f g genValid shrinkValid
 
 equivalentWhenSecondSucceedsOnArbitrary ::
-       (Show a, Eq a, Arbitrary a, Show b, Eq b, CanFail f)
+       (Show a, Arbitrary a, Show b, Eq b, CanFail f)
     => (a -> b)
     -> (a -> f b)
     -> Property
@@ -245,7 +239,7 @@ equivalentWhenSecondSucceedsOnArbitrary f g =
     equivalentWhenSecondSucceedsOnGen f g arbitrary shrink
 
 equivalentWhenSecondSucceeds ::
-       (Show a, Eq a, GenUnchecked a, Show b, Eq b, CanFail f)
+       (Show a, GenUnchecked a, Show b, Eq b, CanFail f)
     => (a -> b)
     -> (a -> f b)
     -> Property
@@ -253,7 +247,7 @@ equivalentWhenSecondSucceeds f g =
     equivalentWhenSecondSucceedsOnGen f g genUnchecked shrinkUnchecked
 
 equivalentWhenSecondSucceedsOnGens2 ::
-       (Show a, Eq a, Show b, Eq b, Show c, Eq c, CanFail f)
+       (Show a, Show b, Show c, Eq c, CanFail f)
     => (a -> b -> c)
     -> (a -> b -> f c)
     -> Gen (a, b)
@@ -267,10 +261,8 @@ equivalentWhenSecondSucceedsOnGens2 f g gen s =
 
 equivalentWhenSecondSucceedsOnValids2 ::
        ( Show a
-       , Eq a
        , GenValid a
        , Show b
-       , Eq b
        , GenValid b
        , Show c
        , Eq c
@@ -284,10 +276,8 @@ equivalentWhenSecondSucceedsOnValids2 f g =
 
 equivalentWhenSecondSucceedsOnArbitrary2 ::
        ( Show a
-       , Eq a
        , Arbitrary a
        , Show b
-       , Eq b
        , Arbitrary b
        , Show c
        , Eq c
@@ -301,10 +291,8 @@ equivalentWhenSecondSucceedsOnArbitrary2 f g =
 
 equivalentWhenSecondSucceeds2 ::
        ( Show a
-       , Eq a
        , GenUnchecked a
        , Show b
-       , Eq b
        , GenUnchecked b
        , Show c
        , Eq c
@@ -317,7 +305,7 @@ equivalentWhenSecondSucceeds2 f g =
     equivalentWhenSecondSucceedsOnGens2 f g genUnchecked shrinkUnchecked
 
 equivalentWhenSucceedOnGen ::
-       (Show a, Eq a, Show b, Eq b, CanFail f)
+       (Show a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> f b)
     -> Gen a
@@ -332,7 +320,7 @@ equivalentWhenSucceedOnGen f g gen s =
             Just (fa, ga) -> fa `shouldBe` ga
 
 equivalentWhenSucceedOnValid ::
-       (Show a, Eq a, GenValid a, Show b, Eq b, CanFail f)
+       (Show a, GenValid a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> f b)
     -> Property
@@ -340,7 +328,7 @@ equivalentWhenSucceedOnValid f g =
     equivalentWhenSucceedOnGen f g genValid shrinkValid
 
 equivalentWhenSucceed ::
-       (Show a, Eq a, GenUnchecked a, Show b, Eq b, CanFail f)
+       (Show a, GenUnchecked a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> f b)
     -> Property
@@ -348,7 +336,7 @@ equivalentWhenSucceed f g =
     equivalentWhenSucceedOnGen f g genUnchecked shrinkUnchecked
 
 equivalentWhenSucceedOnArbitrary ::
-       (Show a, Eq a, Arbitrary a, Show b, Eq b, CanFail f)
+       (Show a, Arbitrary a, Show b, Eq b, CanFail f)
     => (a -> f b)
     -> (a -> f b)
     -> Property
@@ -356,7 +344,7 @@ equivalentWhenSucceedOnArbitrary f g =
     equivalentWhenSucceedOnGen f g arbitrary shrink
 
 equivalentWhenSucceedOnGens2 ::
-       (Show a, Eq a, Show b, Eq b, Show c, Eq c, CanFail f)
+       (Show a, Show b, Show c, Eq c, CanFail f)
     => (a -> b -> f c)
     -> (a -> b -> f c)
     -> Gen (a, b)
@@ -372,10 +360,8 @@ equivalentWhenSucceedOnGens2 f g gen s =
 
 equivalentWhenSucceedOnValids2 ::
        ( Show a
-       , Eq a
        , GenValid a
        , Show b
-       , Eq b
        , GenValid b
        , Show c
        , Eq c
@@ -389,10 +375,8 @@ equivalentWhenSucceedOnValids2 f g =
 
 equivalentWhenSucceedOnArbitrary2 ::
        ( Show a
-       , Eq a
        , Arbitrary a
        , Show b
-       , Eq b
        , Arbitrary b
        , Show c
        , Eq c
@@ -406,10 +390,8 @@ equivalentWhenSucceedOnArbitrary2 f g =
 
 equivalentWhenSucceed2 ::
        ( Show a
-       , Eq a
        , GenUnchecked a
        , Show b
-       , Eq b
        , GenUnchecked b
        , Show c
        , Eq c

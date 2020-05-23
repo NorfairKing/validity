@@ -99,7 +99,7 @@ ordSpecOnArbitrary = ordSpecOnGen @a arbitrary "arbitrary" shrink
 --
 -- > ordSpecOnGen ((* 2) <$> genValid @Int) "even"
 ordSpecOnGen ::
-       forall a. (Show a, Eq a, Ord a, Typeable a)
+       forall a. (Show a, Ord a, Typeable a)
     => Gen a
     -> String
     -> (a -> [a])

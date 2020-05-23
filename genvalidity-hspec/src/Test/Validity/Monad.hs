@@ -149,7 +149,6 @@ monadSpecWithInts gen =
 monadSpecOnGens ::
        forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
        ( Show a
-       , Eq a
        , Show (f a)
        , Show (f b)
        , Show (f c)

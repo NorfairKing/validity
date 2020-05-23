@@ -168,7 +168,6 @@ applicativeSpecWithInts gen =
 applicativeSpecOnGens ::
        forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
        ( Show a
-       , Eq a
        , Show (f a)
        , Eq (f a)
        , Show (f b)

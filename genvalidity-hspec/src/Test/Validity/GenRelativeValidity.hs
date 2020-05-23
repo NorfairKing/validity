@@ -37,7 +37,6 @@ import Test.Validity.Utils
 genRelativeValiditySpec ::
        forall a b.
        ( Typeable a
-       , Typeable b
        , Show a
        , Show b
        , GenUnchecked b
@@ -53,12 +52,9 @@ genRelativeValiditySpec = do
 genRelativeValidSpec ::
        forall a b.
        ( Typeable a
-       , Typeable b
        , Show a
        , Show b
-       , GenValid a
        , GenValid b
-       , RelativeValidity a b
        , GenRelativeValid a b
        )
     => Spec
@@ -76,13 +72,9 @@ genRelativeValidSpec =
 genRelativeInvalidSpec ::
        forall a b.
        ( Typeable a
-       , Typeable b
        , Show a
        , Show b
-       , GenValid a
        , GenUnchecked b
-       , GenValid b
-       , RelativeValidity a b
        , GenRelativeInvalid a b
        )
     => Spec
@@ -100,7 +92,7 @@ genRelativeInvalidSpec =
 -- | @genValidFor b@ only generates values that satisfy @isValidFor b@
 genRelativeValidGeneratesValid ::
        forall a b.
-       (Show a, Show b, GenValid b, RelativeValidity a b, GenRelativeValid a b)
+       (Show a, Show b, GenValid b, GenRelativeValid a b)
     => Property
 genRelativeValidGeneratesValid =
     forAllValid $ \(b :: b) ->
@@ -112,7 +104,6 @@ genRelativeInvalidGeneratesInvalid ::
        ( Show a
        , Show b
        , GenUnchecked b
-       , RelativeValidity a b
        , GenRelativeInvalid a b
        )
     => Property
