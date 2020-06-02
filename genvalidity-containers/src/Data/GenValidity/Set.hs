@@ -7,14 +7,22 @@ module Data.GenValidity.Set
 #if MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidSet
 #endif
+    , genSeperate
+    , genSeperateFor
+    , genSeperateForNE
+    , genValidSeperateFor
+    , genValidSeperateForNE
     ) where
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<$>), pure)
 #endif
 import Data.GenValidity
 import Data.Validity.Set ()
+import Data.Containers.ListUtils
 import Test.QuickCheck
 
+import Data.List.NonEmpty (NonEmpty(..))
+import qualified Data.List.NonEmpty as NE
 import Data.Set (Set)
 import qualified Data.Set as S
 #if MIN_VERSION_containers(0,5,9)
@@ -84,3 +92,29 @@ genStructurallyInvalidSet = do
         then scale (+ 1) genStructurallyInvalidSet
         else pure v
 #endif
+
+genValidSeperateFor :: (GenValid b, Eq b) => [a] -> Gen [(b, a)]
+genValidSeperateFor = genSeperateFor genValid
+
+genValidSeperateForNE :: (GenValid b, Eq b) => NonEmpty a -> Gen (NonEmpty (b, a))
+genValidSeperateForNE = genSeperateForNE genValid
+
+#if MIN_VERSION_containers(0,6,0)
+genSeperate :: Ord a => Gen a -> Gen [a]
+genSeperate g = nubOrd <$> genListOf g
+#else
+genSeperate :: Eq a => Gen a -> Gen [a]
+genSeperate g = nub <$> genListOf g
+#endif
+
+-- TODO these two can likely be optimised
+genSeperateFor :: Eq b => Gen b -> [a] -> Gen [(b, a)]
+genSeperateFor _ [] = pure []
+genSeperateFor g (a : as) = NE.toList <$> genSeperateForNE g (a :| as)
+
+genSeperateForNE :: Eq b => Gen b -> NonEmpty a -> Gen (NonEmpty (b, a))
+genSeperateForNE g (a :| as) = do
+  restTups <- genSeperateFor g as
+  b <- g `suchThat` (`notElem` map fst restTups)
+  pure ((b, a) :| restTups)
+

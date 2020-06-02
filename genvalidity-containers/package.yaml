@@ -20,6 +20,7 @@ library:
   - genvalidity >=0.8
   - validity >=0.5
   - validity-containers >=0.3
+  - containers >=0.6.0.1
 
 tests:
   genvalidity-containers-test:
@@ -31,12 +32,14 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - validity >=0.9
+    - QuickCheck
     - genvalidity >=0.7
     - genvalidity-containers >=0.5
-    - genvalidity-property >=0.5
     - genvalidity-hspec
+    - genvalidity-property >=0.5
     - hspec
+    - validity >=0.9
+    - validity-containers
 
 benchmarks:
   genvalidity-containers-bench:

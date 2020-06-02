@@ -15,11 +15,13 @@ module Data.GenValidity.PersistSpec
   )
 where
 
-import Data.GenValidity.Persist ()
+import Data.GenValidity.Persist
+import Data.Validity.Containers
 import Database.Persist
 import Database.Persist.TH
 import GHC.Generics (Generic)
 import Test.Hspec
+import Test.QuickCheck
 import Test.Validity
 
 share
@@ -48,3 +50,25 @@ spec = do
   shrinkValidSpec @ThingId
   genValidSpec @(Entity Thing)
   shrinkValidSpec @(Entity Thing)
+  describe "genSeperateIds"
+    $ it "generates values with seperate ids"
+    $ forAll genSeperateIds
+    $ \is -> distinctOrd (is :: [Key Thing])
+  describe "genSeperateIdsFor"
+    $ it "generates values with seperate ids"
+    $ forAll genValid
+    $ \as ->
+      forAll (genSeperateIdsFor as) $ \es -> distinctOrd $ map entityKey (es :: [Entity Thing])
+  describe "genValidsWithSeperateIds" $ do
+    it "generates values with seperate ids"
+      $ forAll (genValidsWithSeperateIDs genValid)
+      $ \es ->
+        distinctOrd $ map entityKey (es :: [Entity Thing])
+    it "generates values with seperate ids"
+      $ forAll (genValidsWithSeperateIDs genValid)
+      $ \es ->
+        distinctOrd $ map entityKey (es :: [Entity Thing])
+  describe "validsWithSeperateIDs"
+    $ it "generates values with seperate ids"
+    $ forAll validsWithSeperateIDs
+    $ \es -> distinctOrd $ map entityKey (es :: [Entity Thing])

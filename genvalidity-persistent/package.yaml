@@ -15,8 +15,12 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-  - validity-persistent
+  - QuickCheck
+  - containers
   - genvalidity
+  - genvalidity-containers
+  - validity-containers
+  - validity-persistent
 
 tests:
   genvalidity-persistent-test:
@@ -28,11 +32,13 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
+    - QuickCheck
     - genvalidity
     - genvalidity-hspec
     - genvalidity-persistent
     - hspec
     - persistent-template
+    - validity-containers
 
 benchmarks:
   genvalidity-persistent-bench:

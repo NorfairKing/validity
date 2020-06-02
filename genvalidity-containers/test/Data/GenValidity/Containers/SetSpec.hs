@@ -3,12 +3,13 @@
 
 module Data.GenValidity.Containers.SetSpec where
 
-import Test.Hspec
-
 import Data.GenValidity
 import Data.GenValidity.Set
 import Data.Set (Set)
-import Test.Validity.GenValidity
+import Data.Validity.Containers
+import Test.Hspec
+import Test.QuickCheck
+import Test.Validity
 
 spec :: Spec
 spec = do
@@ -27,3 +28,19 @@ spec = do
 #endif
     genValidSpec @(Set Int)
     genValiditySpec @(Set Rational)
+    describe "genSeperate" $ do
+      it "generates values that are seperate" $
+        forAll (genSeperate genUnchecked) $ \ls -> distinctOrd (ls :: [Int])
+      it "generates values that are seperate" $
+        forAll (genSeperate genValid) $ \ls -> distinctOrd (ls :: [Int])
+    describe "genSeperateFor" $ do
+      it "generates values that are seperate" $
+        forAllValid $ \ls ->
+          forAll (genSeperateFor genUnchecked ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
+      it "generates values that are seperate" $
+        forAllValid $ \ls ->
+          forAll (genSeperateFor genValid ls) $ \tups -> distinctOrd  (map fst(tups :: [(Int, Int)]))
+    describe "genValidSeperateFor" $
+      it "generates values that are seperate" $
+      forAllValid $ \ls ->
+        forAll (genValidSeperateFor ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))

@@ -14,7 +14,7 @@ extra-source-files:
 dependencies:
 - base >=4.7 && <5
 - validity >=0.5
-- containers
+- containers >=0.6.0.1
 
 library:
   source-dirs: src
