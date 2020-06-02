@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Test.Validity.Containers.SetSpec where
+module Data.GenValidity.Containers.SetSpec where
 
 import Test.Hspec
 

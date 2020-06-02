@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Test.Validity.Containers.MapSpec where
+module Data.GenValidity.Containers.MapSpec where
 
 import Test.Hspec
 
