@@ -2,7 +2,8 @@
 {-# LANGUAGE CPP #-}
 
 module Data.GenValidity.Map
-    ( genStructurallyValidMapOf
+    ( genMapOf
+    , genStructurallyValidMapOf
     , genStructurallyValidMapOfInvalidValues
 #if MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidMap
@@ -47,7 +48,7 @@ instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
     shrinkUnchecked = fmap M.fromList . shrinkUnchecked . M.toList
 #endif
 instance (Show k, Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
-    genValid = M.fromList <$> genValid
+    genValid = genMapOf genValid
     shrinkValid = fmap M.fromList . shrinkValid . M.toList
 #if MIN_VERSION_containers(0,5,9)
 instance (Show k, Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
@@ -58,16 +59,12 @@ instance (Show k, Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvali
 instance (Show k, Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid = genStructurallyValidMapOfInvalidValues
 #endif
+
+genMapOf :: Ord k => Gen (k, v) -> Gen (Map k v)
+genMapOf = genStructurallyValidMapOf
+
 genStructurallyValidMapOf :: Ord k => Gen (k, v) -> Gen (Map k v)
-genStructurallyValidMapOf g =
-    sized $ \n ->
-        case n of
-            0 -> pure M.empty
-            _ -> do
-                (kv, m) <- genSplit n
-                (key, val) <- resize kv g
-                rest <- resize m $ genStructurallyValidMapOf g
-                pure $ M.insert key val rest
+genStructurallyValidMapOf g = M.fromList <$> genListOf g
 
 -- Note: M.fromList <$> genInvalid does not work because of this line in the Data.Map documentation:
 -- ' If the list contains more than one value for the same key, the last value for the key is retained.'

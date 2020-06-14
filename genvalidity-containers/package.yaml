@@ -1,5 +1,5 @@
 name: genvalidity-containers
-version: '0.8.0.2'
+version: '0.9.0.0'
 synopsis: GenValidity support for containers
 category: Testing
 author: Tom Sydney Kerckhove
@@ -50,5 +50,6 @@ benchmarks:
     dependencies:
     - QuickCheck
     - criterion
+    - genvalidity
     - genvalidity-containers
     - genvalidity-criterion

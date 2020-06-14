@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [0.9.0.0] - 2020-06-14
+
+### Added
+
+* `genMapOf`
+* `genSeqOf`
+* `genSetOf`
+
+### Changed
+
+* Improved the generation of Set, Seq and Map to generate more appropriately (bigger) sized collections
+
 ## [0.8.0.2] - 2020-02-10
 
 ### Changed

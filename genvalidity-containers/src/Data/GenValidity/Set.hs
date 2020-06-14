@@ -2,7 +2,8 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Set
-    ( genStructurallyValidSetOf
+    ( genSetOf
+    , genStructurallyValidSetOf
     , genStructurallyValidSetOfInvalidValues
 #if MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidSet
@@ -64,16 +65,12 @@ instance (Ord v, GenUnchecked v, GenInvalid v) => GenInvalid (Set v) where
 instance (Ord v, GenUnchecked v, GenInvalid v) => GenInvalid (Set v) where
     genInvalid = genStructurallyValidSetOfInvalidValues
 #endif
+
+genSetOf :: Ord v => Gen v -> Gen (Set v)
+genSetOf = genStructurallyValidSetOf
+
 genStructurallyValidSetOf :: Ord v => Gen v -> Gen (Set v)
-genStructurallyValidSetOf g =
-    sized $ \n ->
-        case n of
-            0 -> pure S.empty
-            _ -> do
-                (v, m) <- genSplit n
-                val <- resize v g
-                rest <- resize m $ genStructurallyValidSetOf g
-                pure $ S.insert val rest
+genStructurallyValidSetOf g = S.fromList <$> genListOf g
 
 -- Note: M.fromList <$> genInvalid does not work because of this line in the Data.Set documentation:
 -- ' If the list contains more than one value for the same key, the last value for the key is retained.'

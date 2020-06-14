@@ -1,7 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
 
-module Data.GenValidity.Sequence where
+module Data.GenValidity.Sequence (
+    genSeqOf,
+  ) where
+import Test.QuickCheck
 #if !MIN_VERSION_base(4,8,0)
 import Data.Functor ((<$>))
 #endif
@@ -13,13 +16,15 @@ import Data.Sequence (Seq)
 import qualified Data.Sequence as S
 
 instance GenUnchecked v => GenUnchecked (Seq v) where
-    genUnchecked = S.fromList <$> genUnchecked
+    genUnchecked = genSeqOf genUnchecked
     shrinkUnchecked = fmap S.fromList . shrinkUnchecked . toList
 
 instance GenValid v => GenValid (Seq v) where
-    genValid = S.fromList <$> genValid
+    genValid = genSeqOf genValid
     shrinkValid = fmap S.fromList . shrinkValid . toList
 
 instance (GenUnchecked v, GenInvalid v) => GenInvalid (Seq v) where
-    genInvalid = S.fromList <$> genInvalid
     shrinkInvalid = fmap S.fromList . shrinkInvalid . toList
+
+genSeqOf :: Gen v -> Gen (Seq v)
+genSeqOf g = S.fromList <$> genListOf g
