@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0.4] - 2020-06-17
+
+### Added
+
+* `distinctOrd`
+
 ## [0.5.0.3] - 2020-04-23
 
 ### Changed
