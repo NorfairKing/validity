@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.4.0.0] - 2020-07-18
+
+### Changed
+
+* Removed the silly extra constraint on the `Day` type.
+
 ## [0.3.0.0] - 2020-02-10
 
 ### Changed
