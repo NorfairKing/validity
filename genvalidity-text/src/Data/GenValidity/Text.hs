@@ -101,3 +101,9 @@ textWithoutAnyOf cs = ST.pack <$> genListOf (genValid `suchThat` (`notElem` cs))
 -- | 'textAllCaps' generates a 'Text' value with only upper-case characters.
 textAllCaps :: Gen ST.Text
 textAllCaps = ST.toUpper <$> genValid
+
+-- | 'genSingleLineText' generates a single-line text, that is without any line separators.
+--
+-- See 'Data.GenValidity.genNonLineSeparator' and 'Data.Validity.isLineSeparator'
+genSingleLineText :: Gen ST.Text
+genSingleLineText = genTextBy genNonLineSeparator

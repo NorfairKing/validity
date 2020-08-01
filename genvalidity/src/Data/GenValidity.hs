@@ -75,8 +75,13 @@ module Data.GenValidity
     , shrinkValidStructurallyWithoutExtraFiltering
     , module Data.GenValidity.Utils
 
-    -- * Strange, possibly useful functions
+    -- ** Helper functions for specific types
+    -- *** Char
     , genUtf16SurrogateCodePoint
+    , genLineSeparator
+    , genNonLineSeparator
+    -- *** String
+    , genSingleLineString
 
     -- * Re-exports
     , module Data.Validity
@@ -585,6 +590,15 @@ genUtf16SurrogateCodePoint = chr <$> oneof [choose (0xD800, 0xDBFF), choose (0xD
 instance GenValid Char where
     genValid = genUnchecked
     shrinkValid = shrinkUnchecked
+
+genLineSeparator :: Gen Char
+genLineSeparator = elements ['\n', '\r']
+
+genNonLineSeparator :: Gen Char
+genNonLineSeparator = genValid `suchThat` (not . isLineSeparator)
+
+genSingleLineString :: Gen String
+genSingleLineString = genListOf genNonLineSeparator
 
 instance GenUnchecked Int where
     genUnchecked = genIntX

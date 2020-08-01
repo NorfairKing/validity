@@ -58,7 +58,7 @@ module Data.Validity
     , isUtf16SurrogateCodePoint
     , validateCharNotLineSeparator
     , isLineSeparator
-    , validateSingleLine
+    , validateStringSingleLine
     , isSingleLine
     -- *** RealFloat (Double)
     , validateNotNaN
@@ -428,8 +428,8 @@ isLineSeparator c = case c of
   '\r' -> True
   _ -> False
 
-validateSingleLine :: String -> Validation
-validateSingleLine s = decorateList s validateCharNotLineSeparator
+validateStringSingleLine :: String -> Validation
+validateStringSingleLine s = decorateList s validateCharNotLineSeparator
 
 isSingleLine :: String -> Bool
 isSingleLine = not . any isLineSeparator

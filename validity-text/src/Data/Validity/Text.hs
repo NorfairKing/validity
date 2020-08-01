@@ -49,3 +49,6 @@ instance Validity LT.Text where
             , declare "The strict chunk is not empty" $ not $ ST.null st
             , delve "The lazy chunk" lt
             ]
+
+validateTextSingleLine :: ST.Text -> Validation
+validateTextSingleLine = validateStringSingleLine . ST.unpack
