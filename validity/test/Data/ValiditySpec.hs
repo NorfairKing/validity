@@ -98,6 +98,24 @@ spec = do
           prettyValidation (validateCharNotUtf16SurrogateCodePoint 'a') `shouldSatisfy` isNothing
         it "Says that \\55810 is an invalid char" $
           prettyValidation (validateCharNotUtf16SurrogateCodePoint '\55810') `shouldSatisfy` isJust
+    describe "Lines" $ do
+      describe "isLineSeparator" $ do
+        it "Says that a is not a line separator" $ isLineSeparator 'a' `shouldBe` False
+        it "Says that '\\n' is a line separator " $ isLineSeparator '\n' `shouldBe` True
+        it "Says that '\\r' is a line separator " $ isLineSeparator '\r' `shouldBe` True
+      describe "validateCharNotLineSeparator" $ do
+        it "Says that a is not a line separator" $
+          prettyValidation (validateCharNotLineSeparator 'a') `shouldSatisfy` isNothing
+        it "Says that '\\n' is a line separator" $
+          prettyValidation (validateCharNotLineSeparator '\n') `shouldSatisfy` isJust
+        it "Says that '\\r' is a line separator" $
+          prettyValidation (validateCharNotLineSeparator '\r') `shouldSatisfy` isJust
+      describe "isSingleLine" $ do
+        it "says that \"abc\" is a single line" $ isSingleLine "abc" `shouldBe` True
+        it "says that \"d\ne\" is a single line" $ isSingleLine "d\ne" `shouldBe` False
+      describe "validateSingleLine" $ do
+        it "says that \"abc\" is a single line" $ prettyValidation (validateSingleLine  "abc")  `shouldSatisfy` isNothing
+        it "says that \"d\ne\" is a single line" $ prettyValidation (validateSingleLine "d\ne") `shouldSatisfy` isJust
   describe "Ratio" $ do
     it "says that 0 is valid" $ NormalisedRatio (0 :% 1 :: Ratio Int) `shouldSatisfy` isValid
     it "says that 1 is valid" $ NormalisedRatio (1 :% 1 :: Ratio Int) `shouldSatisfy` isValid
