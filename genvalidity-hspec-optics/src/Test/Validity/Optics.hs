@@ -191,7 +191,7 @@ lensLaw2 l genS shrinkS =
 --
 -- prop> lensLaw3 ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational) genValid shrinkValid genValid shrinkValid
 lensLaw3 ::
-       (Show b, Eq b, Show s, Eq s)
+       (Show b, Show s, Eq s)
     => Lens s s a b
     -> Gen b
     -> (b -> [b])

@@ -17,6 +17,7 @@ module Test.Validity.Monad
 import Data.Data
 
 import Control.Monad (ap)
+import Data.Kind (Type)
 import Data.GenValidity
 import Test.QuickCheck.Gen (unGen)
 import Test.QuickCheck.Random (mkQCGen)
@@ -44,12 +45,12 @@ import Test.Validity.Utils
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 returnTypeStr ::
-       forall (m :: * -> *). (Typeable m)
+       forall (m :: Type -> Type). (Typeable m)
     => String
 returnTypeStr = unwords ["return", "::", "a", "->", nameOf @m, "a"]
 
 bindTypeStr ::
-       forall (m :: * -> *). (Typeable m)
+       forall (m :: Type -> Type). (Typeable m)
     => String
 bindTypeStr =
     unwords
@@ -73,7 +74,7 @@ bindTypeStr =
 --
 -- > monadSpecOnValid @[]
 monadSpecOnValid ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, GenValid (f Int))
     => Spec
 monadSpecOnValid = monadSpecWithInts @f genValid
@@ -84,7 +85,7 @@ monadSpecOnValid = monadSpecWithInts @f genValid
 --
 -- > monadSpec @[]
 monadSpec ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, GenUnchecked (f Int))
     => Spec
 monadSpec = monadSpecWithInts @f genUnchecked
@@ -95,13 +96,13 @@ monadSpec = monadSpecWithInts @f genUnchecked
 --
 -- > monadSpecOnArbitrary @[]
 monadSpecOnArbitrary ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Monad f, Typeable f, Arbitrary (f Int))
     => Spec
 monadSpecOnArbitrary = monadSpecWithInts @f arbitrary
 
 monadSpecWithInts ::
-       forall (f :: * -> *). (Eq (f Int), Show (f Int), Monad f, Typeable f)
+       forall (f :: Type -> Type). (Eq (f Int), Show (f Int), Monad f, Typeable f)
     => Gen (f Int)
     -> Spec
 monadSpecWithInts gen =
@@ -147,7 +148,7 @@ monadSpecWithInts gen =
 -- >     (pure $ pure (+ 1))
 -- >     "increment in list"
 monadSpecOnGens ::
-       forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
+       forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type).
        ( Show a
        , Show (f a)
        , Show (f b)
