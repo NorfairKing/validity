@@ -17,6 +17,7 @@ module Test.Validity.Functor
 import Data.Data
 
 import Data.GenValidity
+import Data.Kind
 
 import Test.Hspec
 import Test.QuickCheck
@@ -27,7 +28,7 @@ import Test.Validity.Utils
 {-# ANN module "HLint: ignore Functor law" #-}
 
 fmapTypeStr ::
-       forall (f :: * -> *). (Typeable f)
+       forall (f :: Type -> Type). (Typeable f)
     => String
 fmapTypeStr =
     unwords
@@ -45,7 +46,7 @@ fmapTypeStr =
         ]
 
 flTypeStr ::
-       forall (f :: * -> *). (Typeable f)
+       forall (f :: Type -> Type). (Typeable f)
     => String
 flTypeStr =
     unwords ["(<$)", "::", "a", "->", nameOf @f, "b", "->", nameOf @f, "a"]
@@ -56,7 +57,7 @@ flTypeStr =
 --
 -- > functorSpecOnArbitrary @[]
 functorSpecOnValid ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Functor f, Typeable f, GenValid (f Int))
     => Spec
 functorSpecOnValid = functorSpecWithInts @f genValid
@@ -67,7 +68,7 @@ functorSpecOnValid = functorSpecWithInts @f genValid
 --
 -- > functorSpecOnArbitrary @[]
 functorSpec ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Functor f, Typeable f, GenUnchecked (f Int))
     => Spec
 functorSpec = functorSpecWithInts @f genUnchecked
@@ -78,13 +79,13 @@ functorSpec = functorSpecWithInts @f genUnchecked
 --
 -- > functorSpecOnArbitrary @[]
 functorSpecOnArbitrary ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Functor f, Typeable f, Arbitrary (f Int))
     => Spec
 functorSpecOnArbitrary = functorSpecWithInts @f arbitrary
 
 functorSpecWithInts ::
-       forall (f :: * -> *). (Eq (f Int), Show (f Int), Functor f, Typeable f)
+       forall (f :: Type -> Type). (Eq (f Int), Show (f Int), Functor f, Typeable f)
     => Gen (f Int)
     -> Spec
 functorSpecWithInts gen =
@@ -112,7 +113,7 @@ functorSpecWithInts gen =
 -- >     ((+) <$> genValid) "additions"
 -- >     ((*) <$> genValid) "multiplications"
 functorSpecOnGens ::
-       forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
+       forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type).
        ( Show a
        , Show (f a)
        , Show (f c)

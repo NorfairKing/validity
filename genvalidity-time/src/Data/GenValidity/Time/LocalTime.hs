@@ -8,6 +8,7 @@ import Data.Functor ((<$>))
 #endif
 import Data.Fixed
 import Data.GenValidity
+import Data.GenValidity.Time.Clock ()
 import Data.GenValidity.Time.Calendar ()
 import Data.Time.Format
 import Data.Time.LocalTime
@@ -68,3 +69,14 @@ instance GenValid ZonedTime where
   genValid = ZonedTime <$> genValid <*> genValid
 
 instance GenInvalid ZonedTime
+
+#if MIN_VERSION_time(1,9,0)
+instance GenUnchecked CalendarDiffTime where
+  genUnchecked = CalendarDiffTime <$> genUnchecked <*> genUnchecked
+  shrinkUnchecked (CalendarDiffTime ms t) = [ CalendarDiffTime ms' t' | (ms', t') <- shrinkUnchecked (ms, t) ]
+
+instance GenValid CalendarDiffTime where
+  shrinkValid (CalendarDiffTime ms t) = [ CalendarDiffTime ms' t' | (ms', t') <- shrinkValid (ms, t) ]
+  genValid = CalendarDiffTime <$> genValid <*> genValid
+#endif
+

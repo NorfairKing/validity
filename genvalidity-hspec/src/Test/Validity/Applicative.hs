@@ -17,6 +17,7 @@ module Test.Validity.Applicative
 import Data.Data
 
 import Data.GenValidity
+import Data.Kind
 
 import Test.Hspec
 import Test.QuickCheck
@@ -27,12 +28,12 @@ import Test.Validity.Utils
 {-# ANN module "HLint: ignore Avoid lambda" #-}
 
 pureTypeStr ::
-       forall (f :: * -> *). (Typeable f)
+       forall (f :: Type -> Type). (Typeable f)
     => String
 pureTypeStr = unwords ["pure", "::", "a", "->", nameOf @f, "a"]
 
 seqTypeStr ::
-       forall (f :: * -> *). (Typeable f)
+       forall (f :: Type -> Type). (Typeable f)
     => String
 seqTypeStr =
     unwords
@@ -51,7 +52,7 @@ seqTypeStr =
         ]
 
 seqrTypeStr ::
-       forall (f :: * -> *). (Typeable f)
+       forall (f :: Type -> Type). (Typeable f)
     => String
 seqrTypeStr =
     unwords
@@ -68,7 +69,7 @@ seqrTypeStr =
         ]
 
 seqlTypeStr ::
-       forall (f :: * -> *). (Typeable f)
+       forall (f :: Type -> Type). (Typeable f)
     => String
 seqlTypeStr =
     unwords
@@ -90,7 +91,7 @@ seqlTypeStr =
 --
 -- > applicativeSpecOnArbitrary @[]
 applicativeSpecOnValid ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Applicative f, Typeable f, GenValid (f Int))
     => Spec
 applicativeSpecOnValid = applicativeSpecWithInts @f genValid
@@ -101,7 +102,7 @@ applicativeSpecOnValid = applicativeSpecWithInts @f genValid
 --
 -- > applicativeSpecOnArbitrary @[]
 applicativeSpec ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        ( Eq (f Int)
        , Show (f Int)
        , Applicative f
@@ -117,13 +118,13 @@ applicativeSpec = applicativeSpecWithInts @f genUnchecked
 --
 -- > applicativeSpecOnArbitrary @[]
 applicativeSpecOnArbitrary ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Eq (f Int), Show (f Int), Applicative f, Typeable f, Arbitrary (f Int))
     => Spec
 applicativeSpecOnArbitrary = applicativeSpecWithInts @f arbitrary
 
 applicativeSpecWithInts ::
-       forall (f :: * -> *).
+       forall (f :: Type -> Type).
        (Show (f Int), Eq (f Int), Applicative f, Typeable f)
     => Gen (f Int)
     -> Spec
@@ -166,7 +167,7 @@ applicativeSpecWithInts gen =
 -- >     (pure <$> (flip (++) <$> genValid))
 -- >     "appends in a Just"
 applicativeSpecOnGens ::
-       forall (f :: * -> *) (a :: *) (b :: *) (c :: *).
+       forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type).
        ( Show a
        , Show (f a)
        , Eq (f a)
@@ -258,7 +259,7 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
         describe (seqrTypeStr @f) $
             it
                 (unwords
-                     [ "is equivalent to its default implementation 'u *> v = pure (const id) <*> u <*> v' for"
+                     [ "is equivalent to its default implementation 'u Type> v = pure (const id) <*> u <*> v' for"
                      , genDescr @(f a) genname
                      , "in front of"
                      , genDescr @b genbname

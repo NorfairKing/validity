@@ -56,6 +56,10 @@ module Data.Validity
     -- *** Char
     , validateCharNotUtf16SurrogateCodePoint
     , isUtf16SurrogateCodePoint
+    , validateCharNotLineSeparator
+    , isLineSeparator
+    , validateStringSingleLine
+    , isSingleLine
     -- *** RealFloat (Double)
     , validateNotNaN
     , validateNotInfinite
@@ -413,6 +417,22 @@ validateCharNotUtf16SurrogateCodePoint c =
 
 isUtf16SurrogateCodePoint :: Char -> Bool
 isUtf16SurrogateCodePoint c = ord c .&. 0x1ff800 == 0xd800
+
+validateCharNotLineSeparator :: Char -> Validation
+validateCharNotLineSeparator c =
+  declare "The character is not a line separator" $ not $ isLineSeparator c
+
+isLineSeparator :: Char -> Bool
+isLineSeparator c = case c of
+  '\n' -> True
+  '\r' -> True
+  _ -> False
+
+validateStringSingleLine :: String -> Validation
+validateStringSingleLine s = decorateList s validateCharNotLineSeparator
+
+isSingleLine :: String -> Bool
+isSingleLine = not . any isLineSeparator
 
 -- | Trivially valid
 instance Validity Int where

@@ -25,25 +25,25 @@ instance ToBackendKey SqlBackend record => GenValid (Key record) where
   shrinkValid = shrinkUnchecked
 
 instance
-  (GenUnchecked a, PersistEntity a, ToBackendKey SqlBackend a) =>
+  (GenUnchecked a, ToBackendKey SqlBackend a) =>
   GenUnchecked (Entity a)
   where
   genUnchecked = Entity <$> genUnchecked <*> genUnchecked
   shrinkUnchecked (Entity k v) = [Entity k' v' | (k', v') <- shrinkUnchecked (k, v)]
 
-instance (GenValid a, PersistEntity a, ToBackendKey SqlBackend a) => GenValid (Entity a) where
+instance (GenValid a, ToBackendKey SqlBackend a) => GenValid (Entity a) where
   genValid = Entity <$> genValid <*> genValid
   shrinkValid (Entity k v) = [Entity k' v' | (k', v') <- shrinkValid (k, v)]
 
 validsWithSeperateIDs ::
   forall a.
-  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a, Eq (Key a)) =>
+  (ToBackendKey SqlBackend a, GenValid a) =>
   Gen [Entity a]
 validsWithSeperateIDs = genValidsWithSeperateIDs genValid
 
 genValidsWithSeperateIDs ::
   forall a.
-  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a, Eq (Key a)) =>
+  (PersistEntity a, ToBackendKey SqlBackend a) =>
   Gen a ->
   Gen [Entity a]
 genValidsWithSeperateIDs gen =
@@ -62,7 +62,7 @@ genValidsWithSeperateIDs gen =
 
 genSeperateIdsForNE ::
   forall a.
-  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a, Eq (Key a)) =>
+  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a) =>
   NonEmpty a ->
   Gen (NonEmpty (Entity a))
 genSeperateIdsForNE (a :| as) = do
@@ -72,13 +72,13 @@ genSeperateIdsForNE (a :| as) = do
 
 genSeperateIds ::
   forall a.
-  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a, Eq (Key a)) =>
+  (PersistEntity a, ToBackendKey SqlBackend a) =>
   Gen [Key a]
 genSeperateIds = genSeperate genValid
 
 genSeperateIdsFor ::
   forall a.
-  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a, Eq (Key a)) =>
+  (ToBackendKey SqlBackend a, GenValid a) =>
   [a] ->
   Gen [Entity a]
 genSeperateIdsFor [] = pure []
@@ -86,7 +86,7 @@ genSeperateIdsFor (a : as) = NE.toList <$> genSeperateIdsForNE (a :| as)
 
 #if MIN_VERSION_containers(0,6,0)
 shrinkValidWithSeperateIds ::
-  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a, Eq (Key a)) =>
+  (PersistEntity a, ToBackendKey SqlBackend a, GenValid a) =>
   [Entity a] ->
   [[Entity a]]
 shrinkValidWithSeperateIds = filter (distinctOrd . map entityKey) . shrinkValid

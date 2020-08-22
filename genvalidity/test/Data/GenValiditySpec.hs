@@ -12,7 +12,15 @@ spec = do
     describe "genUtf16SurrogateCodePoint" $
         it "generates Utf16 surrogate codepoints" $
             forAll genUtf16SurrogateCodePoint $ (`shouldSatisfy` isUtf16SurrogateCodePoint)
-   
+    describe "genLineSeparator" $
+        it "generates only line separators" $
+            forAll genLineSeparator $ (`shouldSatisfy` isLineSeparator)
+    describe "genNonLineSeparator" $
+        it "never generates line separators" $
+            forAll genNonLineSeparator $ (`shouldSatisfy` (not . isLineSeparator))
+    describe "genSingleLineString" $
+        it "generates only single line strings" $
+            forAll genSingleLineString $ (`shouldSatisfy` isSingleLine)
     describe "upTo" $ do
         it "returns only positive integers" $
             forAll arbitrary $ \n -> forAll (upTo n) (`shouldSatisfy` (>= 0))
