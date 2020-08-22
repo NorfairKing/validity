@@ -14,6 +14,7 @@ spec :: Spec
 spec = do
   genValidSpec @Day
   genValidSpec @CalendarDiffDays
+  genValidSpec @DayOfWeek
   genValidSpec @UniversalTime
   genValidSpec @DiffTime
   genValiditySpec @UTCTime

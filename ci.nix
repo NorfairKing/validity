@@ -5,6 +5,7 @@ let
     "lts-13_19"
     "lts-14_23"
     "lts-15_03"
+    "lts-15_15"
   ];
   copyPackage = pkgName: pkgPath: ''
     cp -r ${pkgPath} $out/${pkgName}

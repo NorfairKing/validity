@@ -49,6 +49,7 @@ instance GenValid Day where
       today = unsafePerformIO $ utctDay <$> getCurrentTime
   shrinkValid (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkValid i
 
+#if MIN_VERSION_time(1,9,0)
 instance GenUnchecked CalendarDiffDays where
   genUnchecked = CalendarDiffDays <$> genUnchecked <*> genUnchecked
   shrinkUnchecked (CalendarDiffDays m d) = [ CalendarDiffDays m' d' | (m', d') <- shrinkUnchecked (m, d) ]
@@ -56,3 +57,28 @@ instance GenUnchecked CalendarDiffDays where
 instance GenValid CalendarDiffDays where
   genValid = CalendarDiffDays <$> genValid <*> genValid
   shrinkValid (CalendarDiffDays m d) = [ CalendarDiffDays m' d' | (m', d') <- shrinkValid (m, d) ]
+
+instance GenUnchecked DayOfWeek where
+  genUnchecked = elements
+    [ Monday
+    , Tuesday
+    , Wednesday
+    , Thursday
+    , Friday
+    , Saturday
+    , Sunday
+    ]
+  -- It's hard to know how to shrink this, because there is no official start of the week.
+  -- However, just as we would shrink MonthOfYear to January, we will shrink the days of the week to monday
+  shrinkUnchecked Monday = []
+  shrinkUnchecked Tuesday = [Monday]
+  shrinkUnchecked Wednesday = [Monday, Tuesday]
+  shrinkUnchecked Thursday = [Monday, Tuesday, Wednesday]
+  shrinkUnchecked Friday = [Monday, Tuesday, Wednesday, Thursday]
+  shrinkUnchecked Saturday = [Monday, Tuesday, Wednesday, Thursday, Friday]
+  shrinkUnchecked Sunday = [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+
+instance GenValid DayOfWeek where
+  genValid = genUnchecked
+  shrinkValid = shrinkUnchecked
+#endif
