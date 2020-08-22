@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE CPP #-}
 
 module Data.Validity.Time.LocalTime where
 
@@ -7,6 +8,7 @@ import Data.Validity
 
 import Data.Time.LocalTime
 
+import Data.Validity.Time.Clock ()
 import Data.Validity.Time.Calendar ()
 
 -- | Valid according to the contained values.
@@ -50,3 +52,12 @@ instance Validity ZonedTime where
       [ annotate zonedTimeToLocalTime "zonedTimeToLocalTime"
       , annotate zonedTimeZone "zonedTimeZone"
       ]
+
+#if MIN_VERSION_time(1,9,0)
+instance Validity CalendarDiffTime where
+  validate CalendarDiffTime{..} =
+    mconcat
+      [ annotate ctMonths "ctMonths"
+      , annotate ctTime "ctTime"
+      ]
+#endif

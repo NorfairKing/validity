@@ -22,5 +22,6 @@ spec = do
   genValidSpec @TimeZone
   genValiditySpec @TimeOfDay
   genValiditySpec @LocalTime
+  genValidSpec @CalendarDiffTime
   genValiditySpec @ZonedTime
   genValidSpec @TimeLocale
