@@ -11,3 +11,10 @@ instance Validity Day where
     mconcat
       [ delve "toModifiedJulianDay" i
       ]
+
+instance Validity CalendarDiffDays where
+  validate (CalendarDiffDays ms ds) =
+    mconcat
+      [ delve "cdMonths" ms,
+        delve "cdDays" ds
+      ]

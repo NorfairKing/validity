@@ -15,7 +15,7 @@ import Test.QuickCheck
 
 instance GenUnchecked Day where
   genUnchecked = ModifiedJulianDay <$> genUnchecked
-  shrinkUnchecked _ = []
+  shrinkUnchecked (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkUnchecked i
 
 instance GenValid Day where
   genValid = oneof
@@ -47,3 +47,12 @@ instance GenValid Day where
       -- will generate days around the current day: A positive and negative diff around today.
       today :: Day
       today = unsafePerformIO $ utctDay <$> getCurrentTime
+  shrinkValid (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkValid i
+
+instance GenUnchecked CalendarDiffDays where
+  genUnchecked = CalendarDiffDays <$> genUnchecked <*> genUnchecked
+  shrinkUnchecked (CalendarDiffDays m d) = [ CalendarDiffDays m' d' | (m', d') <- shrinkUnchecked (m, d) ]
+
+instance GenValid CalendarDiffDays where
+  genValid = CalendarDiffDays <$> genValid <*> genValid
+  shrinkValid (CalendarDiffDays m d) = [ CalendarDiffDays m' d' | (m', d') <- shrinkValid (m, d) ]
