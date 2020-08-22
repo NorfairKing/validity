@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE CPP #-}
 
 module Data.GenValidity.TimeSpec
   ( spec,
@@ -13,8 +14,6 @@ import Test.Validity
 spec :: Spec
 spec = do
   genValidSpec @Day
-  genValidSpec @CalendarDiffDays
-  genValidSpec @DayOfWeek
   genValidSpec @UniversalTime
   genValidSpec @DiffTime
   genValiditySpec @UTCTime
@@ -22,6 +21,10 @@ spec = do
   genValidSpec @TimeZone
   genValiditySpec @TimeOfDay
   genValiditySpec @LocalTime
-  genValidSpec @CalendarDiffTime
   genValiditySpec @ZonedTime
   genValidSpec @TimeLocale
+#if MIN_VERSION_time(1,9,0)
+  genValidSpec @CalendarDiffDays
+  genValidSpec @DayOfWeek
+  genValidSpec @CalendarDiffTime
+#endif
