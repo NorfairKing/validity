@@ -40,7 +40,7 @@ instance GenValid Day where
         pure $ fromGregorian y m d
 
       uniformlyDaysAroundToday = sized $ \s -> do
-        diff <- choose (0, s)
+        diff <- choose (-s, s)
         pure $ addDays (fromIntegral diff) today
 
       -- This will make the code potentially flaky, but that's an okay tradeoff given that it
