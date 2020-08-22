@@ -36,7 +36,7 @@ spec = do
 
 genValidstructurallySpec ::
      forall a.
-     (Validity a, Show a, Eq a, Typeable a, Generic a, GGenValid (Rep a))
+     (Validity a, Show a, Typeable a, Generic a, GGenValid (Rep a))
   => Proxy a
   -> Spec
 genValidstructurallySpec proxy =
@@ -56,8 +56,7 @@ genValidstructurallySpec proxy =
 
 shrinkValidstructurallySpec ::
      forall a.
-     ( Validity a
-     , Show a
+     ( Show a
      , Eq a
      , Typeable a
      , Generic a
