@@ -6,7 +6,7 @@ module Data.GenValidity.TimeSpec
   )
 where
 
-import Data.GenValidity.Time ()
+import Data.GenValidity.Time
 import Data.Time
 import Test.Hspec
 import Test.Validity
@@ -14,6 +14,9 @@ import Test.Validity
 spec :: Spec
 spec = do
   genValidSpec @Day
+  describe "genSmartDayAround" $ it "generates valid days" $ forAllValid $ \ d -> genGeneratesValid $ genSmartDayAround d
+  describe "genDayAround" $ it "generates valid days" $ forAllValid $ \ d -> genGeneratesValid $ genDayAround d
+  describe "genDayCloselyAround" $ it "generates valid days" $ forAllValid $ \d -> genGeneratesValid $ genDayCloselyAround d
   genValidSpec @UniversalTime
   genValidSpec @DiffTime
   genValiditySpec @UTCTime
