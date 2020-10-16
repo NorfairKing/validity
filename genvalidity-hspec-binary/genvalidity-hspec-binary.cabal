@@ -1,0 +1,64 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 6c71a2c9ae2760a717a53cfb165d8acbf1f0e64bf6e88d18b7fab841abeb6502
+
+name:           genvalidity-hspec-binary
+version:        0.2.0.4
+synopsis:       Standard spec's for binary-related Instances
+description:    Standard spec's for cereal-related Instances, see https://hackage.haskell.org/package/binary.
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Nick Van den Broeck
+maintainer:     syd@cs-syd.eu
+copyright:      2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Test.Validity.Binary
+  other-modules:
+      Paths_genvalidity_hspec_binary
+  hs-source-dirs:
+      src/
+  ghc-options: -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <=5
+    , binary
+    , deepseq
+    , genvalidity >=0.5
+    , genvalidity-hspec >=0.6
+    , hspec
+  default-language: Haskell2010
+
+test-suite genvalidity-hspec-binary-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Test.Validity.BinarySpec
+      Paths_genvalidity_hspec_binary
+  hs-source-dirs:
+      test/
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.9 && <=5
+    , binary
+    , genvalidity >=0.7
+    , genvalidity-hspec-binary
+    , genvalidity-property >=0.3
+    , hspec
+    , validity >=0.9
+  default-language: Haskell2010

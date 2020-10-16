@@ -1,0 +1,96 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: ca95f3bacf5bb3643db934fc1f17fb529f537d4a0409f7d1342c18c7933fcab0
+
+name:           genvalidity-hspec
+version:        0.7.0.4
+synopsis:       Standard spec's for GenValidity instances
+description:    Note: There are companion packages for this library:
+                .
+                * <https://hackage.haskell.org/package/genvalidity-hspec-aeson genvalidity-hspec-aeson>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-hspec-binary genvalidity-hspec-binary>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-hspec-cereal genvalidity-hspec-cereal>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-hspec-hashable genvalidity-hspec-hashable>
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Test.Validity
+      Test.Validity.Applicative
+      Test.Validity.Arbitrary
+      Test.Validity.Eq
+      Test.Validity.Functor
+      Test.Validity.GenRelativeValidity
+      Test.Validity.GenValidity
+      Test.Validity.Monad
+      Test.Validity.Monoid
+      Test.Validity.Ord
+      Test.Validity.RelativeValidity
+      Test.Validity.Show
+      Test.Validity.Shrinking
+      Test.Validity.Utils
+  other-modules:
+      Paths_genvalidity_hspec
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -fwarn-redundant-constraints
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <5
+    , genvalidity >=0.8
+    , genvalidity-property >=0.5
+    , hspec
+    , hspec-core
+    , transformers
+    , validity >=0.5
+  default-language: Haskell2010
+
+test-suite genvalidity-hspec-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Test.Validity.ApplicativeSpec
+      Test.Validity.ArbitrarySpec
+      Test.Validity.EqSpec
+      Test.Validity.FunctorSpec
+      Test.Validity.GenRelativeValiditySpec
+      Test.Validity.GenValiditySpec
+      Test.Validity.MonadSpec
+      Test.Validity.MonoidSpec
+      Test.Validity.OrdSpec
+      Test.Validity.RelativeValiditySpec
+      Test.Validity.ShowSpec
+      Test.Validity.ShrinkingSpec
+      Paths_genvalidity_hspec
+  hs-source-dirs:
+      test/
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <5
+    , genvalidity
+    , genvalidity-hspec
+    , hspec
+    , hspec-core
+  default-language: Haskell2010

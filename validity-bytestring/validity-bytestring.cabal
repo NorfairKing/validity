@@ -1,0 +1,38 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 3a60602d0cd285720902eb672df27ae094e261a4816faa49ab29770fe841018e
+
+name:           validity-bytestring
+version:        0.4.1.1
+synopsis:       Validity instances for bytestring
+description:    Please see README.md
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.ByteString
+  other-modules:
+      Paths_validity_bytestring
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , validity >=0.5
+  default-language: Haskell2010

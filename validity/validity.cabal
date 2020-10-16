@@ -1,0 +1,76 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 6e3da519f8ddc7a538070f618f28ca85aa221ce124f13eae8d806fe81e827a0e
+
+name:           validity
+version:        0.11.0.0
+synopsis:       Validity typeclass
+description:    For more info, see <https://github.com/NorfairKing/validity the readme>.
+                .
+                Note: There are companion instance packages for this library:
+                .
+                * <https://hackage.haskell.org/package/validity-aeson validity-aeson>
+                .
+                * <https://hackage.haskell.org/package/validity-bytestring validity-bytestring>
+                .
+                * <https://hackage.haskell.org/package/validity-containers validity-containers>
+                .
+                * <https://hackage.haskell.org/package/validity-path validity-path>
+                .
+                * <https://hackage.haskell.org/package/validity-scientific validity-scientific>
+                .
+                * <https://hackage.haskell.org/package/validity-text validity-text>
+                .
+                * <https://hackage.haskell.org/package/validity-time validity-time>
+                .
+                * <https://hackage.haskell.org/package/validity-unordered-containers validity-unordered-containers>
+                .
+                * <https://hackage.haskell.org/package/validity-uuid validity-uuid>
+                .
+                * <https://hackage.haskell.org/package/validity-vector validity-vector>
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.RelativeValidity
+      Data.Validity
+  other-modules:
+      Paths_validity
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  if impl(ghc >=8.0.0)
+    ghc-options: -Wno-redundant-constraints
+  default-language: Haskell2010
+
+test-suite validity-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.ValiditySpec
+      Paths_validity
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.7 && <5
+    , hspec
+    , validity
+  default-language: Haskell2010

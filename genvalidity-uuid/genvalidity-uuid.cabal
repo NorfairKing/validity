@@ -1,0 +1,77 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: fc85c45732a67308227ab1b3a08dd68797f21a09df65fe651368d18b8ff6c72e
+
+name:           genvalidity-uuid
+version:        0.1.0.4
+synopsis:       GenValidity support for UUID
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.GenValidity.UUID
+  other-modules:
+      Paths_genvalidity_uuid
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , genvalidity >=0.5
+    , uuid
+    , validity >=0.5
+    , validity-uuid >=0.0
+  default-language: Haskell2010
+
+test-suite genvalidity-uuid-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.GenValidity.UUIDSpec
+      Paths_genvalidity_uuid
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall -fno-warn-name-shadowing
+  build-depends:
+      QuickCheck
+    , base
+    , genvalidity
+    , genvalidity-hspec
+    , genvalidity-uuid
+    , hspec
+    , uuid
+  default-language: Haskell2010
+
+benchmark genvalidity-uuid-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_genvalidity_uuid
+  hs-source-dirs:
+      bench/
+  ghc-options: -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , criterion
+    , genvalidity
+    , genvalidity-criterion
+    , genvalidity-uuid
+    , uuid
+  default-language: Haskell2010

@@ -1,0 +1,83 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 5ae387cc516c3b82e6f63da456f002ceb1891355889d1df54c842e1e7df0a605
+
+name:           genvalidity
+version:        0.11.0.1
+synopsis:       Testing utilities for the validity library
+description:    Note: There are companion instance packages for this library:
+                .
+                * <https://hackage.haskell.org/package/genvalidity-aeson genvalidity-aeson>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-bytestring genvalidity-bytestring>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-containers genvalidity-containers>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-path genvalidity-path>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-scientific genvalidity-scientific>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-text genvalidity-text>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-time genvalidity-time>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-unordered-containers genvalidity-unordered-containers>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-uuid genvalidity-uuid>
+                .
+                * <https://hackage.haskell.org/package/genvalidity-vector genvalidity-vector>
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.GenRelativeValidity
+      Data.GenValidity
+      Data.GenValidity.Utils
+  other-modules:
+      Paths_genvalidity
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck >=2.12
+    , base >=4.10 && <5
+    , random
+    , validity >=0.9
+  if impl(ghc >=8.0.0)
+    ghc-options: -Wno-redundant-constraints
+  default-language: Haskell2010
+
+test-suite genvalidity-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.GenValidity.GenericSpec
+      Data.GenValidity.ShrinkGenericSpec
+      Data.GenValiditySpec
+      Data.InstanceSpec
+      Paths_genvalidity
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.10 && <5
+    , genvalidity
+    , hspec
+    , hspec-core
+  default-language: Haskell2010

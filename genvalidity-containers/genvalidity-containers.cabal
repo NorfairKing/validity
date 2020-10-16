@@ -1,0 +1,89 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 1f475d682a51c1839b38c10a051dbd9df5a0b7f4cd1323be22c26605a4495c48
+
+name:           genvalidity-containers
+version:        0.9.0.0
+synopsis:       GenValidity support for containers
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.GenValidity.Containers
+      Data.GenValidity.Map
+      Data.GenValidity.Sequence
+      Data.GenValidity.Set
+      Data.GenValidity.Tree
+  other-modules:
+      Paths_genvalidity_containers
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <=5
+    , containers >=0.6.0.1
+    , genvalidity >=0.8
+    , validity >=0.5
+    , validity-containers >=0.3
+  default-language: Haskell2010
+
+test-suite genvalidity-containers-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.GenValidity.Containers.MapSpec
+      Data.GenValidity.Containers.SeqSpec
+      Data.GenValidity.Containers.SetSpec
+      Data.GenValidity.Containers.TreeSpec
+      Paths_genvalidity_containers
+  hs-source-dirs:
+      test/
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <=5
+    , containers
+    , genvalidity >=0.7
+    , genvalidity-containers >=0.5
+    , genvalidity-hspec
+    , genvalidity-property >=0.5
+    , hspec
+    , validity >=0.9
+    , validity-containers
+  default-language: Haskell2010
+
+benchmark genvalidity-containers-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_genvalidity_containers
+  hs-source-dirs:
+      bench/
+  ghc-options: -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <=5
+    , containers
+    , criterion
+    , genvalidity
+    , genvalidity-containers
+    , genvalidity-criterion
+  default-language: Haskell2010

@@ -1,0 +1,39 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 29ace0bfb76e773d39227d4049242ee3ce7fac1bee0150609004a175283ef9b4
+
+name:           validity-persistent
+version:        0.0.0.0
+synopsis:       Validity instances for persistent-related types
+category:       Testing
+homepage:       http://cs-syd.eu
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.Persist
+  other-modules:
+      Paths_validity_persistent
+  hs-source-dirs:
+      src/
+  ghc-options: -Wall
+  build-depends:
+      base >=4.9 && <=5
+    , hspec
+    , persistent
+    , validity
+  default-language: Haskell2010

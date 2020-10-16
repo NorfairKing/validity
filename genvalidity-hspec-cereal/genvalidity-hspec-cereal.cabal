@@ -1,0 +1,62 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: b9b98f1c3119e96c7122101d2a7f662a49b2c0cbfb7019b7cff86555785ea557
+
+name:           genvalidity-hspec-cereal
+version:        0.2.0.4
+synopsis:       Standard spec's for cereal-related instances
+category:       Testing
+homepage:       http://cs-syd.eu
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Test.Validity.Cereal
+  other-modules:
+      Paths_genvalidity_hspec_cereal
+  hs-source-dirs:
+      src/
+  ghc-options: -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <=5
+    , cereal
+    , deepseq
+    , genvalidity >=0.5
+    , genvalidity-hspec >=0.6
+    , hspec
+  default-language: Haskell2010
+
+test-suite genvalidity-hspec-cereal-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Test.Validity.CerealSpec
+      Paths_genvalidity_hspec_cereal
+  hs-source-dirs:
+      test/
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <=5
+    , cereal
+    , genvalidity >=0.7
+    , genvalidity-hspec-cereal
+    , genvalidity-property >=0.3
+    , hspec
+    , validity >=0.9
+  default-language: Haskell2010

@@ -1,0 +1,82 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: f8a0ec9a40a5f3d148068cf9d75a3f6c86751f3038e70bf242194a2528fefd75
+
+name:           genvalidity-persistent
+version:        0.0.0.0
+synopsis:       GenValidity support for Persistent
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.GenValidity.Persist
+  other-modules:
+      Paths_genvalidity_persistent
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , containers
+    , genvalidity
+    , genvalidity-containers
+    , persistent >=0.5
+    , validity-containers
+    , validity-persistent
+  default-language: Haskell2010
+
+test-suite genvalidity-persistent-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.GenValidity.PersistSpec
+      Paths_genvalidity_persistent
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , genvalidity
+    , genvalidity-hspec
+    , genvalidity-persistent
+    , hspec
+    , persistent >=0.5
+    , persistent-template
+    , validity-containers
+  default-language: Haskell2010
+
+benchmark genvalidity-persistent-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_genvalidity_persistent
+  hs-source-dirs:
+      bench
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.7 && <5
+    , criterion
+    , deepseq
+    , genvalidity
+    , genvalidity-criterion
+    , genvalidity-persistent
+    , persistent >=0.5
+    , persistent-template
+  default-language: Haskell2010

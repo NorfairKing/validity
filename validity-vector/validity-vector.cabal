@@ -1,0 +1,38 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: e55315ad874a714f31c17164ccb9eb5e4cd0884ed1192975e1860a24a21f40f0
+
+name:           validity-vector
+version:        0.2.0.3
+synopsis:       Validity instances for vector
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.Vector
+  other-modules:
+      Paths_validity_vector
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , hashable
+    , validity >=0.5
+    , vector
+  default-language: Haskell2010

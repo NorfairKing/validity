@@ -1,0 +1,43 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 2e970343bc40866f2768fe78bd9427b658402d4bf787b23ad793a1cae658a82f
+
+name:           validity-containers
+version:        0.5.0.4
+synopsis:       Validity instances for containers
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.Containers
+      Data.Validity.Map
+      Data.Validity.Sequence
+      Data.Validity.Set
+      Data.Validity.Tree
+  other-modules:
+      Paths_validity_containers
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , containers >=0.6.0.1
+    , validity >=0.5
+  default-language: Haskell2010

@@ -1,0 +1,67 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: b565ce5a4a7956da9ac040351b844f450cf7046a945063ebc2988b047fd1544d
+
+name:           genvalidity-hspec-aeson
+version:        0.3.1.1
+synopsis:       Standard spec's for aeson-related instances
+category:       Testing
+homepage:       http://cs-syd.eu
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Test.Validity.Aeson
+  other-modules:
+      Paths_genvalidity_hspec_aeson
+  hs-source-dirs:
+      src/
+  ghc-options: -Wall
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.9 && <=5
+    , bytestring
+    , deepseq
+    , genvalidity >=0.5
+    , genvalidity-hspec >=0.6
+    , hspec
+  default-language: Haskell2010
+
+test-suite genvalidity-hspec-aeson-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Test.Validity.AesonSpec
+      Paths_genvalidity_hspec_aeson
+  hs-source-dirs:
+      test/
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.9 && <=5
+    , genvalidity >=0.7
+    , genvalidity-aeson
+    , genvalidity-hspec
+    , genvalidity-hspec-aeson
+    , genvalidity-property >=0.3
+    , genvalidity-text
+    , hspec
+    , text
+    , validity >=0.9
+  default-language: Haskell2010

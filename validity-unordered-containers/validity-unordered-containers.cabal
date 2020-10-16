@@ -1,0 +1,40 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: b5c2373ee549a2d02fe10e3bc61ae98d341342ccf65b78170d25688962521a6b
+
+name:           validity-unordered-containers
+version:        0.2.0.3
+synopsis:       Validity instances for unordered-containers
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.HashMap
+      Data.Validity.HashSet
+      Data.Validity.UnorderedContainers
+  other-modules:
+      Paths_validity_unordered_containers
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , hashable
+    , unordered-containers >=0.2.7
+    , validity >=0.5
+  default-language: Haskell2010

@@ -1,0 +1,80 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 988a8f6dbb73e35e209e7be389f2feecccff1747649fd8038095c7578e7982d5
+
+name:           genvalidity-property
+version:        0.5.0.1
+synopsis:       Standard properties for functions on `Validity` types
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Test.Validity.Functions
+      Test.Validity.Functions.CanFail
+      Test.Validity.Functions.Equivalence
+      Test.Validity.Functions.Idempotence
+      Test.Validity.Functions.Inverse
+      Test.Validity.Functions.Validity
+      Test.Validity.GenValidity.Property
+      Test.Validity.Operations
+      Test.Validity.Operations.Associativity
+      Test.Validity.Operations.Commutativity
+      Test.Validity.Operations.Identity
+      Test.Validity.Property
+      Test.Validity.Property.Utils
+      Test.Validity.Relations
+      Test.Validity.Relations.Antireflexivity
+      Test.Validity.Relations.Antisymmetry
+      Test.Validity.Relations.Reflexivity
+      Test.Validity.Relations.Symmetry
+      Test.Validity.Relations.Transitivity
+      Test.Validity.Shrinking.Property
+      Test.Validity.Types
+  other-modules:
+      Paths_genvalidity_property
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -fwarn-redundant-constraints
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , genvalidity >=0.7
+    , hspec >=2.1
+    , pretty-show
+    , validity >=0.9
+  default-language: Haskell2010
+
+test-suite genvalidity-property-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Test.Validity.Operations.CommutativitySpec
+      Paths_genvalidity_property
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , genvalidity
+    , genvalidity-property
+    , hspec
+  default-language: Haskell2010

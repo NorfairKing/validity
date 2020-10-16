@@ -1,0 +1,41 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 67c39e6553361815461677f4654e3cb4541d1ace7c248f665a324de744f950b7
+
+name:           validity-time
+version:        0.4.0.0
+synopsis:       Validity instances for time
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.Time
+      Data.Validity.Time.Calendar
+      Data.Validity.Time.Clock
+      Data.Validity.Time.Format
+      Data.Validity.Time.LocalTime
+  other-modules:
+      Paths_validity_time
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , time
+    , validity >=0.5
+  default-language: Haskell2010

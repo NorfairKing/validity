@@ -1,0 +1,37 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 0b9ebb8be7ec08a35a0c11967f0199a4fe354dfe16002ef970a7e547b0511861
+
+name:           validity-uuid
+version:        0.1.0.3
+synopsis:       Validity instances for uuid
+category:       Web
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.UUID
+  other-modules:
+      Paths_validity_uuid
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , uuid
+    , validity >=0.5
+  default-language: Haskell2010

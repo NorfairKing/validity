@@ -1,0 +1,80 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: e829149efdf6026d6246ee4a88e92b01272e80068931d575c245f5ba38e086b3
+
+name:           genvalidity-bytestring
+version:        0.6.0.0
+synopsis:       GenValidity support for ByteString
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.GenValidity.ByteString
+  other-modules:
+      Paths_genvalidity_bytestring
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , bytestring
+    , genvalidity >=0.8
+    , random
+    , validity >=0.5
+    , validity-bytestring >=0.4
+  default-language: Haskell2010
+
+test-suite genvalidity-bytestring-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.GenValidity.ByteStringSpec
+      Paths_genvalidity_bytestring
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , bytestring
+    , deepseq
+    , genvalidity >=0.7
+    , genvalidity-bytestring
+    , genvalidity-hspec
+    , hspec
+    , validity >=0.9
+  default-language: Haskell2010
+
+benchmark genvalidity-bytestring-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_genvalidity_bytestring
+  hs-source-dirs:
+      bench/
+  ghc-options: -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , bytestring
+    , criterion
+    , genvalidity
+    , genvalidity-bytestring
+    , genvalidity-criterion
+  default-language: Haskell2010

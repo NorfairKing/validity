@@ -1,0 +1,67 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 34593a6c38fd857fad7e733cf3be583475d920522e25b35b799568fbd50e7436
+
+name:           genvalidity-hspec-hashable
+version:        0.2.0.5
+synopsis:       Standard spec's for Hashable instances
+description:    Standard spec's for Hashable instances
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Nick Van den Broeck
+maintainer:     syd@cs-syd.eu
+copyright:      2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Test.Validity.Hashable
+  other-modules:
+      Paths_genvalidity_hspec_hashable
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <5
+    , genvalidity >=0.5
+    , genvalidity-hspec >=0.6
+    , genvalidity-property >=0.2
+    , hashable >=1.2
+    , hspec
+    , validity >=0.5
+  default-language: Haskell2010
+
+test-suite genvalidity-hspec-hashable-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Test.Validity.HashableSpec
+      Paths_genvalidity_hspec_hashable
+  hs-source-dirs:
+      test/
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <5
+    , genvalidity >=0.7
+    , genvalidity-hspec
+    , genvalidity-hspec-hashable
+    , genvalidity-property >=0.3
+    , hashable
+    , hspec
+    , hspec-core
+    , validity >=0.9
+  default-language: Haskell2010

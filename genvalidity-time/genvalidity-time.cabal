@@ -1,0 +1,77 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: d555d09c0ebb33d8de9eea283249aaf0bcb427c0af14d4c8e6b5051ebc0e85f0
+
+name:           genvalidity-time
+version:        0.3.0.0
+synopsis:       GenValidity support for time
+description:    Please see README.md
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.GenValidity.Time
+      Data.GenValidity.Time.Calendar
+      Data.GenValidity.Time.Clock
+      Data.GenValidity.Time.Format
+      Data.GenValidity.Time.LocalTime
+  other-modules:
+      Paths_genvalidity_time
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , genvalidity >=0.5
+    , time
+    , validity-time >=0.2
+  default-language: Haskell2010
+
+test-suite genvalidity-time-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.GenValidity.TimeSpec
+      Paths_genvalidity_time
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.7 && <5
+    , genvalidity-hspec
+    , genvalidity-time
+    , hspec
+    , time
+  default-language: Haskell2010
+
+benchmark genvalidity-time-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_genvalidity_time
+  hs-source-dirs:
+      bench
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.7 && <5
+    , criterion
+    , genvalidity-criterion
+    , genvalidity-time
+    , time
+  default-language: Haskell2010
