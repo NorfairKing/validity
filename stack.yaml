@@ -1,4 +1,5 @@
 resolver: lts-15.15
+
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
@@ -36,10 +37,10 @@ packages:
 - 'validity-vector'
 ghc-options:
   "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef -Wcompat
+
 nix:
-  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/f9b8d17c100681fde8dde58fa794527f0159c9ee.tar.gz"]
+  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/e3a2247046d4de66b9b193a6ab3ff040fa3da86d.tar.gz"]
   add-gc-roots: true
-  pure: true
   packages:
   - zlib
   - haskellPackages.hpack
