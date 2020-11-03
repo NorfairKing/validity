@@ -16,10 +16,16 @@ instance GenUnchecked Day where
   shrinkUnchecked (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkUnchecked i
 
 instance GenValid Day where
-  genValid = oneof
-    [ (ModifiedJulianDay <$> genValid) `suchThat` isValid
-    , uniformlyOneHundredYearsAround2020
-    ]
+  genValid =
+#if MIN_VERSION_time(1,10,0)
+      let fancy = oneof
+            [ (ModifiedJulianDay <$> genValid) `suchThat` isValid
+            , uniformlyOneHundredYearsAround2020
+            ]
+       in fancy
+#else
+      uniformlyOneHundredYearsAround2020
+#endif
     where
       uniformlyOneHundredYearsAround2020 = do
         y <- choose (1970, 2070)
