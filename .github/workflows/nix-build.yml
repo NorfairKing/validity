@@ -19,10 +19,11 @@ jobs:
           - lts-14_23
           - lts-15_03
           - lts-15_15
+          - lts-16_11
           - current
     steps:
     - uses: actions/checkout@v2
-    - uses: cachix/install-nix-action@v8
+    - uses: cachix/install-nix-action@v11
     - name: free disk space
       run: |
         if [[ "${{matrix.os}}" == "ubuntu-latest" ]]
