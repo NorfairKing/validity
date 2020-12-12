@@ -4,7 +4,7 @@ final:
     {
       validityPackages =
             let validityPkg = name:
-                doBenchmark (failOnAllWarnings (final.haskellPackages.callCabal2nix name (final.gitignoreSource (../. + "/${name}")) {}));
+                doBenchmark (failOnAllWarnings (final.haskellPackages.callCabal2nixWithOptions name (final.gitignoreSource (../. + "/${name}")) "--no-hpack" {}));
             in final.lib.genAttrs [
               "genvalidity"
               "genvalidity-aeson"
@@ -22,6 +22,7 @@ final:
               "genvalidity-persistent"
               "genvalidity-property"
               "genvalidity-scientific"
+              "genvalidity-sydtest"
               "genvalidity-text"
               "genvalidity-time"
               "genvalidity-unordered-containers"
@@ -44,7 +45,8 @@ final:
 
       haskellPackages = previous.haskellPackages.override (old: {
         overrides = final.lib.composeExtensions (old.overrides or (_: _: {})) (
-          self: super: final.validityPackages
+          self: super: 
+            final.validityPackages
         );
       });
     }
