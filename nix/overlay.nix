@@ -24,6 +24,7 @@ final:
               "genvalidity-scientific"
               "genvalidity-sydtest"
               "genvalidity-sydtest-aeson"
+              "genvalidity-sydtest-lens"
               "genvalidity-sydtest-persistent"
               "genvalidity-text"
               "genvalidity-time"

@@ -1,0 +1,61 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           genvalidity-sydtest-lens
+version:        0.0.0.0
+synopsis:       Standard spec's for lens for sydtest
+description:    Standard spec's for lens (van Laarhoven encoding)
+category:       Testing
+homepage:       http://cs-syd.eu
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2020 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Test.Syd.Validity.Lens
+  other-modules:
+      Paths_genvalidity_sydtest_lens
+  hs-source-dirs:
+      src/
+  ghc-options: -Wall
+  build-depends:
+      QuickCheck
+    , base >=4.9 && <=5
+    , genvalidity >=0.5
+    , genvalidity-sydtest
+    , microlens
+    , sydtest
+  default-language: Haskell2010
+
+test-suite genvalidity-sydtest-optics-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Test.Syd.Validity.LensSpec
+      Paths_genvalidity_sydtest_lens
+  hs-source-dirs:
+      test/
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-tool-depends:
+      sydtest-discover:sydtest-discover
+  build-depends:
+      base
+    , genvalidity >=0.7
+    , genvalidity-sydtest
+    , genvalidity-sydtest-lens
+    , microlens
+    , sydtest
+    , validity >=0.9
+  default-language: Haskell2010
