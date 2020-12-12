@@ -23,6 +23,7 @@ final:
               "genvalidity-property"
               "genvalidity-scientific"
               "genvalidity-sydtest"
+              "genvalidity-sydtest-aeson"
               "genvalidity-text"
               "genvalidity-time"
               "genvalidity-unordered-containers"
