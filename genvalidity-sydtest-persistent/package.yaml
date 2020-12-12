@@ -1,0 +1,42 @@
+name: genvalidity-sydtest-persistent
+version: '0.0.0.1'
+synopsis: Standard spec's for persistent-related instances for sydtest
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd@cs-syd.eu
+copyright: ! 'Copyright: (c) 2020 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+homepage: http://cs-syd.eu
+dependencies:
+- base >=4.9 && <=5
+- sydtest
+- persistent
+
+library:
+  source-dirs: src/
+  ghc-options: -Wall
+  dependencies:
+  - QuickCheck
+  - genvalidity >=0.5
+  - genvalidity-sydtest
+  - text
+
+tests:
+  genvalidity-sydtest-persistent-test:
+    main: Spec.hs
+    source-dirs: test/
+    build-tools: sydtest-discover
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - QuickCheck
+    - genvalidity >=0.7
+    - genvalidity-sydtest
+    - genvalidity-sydtest-persistent
+    - genvalidity-text
+    - text
+    - validity >=0.9
