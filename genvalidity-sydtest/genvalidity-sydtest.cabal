@@ -25,27 +25,41 @@ source-repository head
 
 library
   exposed-modules:
-      Test.Validity.Functions
-      Test.Validity.Functions.CanFail
-      Test.Validity.Functions.Equivalence
-      Test.Validity.Functions.Idempotence
-      Test.Validity.Functions.Inverse
-      Test.Validity.Functions.Validity
-      Test.Validity.GenValidity.Property
-      Test.Validity.Operations
-      Test.Validity.Operations.Associativity
-      Test.Validity.Operations.Commutativity
-      Test.Validity.Operations.Identity
-      Test.Validity.Property
-      Test.Validity.Property.Utils
-      Test.Validity.Relations
-      Test.Validity.Relations.Antireflexivity
-      Test.Validity.Relations.Antisymmetry
-      Test.Validity.Relations.Reflexivity
-      Test.Validity.Relations.Symmetry
-      Test.Validity.Relations.Transitivity
-      Test.Validity.Shrinking.Property
-      Test.Validity.Types
+      Test.Syd.Validity
+      Test.Syd.Validity.Applicative
+      Test.Syd.Validity.Arbitrary
+      Test.Syd.Validity.Eq
+      Test.Syd.Validity.Functions
+      Test.Syd.Validity.Functions.CanFail
+      Test.Syd.Validity.Functions.Equivalence
+      Test.Syd.Validity.Functions.Idempotence
+      Test.Syd.Validity.Functions.Inverse
+      Test.Syd.Validity.Functions.Validity
+      Test.Syd.Validity.Functor
+      Test.Syd.Validity.GenRelativeValidity
+      Test.Syd.Validity.GenValidity
+      Test.Syd.Validity.GenValidity.Property
+      Test.Syd.Validity.Monad
+      Test.Syd.Validity.Monoid
+      Test.Syd.Validity.Operations
+      Test.Syd.Validity.Operations.Associativity
+      Test.Syd.Validity.Operations.Commutativity
+      Test.Syd.Validity.Operations.Identity
+      Test.Syd.Validity.Ord
+      Test.Syd.Validity.Property
+      Test.Syd.Validity.Property.Utils
+      Test.Syd.Validity.Relations
+      Test.Syd.Validity.Relations.Antireflexivity
+      Test.Syd.Validity.Relations.Antisymmetry
+      Test.Syd.Validity.Relations.Reflexivity
+      Test.Syd.Validity.Relations.Symmetry
+      Test.Syd.Validity.Relations.Transitivity
+      Test.Syd.Validity.RelativeValidity
+      Test.Syd.Validity.Show
+      Test.Syd.Validity.Shrinking
+      Test.Syd.Validity.Shrinking.Property
+      Test.Syd.Validity.Types
+      Test.Syd.Validity.Utils
   other-modules:
       Paths_genvalidity_sydtest
   hs-source-dirs:
@@ -64,7 +78,19 @@ test-suite genvalidity-sydtest-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Test.Validity.Operations.CommutativitySpec
+      Test.Syd.Validity.ApplicativeSpec
+      Test.Syd.Validity.ArbitrarySpec
+      Test.Syd.Validity.EqSpec
+      Test.Syd.Validity.FunctorSpec
+      Test.Syd.Validity.GenRelativeValiditySpec
+      Test.Syd.Validity.GenValiditySpec
+      Test.Syd.Validity.MonadSpec
+      Test.Syd.Validity.MonoidSpec
+      Test.Syd.Validity.Operations.CommutativitySpec
+      Test.Syd.Validity.OrdSpec
+      Test.Syd.Validity.RelativeValiditySpec
+      Test.Syd.Validity.ShowSpec
+      Test.Syd.Validity.ShrinkingSpec
       Paths_genvalidity_sydtest
   hs-source-dirs:
       test
