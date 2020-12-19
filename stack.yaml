@@ -40,24 +40,22 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-- /home/syd/src/sydtest/sydtest
-- /home/syd/src/sydtest/sydtest-discover
 
 extra-deps:
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
 - yamlparse-applicative-0.1.0.2@sha256:bda91f2818c1b5b124963931cb7f9a4e5758d026c09713e9ae2234534062747d,2133
 
-  # - github: NorfairKing/sydtest
-  #   commit: 8c470180f8b51eb4612673bb9c8a6262c0b34f7a
-  #   subdirs:
-  #     - sydtest
-  #     - sydtest-discover
+- github: NorfairKing/sydtest
+  commit: 23ab09d5640fb3f5f4ef0f75dd8622bfcc3ed9f0
+  subdirs:
+    - sydtest
+    - sydtest-discover
 
 ghc-options:
   "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef -Wcompat
 
 nix:
-  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/89db531aea80df58584c9a9e3504ffd9617e6b48.tar.gz"]
+  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/f9b8d17c100681fde8dde58fa794527f0159c9ee.tar.gz"]
   add-gc-roots: true
   packages:
   - zlib
