@@ -14,7 +14,6 @@ module Test.Syd.Validity.Persist
   )
 where
 
-import Control.Monad
 import Data.GenValidity
 import qualified Data.Text as T
 import Data.Typeable

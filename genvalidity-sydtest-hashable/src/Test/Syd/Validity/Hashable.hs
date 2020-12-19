@@ -6,7 +6,7 @@
 -- | Hashable properties
 --
 -- You will need @TypeApplications@ to use these.
-module Test.Validity.Hashable
+module Test.Syd.Validity.Hashable
   ( hashableSpecOnValid,
     hashableSpecOnInvalid,
     hashableSpec,
@@ -19,10 +19,10 @@ import Control.Monad
 import Data.Data
 import Data.GenValidity
 import Data.Hashable
-import Test.Hspec
 import Test.QuickCheck
-import Test.Validity.Property.Utils
-import Test.Validity.Utils
+import Test.Syd
+import Test.Syd.Validity.Property.Utils
+import Test.Syd.Validity.Utils
 
 -- | Standard test spec for properties of Hashable instances for valid values
 --

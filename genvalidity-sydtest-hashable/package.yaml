@@ -1,0 +1,42 @@
+name: genvalidity-sydtest-hashable
+version: '0.0.0.0'
+synopsis: Standard spec's for Hashable instances for sydtest
+description: Standard spec's for Hashable instances for sydtest
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd@cs-syd.eu
+copyright: 2020 Tom Sydney Kerckhove
+license: MIT
+github: NorfairKing/validity
+extra-source-files:
+- README.md
+dependencies:
+- base >=4.9 && <5
+- hashable >=1.2
+- QuickCheck
+
+library:
+  source-dirs: src
+  dependencies:
+  - validity >=0.5
+  - genvalidity-sydtest
+  - genvalidity >=0.5
+  - sydtest
+
+tests:
+  genvalidity-sydtest-hashable-test:
+    main: Spec.hs
+    source-dirs: test/
+    build-tools: sydtest-discover
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - validity >=0.9
+    - genvalidity >=0.7
+    - genvalidity-sydtest
+    - genvalidity-sydtest-hashable
+    - hashable
+    - sydtest
