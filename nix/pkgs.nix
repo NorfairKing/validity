@@ -11,5 +11,6 @@ let
         yamlparse-applicative-overlay
         sydtest-overlay
       ];
+      config.allowUnfree = true;
     };
 in pkgs
