@@ -137,13 +137,12 @@ encodeAndDecodeAreInversesOnGen gen s =
                   show encoded
                 ]
           Right decoded ->
-            unless (decoded == a) $
-              expectationFailure $
-                unlines
-                  [ "Decoding succeeded, but the decoded value",
-                    show decoded,
-                    "differs from expected decoded value",
-                    show a,
-                    "'encode' encoded it to the json",
-                    show encoded
-                  ]
+            shouldBeWith decoded a $
+              unlines
+                [ "Decoding succeeded, but the decoded value",
+                  show decoded,
+                  "differs from expected decoded value",
+                  show a,
+                  "'encode' encoded it to the json",
+                  show encoded
+                ]
