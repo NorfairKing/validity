@@ -112,12 +112,13 @@ fromPersistValueAndToPersistValueAreInversesOnGen gen s =
                   show encoded
                 ]
           Right decoded ->
-            shouldBeWith decoded a $
-              unlines
-                [ "Decoding succeeded, but the decoded value",
-                  show decoded,
-                  "differs from expected decoded value",
-                  show a,
-                  "'encode' encoded it to the persist",
-                  show encoded
-                ]
+            let ctx =
+                  unlines
+                    [ "Decoding succeeded, but the decoded value",
+                      show decoded,
+                      "differs from expected decoded value",
+                      show a,
+                      "'encode' encoded it to the persist",
+                      show encoded
+                    ]
+             in context ctx $ decoded `shouldBe` a

@@ -136,12 +136,13 @@ encodeAndDecodeAreInversesOnGen gen s =
                   show encoded
                 ]
           Right decoded ->
-            shouldBeWith decoded a $
-              unlines
-                [ "Decoding succeeded, but the decoded value",
-                  show decoded,
-                  "differs from expected decoded value",
-                  show a,
-                  "'encode' encoded it to the json",
-                  show encoded
-                ]
+            let ctx =
+                  unlines
+                    [ "Decoding succeeded, but the decoded value",
+                      show decoded,
+                      "differs from expected decoded value",
+                      show a,
+                      "'encode' encoded it to the json",
+                      show encoded
+                    ]
+             in context ctx $ decoded `shouldBe` a
