@@ -8,9 +8,6 @@ copyright: ! 'Copyright: (c) 2020 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 
-extra-source-files:
-- CHANGELOG.md
-
 dependencies:
 - base >=4.7 && <5
 

@@ -8,8 +8,6 @@ maintainer: syd@cs-syd.eu
 copyright: 2020 Tom Sydney Kerckhove
 license: MIT
 github: NorfairKing/validity
-extra-source-files:
-- README.md
 dependencies:
 - base >=4.9 && <5
 - hashable >=1.2

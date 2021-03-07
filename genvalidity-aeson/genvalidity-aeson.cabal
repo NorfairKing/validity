@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 18c7dcfe0cd94d41a851a68142cc1d6d37c43aaf5fc20aa444a9e0cd4a17efff
+-- hash: fb8cac84e57d8b0f5784204246c02788f4ee17ec6092c69a2b2b50861598f0e2
 
 name:           genvalidity-aeson
 version:        0.3.0.1
@@ -33,7 +33,7 @@ library
   build-depends:
       QuickCheck
     , aeson >=1.4.0.0
-    , base
+    , base >=4.10 && <5
     , genvalidity >=0.8
     , genvalidity-scientific >=0.2
     , genvalidity-text >=0.5
@@ -54,7 +54,7 @@ test-suite genvalidity-aeson-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       aeson >=1.4.0.0
-    , base
+    , base >=4.10 && <5
     , deepseq
     , genvalidity
     , genvalidity-aeson
@@ -72,7 +72,7 @@ benchmark genvalidity-aeson-bench
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       aeson >=1.4.0.0
-    , base
+    , base >=4.10 && <5
     , criterion
     , genvalidity-aeson
     , genvalidity-criterion
