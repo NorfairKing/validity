@@ -14,10 +14,13 @@ jobs:
           - ubuntu-latest
           - macos-latest
         lts:
+          - lts-13_19
+          - lts-14_23
           - lts-15_03
           - lts-15_15
           - lts-16_11
           - lts-16_20
+          - nightly-2021-03-01
           - current
     steps:
     - uses: actions/checkout@v2

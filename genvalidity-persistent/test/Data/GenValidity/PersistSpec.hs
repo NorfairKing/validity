@@ -1,5 +1,7 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -50,25 +52,25 @@ spec = do
   shrinkValidSpec @ThingId
   genValidSpec @(Entity Thing)
   shrinkValidSpec @(Entity Thing)
-  describe "genSeperateIds"
-    $ it "generates values with seperate ids"
-    $ forAll genSeperateIds
-    $ \is -> distinctOrd (is :: [Key Thing])
-  describe "genSeperateIdsFor"
-    $ it "generates values with seperate ids"
-    $ forAll genValid
-    $ \as ->
-      forAll (genSeperateIdsFor as) $ \es -> distinctOrd $ map entityKey (es :: [Entity Thing])
+  describe "genSeperateIds" $
+    it "generates values with seperate ids" $
+      forAll genSeperateIds $
+        \is -> distinctOrd (is :: [Key Thing])
+  describe "genSeperateIdsFor" $
+    it "generates values with seperate ids" $
+      forAll genValid $
+        \as ->
+          forAll (genSeperateIdsFor as) $ \es -> distinctOrd $ map entityKey (es :: [Entity Thing])
   describe "genValidsWithSeperateIds" $ do
-    it "generates values with seperate ids"
-      $ forAll (genValidsWithSeperateIDs genValid)
-      $ \es ->
-        distinctOrd $ map entityKey (es :: [Entity Thing])
-    it "generates values with seperate ids"
-      $ forAll (genValidsWithSeperateIDs genValid)
-      $ \es ->
-        distinctOrd $ map entityKey (es :: [Entity Thing])
-  describe "validsWithSeperateIDs"
-    $ it "generates values with seperate ids"
-    $ forAll validsWithSeperateIDs
-    $ \es -> distinctOrd $ map entityKey (es :: [Entity Thing])
+    it "generates values with seperate ids" $
+      forAll (genValidsWithSeperateIDs genValid) $
+        \es ->
+          distinctOrd $ map entityKey (es :: [Entity Thing])
+    it "generates values with seperate ids" $
+      forAll (genValidsWithSeperateIDs genValid) $
+        \es ->
+          distinctOrd $ map entityKey (es :: [Entity Thing])
+  describe "validsWithSeperateIDs" $
+    it "generates values with seperate ids" $
+      forAll validsWithSeperateIDs $
+        \es -> distinctOrd $ map entityKey (es :: [Entity Thing])

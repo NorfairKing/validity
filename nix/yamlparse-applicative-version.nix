@@ -1,4 +1,4 @@
 {
   url = "https://github.com/NorfairKing/yamlparse-applicative";
-  rev = "1d381a4cbc9736a2defc916a93cfcf8000ee7e37";
+  rev = "7a329d06ffa45595963cf98f34910887115eb471";
 }

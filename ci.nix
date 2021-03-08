@@ -1,10 +1,13 @@
 let
   pkgs = import ./nix/pkgs.nix {};
   versions = [
+    "lts-13_19"
+    "lts-14_23"
     "lts-15_03"
     "lts-15_15"
     "lts-16_11"
     "lts-16_20"
+    "nightly-2021-03-01"
   ];
   copyPackage = pkgName: pkgPath: ''
     cp -r ${pkgPath} $out/${pkgName}
