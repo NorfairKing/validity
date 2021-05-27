@@ -32,7 +32,7 @@ We start by defining some `newtype` wrappers that encapsulate the type on which 
 
 ``` Haskell
 newtype HasPrimeFactorisation
-  -- INVARIANT: (> 0}
+  -- INVARIANT: (> 0)
   = HasPrimeFactorisation Int
 
 newtype Prime
