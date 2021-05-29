@@ -1,4 +1,4 @@
-resolver: nightly-2021-03-01
+resolver: lts-16.12
 
 packages:
 - 'genvalidity'
@@ -44,14 +44,18 @@ packages:
 
 extra-deps:
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
-- yamlparse-applicative-0.1.0.2@sha256:bda91f2818c1b5b124963931cb7f9a4e5758d026c09713e9ae2234534062747d,2133
 
+- github: NorfairKing/yamlparse-applicative
+  commit: a250d9ea4b0c10dd6a96174f4942f73ec9652a2a
+  subdirs:
+    - yamlparse-applicative
 - github: NorfairKing/safe-coloured-text
-  commit: 5aebc16ffb138a2fb2277a3fe3074ba68917abdd
+  commit: 7a3a7751f27ca65a4b7ec6dcad6e0e8c28f1091f
   subdirs:
     - safe-coloured-text
+    - safe-coloured-text-terminfo
 - github: NorfairKing/sydtest
-  commit: f495c959e7ca579fcdd0217236fe5f5c5f970685
+  commit: aafd8e0c2e97143af950e2f9742c5e1bd167c77b
   subdirs:
     - sydtest
     - sydtest-discover

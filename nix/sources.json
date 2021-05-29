@@ -1,0 +1,86 @@
+{
+    "gitignore": {
+        "branch": "master",
+        "description": "Nix function for filtering local git sources",
+        "homepage": "",
+        "owner": "hercules-ci",
+        "repo": "gitignore.nix",
+        "rev": "211907489e9f198594c0eb0ca9256a1949c9d412",
+        "sha256": "06j7wpvj54khw0z10fjyi31kpafkr6hi1k0di13k1xp8kywvfyx8",
+        "type": "tarball",
+        "url": "https://github.com/hercules-ci/gitignore.nix/archive/211907489e9f198594c0eb0ca9256a1949c9d412.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "niv": {
+        "branch": "master",
+        "description": "Easy dependency management for Nix projects",
+        "homepage": "https://github.com/nmattia/niv",
+        "owner": "nmattia",
+        "repo": "niv",
+        "rev": "1819632b5823e0527da28ad82fecd6be5136c1e9",
+        "sha256": "08jz17756qchq0zrqmapcm33nr4ms9f630mycc06i6zkfwl5yh5i",
+        "type": "tarball",
+        "url": "https://github.com/nmattia/niv/archive/1819632b5823e0527da28ad82fecd6be5136c1e9.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs": {
+        "branch": "nixos-20.09",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "85960bea533dc2d89dff8836d8a0a1239ddd5c9c",
+        "sha256": "0r1h3mh1nrca7wldlx64bdcxdzxz6hw9w7rzg9p6xk83zbmsyb9i",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/85960bea533dc2d89dff8836d8a0a1239ddd5c9c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "pre-commit-hooks": {
+        "branch": "master",
+        "description": "Seamless integration of https://pre-commit.com git hooks with Nix.",
+        "homepage": "",
+        "owner": "cachix",
+        "repo": "pre-commit-hooks.nix",
+        "rev": "2e7fac06108b4fc81f5ff9ed9a02bc4f6ede7001",
+        "sha256": "17xlb7cb1n6cyw8my6ks4iacrz49a6wfqrdj2gvjc52qc91wxvj7",
+        "type": "tarball",
+        "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/2e7fac06108b4fc81f5ff9ed9a02bc4f6ede7001.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "safe-coloured-text": {
+        "branch": "master",
+        "description": null,
+        "homepage": "https://cs-syd.eu/posts/2021-03-07-safe-coloured-text",
+        "owner": "NorfairKing",
+        "repo": "safe-coloured-text",
+        "rev": "7a3a7751f27ca65a4b7ec6dcad6e0e8c28f1091f",
+        "sha256": "0nbh1dahc3l0z2hnl2714s3gsfdjiy9nglfw7l6x2fzdjhvjc13r",
+        "type": "tarball",
+        "url": "https://github.com/NorfairKing/safe-coloured-text/archive/7a3a7751f27ca65a4b7ec6dcad6e0e8c28f1091f.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "sydtest": {
+        "branch": "master",
+        "description": "A modern testing framework for Haskell with good defaults and advanced testing features.",
+        "homepage": "",
+        "owner": "NorfairKing",
+        "repo": "sydtest",
+        "rev": "aafd8e0c2e97143af950e2f9742c5e1bd167c77b",
+        "sha256": "0i0il3j32zqj56byngg6jrlnbkmgmq6piw7k4di7j040j5knp2jh",
+        "type": "tarball",
+        "url": "https://github.com/NorfairKing/sydtest/archive/aafd8e0c2e97143af950e2f9742c5e1bd167c77b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "yamlparse-applicative": {
+        "branch": "master",
+        "description": "An optparse-applicative -style explainable yaml parser",
+        "homepage": "https://cs-syd.eu/posts/2020-06-28-yamlparse-applicative",
+        "owner": "NorfairKing",
+        "repo": "yamlparse-applicative",
+        "rev": "a250d9ea4b0c10dd6a96174f4942f73ec9652a2a",
+        "sha256": "0w7z8ai3gikmhxnjmh94x95qws5nzx3q9ic3vyh8220hzn7sfvfp",
+        "type": "tarball",
+        "url": "https://github.com/NorfairKing/yamlparse-applicative/archive/a250d9ea4b0c10dd6a96174f4942f73ec9652a2a.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}

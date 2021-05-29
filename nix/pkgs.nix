@@ -1,18 +1,17 @@
-{ pkgsf ? import ./nixpkgs.nix {}
+{ sources ? import ./sources.nix
+, pkgsf ? sources.nixpkgs
 }:
-let 
-    safe-coloured-text-overlay =    import (      builtins.fetchGit (import ./safe-coloured-text-version.nix) + "/nix/overlay.nix"    );
-    yamlparse-applicative-overlay =    import (      builtins.fetchGit (import ./yamlparse-applicative-version.nix) + "/nix/overlay.nix"    );
-    sydtest-overlay = import (builtins.fetchGit (import ./sydtest-version.nix) + "/nix/overlay.nix");
-    pkgs =
-      import pkgsf {
+let
+  pkgs =
+    import pkgsf {
       overlays = [
-        ( import ./gitignore-src.nix )  
-        ( import ./overlay.nix )
-        safe-coloured-text-overlay
-        yamlparse-applicative-overlay
-        sydtest-overlay
+        (import ./overlay.nix)
+        (final: previous: { inherit (import sources.gitignore { inherit (final) lib; }) gitignoreSource; })
+        (import (sources.safe-coloured-text + "/nix/overlay.nix"))
+        (import (sources.sydtest + "/nix/overlay.nix"))
+        (import (sources.yamlparse-applicative + "/nix/overlay.nix"))
       ];
       config.allowUnfree = true;
     };
-in pkgs
+in
+pkgs
