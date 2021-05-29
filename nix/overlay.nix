@@ -4,7 +4,7 @@ with final.haskell.lib;
 {
   validityPackages =
     let validityPkg = name:
-      doBenchmark (failOnAllWarnings (final.haskellPackages.callCabal2nixWithOptions name (final.gitignoreSource (../. + "/${name}")) "--no-hpack" { }));
+      doBenchmark (buildStrictly (final.haskellPackages.callCabal2nixWithOptions name (final.gitignoreSource (../. + "/${name}")) "--no-hpack" { }));
     in
     final.lib.genAttrs [
       "genvalidity"

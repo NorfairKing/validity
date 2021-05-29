@@ -21,11 +21,6 @@ spec = do
     it "produces valid sets" $
       genGeneratesInvalid
         (genStructurallyValidSetOfInvalidValues @Rational)
-#if MIN_VERSION_containers(0,5,9)
-    describe "genStructurallyInvalidSet" $
-        it "produces invalid sets" $
-        genGeneratesInvalid (genStructurallyInvalidSet @Rational)
-#endif
   genValidSpec @(Set Int)
   genValiditySpec @(Set Rational)
   describe "genSeperate" $ do
@@ -44,3 +39,9 @@ spec = do
     it "generates values that are seperate" $
       forAllValid $ \ls ->
         forAll (genValidSeperateFor ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
+
+#if MIN_VERSION_containers(0,5,9)
+  describe "genStructurallyInvalidSet" $
+      it "produces invalid sets" $
+      genGeneratesInvalid (genStructurallyInvalidSet @Rational)
+#endif

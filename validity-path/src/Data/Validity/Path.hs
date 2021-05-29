@@ -32,7 +32,7 @@ instance Validity (Path Abs File) where
           FilePath.isValid fp,
         declare "The path does not end in /." $ not ("/." `isSuffixOf` fp),
 #if MIN_VERSION_path(0,6,0)
-            , declare "The path does not equal \".\"" $ fp /= "."
+        declare "The path does not equal \".\"" $ fp /= ".",
 #endif
         declare "The path does not contain '..'." $ not (".." `isInfixOf` fp),
         decorate "The path contains no UTF16 Surrogate codepoints" $ decorateList fp validateCharNotUtf16SurrogateCodePoint,
@@ -65,7 +65,7 @@ instance Validity (Path Rel File) where
         declare "The path does not equal \".\"" $ fp /= ".",
         declare "The path is not empty" $ not (null fp),
 #if MIN_VERSION_path(0,6,0)
-            , declare "The path does not end in /." $ not ("/." `isSuffixOf` fp)
+        declare "The path does not end in /." $ not ("/." `isSuffixOf` fp),
 #endif
         declare "The path does not contain '..'." $ not (".." `isInfixOf` fp),
         decorate "The path contains no UTF16 Surrogate codepoints" $ decorateList fp validateCharNotUtf16SurrogateCodePoint,

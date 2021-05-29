@@ -18,7 +18,7 @@ spec :: Spec
 spec = do
   hashableSpecOnValid @Rational
 #if MIN_VERSION_hashable(1,3,0)
-    hashableSpecOnValid @Double
+  hashableSpecOnValid @Double
 #endif
   hashableSpec @Int
   hashableSpecOnArbitrary @Int

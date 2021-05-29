@@ -19,11 +19,12 @@ spec = do
     it "produces valid maps" $
       genGeneratesInvalid
         (genStructurallyValidMapOfInvalidValues @Rational @Rational)
-#if MIN_VERSION_containers(0,5,9)
-    describe "genStructurallyInvalidMap" $
-        it "produces invalid maps" $
-        genGeneratesInvalid
-            (genStructurallyInvalidMap @Rational @Rational)
-#endif
   genValidSpec @(Map Int Rational)
   genValiditySpec @(Map Rational Rational)
+
+#if MIN_VERSION_containers(0,5,9)
+  describe "genStructurallyInvalidMap" $
+      it "produces invalid maps" $
+      genGeneratesInvalid
+          (genStructurallyInvalidMap @Rational @Rational)
+#endif

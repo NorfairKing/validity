@@ -6,7 +6,7 @@ module Data.GenValidity.Set
     genStructurallyValidSetOf,
     genStructurallyValidSetOfInvalidValues,
 #if MIN_VERSION_containers(0,5,9)
-    , genStructurallyInvalidSet
+    genStructurallyInvalidSet,
 #endif
     genSeperate,
     genSeperateFor,

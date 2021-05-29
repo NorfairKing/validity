@@ -6,7 +6,7 @@ module Data.GenValidity.Map
     genStructurallyValidMapOf,
     genStructurallyValidMapOfInvalidValues,
 #if MIN_VERSION_containers(0,5,9)
-    , genStructurallyInvalidMap
+    genStructurallyInvalidMap,
 #endif
   )
 where
