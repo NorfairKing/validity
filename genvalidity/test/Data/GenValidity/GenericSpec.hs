@@ -1,23 +1,20 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Data.GenValidity.GenericSpec
-  ( spec
-  ) where
-
-import GHC.Generics (Generic, Rep)
+  ( spec,
+  )
+where
 
 import Control.Monad
-
-import Test.Hspec
-import Test.QuickCheck
-
+import Data.GenValidity
 import Data.Proxy
 import Data.Typeable
-
-import Data.GenValidity
+import GHC.Generics (Generic, Rep)
+import Test.Hspec
+import Test.QuickCheck
 
 spec :: Spec
 spec = do
@@ -35,37 +32,37 @@ spec = do
     shrinkValidstructurallySpec (Proxy :: Proxy MyType)
 
 genValidstructurallySpec ::
-     forall a.
-     (Validity a, Show a, Typeable a, Generic a, GGenValid (Rep a))
-  => Proxy a
-  -> Spec
+  forall a.
+  (Validity a, Show a, Typeable a, Generic a, GGenValid (Rep a)) =>
+  Proxy a ->
+  Spec
 genValidstructurallySpec proxy =
   it (unwords ["only generates valid", "\"" ++ nameOf proxy ++ "\"s"]) $
-  forAll (genValidStructurally :: Gen a) $ \a ->
-    case prettyValidate a of
-      Right _ -> return ()
-      Left err ->
-        expectationFailure $
-        unlines
-          [ "'validate' reported this value to be invalid: "
-          , show a
-          , "with explanation"
-          , err
-          , ""
-          ]
+    forAll (genValidStructurally :: Gen a) $ \a ->
+      case prettyValidate a of
+        Right _ -> return ()
+        Left err ->
+          expectationFailure $
+            unlines
+              [ "'validate' reported this value to be invalid: ",
+                show a,
+                "with explanation",
+                err,
+                ""
+              ]
 
 shrinkValidstructurallySpec ::
-     forall a.
-     ( Show a
-     , Eq a
-     , Typeable a
-     , Generic a
-     , GenValid a
-     , GValidRecursivelyShrink (Rep a)
-     , GValidSubterms (Rep a) a
-     )
-  => Proxy a
-  -> Spec
+  forall a.
+  ( Show a,
+    Eq a,
+    Typeable a,
+    Generic a,
+    GenValid a,
+    GValidRecursivelyShrink (Rep a),
+    GValidSubterms (Rep a) a
+  ) =>
+  Proxy a ->
+  Spec
 shrinkValidstructurallySpec proxy = do
   it (unwords ["only shrinks to valid", "\"" ++ nameOf proxy ++ "\"s"]) $
     forAll (genValid :: Gen a) $ \a ->
@@ -74,29 +71,31 @@ shrinkValidstructurallySpec proxy = do
           Right _ -> return ()
           Left err ->
             expectationFailure $
-            unlines
-              [ "'validate' reported this value to be invalid: "
-              , show subA
-              , "with explanation"
-              , err
-              , "but it should have been valid from shrinking"
-              ]
+              unlines
+                [ "'validate' reported this value to be invalid: ",
+                  show subA,
+                  "with explanation",
+                  err,
+                  "but it should have been valid from shrinking"
+                ]
   it
-    (unwords
-       ["never shrinks to itself for valid", "\"" ++ nameOf proxy ++ "\"s"]) $
-    forAll (genValid :: Gen a) $ \a ->
+    ( unwords
+        ["never shrinks to itself for valid", "\"" ++ nameOf proxy ++ "\"s"]
+    )
+    $ forAll (genValid :: Gen a) $ \a ->
       forM_ (shrinkValidStructurally a) $ \subA ->
         when (subA == a) $
-        expectationFailure $ unlines [show a, "was shrunk to itself."]
+          expectationFailure $ unlines [show a, "was shrunk to itself."]
 
 nameOf ::
-     forall a. Typeable a
-  => Proxy a
-  -> String
+  forall a.
+  Typeable a =>
+  Proxy a ->
+  String
 nameOf = show . typeRep
 
-data MyType =
-  MyType Double Ordering
+data MyType
+  = MyType Double Ordering
   deriving (Show, Eq, Generic, Typeable)
 
 instance Validity MyType

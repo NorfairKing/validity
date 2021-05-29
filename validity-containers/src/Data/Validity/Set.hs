@@ -16,6 +16,7 @@ instance (Ord v, Validity v) => Validity (Set v) where
       [ declare "The set structure is valid." $ S.valid s,
         annotate (S.toList s) "Set elements"
       ]
+
 #if MIN_VERSION_containers(0,6,0)
 distinctOrd :: Ord a => [a] -> Bool
 distinctOrd ls = nubOrd ls == ls

@@ -1,5 +1,6 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
 module Data.Validity.Time.Calendar where
 
 import Data.Time.Calendar
@@ -11,7 +12,6 @@ instance Validity Day where
     mconcat
       [ delve "toModifiedJulianDay" i
       ]
-
 
 #if MIN_VERSION_time(1,9,0)
 instance Validity CalendarDiffDays where

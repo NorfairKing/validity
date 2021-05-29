@@ -16,9 +16,9 @@ where
 import Control.DeepSeq
 import Criterion
 import Data.GenValidity
+import Data.Typeable
 import Test.QuickCheck.Gen
 import Test.QuickCheck.Random
-import Data.Typeable
 
 -- | Benchmarks for both genUnchecked and genValid
 genValidityBench ::

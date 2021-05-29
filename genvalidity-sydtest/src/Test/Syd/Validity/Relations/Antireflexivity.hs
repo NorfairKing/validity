@@ -2,15 +2,15 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Test.Syd.Validity.Relations.Antireflexivity
-    ( antireflexiveOnElem
-    , antireflexivityOnGen
-    , antireflexivityOnValid
-    , antireflexivity
-    , antireflexivityOnArbitrary
-    ) where
+  ( antireflexiveOnElem,
+    antireflexivityOnGen,
+    antireflexivityOnValid,
+    antireflexivity,
+    antireflexivityOnArbitrary,
+  )
+where
 
 import Data.GenValidity
-
 import Test.QuickCheck
 
 -- |
@@ -21,13 +21,15 @@ import Test.QuickCheck
 --   \forall a: \neg (a \prec a)
 -- \]
 antireflexiveOnElem ::
-       (a -> a -> Bool) -- ^ A relation
-    -> a -- ^ An element
-    -> Bool
+  -- | A relation
+  (a -> a -> Bool) ->
+  -- | An element
+  a ->
+  Bool
 antireflexiveOnElem func a = not $ func a a
 
 antireflexivityOnGen ::
-       Show a => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
+  Show a => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
 antireflexivityOnGen func gen s = forAllShrink gen s $ antireflexiveOnElem func
 
 -- |
@@ -52,5 +54,5 @@ antireflexivity func = antireflexivityOnGen func genUnchecked shrinkUnchecked
 -- prop> antireflexivityOnArbitrary ((/=) :: Int -> Int -> Bool)
 -- prop> antireflexivityOnArbitrary ((>) :: Int -> Int -> Bool)
 antireflexivityOnArbitrary ::
-       (Show a, Arbitrary a) => (a -> a -> Bool) -> Property
+  (Show a, Arbitrary a) => (a -> a -> Bool) -> Property
 antireflexivityOnArbitrary func = antireflexivityOnGen func arbitrary shrink

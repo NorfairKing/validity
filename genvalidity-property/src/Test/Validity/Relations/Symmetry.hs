@@ -2,17 +2,16 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Test.Validity.Relations.Symmetry
-    ( symmetricOnElems
-    , symmetryOnGens
-    , symmetryOnValid
-    , symmetry
-    , symmetryOnArbitrary
-    ) where
+  ( symmetricOnElems,
+    symmetryOnGens,
+    symmetryOnValid,
+    symmetry,
+    symmetryOnArbitrary,
+  )
+where
 
 import Data.GenValidity
-
 import Test.QuickCheck
-
 import Test.Validity.Property.Utils
 
 -- |
@@ -23,16 +22,18 @@ import Test.Validity.Property.Utils
 --   \forall a, b: (a \prec b) \Leftrightarrow (b \prec a)
 -- \]
 symmetricOnElems ::
-       (a -> a -> Bool) -- ^ A relation
-    -> a
-    -> a -- ^ Two elements
-    -> Bool
+  -- | A relation
+  (a -> a -> Bool) ->
+  a ->
+  -- | Two elements
+  a ->
+  Bool
 symmetricOnElems func a b = func a b <==> func b a
 
 symmetryOnGens ::
-       Show a => (a -> a -> Bool) -> Gen (a, a) -> (a -> [a]) -> Property
+  Show a => (a -> a -> Bool) -> Gen (a, a) -> (a -> [a]) -> Property
 symmetryOnGens func gen s =
-    forAllShrink gen (shrinkT2 s) $ uncurry $ symmetricOnElems func
+  forAllShrink gen (shrinkT2 s) $ uncurry $ symmetricOnElems func
 
 -- |
 --

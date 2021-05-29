@@ -13,34 +13,34 @@ import Test.Validity
 
 spec :: Spec
 spec = do
-    describe "genStructurallyValidSetOf" $
-        it "produces valid sets" $
-        genGeneratesValid
-            (genStructurallyValidSetOf @Rational genValid)
-    describe "genStructurallyValidSetOfInvalidValues" $
-        it "produces valid sets" $
-        genGeneratesInvalid
-            (genStructurallyValidSetOfInvalidValues @Rational)
+  describe "genStructurallyValidSetOf" $
+    it "produces valid sets" $
+      genGeneratesValid
+        (genStructurallyValidSetOf @Rational genValid)
+  describe "genStructurallyValidSetOfInvalidValues" $
+    it "produces valid sets" $
+      genGeneratesInvalid
+        (genStructurallyValidSetOfInvalidValues @Rational)
 #if MIN_VERSION_containers(0,5,9)
     describe "genStructurallyInvalidSet" $
         it "produces invalid sets" $
         genGeneratesInvalid (genStructurallyInvalidSet @Rational)
 #endif
-    genValidSpec @(Set Int)
-    genValiditySpec @(Set Rational)
-    describe "genSeperate" $ do
-      it "generates values that are seperate" $
-        forAll (genSeperate genUnchecked) $ \ls -> distinctOrd (ls :: [Int])
-      it "generates values that are seperate" $
-        forAll (genSeperate genValid) $ \ls -> distinctOrd (ls :: [Int])
-    describe "genSeperateFor" $ do
-      it "generates values that are seperate" $
-        forAllValid $ \ls ->
-          forAll (genSeperateFor genUnchecked ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
-      it "generates values that are seperate" $
-        forAllValid $ \ls ->
-          forAll (genSeperateFor genValid ls) $ \tups -> distinctOrd  (map fst(tups :: [(Int, Int)]))
-    describe "genValidSeperateFor" $
-      it "generates values that are seperate" $
+  genValidSpec @(Set Int)
+  genValiditySpec @(Set Rational)
+  describe "genSeperate" $ do
+    it "generates values that are seperate" $
+      forAll (genSeperate genUnchecked) $ \ls -> distinctOrd (ls :: [Int])
+    it "generates values that are seperate" $
+      forAll (genSeperate genValid) $ \ls -> distinctOrd (ls :: [Int])
+  describe "genSeperateFor" $ do
+    it "generates values that are seperate" $
+      forAllValid $ \ls ->
+        forAll (genSeperateFor genUnchecked ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
+    it "generates values that are seperate" $
+      forAllValid $ \ls ->
+        forAll (genSeperateFor genValid ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
+  describe "genValidSeperateFor" $
+    it "generates values that are seperate" $
       forAllValid $ \ls ->
         forAll (genValidSeperateFor ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))

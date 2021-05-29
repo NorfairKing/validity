@@ -2,15 +2,15 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Test.Validity.Relations.Reflexivity
-    ( reflexiveOnElem
-    , reflexivityOnGen
-    , reflexivityOnValid
-    , reflexivity
-    , reflexivityOnArbitrary
-    ) where
+  ( reflexiveOnElem,
+    reflexivityOnGen,
+    reflexivityOnValid,
+    reflexivity,
+    reflexivityOnArbitrary,
+  )
+where
 
 import Data.GenValidity
-
 import Test.QuickCheck
 
 -- |
@@ -21,13 +21,15 @@ import Test.QuickCheck
 --   \forall a: (a \prec a)
 -- \]
 reflexiveOnElem ::
-       (a -> a -> Bool) -- ^ A relation
-    -> a -- ^ An element
-    -> Bool
+  -- | A relation
+  (a -> a -> Bool) ->
+  -- | An element
+  a ->
+  Bool
 reflexiveOnElem func a = func a a
 
 reflexivityOnGen ::
-       Show a => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
+  Show a => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
 reflexivityOnGen func gen s = forAllShrink gen s $ reflexiveOnElem func
 
 -- |

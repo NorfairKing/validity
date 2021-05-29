@@ -3,16 +3,16 @@
 
 -- | Standard tests involving validity
 module Test.Syd.Validity.Functions.Idempotence
-    ( idempotentOnGen
-    , idempotentOnValid
-    , idempotent
-    , idempotentOnArbitrary
-    ) where
+  ( idempotentOnGen,
+    idempotentOnValid,
+    idempotent,
+    idempotentOnArbitrary,
+  )
+where
 
 import Data.GenValidity
-
-import Test.Syd
 import Test.QuickCheck
+import Test.Syd
 
 idempotentOnGen :: (Show a, Eq a) => (a -> a) -> Gen a -> (a -> [a]) -> Property
 idempotentOnGen f gen s = forAllShrink gen s $ \a -> f (f a) `shouldBe` f a

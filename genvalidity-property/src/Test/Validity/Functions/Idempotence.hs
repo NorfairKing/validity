@@ -3,14 +3,14 @@
 
 -- | Standard tests involving validity
 module Test.Validity.Functions.Idempotence
-    ( idempotentOnGen
-    , idempotentOnValid
-    , idempotent
-    , idempotentOnArbitrary
-    ) where
+  ( idempotentOnGen,
+    idempotentOnValid,
+    idempotent,
+    idempotentOnArbitrary,
+  )
+where
 
 import Data.GenValidity
-
 import Test.Hspec
 import Test.QuickCheck
 

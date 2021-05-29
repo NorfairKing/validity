@@ -2,22 +2,23 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Test.Validity.Types
-    ( CanFail(..)
-    ) where
+  ( CanFail (..),
+  )
+where
 
 -- | A class of types that are the result of functions that can fail
 class CanFail f where
-    hasFailed :: f a -> Bool
-    resultIfSucceeded :: f a -> Maybe a
+  hasFailed :: f a -> Bool
+  resultIfSucceeded :: f a -> Maybe a
 
 instance CanFail Maybe where
-    hasFailed Nothing = True
-    hasFailed _ = False
-    resultIfSucceeded Nothing = Nothing
-    resultIfSucceeded (Just r) = Just r
+  hasFailed Nothing = True
+  hasFailed _ = False
+  resultIfSucceeded Nothing = Nothing
+  resultIfSucceeded (Just r) = Just r
 
 instance CanFail (Either e) where
-    hasFailed (Left _) = True
-    hasFailed _ = False
-    resultIfSucceeded (Left _) = Nothing
-    resultIfSucceeded (Right r) = Just r
+  hasFailed (Left _) = True
+  hasFailed _ = False
+  resultIfSucceeded (Left _) = Nothing
+  resultIfSucceeded (Right r) = Just r

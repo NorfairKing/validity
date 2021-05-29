@@ -1,5 +1,6 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
 #if MIN_VERSION_base(4,9,0)
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DataKinds #-}
@@ -8,12 +9,6 @@
 module Data.GenValidity.Text where
 
 import Data.GenValidity
-import Data.Validity.Text ()
-
-import System.Random as Random
-import Test.QuickCheck
-import Test.QuickCheck.Gen
-import Test.QuickCheck.Random
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<*>), pure)
 import Data.Functor ((<$>))
@@ -21,12 +16,19 @@ import Data.Functor ((<$>))
 import qualified Data.Text as ST
 import qualified Data.Text.Internal.Lazy as LT
 import qualified Data.Text.Lazy as LT
+import Data.Validity.Text ()
+import System.Random as Random
+import Test.QuickCheck
+import Test.QuickCheck.Gen
+import Test.QuickCheck.Random
+
 #if MIN_VERSION_base(4,9,0)
 import GHC.TypeLits
 #endif
 instance GenValid ST.Text where
   genValid = genText
   shrinkValid = fmap ST.pack . shrinkValid . ST.unpack
+
 #if MIN_VERSION_base(4,9,0)
 -- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
 instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.Text.Text is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
@@ -60,6 +62,7 @@ instance GenValid LT.Text where
           lt <- resize b genValid
           pure $ LT.Chunk st lt
   shrinkValid = fmap LT.fromChunks . shrinkValid . LT.toChunks
+
 #if MIN_VERSION_base(4,9,0)
 -- If you see this error and want to learn more, have a look at docs/BYTESTRING.md
 instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.Text.Lazy.Text is disabled:" 'GHC.TypeLits.:$$: 'GHC.TypeLits.Text "Do not instantiate GenUnchecked, instantiate GenValid instead") =>
@@ -67,6 +70,7 @@ instance GHC.TypeLits.TypeError ('GHC.TypeLits.Text "The GenUnchecked Data.Text.
   genUnchecked = error "unreachable"
   shrinkUnchecked = error "unreachable"
 #endif
+
 -- | 'textStartingWith c' generates a 'Text' value that starts with 'c'.
 textStartingWith :: Char -> Gen ST.Text
 textStartingWith c =

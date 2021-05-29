@@ -1,5 +1,5 @@
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Data.GenValidity.TimeSpec
   ( spec,
@@ -14,8 +14,8 @@ import Test.Validity
 spec :: Spec
 spec = do
   genValidSpec @Day
-  describe "genSmartDayAround" $ it "generates valid days" $ forAllValid $ \ d -> genGeneratesValid $ genSmartDayAround d
-  describe "genDayAround" $ it "generates valid days" $ forAllValid $ \ d -> genGeneratesValid $ genDayAround d
+  describe "genSmartDayAround" $ it "generates valid days" $ forAllValid $ \d -> genGeneratesValid $ genSmartDayAround d
+  describe "genDayAround" $ it "generates valid days" $ forAllValid $ \d -> genGeneratesValid $ genDayAround d
   describe "genDayCloselyAround" $ it "generates valid days" $ forAllValid $ \d -> genGeneratesValid $ genDayCloselyAround d
   genValidSpec @UniversalTime
   genValidSpec @DiffTime
@@ -26,6 +26,7 @@ spec = do
   genValiditySpec @LocalTime
   genValiditySpec @ZonedTime
   genValidSpec @TimeLocale
+
 #if MIN_VERSION_time(1,9,0)
   genValidSpec @CalendarDiffDays
   genValidSpec @DayOfWeek

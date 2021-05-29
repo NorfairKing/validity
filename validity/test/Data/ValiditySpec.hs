@@ -114,7 +114,7 @@ spec = do
         it "says that \"abc\" is a single line" $ isSingleLine "abc" `shouldBe` True
         it "says that \"d\ne\" is a single line" $ isSingleLine "d\ne" `shouldBe` False
       describe "validateStringSingleLine" $ do
-        it "says that \"abc\" is a single line" $ prettyValidation (validateStringSingleLine  "abc")  `shouldSatisfy` isNothing
+        it "says that \"abc\" is a single line" $ prettyValidation (validateStringSingleLine "abc") `shouldSatisfy` isNothing
         it "says that \"d\ne\" is a single line" $ prettyValidation (validateStringSingleLine "d\ne") `shouldSatisfy` isJust
   describe "Ratio" $ do
     it "says that 0 is valid" $ NormalisedRatio (0 :% 1 :: Ratio Int) `shouldSatisfy` isValid

@@ -5,28 +5,27 @@
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.ShowSpec where
 
-import Test.Hspec
-
 import Data.GenValidity
+import Test.Hspec
 import Test.Validity.Show
 import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-    showReadSpecOnValid @Rational
-    showReadSpec @Int
-    showReadSpecOnArbitrary @Rational
-    showReadSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])
-    failsBecause "show and read don't have the correct semantics" $
-        showReadSpec @ShowFuncMismatch
+  showReadSpecOnValid @Rational
+  showReadSpec @Int
+  showReadSpecOnArbitrary @Rational
+  showReadSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])
+  failsBecause "show and read don't have the correct semantics" $
+    showReadSpec @ShowFuncMismatch
 
-data ShowFuncMismatch =
-    ShowFuncMismatch
-    deriving (Eq, Read)
+data ShowFuncMismatch
+  = ShowFuncMismatch
+  deriving (Eq, Read)
 
 instance Show ShowFuncMismatch where
-    show ShowFuncMismatch = "wrong"
+  show ShowFuncMismatch = "wrong"
 
 instance GenUnchecked ShowFuncMismatch where
-    genUnchecked = pure ShowFuncMismatch
-    shrinkUnchecked _ = []
+  genUnchecked = pure ShowFuncMismatch
+  shrinkUnchecked _ = []

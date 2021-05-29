@@ -1,7 +1,8 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Time.Format where
+
 #if MIN_VERSION_time(1,5,0)
 import Data.GenValidity
 import Data.GenValidity.Time.LocalTime ()

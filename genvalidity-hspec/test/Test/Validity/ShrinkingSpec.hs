@@ -2,11 +2,9 @@
 
 module Test.Validity.ShrinkingSpec where
 
-import Test.Hspec
-
 import Data.Int
 import Data.Ratio
-
+import Test.Hspec
 import Test.Validity.Shrinking
 
 spec :: Spec

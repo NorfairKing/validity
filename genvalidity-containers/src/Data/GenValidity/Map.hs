@@ -1,23 +1,25 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Map
-    ( genMapOf
-    , genStructurallyValidMapOf
-    , genStructurallyValidMapOfInvalidValues
+  ( genMapOf,
+    genStructurallyValidMapOf,
+    genStructurallyValidMapOfInvalidValues,
 #if MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidMap
 #endif
-    ) where
+  )
+where
+
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative (pure, (<$>), (<*>))
 #endif
 import Data.GenValidity
+import Data.Map (Map)
+import qualified Data.Map as M
 import Data.Validity.Map ()
 import Test.QuickCheck
 
-import Data.Map (Map)
-import qualified Data.Map as M
 #if MIN_VERSION_containers(0,5,9)
 import qualified Data.Map.Internal as Internal
 #endif
@@ -48,8 +50,9 @@ instance (Ord k, GenUnchecked k, GenUnchecked v) => GenUnchecked (Map k v) where
     shrinkUnchecked = fmap M.fromList . shrinkUnchecked . M.toList
 #endif
 instance (Show k, Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
-    genValid = genMapOf genValid
-    shrinkValid = fmap M.fromList . shrinkValid . M.toList
+  genValid = genMapOf genValid
+  shrinkValid = fmap M.fromList . shrinkValid . M.toList
+
 #if MIN_VERSION_containers(0,5,9)
 instance (Show k, Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => GenInvalid (Map k v) where
     genInvalid =
@@ -69,19 +72,20 @@ genStructurallyValidMapOf g = M.fromList <$> genListOf g
 -- Note: M.fromList <$> genInvalid does not work because of this line in the Data.Map documentation:
 -- ' If the list contains more than one value for the same key, the last value for the key is retained.'
 genStructurallyValidMapOfInvalidValues ::
-       (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => Gen (Map k v)
+  (Ord k, GenUnchecked k, GenInvalid k, GenUnchecked v, GenInvalid v) => Gen (Map k v)
 genStructurallyValidMapOfInvalidValues =
-    sized $ \n -> do
-        (k, v, m) <- genSplit3 n
-        let go g1 g2 = do
-                key <- resize k g1
-                val <- resize v g2
-                rest <-
-                    resize m $
-                    genStructurallyValidMapOf $
-                    (,) <$> genUnchecked <*> genUnchecked
-                pure $ M.insert key val rest
-        oneof [go genInvalid genUnchecked, go genUnchecked genInvalid]
+  sized $ \n -> do
+    (k, v, m) <- genSplit3 n
+    let go g1 g2 = do
+          key <- resize k g1
+          val <- resize v g2
+          rest <-
+            resize m $
+              genStructurallyValidMapOf $
+                (,) <$> genUnchecked <*> genUnchecked
+          pure $ M.insert key val rest
+    oneof [go genInvalid genUnchecked, go genUnchecked genInvalid]
+
 #if MIN_VERSION_containers(0,5,9)
 genStructurallyInvalidMap ::
        (Show k, Ord k, GenUnchecked k, GenUnchecked v) => Gen (Map k v)

@@ -1,13 +1,13 @@
 {-# LANGUAGE TypeApplications #-}
 
 module Test.Validity.Operations.CommutativitySpec
-    ( spec
-    ) where
+  ( spec,
+  )
+where
 
+import Data.GenValidity (GenUnchecked)
 import Test.Hspec
 import Test.QuickCheck
-import Data.GenValidity (GenUnchecked)
-
 import Test.Validity.Operations.Commutativity (commutative)
 
 spec :: Spec

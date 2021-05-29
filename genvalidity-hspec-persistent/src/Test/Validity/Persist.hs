@@ -1,24 +1,24 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- | Standard test `Spec`s and raw `Property`s for `PersistField` instances.
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.Persist
-  ( persistSpecOnValid
-  , persistSpec
-  , persistSpecOnArbitrary
-  , persistSpecOnGen
-  , fromPersistValueAndToPersistValueAreInversesOnGen
-  ) where
-
-import Data.GenValidity
+  ( persistSpecOnValid,
+    persistSpec,
+    persistSpecOnArbitrary,
+    persistSpecOnGen,
+    fromPersistValueAndToPersistValueAreInversesOnGen,
+  )
+where
 
 import Control.Monad
+import Data.GenValidity
 import qualified Data.Text as T
 import Data.Typeable
-import Database.Persist (PersistField(..))
+import Database.Persist (PersistField (..))
 import Test.Hspec
 import Test.QuickCheck
 import Test.Validity.Utils
@@ -29,8 +29,9 @@ import Test.Validity.Utils
 --
 -- > persistSpecOnValid @Rational
 persistSpecOnValid ::
-     forall a. (Show a, Eq a, Typeable a, GenValid a, PersistField a)
-  => Spec
+  forall a.
+  (Show a, Eq a, Typeable a, GenValid a, PersistField a) =>
+  Spec
 persistSpecOnValid = persistSpecOnGen (genValid @a) "valid" shrinkValid
 
 -- | Standard test spec for properties of persistent-related functions for unchecked values
@@ -39,8 +40,9 @@ persistSpecOnValid = persistSpecOnGen (genValid @a) "valid" shrinkValid
 --
 -- > persistSpec @Int
 persistSpec ::
-     forall a. (Show a, Eq a, Typeable a, GenUnchecked a, PersistField a)
-  => Spec
+  forall a.
+  (Show a, Eq a, Typeable a, GenUnchecked a, PersistField a) =>
+  Spec
 persistSpec = persistSpecOnGen (genUnchecked @a) "unchecked" shrinkUnchecked
 
 -- | Standard test spec for properties of persistent-related functions for arbitrary values
@@ -49,8 +51,9 @@ persistSpec = persistSpecOnGen (genUnchecked @a) "unchecked" shrinkUnchecked
 --
 -- > persistSpecOnArbitrary @Int
 persistSpecOnArbitrary ::
-     forall a. (Show a, Eq a, Typeable a, Arbitrary a, PersistField a)
-  => Spec
+  forall a.
+  (Show a, Eq a, Typeable a, Arbitrary a, PersistField a) =>
+  Spec
 persistSpecOnArbitrary = persistSpecOnGen (arbitrary @a) "arbitrary" shrink
 
 -- | Standard test spec for properties of persistent-related functions for a given generator (and a name for that generator).
@@ -59,23 +62,25 @@ persistSpecOnArbitrary = persistSpecOnGen (arbitrary @a) "arbitrary" shrink
 --
 -- > persistSpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
 persistSpecOnGen ::
-     forall a. (Show a, Eq a, Typeable a, PersistField a)
-  => Gen a
-  -> String
-  -> (a -> [a])
-  -> Spec
+  forall a.
+  (Show a, Eq a, Typeable a, PersistField a) =>
+  Gen a ->
+  String ->
+  (a -> [a]) ->
+  Spec
 persistSpecOnGen gen genname s =
   parallel $ do
     let name = nameOf @a
     describe ("PersistField " ++ name ++ " (" ++ genname ++ ")") $ do
       describe ("fromPersistValue :: PersistValue -> Either Text " ++ name) $
         it
-          (unwords
-             [ "ensures that toPersistValue and fromPersistValue are inverses for"
-             , "\"" ++ genname
-             , name ++ "\"" ++ "'s"
-             ]) $
-        fromPersistValueAndToPersistValueAreInversesOnGen gen s
+          ( unwords
+              [ "ensures that toPersistValue and fromPersistValue are inverses for",
+                "\"" ++ genname,
+                name ++ "\"" ++ "'s"
+              ]
+          )
+          $ fromPersistValueAndToPersistValueAreInversesOnGen gen s
 
 -- |
 --
@@ -91,7 +96,7 @@ persistSpecOnGen gen genname s =
 --
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int genValid shrinkValid
 fromPersistValueAndToPersistValueAreInversesOnGen ::
-     (Show a, Eq a, PersistField a) => Gen a -> (a -> [a]) -> Property
+  (Show a, Eq a, PersistField a) => Gen a -> (a -> [a]) -> Property
 fromPersistValueAndToPersistValueAreInversesOnGen gen s =
   forAllShrink gen s $ \(a :: a) ->
     let encoded = toPersistValue a
@@ -99,22 +104,22 @@ fromPersistValueAndToPersistValueAreInversesOnGen gen s =
      in case errOrDecoded of
           Left err ->
             expectationFailure $
-            unlines
-              [ "Decoding failed with error"
-              , T.unpack err
-              , "instead of decoding to"
-              , show a
-              , "'encode' encoded it to the persist"
-              , show encoded
-              ]
+              unlines
+                [ "Decoding failed with error",
+                  T.unpack err,
+                  "instead of decoding to",
+                  show a,
+                  "'encode' encoded it to the persist",
+                  show encoded
+                ]
           Right decoded ->
             unless (decoded == a) $
-            expectationFailure $
-            unlines
-              [ "Decoding succeeded, but the decoded value"
-              , show decoded
-              , "differs from expected decoded value"
-              , show a
-              , "'encode' encoded it to the persist"
-              , show encoded
-              ]
+              expectationFailure $
+                unlines
+                  [ "Decoding succeeded, but the decoded value",
+                    show decoded,
+                    "differs from expected decoded value",
+                    show a,
+                    "'encode' encoded it to the persist",
+                    show encoded
+                  ]

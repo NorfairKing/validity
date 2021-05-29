@@ -2,10 +2,9 @@
 
 module Test.Validity.PersistSpec where
 
-import Test.Hspec
-
 -- import Numeric.Natural
 import Data.GenValidity
+import Test.Hspec
 import Test.Validity.Persist
 
 spec :: Spec
@@ -15,4 +14,5 @@ spec = do
   persistSpecOnValid @Rational
   persistSpec @Int
   persistSpecOnArbitrary @Int
-  -- persistSpecOnValid @Natural -- DOES NOT HOLD
+
+-- persistSpecOnValid @Natural -- DOES NOT HOLD

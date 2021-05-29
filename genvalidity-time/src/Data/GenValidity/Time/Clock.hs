@@ -1,7 +1,8 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Time.Clock where
+
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<*>))
 import Data.Functor ((<$>))
@@ -10,7 +11,6 @@ import Data.GenValidity
 import Data.GenValidity.Time.Calendar ()
 import Data.Time.Clock
 import Data.Validity.Time.Clock ()
-
 import Test.QuickCheck
 
 instance GenUnchecked UniversalTime where
@@ -22,6 +22,7 @@ instance GenValid UniversalTime where
 
 instance GenUnchecked DiffTime where
   genUnchecked = picosecondsToDiffTime <$> genUnchecked
+
 #if MIN_VERSION_time(1,6,0)
   shrinkUnchecked =
     fmap picosecondsToDiffTime . shrinkUnchecked . diffTimeToPicoseconds
@@ -41,6 +42,7 @@ instance GenValid UTCTime where
     UTCTime <$> genValid <*> (fromIntegral <$> choose (0 :: Int, 86400))
 
 instance GenInvalid UTCTime
+
 #if MIN_VERSION_time(1,9,1)
 instance GenUnchecked NominalDiffTime where
   genUnchecked = secondsToNominalDiffTime <$> genUnchecked

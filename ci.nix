@@ -24,5 +24,5 @@ let
 in
 {
   release = pkgs.validityRelease;
-  # pre-commit-check = (import ./nix/pre-commit.nix { inherit sources; }).run;
+  pre-commit-check = (import ./nix/pre-commit.nix { inherit sources; }).run;
 } // builtins.mapAttrs mkReleaseForVersion versions

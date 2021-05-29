@@ -2,30 +2,33 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Set
-    ( genSetOf
-    , genStructurallyValidSetOf
-    , genStructurallyValidSetOfInvalidValues
+  ( genSetOf,
+    genStructurallyValidSetOf,
+    genStructurallyValidSetOfInvalidValues,
 #if MIN_VERSION_containers(0,5,9)
     , genStructurallyInvalidSet
 #endif
-    , genSeperate
-    , genSeperateFor
-    , genSeperateForNE
-    , genValidSeperateFor
-    , genValidSeperateForNE
-    ) where
+    genSeperate,
+    genSeperateFor,
+    genSeperateForNE,
+    genValidSeperateFor,
+    genValidSeperateForNE,
+  )
+where
+
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<$>), pure)
 #endif
-import Data.GenValidity
-import Data.Validity.Set ()
-import Data.Containers.ListUtils
-import Test.QuickCheck
 
-import Data.List.NonEmpty (NonEmpty(..))
+import Data.Containers.ListUtils
+import Data.GenValidity
+import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
 import Data.Set (Set)
 import qualified Data.Set as S
+import Data.Validity.Set ()
+import Test.QuickCheck
+
 #if MIN_VERSION_containers(0,5,9)
 import qualified Data.Set.Internal as Internal
 #endif
@@ -54,8 +57,9 @@ instance (Ord v, GenUnchecked v) => GenUnchecked (Set v) where
     shrinkUnchecked = fmap S.fromList . shrinkUnchecked . S.toList
 #endif
 instance (Ord v, GenValid v) => GenValid (Set v) where
-    genValid = S.fromList <$> genValid
-    shrinkValid = fmap S.fromList . shrinkValid . S.toList
+  genValid = S.fromList <$> genValid
+  shrinkValid = fmap S.fromList . shrinkValid . S.toList
+
 #if MIN_VERSION_containers(0,5,9)
 instance (Ord v, GenUnchecked v, GenInvalid v) => GenInvalid (Set v) where
     genInvalid =
@@ -76,11 +80,12 @@ genStructurallyValidSetOf g = S.fromList <$> genListOf g
 -- ' If the list contains more than one value for the same key, the last value for the key is retained.'
 genStructurallyValidSetOfInvalidValues :: (Ord v, GenUnchecked v, GenInvalid v) => Gen (Set v)
 genStructurallyValidSetOfInvalidValues =
-    sized $ \n -> do
-        (v, m) <- genSplit n
-        val <- resize v genInvalid
-        rest <- resize m $ genStructurallyValidSetOf genUnchecked
-        pure $ S.insert val rest
+  sized $ \n -> do
+    (v, m) <- genSplit n
+    val <- resize v genInvalid
+    rest <- resize m $ genStructurallyValidSetOf genUnchecked
+    pure $ S.insert val rest
+
 #if MIN_VERSION_containers(0,5,9)
 genStructurallyInvalidSet :: (Ord v, GenUnchecked v) => Gen (Set v)
 genStructurallyInvalidSet = do
@@ -114,4 +119,3 @@ genSeperateForNE g (a :| as) = do
   restTups <- genSeperateFor g as
   b <- g `suchThat` (`notElem` map fst restTups)
   pure ((b, a) :| restTups)
-

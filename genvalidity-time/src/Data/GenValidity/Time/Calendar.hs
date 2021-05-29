@@ -1,5 +1,5 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Time.Calendar where
 
@@ -15,32 +15,34 @@ instance GenUnchecked Day where
   genUnchecked = ModifiedJulianDay <$> genUnchecked
   shrinkUnchecked (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkUnchecked i
 
+#if MIN_VERSION_time(1,10,0)
 instance GenValid Day where
   genValid =
-#if MIN_VERSION_time(1,10,0)
       let fancy = oneof
             [ (ModifiedJulianDay <$> genValid) `suchThat` isValid
             , uniformlyOneHundredYearsAround2020
             ]
        in fancy
-#else
-      uniformlyOneHundredYearsAround2020
-#endif
-    where
-      uniformlyOneHundredYearsAround2020 = do
-        y <- choose (1970, 2070)
-        m <- choose (1, 12)
-        d <- choose (1, 31)
-        pure $ fromGregorian y m d
   shrinkValid (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkValid i
+#else
+instance GenValid Day where
+  genValid = uniformlyOneHundredYearsAround2020
+  shrinkValid (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkValid i
+#endif
+uniformlyOneHundredYearsAround2020 :: Gen Day
+uniformlyOneHundredYearsAround2020 = do
+  y <- choose (1970, 2070)
+  m <- choose (1, 12)
+  d <- choose (1, 31)
+  pure $ fromGregorian y m d
 
 genSmartDayAround :: Day -> Gen Day
-genSmartDayAround d = oneof [genValid , genDayAround d, genDayCloselyAround d]
+genSmartDayAround d = oneof [genValid, genDayAround d, genDayCloselyAround d]
 
 -- We cannot put this in 'GenValid Day' around 'today' because that would break reproducability
 genDayAround :: Day -> Gen Day
 genDayAround today = do
-  let (thisYear, _, _) =  toGregorian today
+  let (thisYear, _, _) = toGregorian today
   y <- choose (pred thisYear, succ thisYear)
   m <- choose (1, 12)
   d <- choose (1, 31)
@@ -48,7 +50,7 @@ genDayAround today = do
 
 genDayCloselyAround :: Day -> Gen Day
 genDayCloselyAround today = sized $ \s -> do
-  diff <- choose (-s, s)
+  diff <- choose (- s, s)
   pure $ addDays (fromIntegral diff) today
 
 #if MIN_VERSION_time(1,9,0)

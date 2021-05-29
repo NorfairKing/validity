@@ -1,28 +1,26 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 
 -- | Tests for GenValidity instances
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.GenValidity
-    ( genValiditySpec
-    , genValidSpec
-    , genInvalidSpec
-    , genValidGeneratesValid
-    , genGeneratesValid
-    , genInvalidGeneratesInvalid
-    , genGeneratesInvalid
-    ) where
+  ( genValiditySpec,
+    genValidSpec,
+    genInvalidSpec,
+    genValidGeneratesValid,
+    genGeneratesValid,
+    genInvalidGeneratesInvalid,
+    genGeneratesInvalid,
+  )
+where
 
 import Data.Data
-
 import Data.GenValidity
-
 import Test.Hspec
 import Test.QuickCheck
-
 import Test.Validity.GenValidity.Property
 import Test.Validity.Utils
 
@@ -38,11 +36,12 @@ import Test.Validity.Utils
 --
 -- > genValiditySpec @Int
 genValiditySpec ::
-       forall a. (Typeable a, Show a, GenValid a, GenInvalid a)
-    => Spec
+  forall a.
+  (Typeable a, Show a, GenValid a, GenInvalid a) =>
+  Spec
 genValiditySpec = do
-    genValidSpec @a
-    genInvalidSpec @a
+  genValidSpec @a
+  genInvalidSpec @a
 
 -- | A @Spec@ that specifies that @genValid@ only generates valid data.
 --
@@ -53,15 +52,16 @@ genValiditySpec = do
 --
 -- > genValidSpec @Int
 genValidSpec ::
-       forall a. (Typeable a, Show a, GenValid a)
-    => Spec
+  forall a.
+  (Typeable a, Show a, GenValid a) =>
+  Spec
 genValidSpec =
-    parallel $ do
-        let name = nameOf @a
-        describe ("GenValid " ++ name) $
-            describe ("genValid   :: Gen " ++ name) $
-            it ("only generates valid \'" ++ name ++ "\'s") $
-                genValidGeneratesValid @a
+  parallel $ do
+    let name = nameOf @a
+    describe ("GenValid " ++ name) $
+      describe ("genValid   :: Gen " ++ name) $
+        it ("only generates valid \'" ++ name ++ "\'s") $
+          genValidGeneratesValid @a
 
 -- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
 --
@@ -71,15 +71,16 @@ genValidSpec =
 --
 -- > genInvalidSpec @Rational
 genInvalidSpec ::
-       forall a. (Typeable a, Show a, GenInvalid a)
-    => Spec
+  forall a.
+  (Typeable a, Show a, GenInvalid a) =>
+  Spec
 genInvalidSpec =
-    parallel $ do
-        let name = nameOf @a
-        describe ("GenInvalid " ++ name) $
-            describe ("genInvalid :: Gen " ++ name) $
-            it ("only generates invalid \'" ++ name ++ "\'s") $
-                genInvalidGeneratesInvalid @a
+  parallel $ do
+    let name = nameOf @a
+    describe ("GenInvalid " ++ name) $
+      describe ("genInvalid :: Gen " ++ name) $
+        it ("only generates invalid \'" ++ name ++ "\'s") $
+          genInvalidGeneratesInvalid @a
 
 -- | @genValid@ only generates valid data
 --
@@ -94,8 +95,9 @@ genInvalidSpec =
 -- prop> genValidGeneratesValid @(Maybe Int)
 -- prop> genValidGeneratesValid @[Int]
 genValidGeneratesValid ::
-       forall a. (Show a, GenValid a)
-    => Property
+  forall a.
+  (Show a, GenValid a) =>
+  Property
 genValidGeneratesValid = genGeneratesValid @a genValid
 
 -- | @genValid@ only generates invalid data
@@ -105,6 +107,7 @@ genValidGeneratesValid = genGeneratesValid @a genValid
 -- prop> genInvalidGeneratesInvalid @(Maybe Rational)
 -- prop> genInvalidGeneratesInvalid @[Rational]
 genInvalidGeneratesInvalid ::
-       forall a. (Show a, GenInvalid a)
-    => Property
+  forall a.
+  (Show a, GenInvalid a) =>
+  Property
 genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid

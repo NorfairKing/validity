@@ -1,11 +1,11 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.Validity.Primitive where
 
+import qualified Data.Primitive.Array as A
 import Data.Validity
 
-import qualified Data.Primitive.Array as A
 #if MIN_VERSION_primitive(0,6,2)
 instance Validity a => Validity (A.Array a) where
     validate = foldMap validate

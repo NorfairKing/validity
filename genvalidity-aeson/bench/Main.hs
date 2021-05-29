@@ -1,13 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Main where
 
-import Data.Aeson
-
 import Criterion.Main as Criterion
-
+import Data.Aeson
 import Data.GenValidity.Aeson ()
 import Data.GenValidity.Criterion
 

@@ -30,8 +30,8 @@ module Test.Syd.Validity.Functions.CanFail
 where
 
 import Data.GenValidity
-import Test.Syd
 import Test.QuickCheck
+import Test.Syd
 import Test.Syd.Validity.Property.Utils
 import Test.Syd.Validity.Types
 

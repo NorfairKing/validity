@@ -2,17 +2,16 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Test.Validity.Relations.Transitivity
-    ( transitiveOnElems
-    , transitivityOnGens
-    , transitivityOnValid
-    , transitivity
-    , transitivityOnArbitrary
-    ) where
+  ( transitiveOnElems,
+    transitivityOnGens,
+    transitivityOnValid,
+    transitivity,
+    transitivityOnArbitrary,
+  )
+where
 
 import Data.GenValidity
-
 import Test.QuickCheck
-
 import Test.Validity.Property.Utils
 
 -- |
@@ -23,17 +22,19 @@ import Test.Validity.Property.Utils
 --   \forall a, b, c: ((a \prec b) \wedge (b \prec c)) \Rightarrow (a \prec c)
 -- \]
 transitiveOnElems ::
-       (a -> a -> Bool) -- ^ A relation
-    -> a
-    -> a
-    -> a -- ^ Three elements
-    -> Bool
+  -- | A relation
+  (a -> a -> Bool) ->
+  a ->
+  a ->
+  -- | Three elements
+  a ->
+  Bool
 transitiveOnElems func a b c = (func a b && func b c) ===> func a c
 
 transitivityOnGens ::
-       Show a => (a -> a -> Bool) -> Gen (a, a, a) -> (a -> [a]) -> Property
+  Show a => (a -> a -> Bool) -> Gen (a, a, a) -> (a -> [a]) -> Property
 transitivityOnGens func gen s =
-    forAllShrink gen (shrinkT3 s) $ \(a, b, c) -> transitiveOnElems func a b c
+  forAllShrink gen (shrinkT3 s) $ \(a, b, c) -> transitiveOnElems func a b c
 
 -- |
 --
