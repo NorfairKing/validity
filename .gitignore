@@ -1,4 +1,5 @@
 *.lock
+.pre-commit-config.yaml
 /src/
 *.css
 *.js
