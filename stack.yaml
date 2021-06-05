@@ -1,4 +1,4 @@
-resolver: lts-16.12
+resolver: nightly-2021-05-10
 
 packages:
 - 'genvalidity'
@@ -55,7 +55,7 @@ extra-deps:
     - safe-coloured-text
     - safe-coloured-text-terminfo
 - github: NorfairKing/sydtest
-  commit: aafd8e0c2e97143af950e2f9742c5e1bd167c77b
+  commit: 0125c6d6d17d44753c793adc8dcaa4284fef2b7d
   subdirs:
     - sydtest
     - sydtest-discover
@@ -64,8 +64,4 @@ ghc-options:
   "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
 
 nix:
-  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/0dff305a49a1ce72fda09206abbaff40ef41efd7.tar.gz"]
-  add-gc-roots: true
-  packages:
-  - zlib
-  - haskellPackages.hpack
+  shell-file: shell.nix

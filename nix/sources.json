@@ -24,15 +24,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
-        "branch": "nixos-20.09",
+        "branch": "nixos-21.05",
         "description": "Nix Packages collection",
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "85960bea533dc2d89dff8836d8a0a1239ddd5c9c",
-        "sha256": "0r1h3mh1nrca7wldlx64bdcxdzxz6hw9w7rzg9p6xk83zbmsyb9i",
+        "rev": "aa576357673d609e618d87db43210e49d4bb1789",
+        "sha256": "1868s3mp0lwg1jpxsgmgijzddr90bjkncf6k6zhdjqihf0i1n2np",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/85960bea533dc2d89dff8836d8a0a1239ddd5c9c.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/aa576357673d609e618d87db43210e49d4bb1789.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "pre-commit-hooks": {
@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "NorfairKing",
         "repo": "sydtest",
-        "rev": "aafd8e0c2e97143af950e2f9742c5e1bd167c77b",
-        "sha256": "0i0il3j32zqj56byngg6jrlnbkmgmq6piw7k4di7j040j5knp2jh",
+        "rev": "420c6e4850e4a0c0040f88b2a5f10ca394083345",
+        "sha256": "1g52ka2cjfmhxlrcy9qzlk2170zxsn010xs7msiwh5nswr7f5lfr",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/sydtest/archive/aafd8e0c2e97143af950e2f9742c5e1bd167c77b.tar.gz",
+        "url": "https://github.com/NorfairKing/sydtest/archive/420c6e4850e4a0c0040f88b2a5f10ca394083345.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "yamlparse-applicative": {
