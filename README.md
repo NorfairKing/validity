@@ -49,11 +49,11 @@
 
 ## Why?
 
-> Make write correct software cheaper.
+> to make writing correct software cheaper.
 
-- Cheap properties
 - Free generators
 - Free shrinking
+- Cheap properties
 
 ### Cheap properties
 
