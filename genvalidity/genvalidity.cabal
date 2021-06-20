@@ -1,13 +1,13 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5ae387cc516c3b82e6f63da456f002ceb1891355889d1df54c842e1e7df0a605
+-- hash: a11cb2a68199a662f31e22018aab8644d840ca90132b9c73e8938c9358a29494
 
 name:           genvalidity
-version:        0.11.0.1
+version:        0.11.0.2
 synopsis:       Testing utilities for the validity library
 description:    Note: There are companion instance packages for this library:
                 .
@@ -53,13 +53,12 @@ library
       Paths_genvalidity
   hs-source-dirs:
       src
+  ghc-options: -Wno-redundant-constraints
   build-depends:
       QuickCheck >=2.12
-    , base >=4.10 && <5
+    , base >=4.11 && <5
     , random
     , validity >=0.9
-  if impl(ghc >=8.0.0)
-    ghc-options: -Wno-redundant-constraints
   default-language: Haskell2010
 
 test-suite genvalidity-test
@@ -76,7 +75,7 @@ test-suite genvalidity-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       QuickCheck
-    , base >=4.10 && <5
+    , base >=4.11 && <5
     , genvalidity
     , hspec
     , hspec-core

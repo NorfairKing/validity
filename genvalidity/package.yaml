@@ -1,5 +1,5 @@
 name: genvalidity
-version: '0.11.0.1'
+version: '0.11.0.2'
 synopsis: Testing utilities for the validity library
 description: ! 'Note: There are companion instance packages for this library:
 
@@ -42,17 +42,15 @@ license: MIT
 github: NorfairKing/validity
 
 dependencies:
-- base >=4.10 && <5
+- base >=4.11 && <5
 
 library:
+  ghc-options: -Wno-redundant-constraints
   source-dirs: src
   dependencies:
   - validity >=0.9
   - QuickCheck >= 2.12
   - random
-  when:
-  - condition: impl(ghc >=8.0.0)
-    ghc-options: -Wno-redundant-constraints
 
 tests:
   genvalidity-test:
