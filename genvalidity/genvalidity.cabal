@@ -3,8 +3,6 @@ cabal-version: 1.12
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: a11cb2a68199a662f31e22018aab8644d840ca90132b9c73e8938c9358a29494
 
 name:           genvalidity
 version:        0.11.0.2

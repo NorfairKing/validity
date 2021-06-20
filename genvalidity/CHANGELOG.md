@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.0.1] - 2021-06-20
+
+### Changed
+
+Updated the base lower bound to be more accurate.
+
 ## [0.11.0.1] - 2020-04-28
 
 ### Changed

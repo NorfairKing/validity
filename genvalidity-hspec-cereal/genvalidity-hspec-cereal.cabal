@@ -1,10 +1,8 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: b9b98f1c3119e96c7122101d2a7f662a49b2c0cbfb7019b7cff86555785ea557
 
 name:           genvalidity-hspec-cereal
 version:        0.2.0.4

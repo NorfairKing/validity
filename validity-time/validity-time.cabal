@@ -1,10 +1,8 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: 67c39e6553361815461677f4654e3cb4541d1ace7c248f665a324de744f950b7
 
 name:           validity-time
 version:        0.4.0.0

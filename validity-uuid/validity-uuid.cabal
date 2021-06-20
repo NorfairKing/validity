@@ -1,10 +1,8 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: 0b9ebb8be7ec08a35a0c11967f0199a4fe354dfe16002ef970a7e547b0511861
 
 name:           validity-uuid
 version:        0.1.0.3
