@@ -114,8 +114,8 @@ isNoncharacter :: Char -> Bool
 isNoncharacter x =
   (x >= '\64976' && x <= '\65007') || x == '\65534' || x == '\65535'
 
-genValidUtf8 :: Gen ST.Text
-genValidUtf8 = ST.pack <$> genListOf (genValid `suchThat` (\x -> not (isNoncharacter x) && not (isSurrogate x)))
+genValidUnicode :: Gen ST.Text
+genValidUnicode = ST.pack <$> genListOf (genValid `suchThat` (\x -> not (isNoncharacter x) && not (isSurrogate x)))
 
 -- | 'textAllCaps' generates a 'Text' value with only upper-case characters.
 textAllCaps :: Gen ST.Text
