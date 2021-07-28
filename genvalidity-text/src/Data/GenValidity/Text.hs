@@ -102,6 +102,21 @@ textWithoutAny c = textWithoutAnyOf [c]
 textWithoutAnyOf :: String -> Gen ST.Text
 textWithoutAnyOf cs = ST.pack <$> genListOf (genValid `suchThat` (`notElem` cs))
 
+-- | Surrogates are characters in the Unicode range U+D800—U+DFFF
+-- See https://unicodebook.readthedocs.io/unicode_encodings.html#surrogates
+isSurrogate :: Char -> Bool
+isSurrogate x =
+  x >= '\55296' && x <= '\57343'
+
+-- | Exclude UTF-8 non-characters U+FDD0..U+FDEF and U+FFFE and U+FFFF 
+-- See http://www.unicode.org/faq/private_use.html#nonchar1
+isNoncharacter :: Char -> Bool
+isNoncharacter x =
+  (x >= '\64976' && x <= '\65007') || x == '\65534' || x == '\65535'
+
+genValidUtf8 :: Gen ST.Text
+genValidUtf8 = ST.pack <$> genListOf (genValid `suchThat` (\x -> not (isNoncharacter x) && not (isSurrogate x)))
+
 -- | 'textAllCaps' generates a 'Text' value with only upper-case characters.
 textAllCaps :: Gen ST.Text
 textAllCaps = ST.toUpper <$> genValid
