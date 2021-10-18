@@ -1,9 +1,11 @@
 { sources ? import ./sources.nix
 , pkgsf ? sources.nixpkgs
+, system ? builtins.currentSystem
 }:
 let
   pkgs =
     import pkgsf {
+      inherit system;
       overlays = [
         (import ./overlay.nix)
         (final: previous: { inherit (import sources.gitignore { inherit (final) lib; }) gitignoreSource; })
