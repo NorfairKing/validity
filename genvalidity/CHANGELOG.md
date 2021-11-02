@@ -1,6 +1,16 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.0.0] - 2021-11-20
+
+### Changed
+
+* The default implementation of `GenValid` now uses `genValidStructurally` and `shrinkValidStructurally`.
+
+### Removed
+
+* `GenUnchecked`: It is no longer necessary after changing the default implementation of `GenValid`.
+* `GenInvalid`: It was a misfeature.
+* `GenRelativeValidity`: It was a misfeature. 
 
 ## [0.11.0.1] - 2021-06-20
 

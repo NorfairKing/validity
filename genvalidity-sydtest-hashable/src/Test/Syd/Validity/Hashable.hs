@@ -7,9 +7,7 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Syd.Validity.Hashable
-  ( hashableSpecOnValid,
-    hashableSpecOnInvalid,
-    hashableSpec,
+  ( hashableSpec,
     hashableSpecOnArbitrary,
     hashableSpecOnGen,
   )
@@ -28,34 +26,12 @@ import Test.Syd.Validity.Utils
 --
 -- Example usage:
 --
--- > hashableSpecOnValid @Double
-hashableSpecOnValid ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenValid a, Hashable a) =>
-  Spec
-hashableSpecOnValid = hashableSpecOnGen @a genValid "valid" shrinkValid
-
--- | Standard test spec for properties of Hashable instances for invalid values
---
--- Example usage:
---
--- > hashableSpecOnInvalid @Double
-hashableSpecOnInvalid ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenInvalid a, Hashable a) =>
-  Spec
-hashableSpecOnInvalid = hashableSpecOnGen @a genInvalid "invalid" shrinkInvalid
-
--- | Standard test spec for properties of Hashable instances for unchecked values
---
--- Example usage:
---
 -- > hashableSpec @Int
 hashableSpec ::
   forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, Hashable a) =>
+  (Show a, Eq a, Typeable a, GenValid a, Hashable a) =>
   Spec
-hashableSpec = hashableSpecOnGen @a genUnchecked "unchecked" shrinkUnchecked
+hashableSpec = hashableSpecOnGen @a genValid "valid" shrinkValid
 
 -- | Standard test spec for properties of Hashable instances for arbitrary values
 --

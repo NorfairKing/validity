@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Time.Calendar where
@@ -6,29 +5,12 @@ module Data.GenValidity.Time.Calendar where
 import Data.GenValidity
 import Data.Time.Calendar
 import Data.Validity.Time.Calendar ()
-#if !MIN_VERSION_base(4,8,0)
-import Data.Functor ((<$>))
-#endif
 import Test.QuickCheck
 
-instance GenUnchecked Day where
-  genUnchecked = ModifiedJulianDay <$> genUnchecked
-  shrinkUnchecked (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkUnchecked i
-
-#if MIN_VERSION_time(1,10,0)
-instance GenValid Day where
-  genValid =
-      let fancy = oneof
-            [ (ModifiedJulianDay <$> genValid) `suchThat` isValid
-            , uniformlyOneHundredYearsAround2020
-            ]
-       in fancy
-  shrinkValid (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkValid i
-#else
 instance GenValid Day where
   genValid = uniformlyOneHundredYearsAround2020
   shrinkValid (ModifiedJulianDay i) = ModifiedJulianDay <$> shrinkValid i
-#endif
+
 uniformlyOneHundredYearsAround2020 :: Gen Day
 uniformlyOneHundredYearsAround2020 = do
   y <- choose (1970, 2070)
@@ -53,36 +35,28 @@ genDayCloselyAround today = sized $ \s -> do
   diff <- choose (- s, s)
   pure $ addDays (fromIntegral diff) today
 
-#if MIN_VERSION_time(1,9,0)
-instance GenUnchecked CalendarDiffDays where
-  genUnchecked = CalendarDiffDays <$> genUnchecked <*> genUnchecked
-  shrinkUnchecked (CalendarDiffDays m d) = [ CalendarDiffDays m' d' | (m', d') <- shrinkUnchecked (m, d) ]
-
 instance GenValid CalendarDiffDays where
   genValid = CalendarDiffDays <$> genValid <*> genValid
-  shrinkValid (CalendarDiffDays m d) = [ CalendarDiffDays m' d' | (m', d') <- shrinkValid (m, d) ]
-
-instance GenUnchecked DayOfWeek where
-  genUnchecked = elements
-    [ Monday
-    , Tuesday
-    , Wednesday
-    , Thursday
-    , Friday
-    , Saturday
-    , Sunday
-    ]
-  -- It's hard to know how to shrink this, because there is no official start of the week.
-  -- However, just as we would shrink MonthOfYear to January, we will shrink the days of the week to monday
-  shrinkUnchecked Monday = []
-  shrinkUnchecked Tuesday = [Monday]
-  shrinkUnchecked Wednesday = [Monday, Tuesday]
-  shrinkUnchecked Thursday = [Monday, Tuesday, Wednesday]
-  shrinkUnchecked Friday = [Monday, Tuesday, Wednesday, Thursday]
-  shrinkUnchecked Saturday = [Monday, Tuesday, Wednesday, Thursday, Friday]
-  shrinkUnchecked Sunday = [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+  shrinkValid (CalendarDiffDays m d) = [CalendarDiffDays m' d' | (m', d') <- shrinkValid (m, d)]
 
 instance GenValid DayOfWeek where
-  genValid = genUnchecked
-  shrinkValid = shrinkUnchecked
-#endif
+  genValid =
+    elements
+      [ Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday
+      ]
+
+  -- It's hard to know how to shrink this, because there is no official start of the week.
+  -- However, just as we would shrink MonthOfYear to January, we will shrink the days of the week to monday
+  shrinkValid Monday = []
+  shrinkValid Tuesday = [Monday]
+  shrinkValid Wednesday = [Monday, Tuesday]
+  shrinkValid Thursday = [Monday, Tuesday, Wednesday]
+  shrinkValid Friday = [Monday, Tuesday, Wednesday, Thursday]
+  shrinkValid Saturday = [Monday, Tuesday, Wednesday, Thursday, Friday]
+  shrinkValid Sunday = [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]

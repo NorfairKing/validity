@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [0.12.0.0] - 2021-11-20
+
+### Removed
+
+* `RelativeValidity`, it was a misfeature.
 
 ## [0.11.0.0] - 2020-04-17
 

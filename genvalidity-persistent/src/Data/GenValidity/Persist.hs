@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -16,20 +15,9 @@ import Database.Persist
 import Database.Persist.Sql
 import Test.QuickCheck
 
-instance ToBackendKey SqlBackend record => GenUnchecked (Key record) where
-  genUnchecked = toSqlKey <$> genUnchecked
-  shrinkUnchecked = fmap toSqlKey . shrinkValid . fromSqlKey
-
 instance ToBackendKey SqlBackend record => GenValid (Key record) where
   genValid = toSqlKey <$> genValid
-  shrinkValid = shrinkUnchecked
-
-instance
-  (GenUnchecked a, ToBackendKey SqlBackend a) =>
-  GenUnchecked (Entity a)
-  where
-  genUnchecked = Entity <$> genUnchecked <*> genUnchecked
-  shrinkUnchecked (Entity k v) = [Entity k' v' | (k', v') <- shrinkUnchecked (k, v)]
+  shrinkValid = fmap toSqlKey . shrinkValid . fromSqlKey
 
 instance (GenValid a, ToBackendKey SqlBackend a) => GenValid (Entity a) where
   genValid = Entity <$> genValid <*> genValid
@@ -84,10 +72,8 @@ genSeperateIdsFor ::
 genSeperateIdsFor [] = pure []
 genSeperateIdsFor (a : as) = NE.toList <$> genSeperateIdsForNE (a :| as)
 
-#if MIN_VERSION_containers(0,6,0)
 shrinkValidWithSeperateIds ::
   (PersistEntity a, ToBackendKey SqlBackend a, GenValid a) =>
   [Entity a] ->
   [[Entity a]]
 shrinkValidWithSeperateIds = filter (distinctOrd . map entityKey) . shrinkValid
-#endif

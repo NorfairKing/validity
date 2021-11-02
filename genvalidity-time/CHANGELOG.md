@@ -1,6 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.0.0] - 2021-11-20
+
+### Changed
+
+* Compatibility with `genvalidity >= 1.0.0.0`
+* Changed the `GenValid Day` instance to only generate days around 2020, no more millions or billions of years ago.
 
 ## [0.3.0.0] - 2020-02-10
 

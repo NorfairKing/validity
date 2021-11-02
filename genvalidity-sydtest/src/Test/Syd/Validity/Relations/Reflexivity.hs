@@ -4,7 +4,6 @@
 module Test.Syd.Validity.Relations.Reflexivity
   ( reflexiveOnElem,
     reflexivityOnGen,
-    reflexivityOnValid,
     reflexivity,
     reflexivityOnArbitrary,
   )
@@ -34,25 +33,14 @@ reflexivityOnGen func gen s = forAllShrink gen s $ reflexiveOnElem func
 
 -- |
 --
--- prop> reflexivityOnValid ((<=) :: Rational -> Rational -> Bool)
--- prop> reflexivityOnValid ((==) :: Rational -> Rational -> Bool)
--- prop> reflexivityOnValid ((>=) :: Rational -> Rational -> Bool)
--- prop> reflexivityOnValid (Data.List.isPrefixOf :: [Rational] -> [Rational] -> Bool)
--- prop> reflexivityOnValid (Data.List.isSuffixOf :: [Rational] -> [Rational] -> Bool)
--- prop> reflexivityOnValid (Data.List.isInfixOf :: [Rational] -> [Rational] -> Bool)
-reflexivityOnValid :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
-reflexivityOnValid func = reflexivityOnGen func genValid shrinkValid
-
--- |
---
 -- prop> reflexivity ((<=) :: Int -> Int -> Bool)
 -- prop> reflexivity ((==) :: Int -> Int -> Bool)
 -- prop> reflexivity ((>=) :: Int -> Int -> Bool)
 -- prop> reflexivity (Data.List.isPrefixOf :: [Int] -> [Int] -> Bool)
 -- prop> reflexivity (Data.List.isSuffixOf :: [Int] -> [Int] -> Bool)
 -- prop> reflexivity (Data.List.isInfixOf :: [Int] -> [Int] -> Bool)
-reflexivity :: (Show a, GenUnchecked a) => (a -> a -> Bool) -> Property
-reflexivity func = reflexivityOnGen func genUnchecked shrinkUnchecked
+reflexivity :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
+reflexivity func = reflexivityOnGen func genValid shrinkValid
 
 -- |
 --

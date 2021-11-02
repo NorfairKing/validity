@@ -1,19 +1,8 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MagicHash #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-
-#if __GLASGOW_HASKELL__ >= 710
-#define OVERLAPPING_ {-# OVERLAPPING #-}
-#else
-{-# LANGUAGE OverlappingInstances #-}
-#define OVERLAPPING_
-#endif
-#if MIN_VERSION_base(4,9,0)
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
-#endif
+
 module Data.GenValidity.Utils
   ( -- ** Helper functions for implementing generators
     upTo,
@@ -28,9 +17,7 @@ module Data.GenValidity.Utils
     shuffle,
     genListLength,
     genListOf,
-#if MIN_VERSION_base(4,9,0)
     genNonEmptyOf,
-#endif
 
     -- ** Helper functions for implementing shrinking functions
     shrinkTuple,
@@ -43,36 +30,16 @@ module Data.GenValidity.Utils
     genDouble,
     genFloatX,
     genInteger,
-    genUncheckedInt,
-    shrinkUncheckedInt,
-    genUncheckedWord,
-    shrinkUncheckedWord,
   )
 where
 
+import Control.Monad (forM, replicateM)
+import Data.List.NonEmpty (NonEmpty (..))
+import qualified Data.List.NonEmpty as NE
 import Data.Ratio
-import GHC.Exts (Int#, Word#)
 import GHC.Float (castWord32ToFloat, castWord64ToDouble)
-import GHC.Int (Int (..))
-import GHC.Word (Word (..))
 import System.Random
 import Test.QuickCheck hiding (Fixed)
-
-#if !MIN_VERSION_QuickCheck(2,8,0)
-import Data.List (sortBy)
-import Data.Ord (comparing)
-#endif
-#if MIN_VERSION_base(4,9,0)
-import Data.List.NonEmpty(NonEmpty(..))
-import qualified Data.List.NonEmpty as NE
-#endif
-
-#if MIN_VERSION_base(4,8,0)
-import Control.Monad (forM, replicateM)
-#else
-import Control.Applicative ((<$>), (<*>), pure)
-import Control.Monad (forM, replicateM)
-#endif
 
 -- | 'upTo' generates an integer between 0 (inclusive) and 'n'.
 upTo :: Int -> Gen Int
@@ -165,22 +132,12 @@ arbPartition i = genListLengthWithSize i >>= go i
     invE :: Double -> Double -> Double
     invE lambda u = (- log (1 - u)) / lambda
 
-#if !MIN_VERSION_QuickCheck(2,8,0)
--- | Generates a random permutation of the given list.
-shuffle :: [a] -> Gen [a]
-shuffle xs = do
-    ns <- vectorOf (length xs) (choose (minBound :: Int, maxBound))
-    return (map snd (sortBy (comparing fst) (zip ns xs)))
-#endif
-
-#if MIN_VERSION_base(4,9,0)
 genNonEmptyOf :: Gen a -> Gen (NonEmpty a)
 genNonEmptyOf gen = do
   l <- genListOf gen
   case NE.nonEmpty l of
-    Nothing -> scale (+1) $ genNonEmptyOf gen
+    Nothing -> scale (+ 1) $ genNonEmptyOf gen
     Just ne -> pure ne
-#endif
 
 -- Uses 'genListLengthWithSize' with the size parameter
 genListLength :: Gen Int
@@ -370,19 +327,3 @@ genInteger = sized $ \s ->
       bi <- resize b genInteger
       ci <- resize c genIntSizedInteger
       pure $ ai * bi + ci
-
-genUncheckedInt :: (Int# -> a) -> Gen a
-genUncheckedInt func = do
-  (I# i#) <- genIntX
-  pure $ func i#
-
-shrinkUncheckedInt :: (Int -> a) -> (a -> Int) -> a -> [a]
-shrinkUncheckedInt fromInt toInt = fmap fromInt . shrink . toInt
-
-genUncheckedWord :: (Word# -> a) -> Gen a
-genUncheckedWord func = do
-  (W# w#) <- genWordX
-  pure $ func w#
-
-shrinkUncheckedWord :: (Word -> a) -> (a -> Word) -> a -> [a]
-shrinkUncheckedWord fromWord toWord = fmap fromWord . shrink . toWord

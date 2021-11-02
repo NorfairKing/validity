@@ -5,18 +5,15 @@
 
 -- | Standard test `Spec`s for optics
 module Test.Syd.Validity.Lens
-  ( lensSpecOnValid,
-    lensSpec,
+  ( lensSpec,
     lensSpecOnArbitrary,
     lensSpecOnGen,
     lensLaw1,
     lensLaw2,
     lensLaw3,
-    lensGettingProducesValidOnValid,
     lensGettingProducesValid,
     lensGettingProducesValidOnArbitrary,
     lensGettingProducesValidOnGen,
-    lensSettingProducesValidOnValid,
     lensSettingProducesValid,
     lensSettingProducesValidOnArbitrary,
     lensSettingProducesValidOnGen,
@@ -34,13 +31,19 @@ import Test.Syd.Validity.Utils
 --
 -- Example usage:
 --
--- > lensSpecOnValid ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
-lensSpecOnValid ::
+-- > lensSpec ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
+lensSpec ::
   forall s b.
-  (Show b, Eq b, GenValid b, Show s, Eq s, GenValid s) =>
+  ( Show b,
+    Eq b,
+    GenValid b,
+    Show s,
+    Eq s,
+    GenValid s
+  ) =>
   Lens s s b b ->
   Spec
-lensSpecOnValid l =
+lensSpec l =
   lensSpecOnGen
     l
     (genValid @b)
@@ -49,34 +52,6 @@ lensSpecOnValid l =
     (genValid @s)
     "valid values"
     shrinkValid
-
--- | Standard test spec for properties lenses for unchecked values
---
--- Example usage:
---
--- > lensSpec ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
-lensSpec ::
-  forall s b.
-  ( Show b,
-    Eq b,
-    GenUnchecked b,
-    Validity b,
-    Show s,
-    Eq s,
-    GenUnchecked s,
-    Validity s
-  ) =>
-  Lens s s b b ->
-  Spec
-lensSpec l =
-  lensSpecOnGen
-    l
-    (genUnchecked @b)
-    "unchecked values"
-    shrinkUnchecked
-    (genUnchecked @s)
-    "unchecked values"
-    shrinkUnchecked
 
 -- | Standard test spec for properties lenses for arbitrary values
 --
@@ -210,21 +185,11 @@ lensLaw3 l genB shrinkB genS shrinkS =
 --
 -- Example Usage:
 --
--- prop> lensGettingProducesValidOnValid ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
-lensGettingProducesValidOnValid ::
-  (Show s, GenValid s, Show b, GenValid b) => Lens s s b b -> Property
-lensGettingProducesValidOnValid l =
-  lensGettingProducesValidOnGen l genValid shrinkValid
-
--- | A property combinator to test whether getting values via a lens on unchecked values produces valid values.
---
--- Example Usage:
---
 -- prop> lensGettingProducesValid ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
 lensGettingProducesValid ::
-  (Show s, GenUnchecked s, Show b, Validity b) => Lens s s b b -> Property
+  (Show s, GenValid s, Show b, Validity b) => Lens s s b b -> Property
 lensGettingProducesValid l =
-  lensGettingProducesValidOnGen l genUnchecked shrinkUnchecked
+  lensGettingProducesValidOnGen l genValid shrinkValid
 
 -- | A property combinator to test whether getting values via a lens on arbitrary values produces valid values.
 --
@@ -258,30 +223,18 @@ lensGettingProducesValidOnGen l genS shrinkS =
 --
 -- Example usage:
 --
--- prop> lensSettingProducesValidOnValid ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
-lensSettingProducesValidOnValid ::
-  (Show s, GenValid s, Show b, GenValid b, Show t, Validity t) =>
-  Lens s t a b ->
-  Property
-lensSettingProducesValidOnValid l =
-  lensSettingProducesValidOnGen l genValid shrinkValid genValid shrinkValid
-
--- | A property combinator to test whether setting unchecked values via a lens on unchecked values produces valid values.
---
--- Example usage:
---
 -- prop> lensSettingProducesValid ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
 lensSettingProducesValid ::
-  (Show s, GenUnchecked s, Show b, GenUnchecked b, Show t, Validity t) =>
+  (Show s, GenValid s, Show b, GenValid b, Show t, Validity t) =>
   Lens s t a b ->
   Property
 lensSettingProducesValid l =
   lensSettingProducesValidOnGen
     l
-    genUnchecked
-    shrinkUnchecked
-    genUnchecked
-    shrinkUnchecked
+    genValid
+    shrinkValid
+    genValid
+    shrinkValid
 
 -- | A property combinator to test whether setting arbitrary values via a lens on arbitrary values produces valid values.
 --

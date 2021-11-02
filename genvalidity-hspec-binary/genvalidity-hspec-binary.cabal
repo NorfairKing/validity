@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-hspec-binary
-version:        0.2.0.4
+version:        1.0.0.0
 synopsis:       Standard spec's for binary-related Instances
 description:    Standard spec's for cereal-related Instances, see https://hackage.haskell.org/package/binary.
 category:       Testing
@@ -13,12 +13,13 @@ homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Nick Van den Broeck
 maintainer:     syd@cs-syd.eu
-copyright:      2017-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
-    README.md
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -37,7 +38,7 @@ library
     , base >=4.9 && <=5
     , binary
     , deepseq
-    , genvalidity >=0.5
+    , genvalidity >=1.0
     , genvalidity-hspec >=0.6
     , hspec
   default-language: Haskell2010
@@ -54,9 +55,9 @@ test-suite genvalidity-hspec-binary-test
   build-depends:
       base >=4.9 && <=5
     , binary
-    , genvalidity >=0.7
+    , genvalidity
     , genvalidity-hspec-binary
-    , genvalidity-property >=0.3
+    , genvalidity-property
     , hspec
     , validity >=0.9
   default-language: Haskell2010

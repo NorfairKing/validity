@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeApplications #-}
 
@@ -16,10 +15,8 @@ import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-  hashableSpecOnValid @Rational
-#if MIN_VERSION_hashable(1,3,0)
-  hashableSpecOnValid @Double
-#endif
+  hashableSpec @Rational
+  hashableSpec @Double
   hashableSpec @Int
   hashableSpecOnArbitrary @Int
   hashableSpec @HashableValid
@@ -46,8 +43,6 @@ instance Validity HashableValid
 
 instance GenValid HashableValid
 
-instance GenUnchecked HashableValid
-
 newtype HashableInvalid
   = HashableInvalid Int
   deriving (Show, Generic)
@@ -70,5 +65,3 @@ instance Hashable HashableInvalid where
 instance Validity HashableInvalid
 
 instance GenValid HashableInvalid
-
-instance GenUnchecked HashableInvalid

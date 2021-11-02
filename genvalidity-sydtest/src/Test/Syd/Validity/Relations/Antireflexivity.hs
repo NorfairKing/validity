@@ -4,7 +4,6 @@
 module Test.Syd.Validity.Relations.Antireflexivity
   ( antireflexiveOnElem,
     antireflexivityOnGen,
-    antireflexivityOnValid,
     antireflexivity,
     antireflexivityOnArbitrary,
   )
@@ -34,19 +33,11 @@ antireflexivityOnGen func gen s = forAllShrink gen s $ antireflexiveOnElem func
 
 -- |
 --
--- prop> antireflexivityOnValid ((<) :: Rational -> Rational -> Bool)
--- prop> antireflexivityOnValid ((/=) :: Rational -> Rational -> Bool)
--- prop> antireflexivityOnValid ((>) :: Rational -> Rational -> Bool)
-antireflexivityOnValid :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
-antireflexivityOnValid func = antireflexivityOnGen func genValid shrinkValid
-
--- |
---
 -- prop> antireflexivity ((<) :: Int -> Int -> Bool)
 -- prop> antireflexivity ((/=) :: Int -> Int -> Bool)
 -- prop> antireflexivity ((>) :: Int -> Int -> Bool)
-antireflexivity :: (Show a, GenUnchecked a) => (a -> a -> Bool) -> Property
-antireflexivity func = antireflexivityOnGen func genUnchecked shrinkUnchecked
+antireflexivity :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
+antireflexivity func = antireflexivityOnGen func genValid shrinkValid
 
 -- |
 --

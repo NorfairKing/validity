@@ -5,17 +5,20 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-uuid
-version:        0.1.0.4
+version:        1.0.0.0
 synopsis:       GenValidity support for UUID
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -31,7 +34,7 @@ library
   build-depends:
       QuickCheck
     , base >=4.7 && <5
-    , genvalidity >=0.5
+    , genvalidity >=1.0
     , uuid
     , validity >=0.5
     , validity-uuid >=0.0

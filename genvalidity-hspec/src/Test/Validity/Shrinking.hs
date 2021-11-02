@@ -7,26 +7,16 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.Shrinking
-  ( shrinkValiditySpec,
-    shrinkValidSpec,
+  ( shrinkValidSpec,
     shrinkValidSpecWithLimit,
-    shrinkInvalidSpec,
     shrinkValidPreservesValidOnGenValid,
     shrinkValidPreservesValidOnGenValidWithLimit,
-    shrinkInvalidPreservesInvalidOnGenInvalid,
     shrinkPreservesValidOnGenValid,
-    shrinkPreservesInvalidOnGenInvalid,
     shrinkValidPreservesValid,
-    shrinkInvalidPreservesInvalid,
     shrinkingStaysValid,
-    shrinkingStaysInvalid,
     shrinkingPreserves,
-    shrinkUncheckedDoesNotShrinkToItself,
-    shrinkUncheckedDoesNotShrinkToItselfWithLimit,
     shrinkValidDoesNotShrinkToItself,
     shrinkValidDoesNotShrinkToItselfWithLimit,
-    shrinkInvalidDoesNotShrinkToItself,
-    shrinkInvalidDoesNotShrinkToItselfWithLimit,
   )
 where
 
@@ -37,14 +27,6 @@ import Test.Hspec
 import Test.QuickCheck
 import Test.Validity.Shrinking.Property
 import Test.Validity.Utils
-
-shrinkValiditySpec ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenValid a, GenInvalid a) =>
-  Spec
-shrinkValiditySpec = do
-  shrinkValidSpec @a
-  shrinkInvalidSpec @a
 
 shrinkValidSpec ::
   forall a.
@@ -76,16 +58,6 @@ shrinkValidSpecWithLimit l =
       )
       $ shrinkValidDoesNotShrinkToItselfWithLimit @a l
 
-shrinkInvalidSpec ::
-  forall a.
-  (Show a, Typeable a, GenInvalid a) =>
-  Spec
-shrinkInvalidSpec =
-  describe ("shrinkInvalid :: " ++ nameOf @(a -> [a])) $ do
-    it "preserves invalidity" $
-      forAll (genInvalid @a) $ \a ->
-        forM_ (shrinkInvalid a) shouldBeInvalid
-
 shrinkValidPreservesValidOnGenValid ::
   forall a.
   (Show a, GenValid a) =>
@@ -101,41 +73,12 @@ shrinkValidPreservesValidOnGenValidWithLimit ::
 shrinkValidPreservesValidOnGenValidWithLimit =
   shrinkingStaysValidWithLimit @a genValid shrinkValid
 
-shrinkInvalidPreservesInvalidOnGenInvalid ::
-  forall a.
-  (Show a, GenInvalid a) =>
-  Property
-shrinkInvalidPreservesInvalidOnGenInvalid =
-  shrinkingStaysInvalid @a genInvalid shrinkInvalid
-
-shrinkUncheckedDoesNotShrinkToItself ::
-  forall a.
-  (Show a, Eq a, GenUnchecked a) =>
-  Property
-shrinkUncheckedDoesNotShrinkToItself =
-  shrinkDoesNotShrinkToItself @a shrinkUnchecked
-
 shrinkValidDoesNotShrinkToItself ::
   forall a.
   (Show a, Eq a, GenValid a) =>
   Property
 shrinkValidDoesNotShrinkToItself =
-  shrinkDoesNotShrinkToItselfOnValid @a shrinkValid
-
-shrinkInvalidDoesNotShrinkToItself ::
-  forall a.
-  (Show a, Eq a, GenInvalid a) =>
-  Property
-shrinkInvalidDoesNotShrinkToItself =
-  shrinkDoesNotShrinkToItselfOnInvalid @a shrinkInvalid
-
-shrinkInvalidDoesNotShrinkToItselfWithLimit ::
-  forall a.
-  (Show a, Eq a, GenInvalid a) =>
-  Int ->
-  Property
-shrinkInvalidDoesNotShrinkToItselfWithLimit =
-  shrinkDoesNotShrinkToItselfOnInvalidWithLimit @a shrinkInvalid
+  shrinkDoesNotShrinkToItself @a shrinkValid
 
 shrinkValidDoesNotShrinkToItselfWithLimit ::
   forall a.
@@ -144,11 +87,3 @@ shrinkValidDoesNotShrinkToItselfWithLimit ::
   Property
 shrinkValidDoesNotShrinkToItselfWithLimit =
   shrinkDoesNotShrinkToItselfOnValidWithLimit @a shrinkValid
-
-shrinkUncheckedDoesNotShrinkToItselfWithLimit ::
-  forall a.
-  (Show a, Eq a, GenUnchecked a) =>
-  Int ->
-  Property
-shrinkUncheckedDoesNotShrinkToItselfWithLimit =
-  shrinkDoesNotShrinkToItselfWithLimit @a shrinkUnchecked

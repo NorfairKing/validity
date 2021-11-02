@@ -6,8 +6,7 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.Aeson
-  ( jsonSpecOnValid,
-    jsonSpec,
+  ( jsonSpec,
     jsonSpecOnArbitrary,
     jsonSpecOnGen,
     neverFailsToEncodeOnGen,
@@ -30,23 +29,12 @@ import Test.Validity.Utils
 --
 -- Example usage:
 --
--- > jsonSpecOnValid @Rational
-jsonSpecOnValid ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenValid a, FromJSON a, ToJSON a) =>
-  Spec
-jsonSpecOnValid = jsonSpecOnGen (genValid @a) "valid" shrinkValid
-
--- | Standard test spec for properties of JSON-related functions for unchecked values
---
--- Example usage:
---
 -- > jsonSpec @Int
 jsonSpec ::
   forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, FromJSON a, ToJSON a) =>
+  (Show a, Eq a, Typeable a, GenValid a, FromJSON a, ToJSON a) =>
   Spec
-jsonSpec = jsonSpecOnGen (genUnchecked @a) "unchecked" shrinkUnchecked
+jsonSpec = jsonSpecOnGen (genValid @a) "valid" shrinkValid
 
 -- | Standard test spec for properties of JSON-related functions for arbitrary values
 --
@@ -101,10 +89,10 @@ jsonSpecOnGen gen genname s =
 -- |
 --
 -- prop> neverFailsToEncodeOnGen @Bool arbitrary shrink
--- prop> neverFailsToEncodeOnGen @Bool genUnchecked shrinkUnchecked
+-- prop> neverFailsToEncodeOnGen @Bool genValid shrinkValid
 -- prop> neverFailsToEncodeOnGen @Bool genValid shrinkValid
 -- prop> neverFailsToEncodeOnGen @Int arbitrary shrink
--- prop> neverFailsToEncodeOnGen @Int genUnchecked shrinkUnchecked
+-- prop> neverFailsToEncodeOnGen @Int genValid shrinkValid
 -- prop> neverFailsToEncodeOnGen @Int genValid shrinkValid
 neverFailsToEncodeOnGen :: (Show a, ToJSON a) => Gen a -> (a -> [a]) -> Property
 neverFailsToEncodeOnGen gen s =
@@ -114,10 +102,10 @@ neverFailsToEncodeOnGen gen s =
 -- |
 --
 -- prop> encodeAndDecodeAreInversesOnGen @Bool arbitrary shrink
--- prop> encodeAndDecodeAreInversesOnGen @Bool genUnchecked shrinkUnchecked
+-- prop> encodeAndDecodeAreInversesOnGen @Bool genValid shrinkValid
 -- prop> encodeAndDecodeAreInversesOnGen @Bool genValid shrinkValid
 -- prop> encodeAndDecodeAreInversesOnGen @Int arbitrary shrink
--- prop> encodeAndDecodeAreInversesOnGen @Int genUnchecked shrinkUnchecked
+-- prop> encodeAndDecodeAreInversesOnGen @Int genValid shrinkValid
 -- prop> encodeAndDecodeAreInversesOnGen @Int genValid shrinkValid
 encodeAndDecodeAreInversesOnGen ::
   (Show a, Eq a, FromJSON a, ToJSON a) => Gen a -> (a -> [a]) -> Property

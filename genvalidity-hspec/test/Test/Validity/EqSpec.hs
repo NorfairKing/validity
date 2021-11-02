@@ -1,18 +1,17 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeApplications #-}
 
--- | Standard 'Spec's for 'Eq' instances.
---
--- You will need @TypeApplications@ to use these.
 module Test.Validity.EqSpec where
 
 import Data.GenValidity
+import GHC.Generics (Generic)
 import Test.Hspec
 import Test.Validity.Eq
 import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-  eqSpecOnValid @Rational
+  eqSpec @Rational
   eqSpec @Int
   -- eqSpec @Double DOES NOT HOLD because of NaN
   eqSpecOnArbitrary @Int
@@ -22,12 +21,14 @@ spec = do
 
 newtype EqFuncMismatch
   = EqFuncMismatch ()
-  deriving (Show)
+  deriving (Show, Generic)
+
+instance Validity EqFuncMismatch
 
 instance Eq EqFuncMismatch where
   (==) _ _ = True
   (/=) _ _ = True
 
-instance GenUnchecked EqFuncMismatch where
-  genUnchecked = EqFuncMismatch <$> genUnchecked
-  shrinkUnchecked _ = []
+instance GenValid EqFuncMismatch where
+  genValid = EqFuncMismatch <$> genValid
+  shrinkValid _ = []

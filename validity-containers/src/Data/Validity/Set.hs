@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.Validity.Set where
@@ -17,7 +16,5 @@ instance (Ord v, Validity v) => Validity (Set v) where
         annotate (S.toList s) "Set elements"
       ]
 
-#if MIN_VERSION_containers(0,6,0)
 distinctOrd :: Ord a => [a] -> Bool
 distinctOrd ls = nubOrd ls == ls
-#endif

@@ -5,7 +5,6 @@ module Test.Validity.Relations.Antisymmetry
   ( antisymmetricOnElemsWithEquality,
     antisymmetryOnGensWithEquality,
     antisymmetryOnGens,
-    antisymmetryOnValid,
     antisymmetry,
     antisymmetryOnArbitrary,
   )
@@ -55,19 +54,6 @@ antisymmetryOnGens func gen = antisymmetryOnGensWithEquality func gen (==)
 
 -- |
 --
--- prop> antisymmetryOnValid ((>) :: Double -> Double -> Bool)
--- prop> antisymmetryOnValid ((>=) :: Double -> Double -> Bool)
--- prop> antisymmetryOnValid ((<=) :: Double -> Double -> Bool)
--- prop> antisymmetryOnValid ((<) :: Double -> Double -> Bool)
--- prop> antisymmetryOnValid (Data.List.isPrefixOf :: [Double] -> [Double] -> Bool)
--- prop> antisymmetryOnValid (Data.List.isSuffixOf :: [Double] -> [Double] -> Bool)
--- prop> antisymmetryOnValid (Data.List.isInfixOf :: [Double] -> [Double] -> Bool)
-antisymmetryOnValid ::
-  (Show a, Eq a, GenValid a) => (a -> a -> Bool) -> Property
-antisymmetryOnValid func = antisymmetryOnGens func genValid shrinkValid
-
--- |
---
 -- prop> antisymmetry ((>) :: Int -> Int -> Bool)
 -- prop> antisymmetry ((>=) :: Int -> Int -> Bool)
 -- prop> antisymmetry ((<=) :: Int -> Int -> Bool)
@@ -76,8 +62,8 @@ antisymmetryOnValid func = antisymmetryOnGens func genValid shrinkValid
 -- prop> antisymmetry (Data.List.isSuffixOf :: [Int] -> [Int] -> Bool)
 -- prop> antisymmetry (Data.List.isInfixOf :: [Int] -> [Int] -> Bool)
 -- prop> antisymmetry ((\x y -> even x && odd y) :: Int -> Int -> Bool)
-antisymmetry :: (Show a, Eq a, GenUnchecked a) => (a -> a -> Bool) -> Property
-antisymmetry func = antisymmetryOnGens func genUnchecked shrinkUnchecked
+antisymmetry :: (Show a, Eq a, GenValid a) => (a -> a -> Bool) -> Property
+antisymmetry func = antisymmetryOnGens func genValid shrinkValid
 
 -- |
 --

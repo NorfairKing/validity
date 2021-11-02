@@ -8,7 +8,7 @@ import Test.Syd.Validity.Ord
 
 spec :: Spec
 spec = do
-  ordSpecOnValid @Rational
+  ordSpec @Rational
   ordSpec @Int
   ordSpecOnArbitrary @Int
   ordSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])

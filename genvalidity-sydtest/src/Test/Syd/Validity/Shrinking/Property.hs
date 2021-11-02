@@ -5,20 +5,15 @@
 -- | Tests for shrinking functions
 module Test.Syd.Validity.Shrinking.Property
   ( shrinkPreservesValidOnGenValid,
-    shrinkPreservesInvalidOnGenInvalid,
     shrinkValidPreservesValid,
-    shrinkInvalidPreservesInvalid,
     shrinkingStaysValid,
     shrinkingStaysValidWithLimit,
-    shrinkingStaysInvalid,
     shrinkingPreserves,
     shrinkingPreservesWithLimit,
     shrinkDoesNotShrinkToItself,
     shrinkDoesNotShrinkToItselfWithLimit,
     shrinkDoesNotShrinkToItselfOnValid,
     shrinkDoesNotShrinkToItselfOnValidWithLimit,
-    shrinkDoesNotShrinkToItselfOnInvalid,
-    shrinkDoesNotShrinkToItselfOnInvalidWithLimit,
     doesNotShrinkToItself,
     doesNotShrinkToItselfWithLimit,
   )
@@ -39,16 +34,6 @@ shrinkPreservesValidOnGenValid = shrinkingStaysValid genValid
 
 -- |
 --
--- prop> shrinkPreservesInvalidOnGenInvalid ((:[]) :: Rational -> [Rational])
-shrinkPreservesInvalidOnGenInvalid ::
-  forall a.
-  (Show a, GenInvalid a) =>
-  (a -> [a]) ->
-  Property
-shrinkPreservesInvalidOnGenInvalid = shrinkingStaysValid genInvalid
-
--- |
---
 -- prop> shrinkValidPreservesValid (pure 5 :: Gen Rational)
 shrinkValidPreservesValid ::
   forall a.
@@ -56,14 +41,6 @@ shrinkValidPreservesValid ::
   Gen a ->
   Property
 shrinkValidPreservesValid gen = shrinkingStaysValid gen shrinkValid
-
--- |
-shrinkInvalidPreservesInvalid ::
-  forall a.
-  (Show a, GenInvalid a) =>
-  Gen a ->
-  Property
-shrinkInvalidPreservesInvalid gen = shrinkingStaysValid gen shrinkInvalid
 
 -- |
 --
@@ -88,17 +65,6 @@ shrinkingStaysValidWithLimit ::
   Property
 shrinkingStaysValidWithLimit gen s l =
   shrinkingPreservesWithLimit gen s l isValid
-
--- |
---
--- prop> shrinkingStaysInvalid (pure (1/0) :: Gen Double) (:[])
-shrinkingStaysInvalid ::
-  forall a.
-  (Show a, Validity a) =>
-  Gen a ->
-  (a -> [a]) ->
-  Property
-shrinkingStaysInvalid gen s = shrinkingPreserves gen s isInvalid
 
 -- |
 --
@@ -128,25 +94,25 @@ shrinkingPreservesWithLimit gen s l p =
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItself (shrinkUnchecked :: Double -> [Double])
+-- prop> shrinkDoesNotShrinkToItself (shrinkValid :: Double -> [Double])
 shrinkDoesNotShrinkToItself ::
   forall a.
-  (Show a, Eq a, GenUnchecked a) =>
+  (Show a, Eq a, GenValid a) =>
   (a -> [a]) ->
   Property
-shrinkDoesNotShrinkToItself = doesNotShrinkToItself genUnchecked
+shrinkDoesNotShrinkToItself = doesNotShrinkToItself genValid
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItselfWithLimit (shrinkUnchecked :: Double -> [Double]) 100
+-- prop> shrinkDoesNotShrinkToItselfWithLimit (shrinkValid :: Double -> [Double]) 100
 shrinkDoesNotShrinkToItselfWithLimit ::
   forall a.
-  (Show a, Eq a, GenUnchecked a) =>
+  (Show a, Eq a, GenValid a) =>
   (a -> [a]) ->
   Int ->
   Property
 shrinkDoesNotShrinkToItselfWithLimit =
-  doesNotShrinkToItselfWithLimit genUnchecked
+  doesNotShrinkToItselfWithLimit genValid
 
 -- |
 --
@@ -172,29 +138,7 @@ shrinkDoesNotShrinkToItselfOnValidWithLimit =
 
 -- |
 --
--- prop> shrinkDoesNotShrinkToItselfOnInvalid (shrinkInvalid :: Rational -> [Rational])
-shrinkDoesNotShrinkToItselfOnInvalid ::
-  forall a.
-  (Show a, Eq a, GenInvalid a) =>
-  (a -> [a]) ->
-  Property
-shrinkDoesNotShrinkToItselfOnInvalid = doesNotShrinkToItself genInvalid
-
--- |
---
--- prop> shrinkDoesNotShrinkToItselfOnInvalidWithLimit (shrinkInvalid :: Rational -> [Rational]) 100
-shrinkDoesNotShrinkToItselfOnInvalidWithLimit ::
-  forall a.
-  (Show a, Eq a, GenInvalid a) =>
-  (a -> [a]) ->
-  Int ->
-  Property
-shrinkDoesNotShrinkToItselfOnInvalidWithLimit =
-  doesNotShrinkToItselfWithLimit genInvalid
-
--- |
---
--- prop> doesNotShrinkToItself (pure 5 :: Gen Double) shrinkUnchecked
+-- prop> doesNotShrinkToItself (pure 5 :: Gen Double) shrinkValid
 doesNotShrinkToItself ::
   forall a.
   (Show a, Eq a) =>
@@ -205,7 +149,7 @@ doesNotShrinkToItself gen s = forAll gen $ \a -> notElem a $ s a
 
 -- |
 --
--- prop> doesNotShrinkToItselfWithLimit (pure 5 :: Gen Double) shrinkUnchecked 100
+-- prop> doesNotShrinkToItselfWithLimit (pure 5 :: Gen Double) shrinkValid 100
 doesNotShrinkToItselfWithLimit ::
   forall a.
   (Show a, Eq a) =>

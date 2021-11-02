@@ -7,12 +7,9 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.GenValidity
-  ( genValiditySpec,
-    genValidSpec,
-    genInvalidSpec,
+  ( genValidSpec,
     genValidGeneratesValid,
     genGeneratesValid,
-    genInvalidGeneratesInvalid,
     genGeneratesInvalid,
   )
 where
@@ -23,25 +20,6 @@ import Test.Hspec
 import Test.QuickCheck
 import Test.Validity.GenValidity.Property
 import Test.Validity.Utils
-
--- | A spec for properties of 'GenValid' and 'GenInvalid' instances.
---
--- In general it is a good idea to add this spec to your test suite if you
--- write a custom implementation of @genValid@ or @genInvalid@.
---
--- __It is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken.__
--- In that case you probably want 'genValidSpec'.
---
--- Example usage:
---
--- > genValiditySpec @Int
-genValiditySpec ::
-  forall a.
-  (Typeable a, Show a, GenValid a, GenInvalid a) =>
-  Spec
-genValiditySpec = do
-  genValidSpec @a
-  genInvalidSpec @a
 
 -- | A @Spec@ that specifies that @genValid@ only generates valid data.
 --
@@ -63,25 +41,6 @@ genValidSpec =
         it ("only generates valid \'" ++ name ++ "\'s") $
           genValidGeneratesValid @a
 
--- | A @Spec@ that specifies that @genInvalid@ only generates invalid data.
---
--- Note that it is not a good idea to use this function if invalid values are broken in such a way that 'Show' or even 'isValid' is broken.
---
--- Example usage:
---
--- > genInvalidSpec @Rational
-genInvalidSpec ::
-  forall a.
-  (Typeable a, Show a, GenInvalid a) =>
-  Spec
-genInvalidSpec =
-  parallel $ do
-    let name = nameOf @a
-    describe ("GenInvalid " ++ name) $
-      describe ("genInvalid :: Gen " ++ name) $
-        it ("only generates invalid \'" ++ name ++ "\'s") $
-          genInvalidGeneratesInvalid @a
-
 -- | @genValid@ only generates valid data
 --
 -- prop> genValidGeneratesValid @()
@@ -99,15 +58,3 @@ genValidGeneratesValid ::
   (Show a, GenValid a) =>
   Property
 genValidGeneratesValid = genGeneratesValid @a genValid
-
--- | @genValid@ only generates invalid data
---
--- prop> genInvalidGeneratesInvalid @Rational
--- prop> genInvalidGeneratesInvalid @Rational
--- prop> genInvalidGeneratesInvalid @(Maybe Rational)
--- prop> genInvalidGeneratesInvalid @[Rational]
-genInvalidGeneratesInvalid ::
-  forall a.
-  (Show a, GenInvalid a) =>
-  Property
-genInvalidGeneratesInvalid = genGeneratesInvalid @a genInvalid

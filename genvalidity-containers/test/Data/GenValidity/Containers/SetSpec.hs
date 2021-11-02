@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Data.GenValidity.Containers.SetSpec where
@@ -13,25 +12,21 @@ import Test.Validity
 
 spec :: Spec
 spec = do
-  describe "genStructurallyValidSetOf" $
+  describe "genSetOf" $
     it "produces valid sets" $
       genGeneratesValid
-        (genStructurallyValidSetOf @Rational genValid)
-  describe "genStructurallyValidSetOfInvalidValues" $
-    it "produces valid sets" $
-      genGeneratesInvalid
-        (genStructurallyValidSetOfInvalidValues @Rational)
+        (genSetOf @Rational genValid)
   genValidSpec @(Set Int)
-  genValiditySpec @(Set Rational)
+  genValidSpec @(Set Rational)
   describe "genSeperate" $ do
     it "generates values that are seperate" $
-      forAll (genSeperate genUnchecked) $ \ls -> distinctOrd (ls :: [Int])
+      forAll (genSeperate genValid) $ \ls -> distinctOrd (ls :: [Int])
     it "generates values that are seperate" $
       forAll (genSeperate genValid) $ \ls -> distinctOrd (ls :: [Int])
   describe "genSeperateFor" $ do
     it "generates values that are seperate" $
       forAllValid $ \ls ->
-        forAll (genSeperateFor genUnchecked ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
+        forAll (genSeperateFor genValid ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
     it "generates values that are seperate" $
       forAllValid $ \ls ->
         forAll (genSeperateFor genValid ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
@@ -39,9 +34,3 @@ spec = do
     it "generates values that are seperate" $
       forAllValid $ \ls ->
         forAll (genValidSeperateFor ls) $ \tups -> distinctOrd (map fst (tups :: [(Int, Int)]))
-
-#if MIN_VERSION_containers(0,5,9)
-  describe "genStructurallyInvalidSet" $
-      it "produces invalid sets" $
-      genGeneratesInvalid (genStructurallyInvalidSet @Rational)
-#endif

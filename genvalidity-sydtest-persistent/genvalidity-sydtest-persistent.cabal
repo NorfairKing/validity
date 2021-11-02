@@ -5,17 +5,20 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-sydtest-persistent
-version:        0.0.0.1
+version:        1.0.0.0
 synopsis:       Standard spec's for persistent-related instances for sydtest
 category:       Testing
 homepage:       http://cs-syd.eu
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -32,7 +35,7 @@ library
   build-depends:
       QuickCheck
     , base >=4.9 && <=5
-    , genvalidity >=0.5
+    , genvalidity >=1.0
     , genvalidity-sydtest
     , persistent
     , sydtest
@@ -53,7 +56,7 @@ test-suite genvalidity-sydtest-persistent-test
   build-depends:
       QuickCheck
     , base >=4.9 && <=5
-    , genvalidity >=0.7
+    , genvalidity
     , genvalidity-sydtest
     , genvalidity-sydtest-persistent
     , genvalidity-text

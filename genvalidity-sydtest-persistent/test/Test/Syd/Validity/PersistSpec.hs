@@ -10,6 +10,6 @@ spec :: Spec
 spec = do
   persistSpecOnGen (genListOf $ pure 'a') "sequence of 'a's" (const [])
   -- persistSpec @Double -- DOES NOT HOLD
-  persistSpecOnValid @Rational
+  persistSpec @Rational
   persistSpec @Int
   persistSpecOnArbitrary @Int

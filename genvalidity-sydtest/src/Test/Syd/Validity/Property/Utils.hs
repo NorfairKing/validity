@@ -1,9 +1,5 @@
-{-# LANGUAGE CPP #-}
-
 module Test.Syd.Validity.Property.Utils
-  ( forAllUnchecked,
-    forAllValid,
-    forAllInvalid,
+  ( forAllValid,
     shouldBeValid,
     shouldBeInvalid,
     (<==>),
@@ -15,20 +11,8 @@ import Data.GenValidity
 import Test.QuickCheck
 import Test.Syd
 
-#if !MIN_VERSION_base(4,8,0)
-import Control.Applicative (pure)
-#endif
-
-forAllUnchecked ::
-  (Show a, GenUnchecked a, Testable prop) => (a -> prop) -> Property
-forAllUnchecked = forAllShrink genUnchecked shrinkUnchecked
-
 forAllValid :: (Show a, GenValid a, Testable prop) => (a -> prop) -> Property
 forAllValid = forAllShrink genValid shrinkValid
-
-forAllInvalid ::
-  (Show a, GenInvalid a, Testable prop) => (a -> prop) -> Property
-forAllInvalid = forAllShrink genInvalid shrinkInvalid
 
 (===>) :: Bool -> Bool -> Bool
 (===>) a b = not a || b

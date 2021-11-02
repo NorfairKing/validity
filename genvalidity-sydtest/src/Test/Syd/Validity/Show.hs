@@ -5,11 +5,9 @@
 
 -- | 'Show' and 'Read' properties
 module Test.Syd.Validity.Show
-  ( showReadSpecOnValid,
-    showReadSpec,
+  ( showReadSpec,
     showReadSpecOnArbitrary,
     showReadSpecOnGen,
-    showReadRoundTripOnValid,
     showReadRoundTrip,
     showReadRoundTripOnArbitrary,
     showReadRoundTripOnGen,
@@ -27,23 +25,12 @@ import Text.Read
 --
 -- Example usage:
 --
--- > showReadSpecOnValid @Double
-showReadSpecOnValid ::
-  forall a.
-  (Show a, Eq a, Read a, Typeable a, GenValid a) =>
-  Spec
-showReadSpecOnValid = showReadSpecOnGen @a genValid "valid" shrinkValid
-
--- | Standard test spec for properties of Show and Read instances for unchecked values
---
--- Example usage:
---
 -- > showReadSpec @Int
 showReadSpec ::
   forall a.
-  (Show a, Eq a, Read a, Typeable a, GenUnchecked a) =>
+  (Show a, Eq a, Read a, Typeable a, GenValid a) =>
   Spec
-showReadSpec = showReadSpecOnGen @a genUnchecked "unchecked" shrinkUnchecked
+showReadSpec = showReadSpecOnGen @a genValid "valid" shrinkValid
 
 -- | Standard test spec for properties of Show and Read instances for arbitrary values
 --
@@ -75,23 +62,13 @@ showReadSpecOnGen gen n s =
 
 -- |
 --
--- prop> showReadRoundTripOnValid @Rational
-showReadRoundTripOnValid ::
-  forall a.
-  (Show a, Eq a, Read a, GenValid a) =>
-  Property
-showReadRoundTripOnValid =
-  showReadRoundTripOnGen (genValid :: Gen a) shrinkValid
-
--- |
---
 -- prop> showReadRoundTrip @Int
 showReadRoundTrip ::
   forall a.
-  (Show a, Eq a, Read a, GenUnchecked a) =>
+  (Show a, Eq a, Read a, GenValid a) =>
   Property
 showReadRoundTrip =
-  showReadRoundTripOnGen (genUnchecked :: Gen a) shrinkUnchecked
+  showReadRoundTripOnGen (genValid :: Gen a) shrinkValid
 
 -- |
 --
@@ -105,7 +82,7 @@ showReadRoundTripOnArbitrary =
 
 -- |
 --
--- prop> showReadRoundTripOnGen (abs <$> genUnchecked :: Gen Int) (const [])
+-- prop> showReadRoundTripOnGen (abs <$> genValid :: Gen Int) (const [])
 showReadRoundTripOnGen ::
   (Show a, Eq a, Read a) => Gen a -> (a -> [a]) -> Property
 showReadRoundTripOnGen gen s =

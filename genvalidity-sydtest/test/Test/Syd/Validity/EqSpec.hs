@@ -11,7 +11,7 @@ import Test.Syd.Validity.Eq
 
 spec :: Spec
 spec = do
-  eqSpecOnValid @Rational
+  eqSpec @Rational
   eqSpec @Int
   -- eqSpec @Double DOES NOT HOLD because of NaN
   eqSpecOnArbitrary @Int

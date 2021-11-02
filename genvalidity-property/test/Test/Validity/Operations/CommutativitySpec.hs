@@ -5,7 +5,7 @@ module Test.Validity.Operations.CommutativitySpec
   )
 where
 
-import Data.GenValidity (GenUnchecked)
+import Data.GenValidity (GenValid)
 import Test.Hspec
 import Test.QuickCheck
 import Test.Validity.Operations.Commutativity (commutative)
@@ -20,7 +20,7 @@ spec = do
     specify "- is not commutative" $ notCommmutative @Int (-)
     specify "cross product is not commutative" $ notCommmutative crossProduct
 
-notCommmutative :: (Show a, Show b, Eq b, GenUnchecked a) => (a -> a -> b) -> Property
+notCommmutative :: (Show a, Show b, Eq b, GenValid a) => (a -> a -> b) -> Property
 notCommmutative op = expectFailure (commutative op)
 
 type Point = (Int, Int)

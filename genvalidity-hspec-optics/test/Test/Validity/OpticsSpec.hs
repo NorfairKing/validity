@@ -11,10 +11,9 @@ import Test.Validity.Optics
 
 spec :: Spec
 spec = do
-  describe "lensSpecOnValid" $
-    lensSpecOnValid
-      ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
-  describe "lensSpec" $ lensSpec ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
+  describe "lensSpec" $ do
+    lensSpec ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
+    lensSpec ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
   describe "lensSpecOnArbitrary" $
     lensSpecOnArbitrary
       ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
@@ -27,13 +26,12 @@ spec = do
       ((,) <$> (negate . abs <$> genValid) <*> (negate . abs <$> genValid))
       "tuples of negative valid doubles"
       (const [])
-  describe "lensGettingProducesValidOnValid" $
-    it "holds for (_2) for doubles" $
-      lensGettingProducesValidOnValid
-        ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
-  describe "lensGettingProducesValid" $
+  describe "lensGettingProducesValid" $ do
     it "holds for (_2) for ints" $
       lensGettingProducesValid ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
+    it "holds for (_2) for doubles" $
+      lensGettingProducesValid
+        ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
   describe "lensGettingProducesValidOnArbitrary" $
     it "holds for (_2) for doubles" $
       lensGettingProducesValidOnArbitrary
@@ -44,13 +42,11 @@ spec = do
         ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
         ((,) <$> (negate . abs <$> genValid) <*> (negate . abs <$> genValid))
         (const [])
-  describe "lensSettingProducesValidOnValid" $
-    it "holds for (_2) for doubles" $
-      lensSettingProducesValidOnValid
-        ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
-  describe "lensSettingProducesValid" $
+  describe "lensSettingProducesValid" $ do
     it "holds for (_2) for ints" $
       lensSettingProducesValid ((_2) :: Lens (Int, Int) (Int, Int) Int Int)
+    it "holds for (_2) for doubles" $
+      lensSettingProducesValid ((_2) :: Lens (Rational, Rational) (Rational, Rational) Rational Rational)
   describe "lensSettingProducesValidOnArbitrary" $
     it "holds for (_2) for doubles" $
       lensSettingProducesValidOnArbitrary
@@ -64,9 +60,9 @@ spec = do
         ((,) <$> (negate . abs <$> genValid) <*> (negate . abs <$> genValid))
         (const [])
   describe "myBoolLens" $
-    lensSpecOnValid myBoolLens
+    lensSpec myBoolLens
   describe "myRationalLens" $
-    lensSpecOnValid myRationalLens
+    lensSpec myRationalLens
 
 data MyRecord = MyRecord
   { myBool :: Bool,
@@ -75,8 +71,6 @@ data MyRecord = MyRecord
   deriving (Show, Eq, Generic)
 
 instance Validity MyRecord
-
-instance GenUnchecked MyRecord
 
 instance GenValid MyRecord
 

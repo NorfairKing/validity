@@ -1,11 +1,6 @@
-{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Aeson where
-
-#if !MIN_VERSION_base(4,8,0)
-import Data.Functor ((<$>))
-#endif
 
 import Data.Aeson
 import Data.Foldable (toList)
@@ -28,13 +23,11 @@ instance GenValid Value where
         pure Null
       ]
   shrinkValid (Object hm) =
-    (Object <$> shrinkValid hm)
-      ++ toList hm
-      ++ concatMap shrinkValid (toList hm)
+    toList hm
+      ++ (Object <$> shrinkValid hm)
   shrinkValid (Array a) =
-    (Array <$> shrinkValid a)
-      ++ toList a
-      ++ concatMap shrinkValid (toList a)
+    toList a
+      ++ (Array <$> shrinkValid a)
   shrinkValid (String s) = String <$> shrinkValid s
   shrinkValid (Number s) = Number <$> shrinkValid s
   shrinkValid (Bool s) = Bool <$> shrinkValid s

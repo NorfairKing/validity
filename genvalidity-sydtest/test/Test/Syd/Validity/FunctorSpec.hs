@@ -12,8 +12,6 @@ spec = do
   functorSpec @Maybe
   functorSpec @(Either Int)
   functorSpec @((,) Int)
-  functorSpecOnValid @[]
-  functorSpecOnValid @Maybe
   functorSpecOnArbitrary @[]
   functorSpecOnArbitrary @Maybe
   functorSpecOnGens

@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-hspec-hashable
-version:        0.2.0.5
+version:        1.0.0.0
 synopsis:       Standard spec's for Hashable instances
 description:    Standard spec's for Hashable instances
 category:       Testing
@@ -13,12 +13,13 @@ homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Nick Van den Broeck
 maintainer:     syd@cs-syd.eu
-copyright:      2017-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
-    README.md
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -34,7 +35,7 @@ library
   build-depends:
       QuickCheck
     , base >=4.9 && <5
-    , genvalidity >=0.5
+    , genvalidity >=1.0
     , genvalidity-hspec >=0.6
     , genvalidity-property >=0.2
     , hashable >=1.2
@@ -54,10 +55,10 @@ test-suite genvalidity-hspec-hashable-test
   build-depends:
       QuickCheck
     , base >=4.9 && <5
-    , genvalidity >=0.7
+    , genvalidity
     , genvalidity-hspec
     , genvalidity-hspec-hashable
-    , genvalidity-property >=0.3
+    , genvalidity-property
     , hashable
     , hspec
     , hspec-core

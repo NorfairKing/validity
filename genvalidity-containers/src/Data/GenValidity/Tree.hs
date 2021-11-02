@@ -1,12 +1,7 @@
-{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.Tree where
 
-#if !MIN_VERSION_base(4,8,0)
-import Control.Applicative ((<*>))
-import Data.Functor ((<$>))
-#endif
 import Data.GenValidity
 import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
@@ -14,29 +9,9 @@ import Data.Tree
 import Data.Validity.Tree ()
 import Test.QuickCheck
 
-instance GenUnchecked a => GenUnchecked (Tree a) where
-  genUnchecked = genTreeOf genUnchecked
-  shrinkUnchecked (Node v ts) = [Node v' ts' | (v', ts') <- shrinkUnchecked (v, ts)]
-
 instance GenValid a => GenValid (Tree a) where
   genValid = genTreeOf genValid
   shrinkValid (Node v ts) = [Node v' ts' | (v', ts') <- shrinkValid (v, ts)]
-
--- | There should be at least one invalid element, either it's here or it's
--- further down the tree.
-instance (GenUnchecked a, GenInvalid a) => GenInvalid (Tree a) where
-  genInvalid =
-    sized $ \n -> do
-      size <- upTo n
-      (a, b) <- genSplit size
-      oneof
-        [ Node <$> resize a genInvalid <*> resize b genUnchecked,
-          Node <$> resize a genUnchecked <*> resize b genInvalid
-        ]
-  shrinkInvalid (Node v ts) =
-    if isInvalid v
-      then Node <$> shrinkInvalid v <*> shrinkUnchecked ts
-      else Node <$> shrinkUnchecked v <*> shrinkInvalid ts
 
 -- | Generate a tree of values that are generated as specified.
 --

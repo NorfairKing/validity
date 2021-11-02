@@ -1,14 +1,19 @@
 name: genvalidity-hspec-optics
-version: '0.1.1.2'
+version: '1.0.0.0'
 synopsis: Standard spec's for lens
 description: Standard spec's for lens (van Laarhoven encoding)
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2018-2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 homepage: http://cs-syd.eu
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
+
 dependencies:
 - hspec
 
@@ -17,7 +22,7 @@ library:
   ghc-options: -Wall
   dependencies:
   - base >=4.9 && <=5
-  - genvalidity >=0.5
+  - genvalidity >= 1.0
   - microlens
   - QuickCheck
   - genvalidity-hspec
@@ -35,7 +40,7 @@ tests:
     - microlens
     - base
     - validity >=0.9
-    - genvalidity >=0.7
-    - genvalidity-property >=0.3
+    - genvalidity
+    - genvalidity-property
     - genvalidity-hspec
     - genvalidity-hspec-optics

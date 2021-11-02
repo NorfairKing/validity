@@ -10,6 +10,6 @@ spec :: Spec
 spec = do
   binarySpecOnGen (genListOf $ pure 'a') "sequence of 'a's" (const [])
   -- binarySpec @Double DOES NOT HOLD
-  binarySpecOnValid @Rational
+  binarySpec @Rational
   binarySpec @Int
   binarySpecOnArbitrary @Int

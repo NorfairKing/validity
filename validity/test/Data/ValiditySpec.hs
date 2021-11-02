@@ -1,16 +1,11 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE MagicHash #-}
 
--- {-# LANGUAGE CPP #-}
-
 module Data.ValiditySpec
   ( spec,
   )
 where
 
--- #if !MIN_VERSION_base(4,7,0)
--- import Data.Monoid
--- #endif
 import Data.Maybe
 import Data.Validity
 import GHC.Exts (Char (..), chr#)

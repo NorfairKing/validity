@@ -7,8 +7,7 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Syd.Validity.Monoid
-  ( monoidSpecOnValid,
-    monoidSpec,
+  ( monoidSpec,
     monoidSpecOnArbitrary,
     monoidSpecOnGen,
   )
@@ -48,23 +47,12 @@ mconcatTypeStr = unwords ["mconcat", "::", "[" ++ an ++ "]", "->", an]
 --
 -- Example usage:
 --
--- > monoidSpecOnValid @[Double]
-monoidSpecOnValid ::
-  forall a.
-  (Show a, Eq a, Monoid a, Typeable a, GenValid a) =>
-  Spec
-monoidSpecOnValid = monoidSpecOnGen @a genValid "valid" shrinkValid
-
--- | Standard test spec for properties of 'Monoid' instances for unchecked values
---
--- Example usage:
---
 -- > monoidSpec @[Int]
 monoidSpec ::
   forall a.
-  (Show a, Eq a, Monoid a, Typeable a, GenUnchecked a) =>
+  (Show a, Eq a, Monoid a, Typeable a, GenValid a) =>
   Spec
-monoidSpec = monoidSpecOnGen @a genUnchecked "unchecked" shrinkUnchecked
+monoidSpec = monoidSpecOnGen @a genValid "valid" shrinkValid
 
 -- | Standard test spec for properties of 'Monoid' instances for arbitrary values
 --

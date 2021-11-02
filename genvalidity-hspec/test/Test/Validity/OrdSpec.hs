@@ -9,7 +9,7 @@ import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-  ordSpecOnValid @Rational
+  ordSpec @Rational
   failsBecause "NaN >= NaN is False" $ ordSpec @Double
   ordSpec @Int
   ordSpecOnArbitrary @Int

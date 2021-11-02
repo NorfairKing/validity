@@ -3,30 +3,9 @@
 
 -- | Properties of operations
 module Test.Syd.Validity.Operations
-  ( leftIdentityOnElemWithEquality,
-    leftIdentityOnGenWithEquality,
-    leftIdentityOnGen,
-    leftIdentityOnValid,
-    leftIdentity,
-    leftIdentityOnArbitrary,
-    rightIdentityOnElemWithEquality,
-    rightIdentityOnGenWithEquality,
-    rightIdentityOnGen,
-    rightIdentityOnValid,
-    rightIdentity,
-    rightIdentityOnArbitrary,
-    identityOnGen,
-    identityOnValid,
-    identity,
-    identityOnArbitrary,
-    associativeOnGens,
-    associativeOnValids,
-    associative,
-    associativeOnArbitrary,
-    commutativeOnGens,
-    commutativeOnValids,
-    commutative,
-    commutativeOnArbitrary,
+  ( module Test.Syd.Validity.Operations.Associativity,
+    module Test.Syd.Validity.Operations.Commutativity,
+    module Test.Syd.Validity.Operations.Identity,
   )
 where
 

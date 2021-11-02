@@ -4,7 +4,6 @@
 module Test.Syd.Validity.Relations.Symmetry
   ( symmetricOnElems,
     symmetryOnGens,
-    symmetryOnValid,
     symmetry,
     symmetryOnArbitrary,
   )
@@ -37,17 +36,10 @@ symmetryOnGens func gen s =
 
 -- |
 --
--- prop> symmetryOnValid ((==) :: Double -> Double -> Bool)
--- prop> symmetryOnValid ((/=) :: Double -> Double -> Bool)
-symmetryOnValid :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
-symmetryOnValid func = symmetryOnGens func genValid shrinkValid
-
--- |
---
 -- prop> symmetry ((==) :: Int -> Int -> Bool)
 -- prop> symmetry ((/=) :: Int -> Int -> Bool)
-symmetry :: (Show a, GenUnchecked a) => (a -> a -> Bool) -> Property
-symmetry func = symmetryOnGens func genUnchecked shrinkUnchecked
+symmetry :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
+symmetry func = symmetryOnGens func genValid shrinkValid
 
 -- |
 --

@@ -4,9 +4,7 @@
 
 -- | Benchmarks for generators
 module Data.GenValidity.Criterion
-  ( genValidityBench,
-    genUncheckedBench,
-    genValidBench,
+  ( genValidBench,
     genBenchSizes,
     genBench,
     genBenchSized,
@@ -19,21 +17,6 @@ import Data.GenValidity
 import Data.Typeable
 import Test.QuickCheck.Gen
 import Test.QuickCheck.Random
-
--- | Benchmarks for both genUnchecked and genValid
-genValidityBench ::
-  forall a.
-  (Typeable a, NFData a, GenUnchecked a, GenValid a) =>
-  Benchmark
-genValidityBench =
-  bgroup (unwords ["GenValidity", nameOf @a]) [genValidBench @a, genUncheckedBench @a]
-
--- | Benchmarks for both genUnchecked
-genUncheckedBench ::
-  forall a.
-  (Typeable a, NFData a, GenUnchecked a) =>
-  Benchmark
-genUncheckedBench = genBenchSizes (unwords ["genUnchecked", nameOf @a]) (genUnchecked @a)
 
 -- | Benchmarks for both genValid
 genValidBench ::

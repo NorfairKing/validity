@@ -11,5 +11,5 @@ import Test.Validity.GenValidity
 spec :: Spec
 spec = do
   genValidSpec @(V.Vector Int)
-  genValiditySpec @(V.Vector Rational)
+  genValidSpec @(V.Vector Rational)
   genValidSpec @(SV.Vector Int)

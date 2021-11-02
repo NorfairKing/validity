@@ -7,9 +7,7 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Syd.Validity.Eq
-  ( eqSpecOnValid,
-    eqSpecOnInvalid,
-    eqSpec,
+  ( eqSpec,
     eqSpecOnArbitrary,
     eqSpecOnGen,
   )
@@ -39,34 +37,12 @@ neqTypeStr = binRelStr @a "/="
 --
 -- Example usage:
 --
--- > eqSpecOnValid @Double
-eqSpecOnValid ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenValid a) =>
-  Spec
-eqSpecOnValid = eqSpecOnGen @a genValid "valid" shrinkValid
-
--- | Standard test spec for properties of Eq instances for invalid values
---
--- Example usage:
---
--- > eqSpecOnInvalid @Double
-eqSpecOnInvalid ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenInvalid a) =>
-  Spec
-eqSpecOnInvalid = eqSpecOnGen @a genInvalid "invalid" shrinkInvalid
-
--- | Standard test spec for properties of Eq instances for unchecked values
---
--- Example usage:
---
 -- > eqSpec @Int
 eqSpec ::
   forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a) =>
+  (Show a, Eq a, Typeable a, GenValid a) =>
   Spec
-eqSpec = eqSpecOnGen @a genUnchecked "unchecked" shrinkUnchecked
+eqSpec = eqSpecOnGen @a genValid "valid" shrinkValid
 
 -- | Standard test spec for properties of Eq instances for arbitrary values
 --

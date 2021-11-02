@@ -1,5 +1,5 @@
 name: genvalidity
-version: '0.11.0.2'
+version: '1.0.0.0'
 synopsis: Testing utilities for the validity library
 description: ! 'Note: There are companion instance packages for this library:
 
@@ -37,20 +37,24 @@ description: ! 'Note: There are companion instance packages for this library:
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
+
 dependencies:
-- base >=4.11 && <5
+- base >=4.13 && <5
 
 library:
   ghc-options: -Wno-redundant-constraints
   source-dirs: src
   dependencies:
-  - validity >=0.9
-  - QuickCheck >= 2.12
-  - random
+  - validity >=0.12
+  - QuickCheck >=2.13
+  - random >=1.1
 
 tests:
   genvalidity-test:

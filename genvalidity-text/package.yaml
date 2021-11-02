@@ -1,12 +1,17 @@
 name: genvalidity-text
-version: '0.7.0.2'
+version: '1.0.0.0'
 synopsis: GenValidity support for Text
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
+
 dependencies:
 - base >=4.7 && <5
 - text
@@ -16,7 +21,7 @@ library:
   source-dirs: src
   dependencies:
   - array
-  - genvalidity >=0.5
+  - genvalidity >=1.0
   - random
   - validity >=0.5
   - validity-text >=0.3

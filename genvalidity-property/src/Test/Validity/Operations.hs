@@ -3,30 +3,9 @@
 
 -- | Properties of operations
 module Test.Validity.Operations
-  ( leftIdentityOnElemWithEquality,
-    leftIdentityOnGenWithEquality,
-    leftIdentityOnGen,
-    leftIdentityOnValid,
-    leftIdentity,
-    leftIdentityOnArbitrary,
-    rightIdentityOnElemWithEquality,
-    rightIdentityOnGenWithEquality,
-    rightIdentityOnGen,
-    rightIdentityOnValid,
-    rightIdentity,
-    rightIdentityOnArbitrary,
-    identityOnGen,
-    identityOnValid,
-    identity,
-    identityOnArbitrary,
-    associativeOnGens,
-    associativeOnValids,
-    associative,
-    associativeOnArbitrary,
-    commutativeOnGens,
-    commutativeOnValids,
-    commutative,
-    commutativeOnArbitrary,
+  ( module Test.Validity.Operations.Associativity,
+    module Test.Validity.Operations.Commutativity,
+    module Test.Validity.Operations.Identity,
   )
 where
 

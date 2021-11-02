@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-hspec
-version:        0.7.0.4
+version:        1.0.0.0
 synopsis:       Standard spec's for GenValidity instances
 description:    Note: There are companion packages for this library:
                 .
@@ -21,11 +21,12 @@ homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
+    LICENSE
     CHANGELOG.md
 
 source-repository head
@@ -39,12 +40,10 @@ library
       Test.Validity.Arbitrary
       Test.Validity.Eq
       Test.Validity.Functor
-      Test.Validity.GenRelativeValidity
       Test.Validity.GenValidity
       Test.Validity.Monad
       Test.Validity.Monoid
       Test.Validity.Ord
-      Test.Validity.RelativeValidity
       Test.Validity.Show
       Test.Validity.Shrinking
       Test.Validity.Utils
@@ -56,10 +55,10 @@ library
   build-depends:
       QuickCheck
     , base >=4.9 && <5
-    , genvalidity >=0.8
+    , genvalidity >=1.0
     , genvalidity-property >=0.5
     , hspec
-    , hspec-core
+    , hspec-core >=2.5.0
     , transformers
     , validity >=0.5
   default-language: Haskell2010
@@ -90,5 +89,5 @@ test-suite genvalidity-hspec-test
     , genvalidity
     , genvalidity-hspec
     , hspec
-    , hspec-core
+    , hspec-core >=2.5.0
   default-language: Haskell2010
