@@ -231,8 +231,8 @@ class Validity a => GenValid a where
   -- If you do, make sure that it is possible to generate all possible valid
   -- data, otherwise your testing may not cover all cases.
   genValid :: Gen a
-  default genValid :: GenUnchecked a => Gen a
-  genValid = genUnchecked `suchThat` isValid
+  default genValid :: (Generic a, GGenValid (Rep a)) => Gen a
+  genValid = genValidStructurally
 
   -- | Shrink a valid value.
   --
@@ -245,8 +245,8 @@ class Validity a => GenValid a where
   -- might fail for a different reason than for the reason that it originally failed.
   -- This would lead to very confusing error messages.
   shrinkValid :: a -> [a]
-  default shrinkValid :: GenUnchecked a => a -> [a]
-  shrinkValid = filter isValid . shrinkUnchecked
+  default shrinkValid :: (Generic a, GValidRecursivelyShrink (Rep a), GValidSubterms (Rep a) a) => a -> [a]
+  shrinkValid = shrinkValidStructurally
 
 -- | A class of types for which invalid values can be generated.
 --
@@ -772,7 +772,9 @@ instance GenUnchecked Integer where
   genUnchecked = genInteger
   shrinkUnchecked = shrink
 
-instance GenValid Integer
+instance GenValid Integer where
+  genValid = genUnchecked
+  shrinkValid = shrinkUnchecked
 
 #if MIN_VERSION_base(4,8,0)
 instance GenUnchecked Natural where
@@ -781,6 +783,7 @@ instance GenUnchecked Natural where
 
 instance GenValid Natural where
     genValid = fromInteger . abs <$> genValid
+    shrinkValid = shrinkUnchecked
 #endif
 
 instance (Integral a, GenUnchecked a) => GenUnchecked (Ratio a) where
@@ -808,7 +811,9 @@ instance HasResolution a => GenUnchecked (Fixed a) where
   genUnchecked = MkFixed <$> genUnchecked
   shrinkUnchecked (MkFixed i) = MkFixed <$> shrinkUnchecked i
 
-instance HasResolution a => GenValid (Fixed a)
+instance HasResolution a => GenValid (Fixed a) where
+  genValid = MkFixed <$> genValid
+  shrinkValid (MkFixed i) = MkFixed <$> shrinkValid i
 
 genericGenUnchecked :: (Generic a, GGenUnchecked (Rep a)) => Gen a
 genericGenUnchecked = to <$> gGenUnchecked

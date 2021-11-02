@@ -23,6 +23,7 @@ instance GenUnchecked TimeZone where
 
 instance GenValid TimeZone where
   genValid = TimeZone <$> genValid <*> genValid <*> genTimeZoneName
+  shrinkValid = filter isValid . shrinkUnchecked
 
 genTimeZoneName :: Gen String
 genTimeZoneName =
@@ -50,6 +51,7 @@ instance GenValid TimeOfDay where
   genValid =
     TimeOfDay <$> (choose (0, 23)) <*> (choose (0, 59))
       <*> (MkFixed <$> choose (0, 60999999999999))
+  shrinkValid = filter isValid . shrinkUnchecked
 
 instance GenInvalid TimeOfDay
 
@@ -60,6 +62,7 @@ instance GenUnchecked LocalTime where
 
 instance GenValid LocalTime where
   genValid = LocalTime <$> genValid <*> genValid
+  shrinkValid = filter isValid . shrinkUnchecked
 
 instance GenInvalid LocalTime
 
@@ -70,6 +73,7 @@ instance GenUnchecked ZonedTime where
 
 instance GenValid ZonedTime where
   genValid = ZonedTime <$> genValid <*> genValid
+  shrinkValid = filter isValid . shrinkUnchecked
 
 instance GenInvalid ZonedTime
 

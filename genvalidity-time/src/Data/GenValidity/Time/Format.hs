@@ -26,4 +26,5 @@ instance GenValid TimeLocale where
         genValid <*>
         genValid <*>
         genValid
+    shrinkValid = filter isValid . shrinkUnchecked
 #endif

@@ -21,4 +21,6 @@ instance GenUnchecked Scientific where
           | (c, e) <- shrinkUnchecked (coefficient s, base10Exponent s)
         ]
 
-instance GenValid Scientific
+instance GenValid Scientific where
+  genValid = scientific <$> genValid <*> genValid
+  shrinkValid = filter isValid . shrinkUnchecked

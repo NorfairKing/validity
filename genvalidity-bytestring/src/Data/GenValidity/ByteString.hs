@@ -133,4 +133,6 @@ instance GenUnchecked Short.ShortByteString where
   genUnchecked = Short.pack <$> genValid
   shrinkUnchecked = fmap Short.pack . shrinkUnchecked . Short.unpack
 
-instance GenValid Short.ShortByteString
+instance GenValid Short.ShortByteString where
+  genValid = Short.pack <$> genValid
+  shrinkValid = fmap Short.pack . shrinkValid . Short.unpack

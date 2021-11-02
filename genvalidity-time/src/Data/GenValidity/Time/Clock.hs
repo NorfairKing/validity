@@ -19,6 +19,7 @@ instance GenUnchecked UniversalTime where
 
 instance GenValid UniversalTime where
   genValid = ModJulianDate <$> genValid
+  shrinkValid = fmap ModJulianDate . shrinkValid . getModJulianDate
 
 instance GenUnchecked DiffTime where
   genUnchecked = picosecondsToDiffTime <$> genUnchecked
@@ -32,6 +33,13 @@ instance GenUnchecked DiffTime where
 instance GenValid DiffTime where
   genValid = picosecondsToDiffTime <$> genValid
 
+#if MIN_VERSION_time(1,6,0)
+  shrinkValid =
+    fmap picosecondsToDiffTime . shrinkValid . diffTimeToPicoseconds
+#else
+  shrinkValid = const []
+#endif
+
 instance GenUnchecked UTCTime where
   genUnchecked = UTCTime <$> genUnchecked <*> genUnchecked
   shrinkUnchecked (UTCTime d dt) =
@@ -40,6 +48,8 @@ instance GenUnchecked UTCTime where
 instance GenValid UTCTime where
   genValid =
     UTCTime <$> genValid <*> (fromIntegral <$> choose (0 :: Int, 86400))
+  shrinkValid (UTCTime d dt) =
+    [UTCTime d' dt' | (d', dt') <- shrinkValid (d, dt)]
 
 instance GenInvalid UTCTime
 

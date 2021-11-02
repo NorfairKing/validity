@@ -55,7 +55,9 @@ instance GenUnchecked A where
   shrinkUnchecked A1 = []
   shrinkUnchecked A2 = [A1]
 
-instance GenValid A
+instance GenValid A where
+  shrinkValid A1 = []
+  shrinkValid A2 = [A1]
 
 data B
   = B1
@@ -73,4 +75,7 @@ instance GenUnchecked B where
   shrinkUnchecked B2 = [B1]
   shrinkUnchecked B3 = [B1, B2]
 
-instance GenValid B
+instance GenValid B where
+  shrinkValid B1 = []
+  shrinkValid B2 = [B1]
+  shrinkValid B3 = [B1]
