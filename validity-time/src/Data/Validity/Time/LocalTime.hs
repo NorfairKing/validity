@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
@@ -51,11 +50,9 @@ instance Validity ZonedTime where
         annotate zonedTimeZone "zonedTimeZone"
       ]
 
-#if MIN_VERSION_time(1,9,0)
 instance Validity CalendarDiffTime where
-  validate CalendarDiffTime{..} =
+  validate CalendarDiffTime {..} =
     mconcat
-      [ annotate ctMonths "ctMonths"
-      , annotate ctTime "ctTime"
+      [ annotate ctMonths "ctMonths",
+        annotate ctTime "ctTime"
       ]
-#endif

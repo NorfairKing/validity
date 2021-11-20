@@ -40,8 +40,6 @@ Thing
 
 instance Validity Thing
 
-instance GenUnchecked Thing
-
 instance GenValid Thing
 
 instance NFData (Key Thing) where

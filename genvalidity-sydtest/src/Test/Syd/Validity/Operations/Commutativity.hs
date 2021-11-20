@@ -3,7 +3,6 @@
 
 module Test.Syd.Validity.Operations.Commutativity
   ( commutativeOnGens,
-    commutativeOnValids,
     commutative,
     commutativeOnArbitrary,
   )
@@ -32,23 +31,13 @@ commutativeOnGens op gen s =
 
 -- |
 --
--- prop> commutativeOnValids ((+) :: Rational -> Rational -> Rational)
--- prop> commutativeOnValids ((*) :: Rational -> Rational -> Rational)
-commutativeOnValids ::
-  (Show a, Show b, Eq b, GenValid a) =>
-  (a -> a -> b) ->
-  Property
-commutativeOnValids op = commutativeOnGens op genValid shrinkValid
-
--- |
---
 -- prop> commutative ((+) :: Int -> Int -> Int)
 -- prop> commutative ((*) :: Int -> Int -> Int)
 commutative ::
-  (Show a, Show b, Eq b, GenUnchecked a) =>
+  (Show a, Show b, Eq b, GenValid a) =>
   (a -> a -> b) ->
   Property
-commutative op = commutativeOnGens op genUnchecked shrinkUnchecked
+commutative op = commutativeOnGens op genValid shrinkValid
 
 -- |
 --

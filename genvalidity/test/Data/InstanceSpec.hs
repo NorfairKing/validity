@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Data.InstanceSpec
@@ -6,72 +5,62 @@ module Data.InstanceSpec
   )
 where
 
-#if !MIN_VERSION_base(4,8,0)
-import Control.Applicative ((<*>), pure)
-import Data.Functor ((<$>))
-#endif
-
-#if MIN_VERSION_base(4,9,0)
-import Data.List.NonEmpty (NonEmpty)
-#endif
-
 import Control.Monad
 import Data.Data
 import Data.Fixed
-#if MIN_VERSION_base(4,8,0)
-import GHC.Natural
-#endif
 import Data.GenValidity
 import Data.Int
+import Data.List.NonEmpty (NonEmpty)
 import Data.Ratio
 import Data.Word
+import Numeric.Natural
 import Test.Hspec
 import Test.Hspec.Core.QuickCheck (modifyMaxSize, modifyMaxSuccess)
 import Test.QuickCheck
 
 spec :: Spec
 spec = do
-  twoTests (Proxy :: Proxy ())
-  twoTests (Proxy :: Proxy Bool)
-  twoTests (Proxy :: Proxy Ordering)
-  twoTests (Proxy :: Proxy Char)
-  twoTests (Proxy :: Proxy Word)
-  twoTests (Proxy :: Proxy Word8)
-  twoTests (Proxy :: Proxy Word16)
-  twoTests (Proxy :: Proxy Word32)
-  twoTests (Proxy :: Proxy Word64)
-  twoTests (Proxy :: Proxy Int)
-  twoTests (Proxy :: Proxy Int8)
-  twoTests (Proxy :: Proxy Int16)
-  twoTests (Proxy :: Proxy Int32)
-  twoTests (Proxy :: Proxy Int64)
-  twoTests (Proxy :: Proxy Integer)
-  twoTests (Proxy :: Proxy Float)
-  twoTupleTests (Proxy :: Proxy Float)
+  genValidTest (Proxy :: Proxy ())
+  genValidTest (Proxy :: Proxy Bool)
+  genValidTest (Proxy :: Proxy Ordering)
+  genValidTest (Proxy :: Proxy Char)
+  genValidTest (Proxy :: Proxy Word)
+  genValidTest (Proxy :: Proxy Word8)
+  genValidTest (Proxy :: Proxy Word16)
+  genValidTest (Proxy :: Proxy Word32)
+  genValidTest (Proxy :: Proxy Word64)
+  genValidTest (Proxy :: Proxy Int)
+  genValidTest (Proxy :: Proxy Int8)
+  genValidTest (Proxy :: Proxy Int16)
+  genValidTest (Proxy :: Proxy Int32)
+  genValidTest (Proxy :: Proxy Int64)
+  genValidTest (Proxy :: Proxy Integer)
+  genValidTest (Proxy :: Proxy Float)
+  tupleTest (Proxy :: Proxy Float)
   -- Regression tests
-  describe "shrinkUnchecked Float" $ do
+  describe "shrinkValid Float" $ do
     let sf :: Float -> Spec
-        sf f = it (unwords ["Does not shrink", show f, "to itself"]) $ f `shouldNotSatisfy` (`elem` shrinkUnchecked f)
+        sf f = it (unwords ["Does not shrink", show f, "to itself"]) $ f `shouldNotSatisfy` (`elem` shrinkValid f)
 
     sf (-2.1393704e20)
     sf 1.2223988e-12
     sf 2.7896812e10
-  describe "shrinkUnchecked Double" $ do
+  describe "shrinkValid Double" $ do
     let sd :: Double -> Spec
-        sd d = it (unwords ["Does not shrink", show d, "to itself"]) $ d `shouldNotSatisfy` (`elem` shrinkUnchecked d)
+        sd d = it (unwords ["Does not shrink", show d, "to itself"]) $ d `shouldNotSatisfy` (`elem` shrinkValid d)
     sd (-1.032730679986007e18)
-  twoTests (Proxy :: Proxy Double)
-  twoTupleTests (Proxy :: Proxy Double)
-  threeTests (Proxy :: Proxy (Ratio Int))
+  genValidTest (Proxy :: Proxy Double)
+  tupleTest (Proxy :: Proxy Double)
+  genValidTest (Proxy :: Proxy (Ratio Int))
   modifyMaxSuccess (`quot` 2) $
-    modifyMaxSize (`quot` 2) $ twoTests (Proxy :: Proxy (Either Bool Ordering))
-  twoTests (Proxy :: Proxy (Maybe Ordering))
-  twoTests (Proxy :: Proxy (Maybe (Maybe (Ordering))))
-  threeTests (Proxy :: Proxy (Ratio Integer))
+    modifyMaxSize (`quot` 2) $ genValidTest (Proxy :: Proxy (Either Bool Ordering))
+  genValidTest (Proxy :: Proxy (Maybe Ordering))
+  genValidTest (Proxy :: Proxy (Maybe (Maybe (Ordering))))
+  genValidTest (Proxy :: Proxy (Ratio Integer))
   -- threeTupleTests (Proxy :: Proxy (Ratio Integer))
-  threeTests (Proxy :: Proxy (Ratio Int))
+  genValidTest (Proxy :: Proxy (Ratio Int))
   -- threeTupleTests (Proxy :: Proxy (Ratio Int))
-  threeTests (Proxy :: Proxy (Ratio Int8))
+  genValidTest (Proxy :: Proxy (Ratio Int8))
   describe "shrinking (Ratio Int)" $
     it "can shrink this example" $
       let v = ((-9223372036854775808) % 9223372036854775761) :: Ratio Int
@@ -80,88 +69,31 @@ spec = do
     it "can shrink this example" $
       let v = ((-128) % 113) :: Ratio Int8
        in v `notElem` shrinkValid v
-  twoTests (Proxy :: Proxy Uni)
-  twoTupleTests (Proxy :: Proxy Uni)
-  twoTests (Proxy :: Proxy Deci)
-  twoTupleTests (Proxy :: Proxy Deci)
-  twoTests (Proxy :: Proxy Centi)
-  twoTupleTests (Proxy :: Proxy Centi)
-  twoTests (Proxy :: Proxy Milli)
-  twoTupleTests (Proxy :: Proxy Milli)
-  twoTests (Proxy :: Proxy Micro)
-  twoTupleTests (Proxy :: Proxy Micro)
-  twoTests (Proxy :: Proxy Nano)
-  twoTupleTests (Proxy :: Proxy Nano)
-  twoTests (Proxy :: Proxy Pico)
-  twoTupleTests (Proxy :: Proxy Pico)
+  genValidTest (Proxy :: Proxy Uni)
+  tupleTest (Proxy :: Proxy Uni)
+  genValidTest (Proxy :: Proxy Deci)
+  tupleTest (Proxy :: Proxy Deci)
+  genValidTest (Proxy :: Proxy Centi)
+  tupleTest (Proxy :: Proxy Centi)
+  genValidTest (Proxy :: Proxy Milli)
+  tupleTest (Proxy :: Proxy Milli)
+  genValidTest (Proxy :: Proxy Micro)
+  tupleTest (Proxy :: Proxy Micro)
+  genValidTest (Proxy :: Proxy Nano)
+  tupleTest (Proxy :: Proxy Nano)
+  genValidTest (Proxy :: Proxy Pico)
+  tupleTest (Proxy :: Proxy Pico)
+  genValidTest (Proxy :: Proxy Natural)
+  tupleTest (Proxy :: Proxy Natural)
+  genValidTest (Proxy :: Proxy (NonEmpty Ordering))
 
-#if MIN_VERSION_base(4,8,0)
-  twoTests (Proxy :: Proxy Natural)
-
-  twoTupleTests (Proxy :: Proxy Natural)
-#endif
-#if MIN_VERSION_base(4,9,0)
-  twoTests (Proxy :: Proxy (NonEmpty Ordering))
-#endif
-twoTupleTests ::
+tupleTest ::
   forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a) =>
+  (Show a, Eq a, Typeable a, GenValid a) =>
   Proxy a ->
   Spec
-twoTupleTests proxy = do
-  modifyMaxSuccess (`quot` 2) $ modifyMaxSize (`quot` 2) $ twoTests $ (,) <$> proxy <*> proxy
-
-twoTests ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a) =>
-  Proxy a ->
-  Spec
-twoTests proxy =
-  describe (nameOf proxy) $ do
-    genUncheckedTest proxy
-    genValidTest proxy
-
-threeTests ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a, GenInvalid a) =>
-  Proxy a ->
-  Spec
-threeTests proxy =
-  describe (nameOf proxy) $ do
-    genUncheckedTest proxy
-    genValidTest proxy
-    genInvalidTest proxy
-
-genUncheckedTest ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, GenValid a) =>
-  Proxy a ->
-  Spec
-genUncheckedTest proxy = do
-  it (unwords ["genUnchecked of", nameOf proxy, "does not crash while validating"]) $
-    forAll genUnchecked $ \a ->
-      case prettyValidate (a :: a) of
-        Right v -> seq v True
-        Left err -> seq err True
-  modifyMaxSuccess (`quot` 5) $
-    it
-      ( unwords
-          [ "shrinkUnchecked of",
-            nameOf proxy,
-            "only produces values that do not crash while validating"
-          ]
-      )
-      $ forAll genUnchecked $ \a ->
-        forM_ (shrinkUnchecked a) $ \v ->
-          case prettyValidate (v :: a) of
-            Right v_ -> seq v_ $ pure () :: IO ()
-            Left err -> seq err $ pure ()
-  modifyMaxSuccess (`quot` 5) $
-    it (unwords ["shrinkUnchecked of", nameOf proxy, "does not shrink to itself"]) $
-      forAll genValid $ \a ->
-        forM_ (shrinkUnchecked a) $ \a' ->
-          unless (a /= a') $
-            expectationFailure $ unlines ["The value", show (a :: a), "was shrunk to itself"]
+tupleTest proxy = do
+  modifyMaxSuccess (`quot` 2) $ modifyMaxSize (`quot` 2) $ genValidTest $ (,) <$> proxy <*> proxy
 
 genValidTest ::
   forall a.
@@ -201,41 +133,6 @@ genValidTest proxy = do
         forM_ (shrinkValid a) $ \a' ->
           unless (a /= a') $
             expectationFailure $ unlines ["The value", show (a :: a), "was shrunk to itself"]
-
-genInvalidTest ::
-  forall a.
-  (Show a, Typeable a, GenInvalid a) =>
-  Proxy a ->
-  Spec
-genInvalidTest proxy = do
-  it (unwords ["genInvalid of", nameOf proxy, "generates only invalid values"]) $
-    forAll genInvalid $ \a ->
-      case prettyValidate (a :: a) of
-        Right _ ->
-          expectationFailure $ unlines ["'validate' reported this value to be valid: ", show a]
-        Left e -> seq e $ pure ()
-  modifyMaxSuccess (`quot` 5) $
-    it (unwords ["shrinkInvalid of", nameOf proxy, "shrinks to only invalid values"]) $
-      forAll genInvalid $ \a ->
-        forM_ (shrinkInvalid a) $ \v ->
-          case prettyValidate (v :: a) of
-            Right _ ->
-              expectationFailure $ unlines ["'validate' reported this value to be valid: ", show v]
-            Left e -> seq e $ pure ()
-  modifyMaxSuccess (`quot` 5) $
-    it
-      ( unwords
-          [ "shrinkInvalid of",
-            nameOf proxy,
-            "only produces values that do not crash while validating"
-          ]
-      )
-      $ forAll genInvalid $ \a ->
-        forM_ (shrinkInvalid a) $ \v ->
-          case prettyValidate (v :: a) of
-            Right _ ->
-              expectationFailure $ unlines ["'validate' reported this value to be valid: ", show v]
-            Left e -> seq e $ pure ()
 
 nameOf ::
   forall a.

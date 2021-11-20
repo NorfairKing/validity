@@ -1,14 +1,10 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE TypeOperators #-}
-
-#if MIN_VERSION_base(4,9,0)
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
-#endif
 
 -- |
 --
@@ -91,41 +87,24 @@ module Data.Validity
 
     -- * Re-exports
     Monoid (..),
-#if MIN_VERSION_base(4,11,0)
-    Semigroup(..),
-#endif
+    Semigroup (..),
   )
 where
 
-#if MIN_VERSION_base(4,9,0)
-import Data.List.NonEmpty (NonEmpty((:|)))
-#endif
-
-#if MIN_VERSION_base(4,8,0)
-#else
-import Data.Monoid
-import Data.Ratio
-#endif
 import Data.Bits ((.&.))
 import Data.Char (ord)
 import Data.Either (isRight)
 import Data.Fixed (Fixed (MkFixed), HasResolution)
 import Data.Int (Int64)
 import Data.List (intercalate)
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Maybe (fromMaybe)
-#if MIN_VERSION_base(4,8,0)
-import GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
-#else
-import Data.Word (Word)
-import GHC.Word (Word8(..), Word16(..), Word32(..), Word64(..))
-#endif
 import GHC.Exts (Char (..), isTrue#, leWord#, ord#, (<=#), (>=#))
 import GHC.Generics
 import GHC.Int (Int16 (..), Int32 (..), Int8 (..))
-#if MIN_VERSION_base(4,8,0)
 import GHC.Natural
-#endif
 import GHC.Real (Ratio (..))
+import GHC.Word (Word16 (..), Word32 (..), Word64 (..), Word8 (..))
 
 -- | A class of types that have additional invariants defined upon them
 
@@ -230,20 +209,12 @@ newtype Validation = Validation
   }
   deriving (Show, Eq, Generic)
 
-#if MIN_VERSION_base(4,11,0)
 instance Semigroup Validation where
-    (Validation v1) <> (Validation v2) = Validation $ v1 ++ v2
-#endif
+  (Validation v1) <> (Validation v2) = Validation $ v1 ++ v2
 
-#if MIN_VERSION_base(4,11,0)
 instance Monoid Validation where
   mempty = Validation []
   mappend = (<>)
-#else
-instance Monoid Validation where
-  mempty = Validation []
-  mappend (Validation v1) (Validation v2) = Validation $ v1 ++ v2
-#endif
 
 -- | Declare any value to be valid in validation
 --
@@ -397,17 +368,15 @@ instance
 instance Validity a => Validity [a] where
   validate = flip decorateList validate
 
-#if MIN_VERSION_base(4,9,0)
 -- | A nonempty list is valid if all the elements are valid.
 --
 -- See the instance for 'Validity [a]' for more information.
 instance Validity a => Validity (NonEmpty a) where
-    validate (e :| es) =
-        mconcat
-            [ annotate e "The first element of the nonempty list"
-            , annotate es "The rest of the elements of the nonempty list"
-            ]
-#endif
+  validate (e :| es) =
+    mconcat
+      [ annotate e "The first element of the nonempty list",
+        annotate es "The rest of the elements of the nonempty list"
+      ]
 
 -- | A Maybe thing is valid if the thing inside is valid or it's nothing
 -- It makes sense to assume that 'Nothing' is valid.
@@ -564,13 +533,9 @@ validateRatioNormalised (n :% d) = declare "The Ratio is normalised." $
 instance Validity Integer where
   validate = trivialValidation
 
-#if MIN_VERSION_base(4,8,0)
 -- | Valid according to 'isValidNatural'
---
--- Only available with @base >= 4.8@.
 instance Validity Natural where
-    validate = declare "The Natural is valid." . isValidNatural
-#endif
+  validate = declare "The Natural is valid." . isValidNatural
 
 -- | Valid if the contained numbers are valid and the denominator is
 -- strictly positive.

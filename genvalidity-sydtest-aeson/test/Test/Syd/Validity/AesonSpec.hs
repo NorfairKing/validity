@@ -17,11 +17,11 @@ spec :: Spec
 spec = do
   jsonSpecOnGen (genListOf $ pure 'a') "sequence of 'a's" (const [])
   -- jsonSpec @Double DOES NOT HOLD
-  jsonSpecOnValid @Rational
+  jsonSpec @Rational
   jsonSpec @Int
   jsonSpecOnArbitrary @Int
-  jsonSpecOnValid @ForShow
-  jsonSpecOnValid @Value
+  jsonSpec @ForShow
+  jsonSpec @Value
 
 -- shrinkValidSpec @Value
 

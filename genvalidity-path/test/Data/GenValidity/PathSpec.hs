@@ -12,11 +12,11 @@ import Test.Validity
 
 spec :: Spec
 spec = do
-  genValiditySpec @(Path Abs File)
-  shrinkValiditySpec @(Path Abs File)
-  genValiditySpec @(Path Abs Dir)
-  shrinkValiditySpec @(Path Abs Dir)
-  genValiditySpec @(Path Rel File)
-  shrinkValiditySpec @(Path Rel File)
-  genValiditySpec @(Path Rel Dir)
-  shrinkValiditySpec @(Path Rel Dir)
+  genValidSpec @(Path Abs File)
+  shrinkValidSpec @(Path Abs File)
+  genValidSpec @(Path Abs Dir)
+  shrinkValidSpec @(Path Abs Dir)
+  genValidSpec @(Path Rel File)
+  shrinkValidSpec @(Path Rel File)
+  genValidSpec @(Path Rel Dir)
+  shrinkValidSpec @(Path Rel Dir)

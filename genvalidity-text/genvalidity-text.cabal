@@ -5,17 +5,20 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-text
-version:        0.7.0.2
+version:        1.0.0.0
 synopsis:       GenValidity support for Text
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -32,7 +35,7 @@ library
       QuickCheck
     , array
     , base >=4.7 && <5
-    , genvalidity >=0.5
+    , genvalidity >=1.0
     , random
     , text
     , validity >=0.5

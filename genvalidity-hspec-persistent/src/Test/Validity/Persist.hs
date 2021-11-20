@@ -6,8 +6,7 @@
 --
 -- You will need @TypeApplications@ to use these.
 module Test.Validity.Persist
-  ( persistSpecOnValid,
-    persistSpec,
+  ( persistSpec,
     persistSpecOnArbitrary,
     persistSpecOnGen,
     fromPersistValueAndToPersistValueAreInversesOnGen,
@@ -27,23 +26,12 @@ import Test.Validity.Utils
 --
 -- Example usage:
 --
--- > persistSpecOnValid @Rational
-persistSpecOnValid ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenValid a, PersistField a) =>
-  Spec
-persistSpecOnValid = persistSpecOnGen (genValid @a) "valid" shrinkValid
-
--- | Standard test spec for properties of persistent-related functions for unchecked values
---
--- Example usage:
---
 -- > persistSpec @Int
 persistSpec ::
   forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, PersistField a) =>
+  (Show a, Eq a, Typeable a, GenValid a, PersistField a) =>
   Spec
-persistSpec = persistSpecOnGen (genUnchecked @a) "unchecked" shrinkUnchecked
+persistSpec = persistSpecOnGen (genValid @a) "valid" shrinkValid
 
 -- | Standard test spec for properties of persistent-related functions for arbitrary values
 --
@@ -86,13 +74,13 @@ persistSpecOnGen gen genname s =
 --
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Bool arbitrary shrink
 --
--- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Bool genUnchecked shrinkUnchecked
+-- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Bool genValid shrinkValid
 --
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Bool genValid shrinkValid
 --
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int arbitrary shrink
 --
--- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int genUnchecked shrinkUnchecked
+-- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int genValid shrinkValid
 --
 -- prop> fromPersistValueAndToPersistValueAreInversesOnGen @Int genValid shrinkValid
 fromPersistValueAndToPersistValueAreInversesOnGen ::

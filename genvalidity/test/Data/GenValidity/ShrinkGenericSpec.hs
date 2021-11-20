@@ -8,13 +8,6 @@ import Test.Hspec
 
 spec :: Spec
 spec = do
-  describe "genericShrinkUnchecked" $ do
-    it "shrinks tuples correctly" $
-      genericShrinkUnchecked ((A2, B3))
-        `shouldBe` [(A1, B1), (A1, B2), (A1, B3), (A2, B1), (A2, B2)]
-    it "figures out the right shrinking function for Ex" $
-      genericShrinkUnchecked (Ex A2 B3)
-        `shouldBe` [Ex A1 B1, Ex A1 B2, Ex A1 B3, Ex A2 B1, Ex A2 B2]
   describe "default shrinkValid" $ do
     it "figures out the right shrinking function for A" $
       shrinkValid A2 `shouldBe` [A1]
@@ -40,8 +33,6 @@ data Ex
 
 instance Validity Ex
 
-instance GenUnchecked Ex
-
 instance GenValid Ex
 
 data A
@@ -51,11 +42,9 @@ data A
 
 instance Validity A
 
-instance GenUnchecked A where
-  shrinkUnchecked A1 = []
-  shrinkUnchecked A2 = [A1]
-
-instance GenValid A
+instance GenValid A where
+  shrinkValid A1 = []
+  shrinkValid A2 = [A1]
 
 data B
   = B1
@@ -68,9 +57,7 @@ instance Validity B where
   validate B2 = invalid "for test"
   validate B3 = valid
 
-instance GenUnchecked B where
-  shrinkUnchecked B1 = []
-  shrinkUnchecked B2 = [B1]
-  shrinkUnchecked B3 = [B1, B2]
-
-instance GenValid B
+instance GenValid B where
+  shrinkValid B1 = []
+  shrinkValid B2 = [B1]
+  shrinkValid B3 = [B1]

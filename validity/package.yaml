@@ -1,5 +1,5 @@
 name: validity
-version: '0.11.0.1'
+version: '0.12.0.0'
 synopsis: Validity typeclass
 description: ! 'For more info, see <https://github.com/NorfairKing/validity the readme>.
 
@@ -44,8 +44,12 @@ copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
+
 dependencies:
-- base >=4.7 && <5
+- base >=4.13 && <5
 
 library:
   source-dirs: src

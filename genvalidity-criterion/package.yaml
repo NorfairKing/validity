@@ -1,12 +1,16 @@
 name: genvalidity-criterion
-version: '0.2.0.0'
+version: '1.0.0.0'
 synopsis: Criterion benchmarks for generators
 category: Validity
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2018-2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
 
 dependencies:
 - base <5
@@ -17,7 +21,7 @@ library:
   dependencies:
   - QuickCheck
   - deepseq
-  - genvalidity
+  - genvalidity >=1.0
 
 benchmarks:
   genvalidity-criterion-bench:

@@ -1,12 +1,16 @@
 name: genvalidity-persistent
-version: '0.0.0.0'
+version: '1.0.0.0'
 synopsis: GenValidity support for Persistent
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
 
 dependencies:
 - base >=4.7 && <5
@@ -17,7 +21,7 @@ library:
   dependencies:
   - QuickCheck
   - containers
-  - genvalidity
+  - genvalidity >=1.0
   - genvalidity-containers
   - validity-containers
   - validity-persistent

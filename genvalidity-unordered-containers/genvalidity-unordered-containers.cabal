@@ -5,17 +5,20 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-unordered-containers
-version:        0.3.0.1
+version:        1.0.0.0
 synopsis:       GenValidity support for unordered-containers
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2017-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -33,7 +36,7 @@ library
   build-depends:
       QuickCheck
     , base <5
-    , genvalidity >=0.8
+    , genvalidity >=1.0
     , hashable
     , unordered-containers
     , validity >=0.5
@@ -51,7 +54,7 @@ test-suite genvalidity-unordered-containers-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       base <5
-    , genvalidity >=0.7
+    , genvalidity
     , genvalidity-hspec
     , genvalidity-unordered-containers
     , hspec

@@ -100,6 +100,4 @@ data MyType
 
 instance Validity MyType
 
-instance GenUnchecked MyType
-
 instance GenValid MyType

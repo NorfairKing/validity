@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Data.GenValidity.TimeSpec
@@ -19,16 +18,13 @@ spec = do
   describe "genDayCloselyAround" $ it "generates valid days" $ forAllValid $ \d -> genGeneratesValid $ genDayCloselyAround d
   genValidSpec @UniversalTime
   genValidSpec @DiffTime
-  genValiditySpec @UTCTime
+  genValidSpec @UTCTime
   genValidSpec @NominalDiffTime
   genValidSpec @TimeZone
-  genValiditySpec @TimeOfDay
-  genValiditySpec @LocalTime
-  genValiditySpec @ZonedTime
+  genValidSpec @TimeOfDay
+  genValidSpec @LocalTime
+  genValidSpec @ZonedTime
   genValidSpec @TimeLocale
-
-#if MIN_VERSION_time(1,9,0)
   genValidSpec @CalendarDiffDays
   genValidSpec @DayOfWeek
   genValidSpec @CalendarDiffTime
-#endif

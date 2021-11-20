@@ -8,8 +8,6 @@ import Test.Syd.Validity.Applicative
 
 spec :: Spec
 spec = do
-  applicativeSpecOnValid @[]
-  applicativeSpecOnValid @Maybe
   applicativeSpec @(Either Int)
   applicativeSpec @[]
   applicativeSpec @Maybe

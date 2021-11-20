@@ -5,17 +5,20 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-sydtest
-version:        0.0.0.0
+version:        1.0.0.0
 synopsis:       Standard properties for functions on `Validity` types for the sydtest framework
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -34,7 +37,6 @@ library
       Test.Syd.Validity.Functions.Inverse
       Test.Syd.Validity.Functions.Validity
       Test.Syd.Validity.Functor
-      Test.Syd.Validity.GenRelativeValidity
       Test.Syd.Validity.GenValidity
       Test.Syd.Validity.GenValidity.Property
       Test.Syd.Validity.Monad
@@ -52,7 +54,6 @@ library
       Test.Syd.Validity.Relations.Reflexivity
       Test.Syd.Validity.Relations.Symmetry
       Test.Syd.Validity.Relations.Transitivity
-      Test.Syd.Validity.RelativeValidity
       Test.Syd.Validity.Show
       Test.Syd.Validity.Shrinking
       Test.Syd.Validity.Shrinking.Property
@@ -66,7 +67,7 @@ library
   build-depends:
       QuickCheck
     , base >=4.7 && <5
-    , genvalidity >=0.7
+    , genvalidity >=1.0
     , pretty-show
     , sydtest
     , validity >=0.9

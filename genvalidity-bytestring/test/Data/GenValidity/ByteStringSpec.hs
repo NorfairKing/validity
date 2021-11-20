@@ -38,9 +38,9 @@ spec = do
       showable (genValid :: Gen LB.ByteString)
       it "generates valid lazy bytestring" $
         forAll (genValid :: Gen LB.ByteString) isValid
-  describe "genUnchecked :: Gen Short.ShortByteString" $ do
-    checkable (genUnchecked :: Gen Short.ShortByteString)
-    showable (genUnchecked :: Gen Short.ShortByteString)
+  describe "genValid :: Gen Short.ShortByteString" $ do
+    checkable (genValid :: Gen Short.ShortByteString)
+    showable (genValid :: Gen Short.ShortByteString)
   describe "genValid :: Gen Short.ShortByteString" $ do
     checkable (genValid :: Gen Short.ShortByteString)
     showable (genValid :: Gen Short.ShortByteString)
@@ -49,17 +49,17 @@ spec = do
 
 -- Uncomment to test that the instances are poisoned
 --
--- instance GenUnchecked SB.ByteString where
---     genUnchecked = undefined
---     shrinkUnchecked = undefined
+-- instance GenValid SB.ByteString where
+--     genValid = undefined
+--     shrinkValid = undefined
 --
--- instance GenUnchecked LB.ByteString where
---     genUnchecked = undefined
---     shrinkUnchecked = undefined
+-- instance GenValid LB.ByteString where
+--     genValid = undefined
+--     shrinkValid = undefined
 --
 -- Uncomment to see the error message that you would get
 --
 -- data FooBar = FooBar SB.ByteString String
 --     deriving (Show, Eq, Generic)
 -- instance Validity FooBar
--- instance GenUnchecked FooBar
+-- instance GenValid FooBar

@@ -12,7 +12,7 @@ homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2016-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple

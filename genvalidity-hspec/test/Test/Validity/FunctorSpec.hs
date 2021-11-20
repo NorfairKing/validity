@@ -1,8 +1,10 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Test.Validity.FunctorSpec where
 
 import Data.GenValidity
+import GHC.Generics (Generic)
 import Test.Hspec
 import Test.Validity.Functor
 import Test.Validity.Utils
@@ -14,8 +16,6 @@ spec = do
   failsBecause "Fcks does not satisfy any Functor laws" $ functorSpec @Fcks
   functorSpec @(Either Int)
   functorSpec @((,) Int)
-  functorSpecOnValid @[]
-  functorSpecOnValid @Maybe
   functorSpecOnArbitrary @[]
   functorSpecOnArbitrary @Maybe
   functorSpecOnGens
@@ -43,11 +43,13 @@ spec = do
 
 newtype Fcks a
   = Fcks Int
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
-instance GenUnchecked (Fcks a) where
-  genUnchecked = Fcks <$> genUnchecked
-  shrinkUnchecked (Fcks i) = Fcks <$> shrinkUnchecked i
+instance Validity (Fcks a)
+
+instance GenValid (Fcks a) where
+  genValid = Fcks <$> genValid
+  shrinkValid (Fcks i) = Fcks <$> shrinkValid i
 
 instance Functor Fcks where
   fmap _ (Fcks i) = Fcks $ i * 2

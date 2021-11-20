@@ -11,7 +11,7 @@ import Test.Syd.Validity.Show
 
 spec :: Spec
 spec = do
-  showReadSpecOnValid @Rational
+  showReadSpec @Rational
   showReadSpec @Int
   showReadSpecOnArbitrary @Rational
   showReadSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])

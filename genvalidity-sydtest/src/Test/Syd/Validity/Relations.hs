@@ -3,32 +3,11 @@
 
 -- | Properties of relations
 module Test.Syd.Validity.Relations
-  ( reflexiveOnElem,
-    reflexivityOnGen,
-    reflexivityOnValid,
-    reflexivity,
-    reflexivityOnArbitrary,
-    transitiveOnElems,
-    transitivityOnGens,
-    transitivityOnValid,
-    transitivity,
-    transitivityOnArbitrary,
-    antisymmetricOnElemsWithEquality,
-    antisymmetryOnGensWithEquality,
-    antisymmetryOnGens,
-    antisymmetryOnValid,
-    antisymmetry,
-    antisymmetryOnArbitrary,
-    antireflexiveOnElem,
-    antireflexivityOnGen,
-    antireflexivityOnValid,
-    antireflexivity,
-    antireflexivityOnArbitrary,
-    symmetricOnElems,
-    symmetryOnGens,
-    symmetryOnValid,
-    symmetry,
-    symmetryOnArbitrary,
+  ( module Test.Syd.Validity.Relations.Antireflexivity,
+    module Test.Syd.Validity.Relations.Antisymmetry,
+    module Test.Syd.Validity.Relations.Reflexivity,
+    module Test.Syd.Validity.Relations.Symmetry,
+    module Test.Syd.Validity.Relations.Transitivity,
   )
 where
 

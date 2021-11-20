@@ -1,12 +1,16 @@
 name: genvalidity-vector
-version: '0.3.0.1'
+version: '1.0.0.0'
 synopsis: GenValidity support for vector
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2017-2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
 
 dependencies:
 - base <5
@@ -14,11 +18,9 @@ dependencies:
 
 library:
   source-dirs: src
-  exposed-modules:
-  - Data.GenValidity.Vector
   dependencies:
   - QuickCheck
-  - genvalidity >=0.5
+  - genvalidity >=1.0
   - validity >=0.5
   - validity-vector >=0.1
 

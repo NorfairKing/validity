@@ -13,8 +13,6 @@ spec = do
   monadSpec @[]
   monadSpec @Maybe
   monadSpec @(Either Int)
-  monadSpecOnValid @[]
-  monadSpecOnValid @Maybe
   monadSpecOnArbitrary @[]
   monadSpecOnArbitrary @Maybe
   monadSpecOnGens

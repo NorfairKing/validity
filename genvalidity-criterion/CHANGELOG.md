@@ -1,6 +1,15 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.0.0] - 2021-11-20
+
+### Changed
+
+* Compatibility with `genvalidity >= 1.0.0.0`
+
+### Removed
+
+* `genValidityBench`
+* `genUncheckedBench`
 
 ## [0.2.0.0] - 2020-05-05
 

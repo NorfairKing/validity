@@ -1,14 +1,17 @@
 name: genvalidity-containers
-version: '0.9.0.0'
+version: '1.0.0.0'
 synopsis: GenValidity support for containers
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
 extra-source-files:
+- LICENSE
 - CHANGELOG.md
+
 dependencies:
 - base >=4.9 && <=5
 - containers
@@ -17,7 +20,7 @@ library:
   source-dirs: src
   dependencies:
   - QuickCheck
-  - genvalidity >=0.8
+  - genvalidity >=1.0
   - validity >=0.5
   - validity-containers >=0.3
   - containers >=0.6.0.1
@@ -33,10 +36,10 @@ tests:
     - -Wall
     dependencies:
     - QuickCheck
-    - genvalidity >=0.7
-    - genvalidity-containers >=0.5
+    - genvalidity
+    - genvalidity-containers
     - genvalidity-hspec
-    - genvalidity-property >=0.5
+    - genvalidity-property
     - hspec
     - validity >=0.9
     - validity-containers

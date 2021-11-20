@@ -1,18 +1,17 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeApplications #-}
 
--- | Standard 'Spec's for 'Show' and 'Read' instances.
---
--- You will need @TypeApplications@ to use these.
 module Test.Validity.ShowSpec where
 
 import Data.GenValidity
+import GHC.Generics (Generic)
 import Test.Hspec
 import Test.Validity.Show
 import Test.Validity.Utils
 
 spec :: Spec
 spec = do
-  showReadSpecOnValid @Rational
+  showReadSpec @Rational
   showReadSpec @Int
   showReadSpecOnArbitrary @Rational
   showReadSpecOnGen ((* 2) <$> genValid @Int) "even" (const [])
@@ -21,11 +20,13 @@ spec = do
 
 data ShowFuncMismatch
   = ShowFuncMismatch
-  deriving (Eq, Read)
+  deriving (Eq, Read, Generic)
+
+instance Validity ShowFuncMismatch
 
 instance Show ShowFuncMismatch where
   show ShowFuncMismatch = "wrong"
 
-instance GenUnchecked ShowFuncMismatch where
-  genUnchecked = pure ShowFuncMismatch
-  shrinkUnchecked _ = []
+instance GenValid ShowFuncMismatch where
+  genValid = pure ShowFuncMismatch
+  shrinkValid _ = []

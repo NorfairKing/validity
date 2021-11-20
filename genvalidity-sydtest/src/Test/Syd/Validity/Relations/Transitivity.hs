@@ -4,7 +4,6 @@
 module Test.Syd.Validity.Relations.Transitivity
   ( transitiveOnElems,
     transitivityOnGens,
-    transitivityOnValid,
     transitivity,
     transitivityOnArbitrary,
   )
@@ -38,19 +37,6 @@ transitivityOnGens func gen s =
 
 -- |
 --
--- prop> transitivityOnValid ((>) :: Double -> Double -> Bool)
--- prop> transitivityOnValid ((>=) :: Double -> Double -> Bool)
--- prop> transitivityOnValid ((==) :: Double -> Double -> Bool)
--- prop> transitivityOnValid ((<=) :: Double -> Double -> Bool)
--- prop> transitivityOnValid ((<) :: Double -> Double -> Bool)
--- prop> transitivityOnValid (Data.List.isPrefixOf :: [Double] -> [Double] -> Bool)
--- prop> transitivityOnValid (Data.List.isSuffixOf :: [Double] -> [Double] -> Bool)
--- prop> transitivityOnValid (Data.List.isInfixOf :: [Double] -> [Double] -> Bool)
-transitivityOnValid :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
-transitivityOnValid func = transitivityOnGens func genValid shrinkValid
-
--- |
---
 -- prop> transitivity ((>) :: Int -> Int -> Bool)
 -- prop> transitivity ((>=) :: Int -> Int -> Bool)
 -- prop> transitivity ((==) :: Int -> Int -> Bool)
@@ -59,8 +45,8 @@ transitivityOnValid func = transitivityOnGens func genValid shrinkValid
 -- prop> transitivity (Data.List.isPrefixOf :: [Int] -> [Int] -> Bool)
 -- prop> transitivity (Data.List.isSuffixOf :: [Int] -> [Int] -> Bool)
 -- prop> transitivity (Data.List.isInfixOf :: [Int] -> [Int] -> Bool)
-transitivity :: (Show a, GenUnchecked a) => (a -> a -> Bool) -> Property
-transitivity func = transitivityOnGens func genUnchecked shrinkUnchecked
+transitivity :: (Show a, GenValid a) => (a -> a -> Bool) -> Property
+transitivity func = transitivityOnGens func genValid shrinkValid
 
 -- |
 --

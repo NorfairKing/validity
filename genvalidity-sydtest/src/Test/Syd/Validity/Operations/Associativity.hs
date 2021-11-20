@@ -3,7 +3,6 @@
 
 module Test.Syd.Validity.Operations.Associativity
   ( associativeOnGens,
-    associativeOnValids,
     associative,
     associativeOnArbitrary,
   )
@@ -31,15 +30,12 @@ associativeOnGens op gen s =
   forAllShrink gen s $ \(a, b, c) ->
     ((a `op` b) `op` c) `shouldBe` (a `op` (b `op` c))
 
-associativeOnValids :: (Show a, Eq a, GenValid a) => (a -> a -> a) -> Property
-associativeOnValids op = associativeOnGens op genValid shrinkValid
-
 -- |
 --
 -- prop> associative ((*) :: Int -> Int -> Int)
 -- prop> associative ((+) :: Int -> Int -> Int)
-associative :: (Show a, Eq a, GenUnchecked a) => (a -> a -> a) -> Property
-associative op = associativeOnGens op genUnchecked shrinkUnchecked
+associative :: (Show a, Eq a, GenValid a) => (a -> a -> a) -> Property
+associative op = associativeOnGens op genValid shrinkValid
 
 -- |
 --

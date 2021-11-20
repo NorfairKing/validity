@@ -1,12 +1,16 @@
 name: genvalidity-path
-version: '0.3.0.4'
+version: '1.0.0.0'
 synopsis: GenValidity support for Path
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2016-2020 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
 
 dependencies:
 - base >=4.7 && <5
@@ -16,7 +20,7 @@ library:
   source-dirs: src
   dependencies:
   - validity-path >=0.3
-  - genvalidity >=0.5
+  - genvalidity >=1.0
   - QuickCheck
 
 tests:

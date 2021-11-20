@@ -42,8 +42,6 @@ Thing
 
 instance Validity Thing
 
-instance GenUnchecked Thing
-
 instance GenValid Thing
 
 spec :: Spec

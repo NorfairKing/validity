@@ -4,19 +4,15 @@
 -- | Standard tests involving inverse functions
 module Test.Syd.Validity.Functions.Inverse
   ( inverseFunctionsOnGen,
-    inverseFunctionsOnValid,
     inverseFunctions,
     inverseFunctionsOnArbitrary,
     inverseFunctionsIfFirstSucceedsOnGen,
-    inverseFunctionsIfFirstSucceedsOnValid,
     inverseFunctionsIfFirstSucceeds,
     inverseFunctionsIfFirstSucceedsOnArbitrary,
     inverseFunctionsIfSecondSucceedsOnGen,
-    inverseFunctionsIfSecondSucceedsOnValid,
     inverseFunctionsIfSecondSucceeds,
     inverseFunctionsIfSecondSucceedsOnArbitrary,
     inverseFunctionsIfSucceedOnGen,
-    inverseFunctionsIfSucceedOnValid,
     inverseFunctionsIfSucceed,
     inverseFunctionsIfSucceedOnArbitrary,
   )
@@ -32,13 +28,9 @@ inverseFunctionsOnGen ::
 inverseFunctionsOnGen f g gen s =
   forAllShrink gen s $ \a -> g (f a) `shouldBe` a
 
-inverseFunctionsOnValid ::
-  (Show a, Eq a, GenValid a) => (a -> b) -> (b -> a) -> Property
-inverseFunctionsOnValid f g = inverseFunctionsOnGen f g genValid shrinkValid
-
 inverseFunctions ::
-  (Show a, Eq a, GenUnchecked a) => (a -> b) -> (b -> a) -> Property
-inverseFunctions f g = inverseFunctionsOnGen f g genUnchecked shrinkUnchecked
+  (Show a, Eq a, GenValid a) => (a -> b) -> (b -> a) -> Property
+inverseFunctions f g = inverseFunctionsOnGen f g genValid shrinkValid
 
 -- |
 -- 'id' is its own inverse function for every type:
@@ -60,21 +52,13 @@ inverseFunctionsIfFirstSucceedsOnGen f g gen s =
       Nothing -> return () -- fine
       Just b -> g b `shouldBe` a
 
-inverseFunctionsIfFirstSucceedsOnValid ::
+inverseFunctionsIfFirstSucceeds ::
   (Show a, Eq a, GenValid a, CanFail f) =>
   (a -> f b) ->
   (b -> a) ->
   Property
-inverseFunctionsIfFirstSucceedsOnValid f g =
-  inverseFunctionsIfFirstSucceedsOnGen f g genValid shrinkValid
-
-inverseFunctionsIfFirstSucceeds ::
-  (Show a, Eq a, GenUnchecked a, CanFail f) =>
-  (a -> f b) ->
-  (b -> a) ->
-  Property
 inverseFunctionsIfFirstSucceeds f g =
-  inverseFunctionsIfFirstSucceedsOnGen f g genUnchecked shrinkUnchecked
+  inverseFunctionsIfFirstSucceedsOnGen f g genValid shrinkValid
 
 inverseFunctionsIfFirstSucceedsOnArbitrary ::
   (Show a, Eq a, Arbitrary a, CanFail f) =>
@@ -97,21 +81,13 @@ inverseFunctionsIfSecondSucceedsOnGen f g gen s =
       Nothing -> return () -- fine
       Just r -> r `shouldBe` a
 
-inverseFunctionsIfSecondSucceedsOnValid ::
+inverseFunctionsIfSecondSucceeds ::
   (Show a, Eq a, GenValid a, CanFail f) =>
   (a -> b) ->
   (b -> f a) ->
   Property
-inverseFunctionsIfSecondSucceedsOnValid f g =
-  inverseFunctionsIfSecondSucceedsOnGen f g genValid shrinkValid
-
-inverseFunctionsIfSecondSucceeds ::
-  (Show a, Eq a, GenUnchecked a, CanFail f) =>
-  (a -> b) ->
-  (b -> f a) ->
-  Property
 inverseFunctionsIfSecondSucceeds f g =
-  inverseFunctionsIfSecondSucceedsOnGen f g genUnchecked shrinkUnchecked
+  inverseFunctionsIfSecondSucceedsOnGen f g genValid shrinkValid
 
 inverseFunctionsIfSecondSucceedsOnArbitrary ::
   (Show a, Eq a, Arbitrary a, CanFail f) =>
@@ -136,21 +112,13 @@ inverseFunctionsIfSucceedOnGen f g gen s =
       Nothing -> return () -- fine
       Just r -> r `shouldBe` a
 
-inverseFunctionsIfSucceedOnValid ::
+inverseFunctionsIfSucceed ::
   (Show a, Eq a, GenValid a, CanFail f, CanFail g) =>
   (a -> f b) ->
   (b -> g a) ->
   Property
-inverseFunctionsIfSucceedOnValid f g =
-  inverseFunctionsIfSucceedOnGen f g genValid shrinkValid
-
-inverseFunctionsIfSucceed ::
-  (Show a, Eq a, GenUnchecked a, CanFail f, CanFail g) =>
-  (a -> f b) ->
-  (b -> g a) ->
-  Property
 inverseFunctionsIfSucceed f g =
-  inverseFunctionsIfSucceedOnGen f g genUnchecked shrinkUnchecked
+  inverseFunctionsIfSucceedOnGen f g genValid shrinkValid
 
 inverseFunctionsIfSucceedOnArbitrary ::
   (Show a, Eq a, Arbitrary a, CanFail f, CanFail g) =>

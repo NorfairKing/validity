@@ -1,6 +1,16 @@
 # Changelog
 
-## [Unreleased]
+### Changed
+
+* Compatibility with `validity >= 0.12.0.0`
+* Compatibility with `genvalidity >= 1.0.0.0`
+* Renamed every combinator that ends in `OnValid` (or similar) to not have that suffix anymore.
+
+### Removed
+
+* Every combinator that relates to unchecked or invalid values.
+* Everything related to `RelativeValidity`.
+
 
 ## [0.7.0.3] - 2020-02-10
 

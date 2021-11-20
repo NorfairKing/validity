@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-hspec-optics
-version:        0.1.1.2
+version:        1.0.0.0
 synopsis:       Standard spec's for lens
 description:    Standard spec's for lens (van Laarhoven encoding)
 category:       Testing
@@ -13,10 +13,13 @@ homepage:       http://cs-syd.eu
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2018-2020 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    LICENSE
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -33,7 +36,7 @@ library
   build-depends:
       QuickCheck
     , base >=4.9 && <=5
-    , genvalidity >=0.5
+    , genvalidity >=1.0
     , genvalidity-hspec
     , hspec
     , microlens
@@ -50,10 +53,10 @@ test-suite genvalidity-hspec-optics-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       base
-    , genvalidity >=0.7
+    , genvalidity
     , genvalidity-hspec
     , genvalidity-hspec-optics
-    , genvalidity-property >=0.3
+    , genvalidity-property
     , hspec
     , microlens
     , validity >=0.9

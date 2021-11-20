@@ -9,8 +9,6 @@
 -- You will need @TypeApplications@ to use these.
 module Test.Syd.Validity.Ord
   ( ordSpecOnGen,
-    ordSpecOnValid,
-    ordSpecOnInvalid,
     ordSpec,
     ordSpecOnArbitrary,
   )
@@ -60,34 +58,12 @@ gtTypeStr = binRelStr @a ">"
 --
 -- Example usage:
 --
--- > ordSpecOnValid @Double
-ordSpecOnValid ::
-  forall a.
-  (Show a, Ord a, Typeable a, GenValid a) =>
-  Spec
-ordSpecOnValid = ordSpecOnGen @a genValid "valid" shrinkValid
-
--- | Standard test spec for properties of Ord instances for invalid values
---
--- Example usage:
---
--- > ordSpecOnInvalid @Double
-ordSpecOnInvalid ::
-  forall a.
-  (Show a, Ord a, Typeable a, GenInvalid a) =>
-  Spec
-ordSpecOnInvalid = ordSpecOnGen @a genInvalid "invalid" shrinkInvalid
-
--- | Standard test spec for properties of Ord instances for unchecked values
---
--- Example usage:
---
 -- > ordSpec @Int
 ordSpec ::
   forall a.
-  (Show a, Ord a, Typeable a, GenUnchecked a) =>
+  (Show a, Ord a, Typeable a, GenValid a) =>
   Spec
-ordSpec = ordSpecOnGen @a genUnchecked "unchecked" shrinkUnchecked
+ordSpec = ordSpecOnGen @a genValid "valid" shrinkValid
 
 -- | Standard test spec for properties of Ord instances for arbitrary values
 --
