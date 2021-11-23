@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.Validity.Text where
@@ -20,6 +21,27 @@ instance Validity ST.Text where
     mconcat
       [ check (len >= 0) "The length is positive.",
         check (off >= 0) "The offset is positive.",
+#if MIN_VERSION_text(2,0,0)
+        check
+          ( let c = A.unsafeIndex arr off
+             in len == 0 || c < 0x80 || c >= 0xC0
+          )
+          "The offset character is valid UTF8.",
+        -- It contains a valid UTF8
+        check
+          ( (== (Right t :: Either E.UnicodeException ST.Text)) $
+              U.unsafeDupablePerformIO
+                . try
+                . evaluate
+                . E.decodeUtf8With E.strictDecode
+                . LB.toStrict
+                . SBB.toLazyByteString
+                . mconcat
+                . map SBB.word8
+                $ A.toList arr off len
+          )
+          "The bytes can correctly be decoded as UTF8."
+#else
         check
           ( let c = A.unsafeIndex arr off
              in len == 0 || c < 0xDC00 || c > 0xDFFF
@@ -39,6 +61,7 @@ instance Validity ST.Text where
                 $ A.toList arr off len
           )
           "The bytes can correctly be decoded as UTF16."
+#endif
       ]
 
 -- | A lazy text value is valid if all the internal chunks are valid and nonempty
