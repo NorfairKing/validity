@@ -13,7 +13,6 @@ import qualified Data.Text.Array as A
 import qualified Data.Text.Internal as ST
 import qualified Data.Text.Internal.Lazy as LT
 import qualified Data.Text.Lazy as LT
-import Data.Word
 import Test.Hspec
 import Test.QuickCheck
 import Test.Validity
@@ -25,12 +24,12 @@ showTextDebug (ST.Text arr off len) =
     [ unwords
         [ "arr:   ",
           intercalate "," $
-            map (printf "%4d" :: Word16 -> String) $ A.toList arr off len
+            map (printf "%4d") $ A.toList arr off len
         ],
       unwords
         [ "hexarr:",
           intercalate "," $
-            map (printf "%4x" :: Word16 -> String) $ A.toList arr off len
+            map (printf "%4x") $ A.toList arr off len
         ],
       unwords ["off:      ", show off],
       unwords ["len:      ", show len]
