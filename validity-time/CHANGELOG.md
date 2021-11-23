@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [0.5.0.0] - 2021-11-23
+
+### Changed
+
+* Removed all the CPP. All the new instances are now no longer conditional.
 
 ## [0.4.0.0] - 2020-07-18
 
