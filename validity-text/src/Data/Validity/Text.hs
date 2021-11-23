@@ -20,9 +20,10 @@ instance Validity ST.Text where
   validate t@(ST.Text arr off len) =
     mconcat
       [ check (len >= 0) "The length is positive.",
-        check (off >= 0) "The offset is positive.",
+        check (off >= 0) "The offset is positive."]
 #if MIN_VERSION_text(2,0,0)
-        check
+      ++
+      [ check
           ( let c = A.unsafeIndex arr off
              in len == 0 || c < 0x80 || c >= 0xC0
           )
@@ -41,8 +42,10 @@ instance Validity ST.Text where
                 $ A.toList arr off len
           )
           "The bytes can correctly be decoded as UTF8."
+      ]
 #else
-        check
+      ++
+      [ check
           ( let c = A.unsafeIndex arr off
              in len == 0 || c < 0xDC00 || c > 0xDFFF
           )
@@ -61,8 +64,8 @@ instance Validity ST.Text where
                 $ A.toList arr off len
           )
           "The bytes can correctly be decoded as UTF16."
-#endif
       ]
+#endif
 
 -- | A lazy text value is valid if all the internal chunks are valid and nonempty
 instance Validity LT.Text where
