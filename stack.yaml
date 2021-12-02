@@ -1,4 +1,4 @@
-resolver: nightly-2021-05-10
+resolver: lts-18.16
 
 packages:
 - 'genvalidity'
@@ -43,12 +43,12 @@ packages:
 
 
 extra-deps:
-- envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
-
-- github: NorfairKing/yamlparse-applicative
-  commit: a250d9ea4b0c10dd6a96174f4942f73ec9652a2a
+- github: NorfairKing/autodocodec
+  commit: f0cb2ead0985b4394db0627e6befd7ce23c54c22
   subdirs:
-    - yamlparse-applicative
+    - autodocodec
+    - autodocodec-schema
+    - autodocodec-yaml
 - github: NorfairKing/safe-coloured-text
   commit: 7a3a7751f27ca65a4b7ec6dcad6e0e8c28f1091f
   subdirs:

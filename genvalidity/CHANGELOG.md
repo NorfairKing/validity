@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0.1] - 2021-11-20
+
+### Changed
+
+* Added compatibility with `lts-18.16`
+
 ## [1.0.0.0] - 2021-11-20
 
 ### Changed

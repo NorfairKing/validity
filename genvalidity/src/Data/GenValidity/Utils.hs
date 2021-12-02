@@ -199,7 +199,7 @@ genIntX =
   frequency
     [ (1, extreme),
       (1, small),
-      (8, uniform)
+      (8, uniformInt)
     ]
   where
     extreme :: Gen a
@@ -210,8 +210,8 @@ genIntX =
         ]
     small :: Gen a
     small = sized $ \s -> choose (- fromIntegral s, fromIntegral s)
-    uniform :: Gen a
-    uniform = choose (minBound, maxBound)
+    uniformInt :: Gen a
+    uniformInt = choose (minBound, maxBound)
 
 -- | Generate Word, Word8, Word16, Word32 and Word64 values smartly.
 --
@@ -223,7 +223,7 @@ genWordX =
   frequency
     [ (1, extreme),
       (1, small),
-      (8, uniform)
+      (8, uniformWord)
     ]
   where
     extreme :: Gen a
@@ -231,8 +231,8 @@ genWordX =
       choose (maxBound - fromIntegral s, maxBound)
     small :: Gen a
     small = sized $ \s -> choose (0, fromIntegral s)
-    uniform :: Gen a
-    uniform = choose (minBound, maxBound)
+    uniformWord :: Gen a
+    uniformWord = choose (minBound, maxBound)
 
 -- | See 'genFloatX'
 genFloat :: Gen Float
