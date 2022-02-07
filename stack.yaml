@@ -1,5 +1,4 @@
-resolver: lts-18.16
-
+resolver: lts-19.3
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
@@ -46,24 +45,27 @@ packages:
 
 extra-deps:
 - github: NorfairKing/autodocodec
-  commit: f0cb2ead0985b4394db0627e6befd7ce23c54c22
+  commit: fa655f633a7af200b02b1ddd7d6d853167ba9c09
   subdirs:
     - autodocodec
     - autodocodec-schema
     - autodocodec-yaml
+
 - github: NorfairKing/safe-coloured-text
-  commit: 7a3a7751f27ca65a4b7ec6dcad6e0e8c28f1091f
+  commit: f30fe0e4d2a0fa036967ffe17538b60e5f9861f5
   subdirs:
     - safe-coloured-text
     - safe-coloured-text-terminfo
+
 - github: NorfairKing/sydtest
-  commit: 0125c6d6d17d44753c793adc8dcaa4284fef2b7d
+  commit: aac96e2e520a4fca97bccd3403721dc0036b026f
   subdirs:
     - sydtest
     - sydtest-discover
 
 ghc-options:
   "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
+
 
 nix:
   shell-file: shell.nix
