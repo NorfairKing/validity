@@ -1,0 +1,81 @@
+resolver: nightly-2022-02-07
+compiler: ghc-9.2.1
+packages:
+- 'genvalidity'
+- 'genvalidity-aeson'
+- 'genvalidity-bytestring'
+- 'genvalidity-containers'
+- 'genvalidity-criterion'
+- 'genvalidity-hspec'
+- 'genvalidity-hspec-aeson'
+- 'genvalidity-hspec-binary'
+- 'genvalidity-hspec-cereal'
+- 'genvalidity-hspec-hashable'
+- 'genvalidity-hspec-optics'
+- 'genvalidity-hspec-persistent'
+- 'genvalidity-path'
+- 'genvalidity-persistent'
+- 'genvalidity-property'
+- 'genvalidity-scientific'
+- 'genvalidity-sydtest'
+- 'genvalidity-sydtest-aeson'
+- 'genvalidity-sydtest-hashable'
+- 'genvalidity-sydtest-lens'
+- 'genvalidity-sydtest-persistent'
+- 'genvalidity-text'
+- 'genvalidity-time'
+- 'genvalidity-unordered-containers'
+- 'genvalidity-uuid'
+- 'genvalidity-vector'
+- 'validity'
+- 'validity-aeson'
+- 'validity-bytestring'
+- 'validity-containers'
+- 'validity-path'
+- 'validity-persistent'
+- 'validity-primitive'
+- 'validity-scientific'
+- 'validity-text'
+- 'validity-time'
+- 'validity-unordered-containers'
+- 'validity-uuid'
+- 'validity-vector'
+
+
+extra-deps:
+- aeson-2.0.3.0
+- base-compat-0.12.1
+- base-compat-batteries-0.12.1
+- yaml-0.11.7.0 # aeson 2
+# https://github.com/yesodweb/persistent/pull/1338
+- github: brandon-leapyear/persistent
+  commit: ef4d8a2a62e833e3600bfb833b4e6afe984a81d6 # chinn/aeson2
+  subdirs:
+    - persistent
+    - persistent-test
+    - persistent-template
+- github: NorfairKing/autodocodec
+  commit: f0cb2ead0985b4394db0627e6befd7ce23c54c22
+  subdirs:
+    - autodocodec
+    - autodocodec-schema
+    - autodocodec-yaml
+- github: NorfairKing/safe-coloured-text
+  commit: 7a3a7751f27ca65a4b7ec6dcad6e0e8c28f1091f
+  subdirs:
+    - safe-coloured-text
+    - safe-coloured-text-terminfo
+- github: NorfairKing/sydtest
+  commit: 0125c6d6d17d44753c793adc8dcaa4284fef2b7d
+  subdirs:
+    - sydtest
+    - sydtest-discover
+
+ghc-options:
+  "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
+
+# To allow newer base-compat (etc.).
+allow-newer: true
+
+nix:
+  shell-file: shell.nix
