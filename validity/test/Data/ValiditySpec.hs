@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE MagicHash #-}
 
@@ -51,30 +52,48 @@ spec = do
     describe "Validity Int8" $ do
       it "Says that minBound is valid" $ isValid (minBound :: Int8) `shouldBe` True
       it "Says that maxBound is valid" $ isValid (maxBound :: Int8) `shouldBe` True
+#if MIN_VERSION_base(4,16,0)
+#else
       it "Says that Int# 200 is invalid" $ isValid (I8# 200#) `shouldBe` False
       it "Says that Int# -200 is invalid" $ isValid (I8# (-200#)) `shouldBe` False
+#endif
     describe "Validity Int16" $ do
       it "Says that minBound is valid" $ isValid (minBound :: Int16) `shouldBe` True
       it "Says that maxBound is valid" $ isValid (maxBound :: Int16) `shouldBe` True
+#if MIN_VERSION_base(4,16,0)
+#else
       it "Says that Int# 4000 is invalid" $ isValid (I16# 40000#) `shouldBe` False
       it "Says that Int# -4000 is invalid" $ isValid (I16# (-40000#)) `shouldBe` False
+#endif
     describe "Validity Int32" $ do
       it "Says that minBound is valid" $ isValid (minBound :: Int32) `shouldBe` True
       it "Says that maxBound is valid" $ isValid (maxBound :: Int32) `shouldBe` True
+#if MIN_VERSION_base(4,16,0)
+#else
       it "Says that Int# 2200000000 is invalid" $ isValid (I32# 2200000000#) `shouldBe` False
       it "Says that Int# -2200000000 is invalid" $ isValid (I32# (-2200000000#)) `shouldBe` False
+#endif
     describe "Validity Word8" $ do
       it "Says that minBound is valid" $ isValid (minBound :: Word8) `shouldBe` True
       it "Says that maxBound is valid" $ isValid (maxBound :: Word8) `shouldBe` True
+#if MIN_VERSION_base(4,16,0)
+#else
       it "Says that Word# 300 is invalid" $ isValid (W8# 300##) `shouldBe` False
+#endif
     describe "Validity Word16" $ do
       it "Says that minBound is valid" $ isValid (minBound :: Word16) `shouldBe` True
       it "Says that maxBound is valid" $ isValid (maxBound :: Word16) `shouldBe` True
+#if MIN_VERSION_base(4,16,0)
+#else
       it "Says that Word# 80000 is invalid" $ isValid (W16# 80000##) `shouldBe` False
+#endif
     describe "Validity Word32" $ do
       it "Says that minBound is valid" $ isValid (minBound :: Word32) `shouldBe` True
       it "Says that maxBound is valid" $ isValid (maxBound :: Word32) `shouldBe` True
+#if MIN_VERSION_base(4,16,0)
+#else
       it "Says that Word# 4800000000 is invalid" $ isValid (W32# 4800000000##) `shouldBe` False
+#endif
   describe "Chars" $ do
     describe "Small" $ do
       describe "Validity Char" $ do

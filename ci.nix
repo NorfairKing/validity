@@ -3,7 +3,8 @@ let
   pkgs = import ./nix/pkgs.nix { inherit sources; };
 
   versions = {
-    "lts-16_11" = "89db531aea80df58584c9a9e3504ffd9617e6b48";
+    "nixos-21_05" = "ad425b5cfb214f6d94c57638e3fc371d5806562c";
+    "nixos-21_11" = "5a2e2471e8163da8e6f2c1dfd50ef9063199c08b";
   };
 
   mkReleaseForVersion = version: rev:

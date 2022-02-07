@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -99,7 +100,11 @@ import Data.Int (Int64)
 import Data.List (intercalate)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Maybe (fromMaybe)
+#if MIN_VERSION_base(4,16,0)
+import GHC.Exts (Char (..), isTrue#, ord#, (<=#), (>=#))
+#else
 import GHC.Exts (Char (..), isTrue#, leWord#, ord#, (<=#), (>=#))
+#endif
 import GHC.Generics
 import GHC.Int (Int16 (..), Int32 (..), Int8 (..))
 import GHC.Natural
@@ -433,6 +438,11 @@ isSingleLine = not . any isLineSeparator
 instance Validity Int where
   validate = trivialValidation
 
+#if MIN_VERSION_base(4,16,0)
+instance Validity Int8 where validate = trivialValidation
+instance Validity Int16 where validate = trivialValidation
+instance Validity Int32 where validate = trivialValidation
+#else
 -- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Int8 where
   validate (I8# i#) =
@@ -456,6 +466,7 @@ instance Validity Int32 where
       [ declare "The contained integer is smaller than 2^31 = 2147483648" $ isTrue# (i# <=# 2147483647#),
         declare "The contained integer is greater than or equal to -2^31 = -2147483648" $ isTrue# (i# >=# -2147483648#)
       ]
+#endif
 
 -- | Trivially valid
 instance Validity Int64 where
@@ -465,6 +476,11 @@ instance Validity Int64 where
 instance Validity Word where
   validate = trivialValidation
 
+#if MIN_VERSION_base(4,16,0)
+instance Validity Word8 where validate = trivialValidation
+instance Validity Word16 where validate = trivialValidation
+instance Validity Word32 where validate = trivialValidation
+#else
 -- | NOT trivially valid on GHC because small number types are represented using a 64bit structure underneath.
 instance Validity Word8 where
   validate (W8# w#) =
@@ -479,6 +495,7 @@ instance Validity Word16 where
 instance Validity Word32 where
   validate (W32# w#) =
     declare "The contained integer is smaller than 2^32 = 4294967296" $ isTrue# (w# `leWord#` 4294967295##)
+#endif
 
 -- | Trivially valid
 instance Validity Word64 where
