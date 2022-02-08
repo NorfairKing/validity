@@ -55,18 +55,18 @@ extra-deps:
     - persistent-test
     - persistent-template
 - github: NorfairKing/autodocodec
-  commit: f0cb2ead0985b4394db0627e6befd7ce23c54c22
+  commit: 42b42a7407f33c6c74fa4e8c84906aebfed28daf
   subdirs:
     - autodocodec
     - autodocodec-schema
     - autodocodec-yaml
 - github: NorfairKing/safe-coloured-text
-  commit: 7a3a7751f27ca65a4b7ec6dcad6e0e8c28f1091f
+  commit: 034f3612525568b422e0c62b52417d77b7cf31c2
   subdirs:
     - safe-coloured-text
     - safe-coloured-text-terminfo
 - github: NorfairKing/sydtest
-  commit: 0125c6d6d17d44753c793adc8dcaa4284fef2b7d
+  commit: 7d2f125b9b9d9e8e36b92a1da83b934f1a17cc53
   subdirs:
     - sydtest
     - sydtest-discover
