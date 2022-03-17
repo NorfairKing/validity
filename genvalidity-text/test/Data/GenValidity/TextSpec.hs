@@ -76,14 +76,22 @@ spec = do
       it "contains the given character" $
         forAll arbitrary $ \c ->
           forAll (textWithA c) $ \t -> ST.unpack t `shouldSatisfy` elem c
-    describe "textWithoutAny" $
+    describe "textWithoutAny" $ do
+      it "works with \65533" $
+        let c = '\65533'
+         in forAll (textWithoutAny c) $ \t ->
+              ST.unpack t `shouldNotSatisfy` elem c
       it "never contains the given char" $
-        forAll arbitrary $ \c ->
+        forAllShrink arbitrary shrink $ \c ->
           forAll (textWithoutAny c) $ \t ->
             ST.unpack t `shouldNotSatisfy` elem c
-    describe "textWithoutAnyOf" $
+    describe "textWithoutAnyOf" $ do
+      it "works with \65533" $
+        let cs = "\65533"
+         in forAll (textWithoutAnyOf cs) $ \text ->
+              ST.unpack text `shouldNotSatisfy` (\t -> any (`elem` t) cs)
       it "never contains any of the given chars" $
-        forAll arbitrary $ \cs ->
+        forAllShrink arbitrary shrink $ \cs ->
           forAll (textWithoutAnyOf cs) $ \text ->
             ST.unpack text `shouldNotSatisfy` (\t -> any (`elem` t) cs)
   describe "Lazy Text" $ do

@@ -68,11 +68,17 @@ textWithA c = textWith $ ST.singleton <$> pure c
 
 -- | 'textWithoutAny c' generates a 'Text' value that does not contain any 'c'.
 textWithoutAny :: Char -> Gen ST.Text
-textWithoutAny c = textWithoutAnyOf [c]
+textWithoutAny c = doubleCheck $ genTextBy $ genValid `suchThat` predicate
+  where
+    doubleCheck = (`suchThat` (ST.all predicate))
+    predicate = (/= c)
 
 -- | 'textWithoutAnyOf c' generates a 'Text' value that does not contain any character in 'ls'.
 textWithoutAnyOf :: String -> Gen ST.Text
-textWithoutAnyOf cs = ST.pack <$> genListOf (genValid `suchThat` (`notElem` cs))
+textWithoutAnyOf cs = doubleCheck $ genTextBy (genValid `suchThat` predicate)
+  where
+    doubleCheck = (`suchThat` (ST.all predicate))
+    predicate = (`notElem` cs)
 
 -- | 'textAllCaps' generates a 'Text' value with only upper-case characters.
 textAllCaps :: Gen ST.Text
