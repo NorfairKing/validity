@@ -77,3 +77,9 @@ instance Validity LT.Text where
 
 validateTextSingleLine :: ST.Text -> Validation
 validateTextSingleLine = validateStringSingleLine . ST.unpack
+
+decorateText :: ST.Text -> (Char -> Validation) -> Validation
+decorateText t func = mconcat $
+  flip map (zip [0 ..] (ST.unpack t)) $ \(i, c) ->
+    decorate (unwords ["The character at index", show (i :: Integer), "in the text"]) $
+      func c
