@@ -1,0 +1,49 @@
+name: genvalidity-case-insensitive
+version: '0.0.0.0'
+synopsis: GenValidity support for case-insensitive
+category: Testing
+license: MIT
+github: NorfairKing/validity
+
+extra-source-files:
+- CHANGELOG.md
+
+dependencies:
+- base
+- case-insensitive
+
+library:
+  source-dirs: src
+  dependencies:
+  - validity-case-insensitive
+  - genvalidity >=1.0
+
+tests:
+  genvalidity-case-insensitive-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - genvalidity-case-insensitive
+    - hspec
+    - genvalidity-hspec
+
+benchmarks:
+  genvalidity-case-insensitive-bench:
+    main: Main.hs
+    source-dirs: bench
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - genvalidity-case-insensitive
+    - genvalidity-criterion
+    - criterion
+    - QuickCheck
+    - genvalidity
