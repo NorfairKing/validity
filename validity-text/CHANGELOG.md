@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [0.3.1.2] - 2022-03-21
+
+### Added
+
+* `decorateText`
 
 ## [0.3.1.1] - 2020-02-10
 
