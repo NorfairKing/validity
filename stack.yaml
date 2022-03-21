@@ -4,6 +4,7 @@ packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
 - 'genvalidity-bytestring'
+- 'genvalidity-case-insensitive'
 - 'genvalidity-containers'
 - 'genvalidity-criterion'
 - 'genvalidity-hspec'

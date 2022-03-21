@@ -1,0 +1,69 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           genvalidity-case-insensitive
+version:        0.0.0.0
+synopsis:       GenValidity support for case-insensitive
+category:       Testing
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+license:        MIT
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.GenValidity.CaseInsensitive
+  other-modules:
+      Paths_genvalidity_case_insensitive
+  hs-source-dirs:
+      src
+  build-depends:
+      base
+    , case-insensitive
+    , genvalidity >=1.0
+    , validity-case-insensitive
+  default-language: Haskell2010
+
+test-suite genvalidity-case-insensitive-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.GenValidity.CaseInsensitiveSpec
+      Paths_genvalidity_case_insensitive
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base
+    , case-insensitive
+    , genvalidity-case-insensitive
+    , genvalidity-hspec
+    , hspec
+  default-language: Haskell2010
+
+benchmark genvalidity-case-insensitive-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_genvalidity_case_insensitive
+  hs-source-dirs:
+      bench
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      QuickCheck
+    , base
+    , case-insensitive
+    , criterion
+    , genvalidity
+    , genvalidity-case-insensitive
+    , genvalidity-criterion
+  default-language: Haskell2010
