@@ -30,6 +30,7 @@ packages:
 - 'validity'
 - 'validity-aeson'
 - 'validity-bytestring'
+- 'validity-case-insensitive'
 - 'validity-containers'
 - 'validity-path'
 - 'validity-persistent'
