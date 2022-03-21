@@ -1,0 +1,49 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           validity-case-insensitive
+version:        0.0.0.0
+synopsis:       Validity instances for case-insensitive
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+license:        MIT
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.CaseInsensitive
+  other-modules:
+      Paths_validity_case_insensitive
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , case-insensitive
+    , validity >=0.9.0.2
+  default-language: Haskell2010
+
+test-suite validity-case-insensitive-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Data.Validity.CaseInsensitiveSpec
+      Paths_validity_case_insensitive
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+      base >=4.7 && <5
+    , case-insensitive
+    , genvalidity-hspec
+    , hspec
+    , validity >=0.9.0.2
+    , validity-case-insensitive
+  default-language: Haskell2010

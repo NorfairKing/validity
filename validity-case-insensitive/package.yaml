@@ -1,0 +1,29 @@
+name: validity-case-insensitive
+version: '0.0.0.0'
+synopsis: Validity instances for case-insensitive
+category: Validity
+license: MIT
+github: NorfairKing/validity
+
+dependencies:
+- base >=4.7 && <5
+- validity >=0.9.0.2
+- case-insensitive
+
+library:
+  source-dirs: src
+
+tests:
+  validity-case-insensitive-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - hspec
+    - validity-case-insensitive
+    - genvalidity-hspec
+
