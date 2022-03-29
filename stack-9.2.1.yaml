@@ -47,13 +47,8 @@ extra-deps:
 - base-compat-0.12.1
 - base-compat-batteries-0.12.1
 - yaml-0.11.7.0 # aeson 2
-# https://github.com/yesodweb/persistent/pull/1338
-- github: brandon-leapyear/persistent
-  commit: ef4d8a2a62e833e3600bfb833b4e6afe984a81d6 # chinn/aeson2
-  subdirs:
-    - persistent
-    - persistent-test
-    - persistent-template
+- persistent-2.13.3.3
+- persistent-template-2.12.0.0
 - github: NorfairKing/autodocodec
   commit: 42b42a7407f33c6c74fa4e8c84906aebfed28daf
   subdirs:
