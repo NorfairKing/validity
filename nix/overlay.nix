@@ -1,10 +1,22 @@
 final:
 previous:
-with final.haskell.lib;
+let
+  defCompiler = "ghc${previous.lib.strings.replaceStrings ["."] [""] previous.haskellPackages.ghc.version}";
+  gitignoreSrc = final.fetchFromGitHub {
+    owner = "hercules-ci";
+    repo = "gitignore.nix";
+    # put the latest commit sha of gitignore Nix library here:
+    rev = "5b9e0ff9d3b551234b4f3eb3983744fa354b17f1";
+    # use what nix suggests in the mismatch message here:
+    sha256 = "01l4phiqgw9xgaxr6jr456qmww6kzghqrnbc7aiiww3h6db5vw53";
+  };
+  inherit (import gitignoreSrc { inherit (final) lib; }) gitignoreSource;
+in with final.haskell.lib;
 {
   validityPackages =
+    compiler:
     let validityPkg = name:
-      doBenchmark (buildStrictly (final.haskellPackages.callCabal2nixWithOptions name (final.gitignoreSource (../. + "/${name}")) "--no-hpack" { }));
+      doBenchmark (buildStrictly (final.haskell.packages.${compiler}.callCabal2nixWithOptions name (gitignoreSource (../. + "/${name}")) "--no-hpack" { }));
     in
     final.lib.genAttrs [
       "genvalidity"
@@ -51,13 +63,35 @@ with final.haskell.lib;
   validityRelease =
     final.symlinkJoin {
       name = "validity-release";
-      paths = final.lib.attrValues final.validityPackages;
+      paths = final.lib.attrValues (final.validityPackages defCompiler);
     };
 
-  haskellPackages = previous.haskellPackages.override (old: {
-    overrides = final.lib.composeExtensions (old.overrides or (_: _: { })) (
-      self: super:
-        final.validityPackages
-    );
-  });
+  haskell = previous.haskell // {
+    packages = final.lib.mapAttrs
+      (compiler: haskellPackages:
+        haskellPackages.override (
+          old:
+          {
+            overrides =
+              final.lib.composeExtensions
+                (
+                  old.overrides or (
+                    _:
+                    _:
+                    { }
+                  )
+                )
+                (
+                  _:
+                  _:
+                    final.validityPackages compiler
+                );
+          }
+        )
+      )
+      previous.haskell.packages;
+  };
+
+  haskellPackages = final.haskell.packages.${defCompiler};
+
 }
