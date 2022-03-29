@@ -85,6 +85,9 @@ in with final.haskell.lib;
                   _:
                   _:
                     final.validityPackages compiler
+                    // {
+                      autoexporter = previous.haskell.lib.doJailbreak haskellPackages.autoexporter;
+                    }
                 );
           }
         )
