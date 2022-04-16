@@ -10,7 +10,7 @@ github: NorfairKing/validity
 
 dependencies:
 - base >=4.7 && <5
-- validity >=0.5
+- validity >=0.12
 - text
 - bytestring
 
