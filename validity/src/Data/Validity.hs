@@ -100,7 +100,11 @@ import Data.Int (Int64)
 import Data.List (intercalate)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Maybe (fromMaybe)
+#if MIN_VERSION_base(4,16,0)
+import GHC.Exts (Char (..), isTrue#, ord#, (<=#), (>=#))
+#else
 import GHC.Exts (Char (..), isTrue#, leWord#, ord#, (<=#), (>=#))
+#endif
 import GHC.Generics
 import GHC.Int (Int16 (..), Int32 (..), Int8 (..))
 import GHC.Natural
