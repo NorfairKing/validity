@@ -9,7 +9,7 @@ extra-source-files:
 - CHANGELOG.md
 
 dependencies:
-- base
+- base >=4.7 && <5
 - case-insensitive
 
 library:
