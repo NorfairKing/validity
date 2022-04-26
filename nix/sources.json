@@ -1,14 +1,14 @@
 {
     "autodocodec": {
-        "branch": "lts-19.3",
+        "branch": "master",
         "description": "self(auto)- documenting encoders and decoders",
         "homepage": "",
         "owner": "NorfairKing",
         "repo": "autodocodec",
-        "rev": "fa655f633a7af200b02b1ddd7d6d853167ba9c09",
-        "sha256": "0lhk0g735dx3x131a99w5p515jb3ria9lk0bm04jzym61nrpbzax",
+        "rev": "de3a6efbfad165d2265f9d222a570d9a938c162d",
+        "sha256": "0jaq0ck6v4g8lxwdwd3ksz0dry6kag74zwh950lzh0jir2a7lhds",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/autodocodec/archive/fa655f633a7af200b02b1ddd7d6d853167ba9c09.tar.gz",
+        "url": "https://github.com/NorfairKing/autodocodec/archive/de3a6efbfad165d2265f9d222a570d9a938c162d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "gitignore": {
@@ -77,10 +77,10 @@
         "homepage": "",
         "owner": "NorfairKing",
         "repo": "sydtest",
-        "rev": "aac96e2e520a4fca97bccd3403721dc0036b026f",
-        "sha256": "06fb6h32z4mqvkmvya9s2zpqb64iyib7bwzn6mym7wiisgbwc98k",
+        "rev": "da5ff27751ced020900d88dca43bb20cd3dc3c87",
+        "sha256": "07mpmzalyqqqv4kqv7pyqp0ldwnmapyz6q2j8pdsylm7x3c45mdi",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/sydtest/archive/aac96e2e520a4fca97bccd3403721dc0036b026f.tar.gz",
+        "url": "https://github.com/NorfairKing/sydtest/archive/da5ff27751ced020900d88dca43bb20cd3dc3c87.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
