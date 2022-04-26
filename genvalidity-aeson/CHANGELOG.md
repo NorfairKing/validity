@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0.1] - 2022-04-26
+
+### Added
+
+* Support for `aeson >= 2.0.0.0`
+
 ## [1.0.0.0] - 2021-11-20
 
 ### Changed
