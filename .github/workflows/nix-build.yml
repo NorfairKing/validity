@@ -12,7 +12,6 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - macos-latest
         attribute:
           - release
           - pre-commit-check
