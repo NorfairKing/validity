@@ -52,7 +52,7 @@ extra-deps:
     - autodocodec-yaml
 
 - github: NorfairKing/safe-coloured-text
-  commit: f30fe0e4d2a0fa036967ffe17538b60e5f9861f5
+  commit: 95860cbf6aa7c50d9c3702165bf6df25baf770b1
   subdirs:
     - safe-coloured-text
     - safe-coloured-text-terminfo

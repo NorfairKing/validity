@@ -65,10 +65,10 @@
         "homepage": "https://cs-syd.eu/posts/2021-03-07-safe-coloured-text",
         "owner": "NorfairKing",
         "repo": "safe-coloured-text",
-        "rev": "f30fe0e4d2a0fa036967ffe17538b60e5f9861f5",
-        "sha256": "0lgq503wa3ws5cci82kmaz4ws6bl9fz11i73kkqmmrldsr0gsvs0",
+        "rev": "95860cbf6aa7c50d9c3702165bf6df25baf770b1",
+        "sha256": "00wxxgabylkkvqcicvh758l14bssqy3dlxa0xps40c5579k7cp0i",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/safe-coloured-text/archive/f30fe0e4d2a0fa036967ffe17538b60e5f9861f5.tar.gz",
+        "url": "https://github.com/NorfairKing/safe-coloured-text/archive/95860cbf6aa7c50d9c3702165bf6df25baf770b1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "sydtest": {
