@@ -1,19 +1,20 @@
+{ sources ? import ./nix/sources.nix
+, pkgs ? import ./nix/pkgs.nix { inherit sources; }
+, system ? builtins.currentSystem
+}:
 let
-  sources = import ./nix/sources.nix;
-  pkgs = import ./nix/pkgs.nix { inherit sources; };
-
   versions = {
-    "nixos-21_05" = "ad425b5cfb214f6d94c57638e3fc371d5806562c";
-    "nixos-21_11" = "5a2e2471e8163da8e6f2c1dfd50ef9063199c08b";
+    "nixos-21_05" = sources.nixpkgs-21_05;
+    "nixos-21_11" = sources.nixpkgs-21_11;
+    "nixos-22_05" = sources.nixpkgs-22_05;
   };
 
-  mkReleaseForVersion = version: rev:
+  mkReleaseForVersion = version: nixpkgs:
     let
-      pkgsf = builtins.fetchGit {
-        url = "https://github.com/NixOS/nixpkgs";
-        inherit rev;
+      p = import ./nix/pkgs.nix {
+        inherit sources nixpkgs system;
       };
-      p = import ./nix/pkgs.nix { inherit pkgsf; };
+
     in
     p.validityRelease.overrideAttrs (old: { name = "validity-release-${version}"; });
 
