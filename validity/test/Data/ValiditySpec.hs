@@ -146,7 +146,7 @@ spec = do
   describe "NormalisedRatio" $ do
     it "says that NaN is invalid" $ NormalisedRatio notANumber `shouldSatisfy` (not . isValid)
     it "says that +Inf is invalid" $ NormalisedRatio infinity `shouldSatisfy` (not . isValid)
-    it "says that -Inf is invalid" $ NormalisedRatio (- infinity) `shouldSatisfy` (not . isValid)
+    it "says that -Inf is invalid" $ NormalisedRatio (-infinity) `shouldSatisfy` (not . isValid)
     it "says that these non-normalised numbers are invalid" $ do
       NormalisedRatio ((5 :: Integer) :% 5) `shouldSatisfy` (not . isValid)
       NormalisedRatio ((1 :: Integer) :% (-5)) `shouldSatisfy` (not . isValid)

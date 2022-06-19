@@ -32,7 +32,7 @@ genDayAround today = do
 
 genDayCloselyAround :: Day -> Gen Day
 genDayCloselyAround today = sized $ \s -> do
-  diff <- choose (- s, s)
+  diff <- choose (-s, s)
   pure $ addDays (fromIntegral diff) today
 
 instance GenValid CalendarDiffDays where

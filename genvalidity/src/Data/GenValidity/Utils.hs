@@ -52,68 +52,68 @@ genSplit :: Int -> Gen (Int, Int)
 genSplit n
   | n < 0 = pure (0, 0)
   | otherwise = do
-    i <- choose (0, n)
-    let j = n - i
-    pure (i, j)
+      i <- choose (0, n)
+      let j = n - i
+      pure (i, j)
 
 -- | 'genSplit3 a' generates a triple '(b, c, d)' such that 'b + c + d' equals 'a'.
 genSplit3 :: Int -> Gen (Int, Int, Int)
 genSplit3 n
   | n < 0 = pure (0, 0, 0)
   | otherwise = do
-    (a, z) <- genSplit n
-    (b, c) <- genSplit z
-    return (a, b, c)
+      (a, z) <- genSplit n
+      (b, c) <- genSplit z
+      return (a, b, c)
 
 -- | 'genSplit4 a' generates a quadruple '(b, c, d, e)' such that 'b + c + d + e' equals 'a'.
 genSplit4 :: Int -> Gen (Int, Int, Int, Int)
 genSplit4 n
   | n < 0 = pure (0, 0, 0, 0)
   | otherwise = do
-    (y, z) <- genSplit n
-    (a, b) <- genSplit y
-    (c, d) <- genSplit z
-    return (a, b, c, d)
+      (y, z) <- genSplit n
+      (a, b) <- genSplit y
+      (c, d) <- genSplit z
+      return (a, b, c, d)
 
 -- | 'genSplit5 a' generates a quintuple '(b, c, d, e, f)' such that 'b + c + d + e + f' equals 'a'.
 genSplit5 :: Int -> Gen (Int, Int, Int, Int, Int)
 genSplit5 n
   | n < 0 = pure (0, 0, 0, 0, 0)
   | otherwise = do
-    (y, z) <- genSplit n
-    (a, b, c) <- genSplit3 y
-    (d, e) <- genSplit z
-    return (a, b, c, d, e)
+      (y, z) <- genSplit n
+      (a, b, c) <- genSplit3 y
+      (d, e) <- genSplit z
+      return (a, b, c, d, e)
 
 -- | 'genSplit6 a' generates a sextuple '(b, c, d, e, f, g)' such that 'b + c + d + e + f + g' equals 'a'.
 genSplit6 :: Int -> Gen (Int, Int, Int, Int, Int, Int)
 genSplit6 n
   | n < 0 = pure (0, 0, 0, 0, 0, 0)
   | otherwise = do
-    (y, z) <- genSplit n
-    (a, b, c) <- genSplit3 y
-    (d, e, f) <- genSplit3 z
-    return (a, b, c, d, e, f)
+      (y, z) <- genSplit n
+      (a, b, c) <- genSplit3 y
+      (d, e, f) <- genSplit3 z
+      return (a, b, c, d, e, f)
 
 -- | 'genSplit7 a' generates a septtuple '(b, c, d, e, f, g)' such that 'b + c + d + e + f + g' equals 'a'.
 genSplit7 :: Int -> Gen (Int, Int, Int, Int, Int, Int, Int)
 genSplit7 n
   | n < 0 = pure (0, 0, 0, 0, 0, 0, 0)
   | otherwise = do
-    (y, z) <- genSplit n
-    (a, b, c) <- genSplit3 y
-    (d, e, f, g) <- genSplit4 z
-    return (a, b, c, d, e, f, g)
+      (y, z) <- genSplit n
+      (a, b, c) <- genSplit3 y
+      (d, e, f, g) <- genSplit4 z
+      return (a, b, c, d, e, f, g)
 
 -- | 'genSplit8 a' generates a octtuple '(b, c, d, e, f, g, h)' such that 'b + c + d + e + f + g + h' equals 'a'.
 genSplit8 :: Int -> Gen (Int, Int, Int, Int, Int, Int, Int, Int)
 genSplit8 n
   | n < 0 = pure (0, 0, 0, 0, 0, 0, 0, 0)
   | otherwise = do
-    (y, z) <- genSplit n
-    (a, b, c, d) <- genSplit4 y
-    (e, f, g, h) <- genSplit4 z
-    return (a, b, c, d, e, f, g, h)
+      (y, z) <- genSplit n
+      (a, b, c, d) <- genSplit4 y
+      (e, f, g, h) <- genSplit4 z
+      return (a, b, c, d, e, f, g, h)
 
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 arbPartition :: Int -> Gen [Int]
@@ -130,7 +130,7 @@ arbPartition i = genListLengthWithSize i >>= go i
     -- Use an exponential distribution for generating the
     -- sizes in the partition.
     invE :: Double -> Double -> Double
-    invE lambda u = (- log (1 - u)) / lambda
+    invE lambda u = (-log (1 - u)) / lambda
 
 genNonEmptyOf :: Gen a -> Gen (NonEmpty a)
 genNonEmptyOf gen = do
@@ -209,7 +209,7 @@ genIntX =
           choose (minBound, minBound + fromIntegral s)
         ]
     small :: Gen a
-    small = sized $ \s -> choose (- fromIntegral s, fromIntegral s)
+    small = sized $ \s -> choose (-fromIntegral s, fromIntegral s)
     uniformInt :: Gen a
     uniformInt = choose (minBound, maxBound)
 
@@ -282,12 +282,12 @@ genFloatX func =
       let n' = toInteger n
       let precision = 9999999999999 :: Integer
       b <- choose (1, precision)
-      a <- choose ((- n') * b, n' * b)
+      a <- choose ((-n') * b, n' * b)
       pure (fromRational (a % b))
     upperSignificand :: Integer
     upperSignificand = floatRadix (0.0 :: a) ^ floatDigits (0.0 :: a)
     lowerSignificand :: Integer
-    lowerSignificand = (- upperSignificand)
+    lowerSignificand = (-upperSignificand)
     (lowerExponent, upperExponent) = floatRange (0.0 :: a)
     aroundBounds :: Gen a
     aroundBounds = do
@@ -319,7 +319,7 @@ genInteger = sized $ \s ->
         small
       ]
   where
-    small = sized $ \s -> choose (- toInteger s, toInteger s)
+    small = sized $ \s -> choose (-toInteger s, toInteger s)
     genIntSizedInteger = toInteger <$> (genIntX :: Gen Int)
     genBiggerInteger = sized $ \s -> do
       (a, b, c) <- genSplit3 s
