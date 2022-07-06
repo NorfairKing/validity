@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0.2] - Unreleased
+
+### Added
+
+* `genListOf1`
+
 ## [1.0.0.1] - 2021-11-20
 
 ### Changed

@@ -1,0 +1,50 @@
+name: genvalidity-network-uri
+version: '0.0.0.0'
+synopsis: GenValidity support for URI
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd@cs-syd.eu
+copyright: ! 'Copyright: (c) 2022 Tom Sydney Kerckhove'
+license: MIT
+github: NorfairKing/validity
+
+dependencies:
+- base >=4.7 && <5
+- network-uri
+- QuickCheck
+
+library:
+  source-dirs: src
+  dependencies:
+  - genvalidity >=1.0
+  - validity >=0.5
+  - validity-network-uri
+
+tests:
+  genvalidity-network-uri-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - genvalidity
+    - genvalidity-hspec
+    - genvalidity-network-uri
+    - hspec
+    - validity-network-uri
+
+benchmarks:
+  genvalidity-network-uri-bench:
+    main: Main.hs
+    source-dirs: bench/
+    ghc-options:
+    - -Wall
+    dependencies:
+    - QuickCheck
+    - criterion
+    - genvalidity
+    - genvalidity-criterion
+    - genvalidity-network-uri

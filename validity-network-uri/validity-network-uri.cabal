@@ -4,17 +4,16 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           validity-text
-version:        0.3.1.3
-synopsis:       Validity instances for text
+name:           validity-network-uri
+version:        0.0.0.0
+synopsis:       Validity instances for URI
 category:       Validity
 homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2022 Tom Sydney Kerckhove
 license:        MIT
-license-file:   LICENSE
 build-type:     Simple
 
 source-repository head
@@ -23,14 +22,13 @@ source-repository head
 
 library
   exposed-modules:
-      Data.Validity.Text
+      Data.Validity.URI
   other-modules:
-      Paths_validity_text
+      Paths_validity_network_uri
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
-    , bytestring
-    , text
+    , network-uri
     , validity >=0.12
   default-language: Haskell2010

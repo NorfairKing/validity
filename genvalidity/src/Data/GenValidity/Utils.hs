@@ -17,6 +17,7 @@ module Data.GenValidity.Utils
     shuffle,
     genListLength,
     genListOf,
+    genListOf1,
     genNonEmptyOf,
 
     -- ** Helper functions for implementing shrinking functions
@@ -170,6 +171,10 @@ genListOf func =
   sized $ \n -> do
     pars <- arbPartition n
     forM pars $ \i -> resize i func
+
+-- | A version of 'genNonEmptyOf' that returns a list instead of a 'NonEmpty'.
+genListOf1 :: Gen a -> Gen [a]
+genListOf1 gen = NE.toList <$> genNonEmptyOf gen
 
 shrinkTuple :: (a -> [a]) -> (b -> [b]) -> (a, b) -> [(a, b)]
 shrinkTuple sa sb (a, b) =
