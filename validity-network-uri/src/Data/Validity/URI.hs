@@ -4,13 +4,7 @@
 
 -- [RFC 3986, section 3](https://datatracker.ietf.org/doc/html/rfc3986#section-3)
 module Data.Validity.URI
-  ( validateUserInfo,
-    validateHost,
-    validatePort,
-    validateScheme,
-    validatePath,
-    validateQuery,
-    validateFragment,
+  ( dangerousURIToString,
     -- Export everything for testing
     module Data.Validity.URI,
   )
@@ -33,7 +27,7 @@ instance Validity URI where
   validate u@URI {..} =
     mconcat
       [ genericValidate u,
-        let rendered = unsafeURIToString u
+        let rendered = dangerousURIToString u
             parsed = parseURIReference rendered
             explanation =
               unlines
@@ -41,7 +35,7 @@ instance Validity URI where
                   "rendered:",
                   rendered,
                   "parsed:",
-                  show $ unsafeURIToString <$> parsed
+                  show $ dangerousURIToString <$> parsed
                 ]
          in declare explanation $
               case parseURIReference rendered of
@@ -310,8 +304,10 @@ validateFragment uriFragment =
     -- Laziness prevents the partial 'head' from blowing up.
     null uriFragment || head uriFragment == '#'
 
+-- | Render a URI to a 'String', for use in testing
+--
 -- This uses 'uriToString id' as the docs specify.
 -- It potentially exposes passwords, so only use it if you know what you're
 -- doing.
-unsafeURIToString :: URI -> String
-unsafeURIToString u = uriToString id u ""
+dangerousURIToString :: URI -> String
+dangerousURIToString u = uriToString id u ""

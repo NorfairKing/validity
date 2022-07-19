@@ -86,7 +86,7 @@ spec = do
         genGeneratesValid genAbsoluteURI
       it "generates values that parse using parseAbsoluteURI" $
         forAll genAbsoluteURI $ \uri ->
-          case parseAbsoluteURI (unsafeURIToString uri) of
+          case parseAbsoluteURI (dangerousURIToString uri) of
             Nothing -> expectationFailure "Should have parsed."
             Just uri' -> uri' `shouldBe` uri
 
@@ -95,7 +95,7 @@ spec = do
         genGeneratesValid genURIReference
       it "generates values that parse using parseURIReference" $
         forAll genURIReference $ \uri ->
-          case parseURIReference (unsafeURIToString uri) of
+          case parseURIReference (dangerousURIToString uri) of
             Nothing -> expectationFailure "Should have parsed."
             Just uri' -> uri' `shouldBe` uri
 
@@ -104,7 +104,7 @@ spec = do
         genGeneratesValid genRelativeReference
       it "generates values that parse using parseRelativeReference" $
         forAll genRelativeReference $ \uri ->
-          case parseRelativeReference (unsafeURIToString uri) of
+          case parseRelativeReference (dangerousURIToString uri) of
             Nothing -> expectationFailure "Should have parsed."
             Just uri' -> uri' `shouldBe` uri
 
@@ -113,7 +113,7 @@ spec = do
         genGeneratesValid genURI
       it "generates values that parse using parseURI" $
         forAll genURI $ \uri ->
-          case parseURI (unsafeURIToString uri) of
+          case parseURI (dangerousURIToString uri) of
             Nothing -> expectationFailure "Should have parsed."
             Just uri' -> uri' `shouldBe` uri
 
@@ -121,6 +121,6 @@ spec = do
 
     it "produces URI that roundtrip through parsing" $
       forAll genValid $ \uri ->
-        case parseURIReference (unsafeURIToString uri) of
-          Nothing -> expectationFailure $ "Could not parse uri: " <> show (unsafeURIToString uri)
+        case parseURIReference (dangerousURIToString uri) of
+          Nothing -> expectationFailure $ "Could not parse uri: " <> show (dangerousURIToString uri)
           Just uri' -> uri' `shouldBe` uri
