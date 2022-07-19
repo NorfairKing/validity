@@ -213,7 +213,7 @@ genPath =
 genPathAbEmpty :: Gen String
 genPathAbEmpty = do
   segments <- genListOf genSegment
-  pure $ concatMap (\s -> '/' : s) segments
+  pure $ concatMap ('/' :) segments
 
 -- @
 -- path-absolute = "/" [ segment-nz *( "/" segment ) ]
@@ -222,7 +222,7 @@ genPathAbsolute :: Gen String
 genPathAbsolute = do
   firstSegment <- genSegmentNz
   restSegments <- genListOf genSegment
-  pure $ '/' : firstSegment ++ concatMap (\s -> '/' : s) restSegments
+  pure $ '/' : firstSegment ++ concatMap ('/' :) restSegments
 
 -- @
 -- path-noscheme = segment-nz-nc *( "/" segment )
@@ -231,7 +231,7 @@ genPathNoScheme :: Gen String
 genPathNoScheme = do
   firstSegment <- genSegmentNzNc
   restSegments <- genListOf genSegment
-  pure $ firstSegment ++ concatMap (\s -> '/' : s) restSegments
+  pure $ firstSegment ++ concatMap ('/' :) restSegments
 
 -- @
 -- path-rootless = segment-nz *( "/" segment )
@@ -240,7 +240,7 @@ genPathRootless :: Gen String
 genPathRootless = do
   firstSegment <- genSegmentNz
   restSegments <- genListOf genSegment
-  pure $ firstSegment ++ concatMap (\s -> '/' : s) restSegments
+  pure $ firstSegment ++ concatMap ('/' :) restSegments
 
 -- @
 -- path-empty    = 0<pchar>
