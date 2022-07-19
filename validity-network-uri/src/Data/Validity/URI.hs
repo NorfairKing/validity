@@ -24,10 +24,8 @@ instance Validity URI where
   validate u@URI {..} =
     mconcat
       [ genericValidate u,
-        declare "Looks valid according to the library" $
-          isURIReference (unsafeURIToString u),
         declare "Roundtrips through a parse" $
-          case parseURI (unsafeURIToString u) of
+          case parseURIReference (unsafeURIToString u) of
             Nothing -> False
             Just u' -> u' == u,
         validateScheme uriScheme,
@@ -35,6 +33,42 @@ instance Validity URI where
         validateQuery uriQuery,
         validateFragment uriFragment
       ]
+
+-- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
+-- @
+-- scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+-- @
+validateScheme :: String -> Validation
+validateScheme uriScheme =
+  mconcat
+    [ declare (unwords ["The scheme", show uriScheme, "is empty or ends in ':'"]) $
+        -- Laziness prevents the partial 'last' from blowing up.
+        null uriScheme || last uriScheme == ':',
+      case uriScheme of
+        [] -> valid
+        [c] -> declare "The first character is ALPHA" (charIsALPHA c)
+        (c : rest) ->
+          mconcat
+            [ declare "The first character is ALPHA" (charIsALPHA c),
+              decorateString
+                -- 'init' is safe because of case match above
+                (init rest)
+                validateSchemeChar
+            ]
+    ]
+
+-- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
+-- @
+-- scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+-- @
+validateSchemeChar :: Char -> Validation
+validateSchemeChar c =
+  declare "The character is alphanumeric, '+', '-' or '.'." $
+    case c of
+      '+' -> True
+      '-' -> True
+      '.' -> True
+      _ -> charIsALPHA c || charIsDIGIT c
 
 -- [RFC 3986, section 3.2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1)
 --
@@ -136,42 +170,6 @@ validatePort uriPort =
 -- @
 validatePortChar :: Char -> Validation
 validatePortChar c = declare "The character is a digit" $ charIsDIGIT c
-
--- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
--- @
--- scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
--- @
-validateScheme :: String -> Validation
-validateScheme uriScheme =
-  mconcat
-    [ declare (unwords ["The scheme", show uriScheme, "is empty or ends in ':'"]) $
-        -- Laziness prevents the partial 'last' from blowing up.
-        null uriScheme || last uriScheme == ':',
-      case uriScheme of
-        [] -> valid
-        [c] -> declare "The first character is ALPHA" (charIsALPHA c)
-        (c : rest) ->
-          mconcat
-            [ declare "The first character is ALPHA" (charIsALPHA c),
-              decorateString
-                -- 'init' is safe because of case match above
-                (init rest)
-                validateSchemeChar
-            ]
-    ]
-
--- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
--- @
--- scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
--- @
-validateSchemeChar :: Char -> Validation
-validateSchemeChar c =
-  declare "The character is alphanumeric, '+', '-' or '.'." $
-    case c of
-      '+' -> True
-      '-' -> True
-      '.' -> True
-      _ -> charIsALPHA c || charIsDIGIT c
 
 -- [RFC 3986, section 2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2)
 -- @

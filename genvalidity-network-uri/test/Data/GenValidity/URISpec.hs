@@ -100,7 +100,7 @@ spec = do
 
     it "produces URI that roundtrip through parsing" $
       forAll genValid $ \uri ->
-        case parseURI (unsafeURIToString uri) of
+        case parseURIReference (unsafeURIToString uri) of
           Nothing -> expectationFailure $ "Could not parse uri: " <> show (unsafeURIToString uri)
           Just uri' -> uri' `shouldBe` uri
 
