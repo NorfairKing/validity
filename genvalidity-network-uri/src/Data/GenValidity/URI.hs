@@ -39,16 +39,19 @@ instance GenValid URI where
     pure $ rectify URI {..}
 
 genScheme :: Gen String
-genScheme = nullOrAppend ':' <$> genSchemeString
-
-genSchemeString :: Gen String
-genSchemeString =
-  genStringBy $
-    oneof
-      [ genCharALPHA,
-        genCharDIGIT,
-        elements ['+', '-', '.']
-      ]
+genScheme =
+  oneof
+    [ pure "",
+      (:)
+        <$> genCharALPHA
+        <*> genStringBy
+          ( oneof
+              [ genCharALPHA,
+                genCharDIGIT,
+                elements ['+', '-', '.']
+              ]
+          )
+    ]
 
 genCharALPHA :: Gen Char
 genCharALPHA =

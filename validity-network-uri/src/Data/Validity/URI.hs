@@ -39,11 +39,18 @@ instance Validity URI where
         validateFragment uriFragment
       ]
 
+-- [RFC 3986, section 3.2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1)
+--
+-- @
+-- userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
+-- @
 validateUserInfo :: String -> Validation
 validateUserInfo uriUserInfo =
-  declare "The user info is empty or ends in @" $
-    -- Laziness prevents the partial 'last' from blowing up.
-    null uriUserInfo || last uriUserInfo == '@'
+  mconcat
+    [ declare "The user info is empty or ends in @" $
+        -- Laziness prevents the partial 'last' from blowing up.
+        null uriUserInfo || last uriUserInfo == '@'
+    ]
 
 validatePort :: String -> Validation
 validatePort uriPort =
@@ -58,21 +65,32 @@ validatePort uriPort =
     ]
 
 -- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
+-- @
+-- scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+-- @
 validateScheme :: String -> Validation
 validateScheme uriScheme =
   mconcat
     [ declare (unwords ["The scheme", show uriScheme, "is empty or ends in ':'"]) $
         -- Laziness prevents the partial 'last' from blowing up.
         null uriScheme || last uriScheme == ':',
-      if null uriScheme
-        then valid
-        else
-          decorateString
-            -- 'init' is safe because of 'null' above
-            (init uriScheme)
-            validateSchemeChar
+      case uriScheme of
+        [] -> valid
+        [c] -> declare "The first character is ALPHA" (charIsALPHA c)
+        (c : rest) ->
+          mconcat
+            [ declare "The first character is ALPHA" (charIsALPHA c),
+              decorateString
+                -- 'init' is safe because of case match above
+                (init rest)
+                validateSchemeChar
+            ]
     ]
 
+-- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
+-- @
+-- scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+-- @
 validateSchemeChar :: Char -> Validation
 validateSchemeChar c =
   declare "The character is alphanumeric, '+', '-' or '.'." $
