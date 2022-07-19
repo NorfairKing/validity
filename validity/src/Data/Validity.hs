@@ -48,6 +48,7 @@ module Data.Validity
     delve,
     decorate,
     decorateList,
+    decorateString,
     invalid,
     valid,
 
@@ -274,6 +275,12 @@ decorateList as func = mconcat $
   flip map (zip [0 ..] as) $ \(i, a) ->
     decorate (unwords ["The element at index", show (i :: Integer), "in the list"]) $
       func a
+
+-- | 'decorateList', but specifically for 'String's
+--
+-- > decorateString = decorateList
+decorateString :: String -> (Char -> Validation) -> Validation
+decorateString = decorateList
 
 -- | Construct a trivially invalid 'Validation'
 --

@@ -16,6 +16,8 @@ module Data.GenValidity.Utils
     arbPartition,
     shuffle,
     genListLength,
+    genStringBy,
+    genStringBy1,
     genListOf,
     genListOf1,
     genNonEmptyOf,
@@ -53,68 +55,68 @@ genSplit :: Int -> Gen (Int, Int)
 genSplit n
   | n < 0 = pure (0, 0)
   | otherwise = do
-      i <- choose (0, n)
-      let j = n - i
-      pure (i, j)
+    i <- choose (0, n)
+    let j = n - i
+    pure (i, j)
 
 -- | 'genSplit3 a' generates a triple '(b, c, d)' such that 'b + c + d' equals 'a'.
 genSplit3 :: Int -> Gen (Int, Int, Int)
 genSplit3 n
   | n < 0 = pure (0, 0, 0)
   | otherwise = do
-      (a, z) <- genSplit n
-      (b, c) <- genSplit z
-      return (a, b, c)
+    (a, z) <- genSplit n
+    (b, c) <- genSplit z
+    return (a, b, c)
 
 -- | 'genSplit4 a' generates a quadruple '(b, c, d, e)' such that 'b + c + d + e' equals 'a'.
 genSplit4 :: Int -> Gen (Int, Int, Int, Int)
 genSplit4 n
   | n < 0 = pure (0, 0, 0, 0)
   | otherwise = do
-      (y, z) <- genSplit n
-      (a, b) <- genSplit y
-      (c, d) <- genSplit z
-      return (a, b, c, d)
+    (y, z) <- genSplit n
+    (a, b) <- genSplit y
+    (c, d) <- genSplit z
+    return (a, b, c, d)
 
 -- | 'genSplit5 a' generates a quintuple '(b, c, d, e, f)' such that 'b + c + d + e + f' equals 'a'.
 genSplit5 :: Int -> Gen (Int, Int, Int, Int, Int)
 genSplit5 n
   | n < 0 = pure (0, 0, 0, 0, 0)
   | otherwise = do
-      (y, z) <- genSplit n
-      (a, b, c) <- genSplit3 y
-      (d, e) <- genSplit z
-      return (a, b, c, d, e)
+    (y, z) <- genSplit n
+    (a, b, c) <- genSplit3 y
+    (d, e) <- genSplit z
+    return (a, b, c, d, e)
 
 -- | 'genSplit6 a' generates a sextuple '(b, c, d, e, f, g)' such that 'b + c + d + e + f + g' equals 'a'.
 genSplit6 :: Int -> Gen (Int, Int, Int, Int, Int, Int)
 genSplit6 n
   | n < 0 = pure (0, 0, 0, 0, 0, 0)
   | otherwise = do
-      (y, z) <- genSplit n
-      (a, b, c) <- genSplit3 y
-      (d, e, f) <- genSplit3 z
-      return (a, b, c, d, e, f)
+    (y, z) <- genSplit n
+    (a, b, c) <- genSplit3 y
+    (d, e, f) <- genSplit3 z
+    return (a, b, c, d, e, f)
 
 -- | 'genSplit7 a' generates a septtuple '(b, c, d, e, f, g)' such that 'b + c + d + e + f + g' equals 'a'.
 genSplit7 :: Int -> Gen (Int, Int, Int, Int, Int, Int, Int)
 genSplit7 n
   | n < 0 = pure (0, 0, 0, 0, 0, 0, 0)
   | otherwise = do
-      (y, z) <- genSplit n
-      (a, b, c) <- genSplit3 y
-      (d, e, f, g) <- genSplit4 z
-      return (a, b, c, d, e, f, g)
+    (y, z) <- genSplit n
+    (a, b, c) <- genSplit3 y
+    (d, e, f, g) <- genSplit4 z
+    return (a, b, c, d, e, f, g)
 
 -- | 'genSplit8 a' generates a octtuple '(b, c, d, e, f, g, h)' such that 'b + c + d + e + f + g + h' equals 'a'.
 genSplit8 :: Int -> Gen (Int, Int, Int, Int, Int, Int, Int, Int)
 genSplit8 n
   | n < 0 = pure (0, 0, 0, 0, 0, 0, 0, 0)
   | otherwise = do
-      (y, z) <- genSplit n
-      (a, b, c, d) <- genSplit4 y
-      (e, f, g, h) <- genSplit4 z
-      return (a, b, c, d, e, f, g, h)
+    (y, z) <- genSplit n
+    (a, b, c, d) <- genSplit4 y
+    (e, f, g, h) <- genSplit4 z
+    return (a, b, c, d, e, f, g, h)
 
 -- | 'arbPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 arbPartition :: Int -> Gen [Int]
@@ -161,6 +163,14 @@ genListLengthWithSize maxLen = round . invT (fromIntegral maxLen) <$> choose (0,
        in if u < fc
             then a + sqrt (u * (b - a) * (c - a))
             else b - sqrt ((1 - u) * (b - a) * (b - c))
+
+-- Generate a String using a generator of 'Char's
+genStringBy :: Gen Char -> Gen String
+genStringBy = genListOf
+
+-- Generate a String using a generator of 'Char's
+genStringBy1 :: Gen Char -> Gen String
+genStringBy1 = genListOf1
 
 -- | A version of @listOf@ that takes size into account more accurately.
 --
