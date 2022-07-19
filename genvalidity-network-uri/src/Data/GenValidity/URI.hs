@@ -12,10 +12,11 @@ import Data.Validity.URI ()
 import Data.Word
 import Network.URI
 import Test.QuickCheck
+import Text.Printf
 
 instance GenValid URIAuth where
   genValid = (`suchThat` isValid) $ do
-    uriUserInfo <- nullOrAppend '@' <$> genURIComponentString
+    uriUserInfo <- genUserInfo
 
     uriRegName <- genURIStringSeparatedBy '.'
 
@@ -42,15 +43,77 @@ genScheme :: Gen String
 genScheme =
   oneof
     [ pure "",
-      (:)
-        <$> genCharALPHA
-        <*> genStringBy
-          ( oneof
-              [ genCharALPHA,
-                genCharDIGIT,
-                elements ['+', '-', '.']
-              ]
-          )
+      nullOrAppend ':'
+        <$> ( (:)
+                <$> genCharALPHA
+                <*> genStringBy
+                  ( oneof
+                      [ genCharALPHA,
+                        genCharDIGIT,
+                        elements ['+', '-', '.']
+                      ]
+                  )
+            )
+    ]
+
+genUserInfo :: Gen String
+genUserInfo =
+  nullOrAppend '@' . concat
+    <$> genListOf
+      ( oneof
+          [ (: []) <$> genCharUnreserved,
+            genPercentEncodedChar,
+            (: []) <$> genCharSubDelim,
+            pure ":"
+          ]
+      )
+
+genPercentEncodedChar :: Gen String
+genPercentEncodedChar = do
+  octet <- choose (0, 255)
+  pure $ '%' : printf "%x" (octet :: Word8)
+
+genCharUnreserved :: Gen Char
+genCharUnreserved =
+  oneof
+    [ elements ['+', '-', '.', '~'],
+      genCharALPHA,
+      genCharDIGIT
+    ]
+
+genCharReserved :: Gen Char
+genCharReserved =
+  oneof
+    [ genCharGenDelim,
+      genCharSubDelim
+    ]
+
+genCharGenDelim :: Gen Char
+genCharGenDelim =
+  elements
+    [ ':',
+      '/',
+      '?',
+      '#',
+      '[',
+      ']',
+      '@'
+    ]
+
+genCharSubDelim :: Gen Char
+genCharSubDelim =
+  elements
+    [ '!',
+      '$',
+      '&',
+      '\'',
+      '(',
+      ')',
+      '*',
+      '+',
+      ',',
+      ';',
+      '='
     ]
 
 genCharALPHA :: Gen Char

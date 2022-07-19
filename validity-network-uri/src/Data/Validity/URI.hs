@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
@@ -49,8 +50,34 @@ validateUserInfo uriUserInfo =
   mconcat
     [ declare "The user info is empty or ends in @" $
         -- Laziness prevents the partial 'last' from blowing up.
-        null uriUserInfo || last uriUserInfo == '@'
+        null uriUserInfo || last uriUserInfo == '@',
+      case uriUserInfo of
+        [] -> valid
+        _ ->
+          decorateString
+            -- init is safe because of the case above
+            (init uriUserInfo)
+            validateUserInfoChar
     ]
+
+-- [RFC 3986, section 3.2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1)
+--
+-- @
+-- userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
+-- @
+validateUserInfoChar :: Char -> Validation
+validateUserInfoChar c =
+  declare "The character is unreserved, part of a percent-encoding, a sub-delimiter, or ':'" $
+    case c of
+      ':' -> True
+      _ ->
+        charIsUnreserved c
+          ||
+          -- NOTE:
+          -- Technically this is not good enough, because incorrectly-percent-encoded values should be disallowed.
+          -- However, this is good enough because we do the extra parsing elsewhere
+          charIsPossiblyPartOfPercentEncoding c
+          || charIsSubDelim c
 
 validatePort :: String -> Validation
 validatePort uriPort =
@@ -100,7 +127,70 @@ validateSchemeChar c =
       '.' -> True
       _ -> charIsALPHA c || charIsDIGIT c
 
---  [RFC 3986, section 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3)
+-- [RFC 3986, section 2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2)
+-- @
+-- unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+-- @
+charIsUnreserved :: Char -> Bool
+charIsUnreserved = \case
+  '+' -> True
+  '-' -> True
+  '.' -> True
+  '~' -> True
+  c -> charIsALPHA c || charIsDIGIT c
+
+-- [RFC 3986, section 2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2)
+-- @
+-- reserved      = gen-delims / sub-delims
+-- @
+charIsReserved :: Char -> Bool
+charIsReserved c = charIsGenDelim c || charIsSubDelim c
+
+-- [RFC 3986, section 2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2)
+-- @
+-- gen-delims  = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+-- @
+charIsGenDelim :: Char -> Bool
+charIsGenDelim = \case
+  ':' -> True
+  '/' -> True
+  '?' -> True
+  '#' -> True
+  '[' -> True
+  ']' -> True
+  '@' -> True
+  _ -> False
+
+-- [RFC 3986, section 2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-2.2)
+-- @
+-- sub-delims  = "!" / "$" / "&" / "'" / "(" / ")"
+--             / "*" / "+" / "," / ";" / "="
+-- @
+charIsSubDelim :: Char -> Bool
+charIsSubDelim = \case
+  '!' -> True
+  '$' -> True
+  '&' -> True
+  '\'' -> True
+  '(' -> True
+  ')' -> True
+  '*' -> True
+  '+' -> True
+  ',' -> True
+  ';' -> True
+  '=' -> True
+  _ -> False
+
+-- [RFC 3986, section 2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)
+-- @
+-- pct-encoded = "%" HEXDIG HEXDIG
+-- @
+charIsPossiblyPartOfPercentEncoding :: Char -> Bool
+charIsPossiblyPartOfPercentEncoding = \case
+  '%' -> True
+  c -> charIsHEXDIG c
+
+-- [RFC 3986, section 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3)
 -- @
 -- ALPHA (%41-%5A and %61-%7A)
 -- @
@@ -109,6 +199,19 @@ charIsALPHA c =
   let o = Char.ord c
    in (0x41 <= o && o <= 0x5A)
         || (0x61 <= o && o <= 0x7A)
+
+-- [RFC 3986, section 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3)
+-- @
+-- The uppercase hexadecimal digits 'A' through 'F' are equivalent to
+-- the lowercase digits 'a' through 'f', respectively.  If two URIs
+-- differ only in the case of hexadecimal digits used in percent-encoded
+-- octets, they are equivalent.
+-- @
+charIsHEXDIG :: Char -> Bool
+charIsHEXDIG c =
+  charIsDIGIT c
+    || ('A' <= c && c <= 'F')
+    || ('a' <= c && c <= 'f')
 
 --  [RFC 3986, section 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3)
 -- @

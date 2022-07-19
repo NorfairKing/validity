@@ -39,6 +39,13 @@ spec = do
             Nothing -> pure ()
             Just err -> expectationFailure err
 
+    describe "genUserInfo" $ do
+      it "generates user info  that are considered valid by validateUserInfo" $
+        forAll genUserInfo $ \userinfoCandidate ->
+          case prettyValidation (validateUserInfo userinfoCandidate) of
+            Nothing -> pure ()
+            Just err -> expectationFailure err
+
     -- describe "genURI" $ do
     --   it "generates valid URI values" $
     --     genGeneratesValid genURI
@@ -82,3 +89,5 @@ spec = do
         case parseURI (unsafeURIToString uri) of
           Nothing -> expectationFailure $ "Could not parse uri: " <> show (unsafeURIToString uri)
           Just uri' -> uri' `shouldBe` uri
+
+    runIO $ sample (genValid @URI)
