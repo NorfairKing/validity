@@ -24,10 +24,20 @@ instance Validity URI where
   validate u@URI {..} =
     mconcat
       [ genericValidate u,
-        declare "Roundtrips through a parse" $
-          case parseURIReference (unsafeURIToString u) of
-            Nothing -> False
-            Just u' -> u' == u,
+        let rendered = unsafeURIToString u
+            parsed = parseURIReference rendered
+            explanation =
+              unlines
+                [ "Roundtrips through a parse",
+                  "rendered:",
+                  rendered,
+                  "parsed:",
+                  show $ unsafeURIToString <$> parsed
+                ]
+         in declare explanation $
+              case parseURIReference rendered of
+                Nothing -> False
+                Just u' -> u' == u,
         validateScheme uriScheme,
         validatePath uriPath,
         validateQuery uriQuery,

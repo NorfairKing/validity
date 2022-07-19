@@ -81,41 +81,41 @@ spec = do
             Nothing -> pure ()
             Just err -> expectationFailure err
 
-    -- describe "genURI" $ do
-    --   it "generates valid URI values" $
-    --     genGeneratesValid genURI
-    --   it "generates values that parse using parseURI" $
-    --     forAll genURI $ \uri ->
-    --       case parseURI (unsafeURIToString uri) of
-    --         Nothing -> expectationFailure "Should have parsed."
-    --         Just uri' -> uri' `shouldBe` uri
+    describe "genAbsoluteURI" $ do
+      it "generates valid URI values" $
+        genGeneratesValid genAbsoluteURI
+      it "generates values that parse using parseAbsoluteURI" $
+        forAll genAbsoluteURI $ \uri ->
+          case parseAbsoluteURI (unsafeURIToString uri) of
+            Nothing -> expectationFailure "Should have parsed."
+            Just uri' -> uri' `shouldBe` uri
 
-    -- describe "genURIReference" $ do
-    --   it "generates valid URI values" $
-    --     genGeneratesValid genURIReference
-    --   it "generates values that parse using parseURIReference" $
-    --     forAll genURIReference $ \uri ->
-    --       case parseURIReference (unsafeURIToString uri) of
-    --         Nothing -> expectationFailure "Should have parsed."
-    --         Just uri' -> uri' `shouldBe` uri
+    describe "genURIReference" $ do
+      it "generates valid URI values" $
+        genGeneratesValid genURIReference
+      it "generates values that parse using parseURIReference" $
+        forAll genURIReference $ \uri ->
+          case parseURIReference (unsafeURIToString uri) of
+            Nothing -> expectationFailure "Should have parsed."
+            Just uri' -> uri' `shouldBe` uri
 
-    -- describe "genRelativeReference" $ do
-    --   it "generates valid URI values" $
-    --     genGeneratesValid genRelativeReference
-    --   it "generates values that parse using parseRelativeReference" $
-    --     forAll genRelativeReference $ \uri ->
-    --       case parseRelativeReference (unsafeURIToString uri) of
-    --         Nothing -> expectationFailure "Should have parsed."
-    --         Just uri' -> uri' `shouldBe` uri
+    describe "genRelativeReference" $ do
+      it "generates valid URI values" $
+        genGeneratesValid genRelativeReference
+      it "generates values that parse using parseRelativeReference" $
+        forAll genRelativeReference $ \uri ->
+          case parseRelativeReference (unsafeURIToString uri) of
+            Nothing -> expectationFailure "Should have parsed."
+            Just uri' -> uri' `shouldBe` uri
 
-    -- describe "genAbsoluteURI" $ do
-    --   it "generates valid URI values" $
-    --     genGeneratesValid genAbsoluteURI
-    --   it "generates values that parse using parseAbsoluteURI" $
-    --     forAll genAbsoluteURI $ \uri ->
-    --       case parseAbsoluteURI (unsafeURIToString uri) of
-    --         Nothing -> expectationFailure "Should have parsed."
-    --         Just uri' -> uri' `shouldBe` uri
+    describe "genURI" $ do
+      it "generates valid URI values" $
+        genGeneratesValid genURI
+      it "generates values that parse using parseURI" $
+        forAll genURI $ \uri ->
+          case parseURI (unsafeURIToString uri) of
+            Nothing -> expectationFailure "Should have parsed."
+            Just uri' -> uri' `shouldBe` uri
 
     genValidSpec @URI
 
@@ -124,5 +124,3 @@ spec = do
         case parseURIReference (unsafeURIToString uri) of
           Nothing -> expectationFailure $ "Could not parse uri: " <> show (unsafeURIToString uri)
           Just uri' -> uri' `shouldBe` uri
-
-    runIO $ sample (genValid @URI)

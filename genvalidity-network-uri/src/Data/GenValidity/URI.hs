@@ -144,7 +144,7 @@ genPath =
       genPathAbsolute,
       genPathNoScheme,
       genPathRootless,
-      pure ""
+      genPathEmpty
     ]
 
 -- @
@@ -181,6 +181,12 @@ genPathRootless = do
   firstSegment <- genSegmentNz
   restSegments <- genListOf genSegment
   pure $ firstSegment ++ concatMap (\s -> '/' : s) restSegments
+
+-- @
+-- path-empty    = 0<pchar>
+-- @
+genPathEmpty :: Gen String
+genPathEmpty = pure ""
 
 -- @
 -- segment       = *pchar
@@ -313,17 +319,60 @@ genCharDIGIT =
   Char.chr
     <$> choose (0x30, 0x39)
 
--- genURI :: Gen URI
--- genURI = undefined
---
--- genURIReference :: Gen URI
--- genURIReference = undefined
---
--- genRelativeReference :: Gen URI
--- genRelativeReference = undefined
---
--- genAbsoluteURI :: Gen URI
--- genAbsoluteURI = undefined
+genURIReference :: Gen URI
+genURIReference =
+  oneof
+    [ genURI,
+      genRelativeReference
+    ]
+
+genURI :: Gen URI
+genURI = (`suchThat` isValid) $ do
+  uriScheme <- genScheme `suchThat` (not . null)
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  uriFragment <- genFragment
+  pure URI {..}
+
+genRelativeReference :: Gen URI
+genRelativeReference = (`suchThat` isValid) $ do
+  let uriScheme = ""
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  uriFragment <- genFragment
+  pure URI {..}
+
+genAbsoluteURI :: Gen URI
+genAbsoluteURI = (`suchThat` isValid) $ do
+  uriScheme <- genScheme `suchThat` (not . null)
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  let uriFragment = ""
+  pure URI {..}
 
 nullOrAppend :: Char -> String -> String
 nullOrAppend c s = if null s then s else s ++ [c]
