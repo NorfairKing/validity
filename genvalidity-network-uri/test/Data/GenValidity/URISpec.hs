@@ -74,6 +74,13 @@ spec = do
             Nothing -> pure ()
             Just err -> expectationFailure err
 
+    describe "genFragment" $ do
+      it "generates user info  that are considered valid by validateFragment" $
+        forAll genFragment $ \portCandidate ->
+          case prettyValidation (validateFragment portCandidate) of
+            Nothing -> pure ()
+            Just err -> expectationFailure err
+
     -- describe "genURI" $ do
     --   it "generates valid URI values" $
     --     genGeneratesValid genURI

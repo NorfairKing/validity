@@ -28,7 +28,7 @@ instance GenValid URI where
     uriAuthority <- genValid
     uriPath <- genPath
     uriQuery <- genQuery
-    uriFragment <- nullOrPrepend '#' <$> genURIComponentString
+    uriFragment <- genFragment
     pure $ URI {..}
 
 genScheme :: Gen String
@@ -39,24 +39,39 @@ genScheme =
         <$> ( (:)
                 <$> genCharALPHA
                 <*> genStringBy
-                  ( oneof
-                      [ genCharALPHA,
-                        genCharDIGIT,
-                        elements ['+', '-', '.']
+                  ( frequency
+                      [ (4, genCharALPHA),
+                        (3, genCharDIGIT),
+                        (1, elements ['+', '-', '.'])
                       ]
                   )
-            )
+            ),
+      -- Common schemes
+      elements
+        [ "http:",
+          "https:",
+          "ftp:",
+          "ftps:",
+          "ldap:",
+          "mailto:",
+          "news:",
+          "tel:",
+          "telnet:",
+          "urn:",
+          "ws:",
+          "wss:"
+        ]
     ]
 
 genUserInfo :: Gen String
 genUserInfo =
   nullOrAppend '@' . concat
     <$> genListOf
-      ( oneof
-          [ (: []) <$> genCharUnreserved,
-            genPercentEncodedChar,
-            (: []) <$> genCharSubDelim,
-            pure ":"
+      ( frequency
+          [ (4, (: []) <$> genCharUnreserved),
+            (1, genPercentEncodedChar),
+            (1, (: []) <$> genCharSubDelim),
+            (1, pure ":")
           ]
       )
 
@@ -70,7 +85,11 @@ genHost =
 
 genIPLiteral :: Gen String
 genIPLiteral = do
-  a <- oneof [genIPv6Address, genIPvFuture]
+  a <-
+    oneof
+      [ genIPv6Address,
+        genIPvFuture
+      ]
   pure $ "[" ++ a ++ "]"
 
 genIPv6Address :: Gen String
@@ -81,10 +100,10 @@ genIPvFuture = do
   hd <- genStringBy1 genCharHEXDIG
   s <-
     genStringBy1
-      ( oneof
-          [ genCharUnreserved,
-            genCharSubDelim,
-            pure ':'
+      ( frequency
+          [ (4, genCharUnreserved),
+            (1, genCharSubDelim),
+            (1, pure ':')
           ]
       )
   pure $ concat ["v", hd, ".", s]
@@ -96,10 +115,10 @@ genRegName :: Gen String
 genRegName =
   concat
     <$> genListOf
-      ( oneof
-          [ (: []) <$> genCharUnreserved,
-            genPercentEncodedChar,
-            (: []) <$> genCharSubDelim
+      ( frequency
+          [ (4, (: []) <$> genCharUnreserved),
+            (1, genPercentEncodedChar),
+            (1, (: []) <$> genCharSubDelim)
           ]
       )
 
@@ -167,13 +186,13 @@ genPathRootless = do
 -- segment       = *pchar
 -- @
 genSegment :: Gen String
-genSegment = concat <$> genListOf genPChar
+genSegment = concat <$> genListOf genPathChar
 
 -- @
 -- segment-nz    = 1*pchar
 -- @
 genSegmentNz :: Gen String
-genSegmentNz = concat <$> genListOf1 genPChar
+genSegmentNz = concat <$> genListOf1 genPathChar
 
 -- @
 -- segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
@@ -183,24 +202,24 @@ genSegmentNzNc :: Gen String
 genSegmentNzNc =
   concat
     <$> genListOf1
-      ( oneof
-          [ (: []) <$> genCharUnreserved,
-            genPercentEncodedChar,
-            (: []) <$> genCharSubDelim,
-            pure "@"
+      ( frequency
+          [ (4, (: []) <$> genCharUnreserved),
+            (1, genPercentEncodedChar),
+            (1, (: []) <$> genCharSubDelim),
+            (1, pure "@")
           ]
       )
 
 -- @
 -- pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 -- @
-genPChar :: Gen String
-genPChar =
-  oneof
-    [ (: []) <$> genCharUnreserved,
-      genPercentEncodedChar,
-      (: []) <$> genCharSubDelim,
-      elements [":", "@"]
+genPathChar :: Gen String
+genPathChar =
+  frequency
+    [ (4, (: []) <$> genCharUnreserved),
+      (1, genPercentEncodedChar),
+      (1, (: []) <$> genCharSubDelim),
+      (1, elements [":", "@"])
     ]
 
 -- @
@@ -208,24 +227,39 @@ genPChar =
 -- @
 genQuery :: Gen String
 genQuery =
-  nullOrAppend '?' . concat
+  nullOrPrepend '?' . concat
     <$> genListOf
-      ( oneof
-          [ genPChar,
-            elements
-              [ "/",
-                "?",
-                "&" -- '&' is not specified but very common in queries so we add it here.
-              ]
+      ( frequency
+          [ (4, genPathChar),
+            ( 1,
+              elements
+                [ "/",
+                  "?",
+                  "&" -- '&' is not specified but very common in queries so we add it here.
+                ]
+            )
+          ]
+      )
+
+-- @
+-- fragment    = *( pchar / "/" / "?" )
+-- @
+genFragment :: Gen String
+genFragment =
+  nullOrPrepend '#' . concat
+    <$> genListOf
+      ( frequency
+          [ (4, genPathChar),
+            (1, elements ["/", "?"])
           ]
       )
 
 genCharUnreserved :: Gen Char
 genCharUnreserved =
-  oneof
-    [ elements ['+', '-', '.', '~'],
-      genCharALPHA,
-      genCharDIGIT
+  frequency
+    [ (1, elements ['+', '-', '.', '~']),
+      (4, genCharALPHA),
+      (3, genCharDIGIT)
     ]
 
 genCharReserved :: Gen Char
@@ -290,29 +324,6 @@ genCharDIGIT =
 --
 -- genAbsoluteURI :: Gen URI
 -- genAbsoluteURI = undefined
-
--- [RFC 3986 section 1.2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-1.2.1)
---
--- @
--- The URI syntax has been designed with global transcription as one of
--- its main considerations.  A URI is a sequence of characters from a
--- very limited set: the letters of the basic Latin alphabet, digits,
--- and a few special characters.
--- @
-genURIChar :: Gen Char
-genURIChar =
-  (chr <$> choose (0, 127)) `suchThat` isAllowedInURI
-
-genURIString :: Gen String
-genURIString = genListOf genURIChar
-
-genURIComponentString :: Gen String
-genURIComponentString = escapeURIString isUnescapedInURIComponent <$> genListOf genURIChar
-
-genURIStringSeparatedBy :: Char -> Gen String
-genURIStringSeparatedBy c = do
-  ll <- (`div` 5) . max 1 <$> genListLength
-  intercalate [c] <$> replicateM ll (escapeURIString isUnescapedInURIComponent <$> genURIComponentString)
 
 nullOrAppend :: Char -> String -> String
 nullOrAppend c s = if null s then s else s ++ [c]
