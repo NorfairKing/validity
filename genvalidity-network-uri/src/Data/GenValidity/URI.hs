@@ -18,25 +18,17 @@ import Text.Printf
 instance GenValid URIAuth where
   genValid = (`suchThat` isValid) $ do
     uriUserInfo <- genUserInfo
-
     uriRegName <- genHost
-
     uriPort <- genPort
-
     pure $ URIAuth {..}
 
 instance GenValid URI where
   genValid = (`suchThat` isValid) $ do
     uriScheme <- genScheme
-
     uriAuthority <- genValid
-
     uriPath <- genPath
-
-    uriQuery <- nullOrAppend '?' <$> genURIStringSeparatedBy '&'
-
+    uriQuery <- genQuery
     uriFragment <- nullOrPrepend '#' <$> genURIComponentString
-
     pure $ URI {..}
 
 genScheme :: Gen String
@@ -210,6 +202,23 @@ genPChar =
       (: []) <$> genCharSubDelim,
       elements [":", "@"]
     ]
+
+-- @
+-- query       = *( pchar / "/" / "?" )
+-- @
+genQuery :: Gen String
+genQuery =
+  nullOrAppend '?' . concat
+    <$> genListOf
+      ( oneof
+          [ genPChar,
+            elements
+              [ "/",
+                "?",
+                "&" -- '&' is not specified but very common in queries so we add it here.
+              ]
+          ]
+      )
 
 genCharUnreserved :: Gen Char
 genCharUnreserved =

@@ -67,6 +67,13 @@ spec = do
             Nothing -> pure ()
             Just err -> expectationFailure err
 
+    describe "genQuery" $ do
+      it "generates user info  that are considered valid by validateQuery" $
+        forAll genQuery $ \portCandidate ->
+          case prettyValidation (validateQuery portCandidate) of
+            Nothing -> pure ()
+            Just err -> expectationFailure err
+
     -- describe "genURI" $ do
     --   it "generates valid URI values" $
     --     genGeneratesValid genURI
