@@ -1,6 +1,7 @@
 - ignore: { name: "Use forM_" }
 - ignore: { name: "Redundant bracket" }
 - ignore: { name: "Use <$>" }
+- ignore: { name: "Use ++" }
 - ignore: { name: "Use <&>" }
 - ignore: { name: "Redundant <$>" }
 - ignore: { name: "Avoid lambda using `infix`" }

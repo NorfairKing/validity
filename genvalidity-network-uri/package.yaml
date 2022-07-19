@@ -17,6 +17,7 @@ library:
   source-dirs: src
   dependencies:
   - genvalidity >=1.0
+  - iproute
   - validity >=0.5
   - validity-network-uri
 
@@ -24,6 +25,7 @@ tests:
   genvalidity-network-uri-test:
     main: Spec.hs
     source-dirs: test
+    build-tools: sydtest-discover
     ghc-options:
     - -threaded
     - -rtsopts
@@ -31,9 +33,9 @@ tests:
     - -Wall
     dependencies:
     - genvalidity
-    - genvalidity-hspec
+    - genvalidity-sydtest
     - genvalidity-network-uri
-    - hspec
+    - sydtest
     - validity-network-uri
 
 benchmarks:

@@ -1,3 +1,4 @@
+{-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Data.InstanceSpec

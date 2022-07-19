@@ -1,56 +1,392 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# OPTIONS_GHC -Wno-orphans -Wno-duplicate-exports #-}
 
-module Data.GenValidity.URI where
+-- | 'GenValid' instances for 'URI' and 'URIAuth'
+--
+-- The main API of this module is in the orphan instances @GenValid URI@ and @GenValid URIAuth@.
+module Data.GenValidity.URI
+  ( -- ** Specific Generators
+    genURIReference,
+    genURI,
+    genRelativeReference,
+    genAbsoluteURI,
 
-import Control.Monad
-import Data.Char
+    -- * Export everything for testing, **You probably do not want to use any of the functions below**.
+    module Data.GenValidity.URI,
+  )
+where
+
+import Data.Char as Char
 import Data.GenValidity
-import Data.List
-import Data.Validity.URI ()
+import Data.IP
+import Data.Validity.URI
 import Data.Word
 import Network.URI
 import Test.QuickCheck
+import Text.Printf
 
-genURIChar :: Gen Char
-genURIChar =
-  (chr <$> choose (0, 127)) `suchThat` isAllowedInURI
+-- | Generate an 'URI' that parses using 'parseURIReference'.
+genURIReference :: Gen URI
+genURIReference =
+  oneof
+    [ genURI,
+      genRelativeReference
+    ]
 
-genURIString :: Gen String
-genURIString = genListOf genURIChar
+-- | Generate an 'URI' that parses using 'parseURI'.
+genURI :: Gen URI
+genURI = (`suchThatMap` (parseURI . dangerousURIToString)) $ do
+  uriScheme <- genScheme `suchThat` (not . null)
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  uriFragment <- genFragment
+  pure URI {..}
 
-genURIComponentString :: Gen String
-genURIComponentString = escapeURIString isUnescapedInURIComponent <$> genListOf genURIChar
+-- | Generate an 'URI' that parses using 'parseRelativeReference'.
+genRelativeReference :: Gen URI
+genRelativeReference = (`suchThatMap` (parseRelativeReference . dangerousURIToString)) $ do
+  let uriScheme = ""
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  uriFragment <- genFragment
+  pure URI {..}
 
-genURIStringSeparatedBy :: Char -> Gen String
-genURIStringSeparatedBy c = do
-  ll <- (`div` 5) . max 1 <$> genListLength
-  intercalate [c] <$> replicateM ll (escapeURIString isUnescapedInURIComponent <$> genURIComponentString)
-
-instance GenValid URI where
-  genValid = (`suchThat` isValid) $ do
-    uriScheme <- nullOrAppend ':' <$> genURIComponentString
-
-    uriAuthority <- genValid
-
-    uriPath <- nullOrPrepend '/' <$> genURIStringSeparatedBy '/'
-
-    uriQuery <- nullOrAppend '?' <$> genURIStringSeparatedBy '&'
-
-    uriFragment <- nullOrPrepend '#' <$> genURIComponentString
-
-    pure $ rectify URI {..}
+-- | Generate an 'URI' that parses using 'parseAbsoluteURI'.
+genAbsoluteURI :: Gen URI
+genAbsoluteURI = (`suchThatMap` (parseAbsoluteURI . dangerousURIToString)) $ do
+  uriScheme <- genScheme `suchThat` (not . null)
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  let uriFragment = ""
+  pure URI {..}
 
 instance GenValid URIAuth where
   genValid = (`suchThat` isValid) $ do
-    uriUserInfo <- nullOrAppend '@' <$> genURIComponentString
+    uriUserInfo <- genUserInfo
+    uriRegName <- genHost
+    uriPort <- genPort
+    pure $ URIAuth {..}
 
-    uriRegName <- genURIStringSeparatedBy '.'
+instance GenValid URI where
+  genValid = (`suchThat` isValid) . (`suchThatMap` (parseURIReference . dangerousURIToString)) $ do
+    uriScheme <- genScheme
+    uriAuthority <- genValid
+    uriPath <- genPath
+    uriQuery <- genQuery
+    uriFragment <- genFragment
+    pure $ URI {..}
 
-    port <- genValid :: Gen Word16
-    let uriPort = ':' : show port
+genScheme :: Gen String
+genScheme =
+  oneof
+    [ pure "",
+      nullOrAppend ':'
+        <$> ( (:)
+                <$> genCharALPHA
+                <*> genStringBy
+                  ( frequency
+                      [ (4, genCharALPHA),
+                        (3, genCharDIGIT),
+                        (1, elements ['+', '-', '.'])
+                      ]
+                  )
+            ),
+      -- Common schemes
+      elements
+        [ "http:",
+          "https:",
+          "ftp:",
+          "ftps:",
+          "ldap:",
+          "mailto:",
+          "news:",
+          "tel:",
+          "telnet:",
+          "urn:",
+          "ws:",
+          "wss:"
+        ]
+    ]
 
-    pure $ rectifyAuth URIAuth {..}
+genUserInfo :: Gen String
+genUserInfo =
+  nullOrAppend '@' . concat
+    <$> genListOf
+      ( frequency
+          [ (4, (: []) <$> genCharUnreserved),
+            (1, genPercentEncodedChar),
+            (1, (: []) <$> genCharSubDelim),
+            (1, pure ":")
+          ]
+      )
+
+genHost :: Gen String
+genHost =
+  oneof
+    [ genIPLiteral,
+      genIPv4Address,
+      genRegName
+    ]
+
+genIPLiteral :: Gen String
+genIPLiteral = do
+  a <-
+    oneof
+      [ genIPv6Address,
+        genIPvFuture
+      ]
+  pure $ "[" ++ a ++ "]"
+
+genIPv6Address :: Gen String
+genIPv6Address = show . toIPv6w <$> genValid
+
+genIPvFuture :: Gen String
+genIPvFuture = do
+  hd <- genStringBy1 genCharHEXDIG
+  s <-
+    genStringBy1
+      ( frequency
+          [ (4, genCharUnreserved),
+            (1, genCharSubDelim),
+            (1, pure ':')
+          ]
+      )
+  pure $ concat ["v", hd, ".", s]
+
+genIPv4Address :: Gen String
+genIPv4Address = show . toIPv4w <$> genValid
+
+genRegName :: Gen String
+genRegName =
+  concat
+    <$> genListOf
+      ( frequency
+          [ (4, (: []) <$> genCharUnreserved),
+            (1, genPercentEncodedChar),
+            (1, (: []) <$> genCharSubDelim)
+          ]
+      )
+
+genPort :: Gen String
+genPort = nullOrPrepend ':' <$> genStringBy genCharDIGIT
+
+genPercentEncodedChar :: Gen String
+genPercentEncodedChar = do
+  octet <- choose (0, 255)
+  pure $ '%' : printf "%x" (octet :: Word8)
+
+genPath :: Gen String
+genPath =
+  -- @
+  -- path          = path-abempty    ; begins with "/" or is empty
+  --               / path-absolute   ; begins with "/" but not "//"
+  --               / path-noscheme   ; begins with a non-colon segment
+  --               / path-rootless   ; begins with a segment
+  --               / path-empty      ; zero characters
+  -- @
+  oneof
+    [ genPathAbEmpty,
+      genPathAbsolute,
+      genPathNoScheme,
+      genPathRootless,
+      genPathEmpty
+    ]
+
+-- @
+-- path-abempty  = *( "/" segment )
+-- @
+genPathAbEmpty :: Gen String
+genPathAbEmpty = do
+  segments <- genListOf genSegment
+  pure $ concatMap ('/' :) segments
+
+-- @
+-- path-absolute = "/" [ segment-nz *( "/" segment ) ]
+-- @
+genPathAbsolute :: Gen String
+genPathAbsolute = do
+  firstSegment <- genSegmentNz
+  restSegments <- genListOf genSegment
+  pure $ '/' : firstSegment ++ concatMap ('/' :) restSegments
+
+-- @
+-- path-noscheme = segment-nz-nc *( "/" segment )
+-- @
+genPathNoScheme :: Gen String
+genPathNoScheme = do
+  firstSegment <- genSegmentNzNc
+  restSegments <- genListOf genSegment
+  pure $ firstSegment ++ concatMap ('/' :) restSegments
+
+-- @
+-- path-rootless = segment-nz *( "/" segment )
+-- @
+genPathRootless :: Gen String
+genPathRootless = do
+  firstSegment <- genSegmentNz
+  restSegments <- genListOf genSegment
+  pure $ firstSegment ++ concatMap ('/' :) restSegments
+
+-- @
+-- path-empty    = 0<pchar>
+-- @
+genPathEmpty :: Gen String
+genPathEmpty = pure ""
+
+-- @
+-- segment       = *pchar
+-- @
+genSegment :: Gen String
+genSegment = concat <$> genListOf genPathChar
+
+-- @
+-- segment-nz    = 1*pchar
+-- @
+genSegmentNz :: Gen String
+genSegmentNz = concat <$> genListOf1 genPathChar
+
+-- @
+-- segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+--               ; non-zero-length segment without any colon ":"
+-- @
+genSegmentNzNc :: Gen String
+genSegmentNzNc =
+  concat
+    <$> genListOf1
+      ( frequency
+          [ (4, (: []) <$> genCharUnreserved),
+            (1, genPercentEncodedChar),
+            (1, (: []) <$> genCharSubDelim),
+            (1, pure "@")
+          ]
+      )
+
+-- @
+-- pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+-- @
+genPathChar :: Gen String
+genPathChar =
+  frequency
+    [ (4, (: []) <$> genCharUnreserved),
+      (1, genPercentEncodedChar),
+      (1, (: []) <$> genCharSubDelim),
+      (1, elements [":", "@"])
+    ]
+
+-- @
+-- query       = *( pchar / "/" / "?" )
+-- @
+genQuery :: Gen String
+genQuery =
+  nullOrPrepend '?' . concat
+    <$> genListOf
+      ( frequency
+          [ (4, genPathChar),
+            ( 1,
+              elements
+                [ "/",
+                  "?",
+                  "&" -- '&' is not specified but very common in queries so we add it here.
+                ]
+            )
+          ]
+      )
+
+-- @
+-- fragment    = *( pchar / "/" / "?" )
+-- @
+genFragment :: Gen String
+genFragment =
+  nullOrPrepend '#' . concat
+    <$> genListOf
+      ( frequency
+          [ (4, genPathChar),
+            (1, elements ["/", "?"])
+          ]
+      )
+
+genCharUnreserved :: Gen Char
+genCharUnreserved =
+  frequency
+    [ (1, elements ['+', '-', '.', '~']),
+      (4, genCharALPHA),
+      (3, genCharDIGIT)
+    ]
+
+genCharReserved :: Gen Char
+genCharReserved =
+  oneof
+    [ genCharGenDelim,
+      genCharSubDelim
+    ]
+
+genCharGenDelim :: Gen Char
+genCharGenDelim =
+  elements
+    [ ':',
+      '/',
+      '?',
+      '#',
+      '[',
+      ']',
+      '@'
+    ]
+
+genCharSubDelim :: Gen Char
+genCharSubDelim =
+  elements
+    [ '!',
+      '$',
+      '&',
+      '\'',
+      '(',
+      ')',
+      '*',
+      '+',
+      ',',
+      ';',
+      '='
+    ]
+
+genCharHEXDIG :: Gen Char
+genCharHEXDIG = elements $ ['1' .. '9'] ++ ['A' .. 'F'] ++ ['a' .. 'f']
+
+genCharALPHA :: Gen Char
+genCharALPHA =
+  Char.chr
+    <$> oneof
+      [ choose (0x41, 0x5A),
+        choose (0x61, 0x7A)
+      ]
+
+genCharDIGIT :: Gen Char
+genCharDIGIT =
+  Char.chr
+    <$> choose (0x30, 0x39)
 
 nullOrAppend :: Char -> String -> String
 nullOrAppend c s = if null s then s else s ++ [c]

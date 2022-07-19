@@ -16,6 +16,8 @@ module Data.GenValidity.Utils
     arbPartition,
     shuffle,
     genListLength,
+    genStringBy,
+    genStringBy1,
     genListOf,
     genListOf1,
     genNonEmptyOf,
@@ -161,6 +163,14 @@ genListLengthWithSize maxLen = round . invT (fromIntegral maxLen) <$> choose (0,
        in if u < fc
             then a + sqrt (u * (b - a) * (c - a))
             else b - sqrt ((1 - u) * (b - a) * (b - c))
+
+-- Generate a String using a generator of 'Char's
+genStringBy :: Gen Char -> Gen String
+genStringBy = genListOf
+
+-- Generate a String using a generator of 'Char's
+genStringBy1 :: Gen Char -> Gen String
+genStringBy1 = genListOf1
 
 -- | A version of @listOf@ that takes size into account more accurately.
 --
