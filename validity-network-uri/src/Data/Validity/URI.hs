@@ -1,22 +1,31 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# OPTIONS_GHC -Wno-orphans -Wno-duplicate-exports #-}
 
 -- [RFC 3986, section 3](https://datatracker.ietf.org/doc/html/rfc3986#section-3)
-module Data.Validity.URI where
+module Data.Validity.URI
+  ( validateUserInfo,
+    validateHost,
+    validatePort,
+    validateScheme,
+    validatePath,
+    validateQuery,
+    validateFragment,
+    -- Export everything for testing
+    module Data.Validity.URI,
+  )
+where
 
 import Data.Char as Char
-import Data.Maybe
 import Data.Validity
-import Data.Word
 import Network.URI
-import Text.Read
 
 instance Validity URIAuth where
   validate ua@URIAuth {..} =
     mconcat
       [ genericValidate ua,
         validateUserInfo uriUserInfo,
+        validateHost uriRegName,
         validatePort uriPort
       ]
 

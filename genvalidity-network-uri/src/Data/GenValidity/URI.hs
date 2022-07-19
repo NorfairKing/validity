@@ -1,19 +1,79 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# OPTIONS_GHC -Wno-orphans -Wno-duplicate-exports #-}
 
-module Data.GenValidity.URI where
+module Data.GenValidity.URI
+  ( genURIReference,
+    genURI,
+    genRelativeReference,
+    genAbsoluteURI,
+    -- Export everything for testing
+    module Data.GenValidity.URI,
+  )
+where
 
-import Control.Monad
-import Data.Char
 import Data.Char as Char
 import Data.GenValidity
 import Data.IP
-import Data.List
 import Data.Validity.URI ()
 import Data.Word
 import Network.URI
 import Test.QuickCheck
 import Text.Printf
+
+genURIReference :: Gen URI
+genURIReference =
+  oneof
+    [ genURI,
+      genRelativeReference
+    ]
+
+genURI :: Gen URI
+genURI = (`suchThat` isValid) $ do
+  uriScheme <- genScheme `suchThat` (not . null)
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  uriFragment <- genFragment
+  pure URI {..}
+
+genRelativeReference :: Gen URI
+genRelativeReference = (`suchThat` isValid) $ do
+  let uriScheme = ""
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  uriFragment <- genFragment
+  pure URI {..}
+
+genAbsoluteURI :: Gen URI
+genAbsoluteURI = (`suchThat` isValid) $ do
+  uriScheme <- genScheme `suchThat` (not . null)
+  uriAuthority <- genValid
+  uriPath <- case uriAuthority of
+    Just _ -> genPathAbEmpty
+    Nothing ->
+      oneof
+        [ genPathAbsolute,
+          genPathNoScheme,
+          genPathEmpty
+        ]
+  uriQuery <- genQuery
+  let uriFragment = ""
+  pure URI {..}
 
 instance GenValid URIAuth where
   genValid = (`suchThat` isValid) $ do
@@ -318,61 +378,6 @@ genCharDIGIT :: Gen Char
 genCharDIGIT =
   Char.chr
     <$> choose (0x30, 0x39)
-
-genURIReference :: Gen URI
-genURIReference =
-  oneof
-    [ genURI,
-      genRelativeReference
-    ]
-
-genURI :: Gen URI
-genURI = (`suchThat` isValid) $ do
-  uriScheme <- genScheme `suchThat` (not . null)
-  uriAuthority <- genValid
-  uriPath <- case uriAuthority of
-    Just _ -> genPathAbEmpty
-    Nothing ->
-      oneof
-        [ genPathAbsolute,
-          genPathNoScheme,
-          genPathEmpty
-        ]
-  uriQuery <- genQuery
-  uriFragment <- genFragment
-  pure URI {..}
-
-genRelativeReference :: Gen URI
-genRelativeReference = (`suchThat` isValid) $ do
-  let uriScheme = ""
-  uriAuthority <- genValid
-  uriPath <- case uriAuthority of
-    Just _ -> genPathAbEmpty
-    Nothing ->
-      oneof
-        [ genPathAbsolute,
-          genPathNoScheme,
-          genPathEmpty
-        ]
-  uriQuery <- genQuery
-  uriFragment <- genFragment
-  pure URI {..}
-
-genAbsoluteURI :: Gen URI
-genAbsoluteURI = (`suchThat` isValid) $ do
-  uriScheme <- genScheme `suchThat` (not . null)
-  uriAuthority <- genValid
-  uriPath <- case uriAuthority of
-    Just _ -> genPathAbEmpty
-    Nothing ->
-      oneof
-        [ genPathAbsolute,
-          genPathNoScheme,
-          genPathEmpty
-        ]
-  uriQuery <- genQuery
-  let uriFragment = ""
-  pure URI {..}
 
 nullOrAppend :: Char -> String -> String
 nullOrAppend c s = if null s then s else s ++ [c]
