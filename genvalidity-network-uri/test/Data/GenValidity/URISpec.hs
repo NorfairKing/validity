@@ -60,6 +60,13 @@ spec = do
             Nothing -> pure ()
             Just err -> expectationFailure err
 
+    describe "genPath" $ do
+      it "generates user info  that are considered valid by validatePath" $
+        forAll genPath $ \portCandidate ->
+          case prettyValidation (validatePath portCandidate) of
+            Nothing -> pure ()
+            Just err -> expectationFailure err
+
     -- describe "genURI" $ do
     --   it "generates valid URI values" $
     --     genGeneratesValid genURI

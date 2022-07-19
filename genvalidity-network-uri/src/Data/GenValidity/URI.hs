@@ -31,7 +31,7 @@ instance GenValid URI where
 
     uriAuthority <- genValid
 
-    uriPath <- nullOrPrepend '/' <$> genURIStringSeparatedBy '/'
+    uriPath <- genPath
 
     uriQuery <- nullOrAppend '?' <$> genURIStringSeparatedBy '&'
 
@@ -118,6 +118,98 @@ genPercentEncodedChar :: Gen String
 genPercentEncodedChar = do
   octet <- choose (0, 255)
   pure $ '%' : printf "%x" (octet :: Word8)
+
+genPath :: Gen String
+genPath =
+  -- @
+  -- path          = path-abempty    ; begins with "/" or is empty
+  --               / path-absolute   ; begins with "/" but not "//"
+  --               / path-noscheme   ; begins with a non-colon segment
+  --               / path-rootless   ; begins with a segment
+  --               / path-empty      ; zero characters
+  -- @
+  oneof
+    [ genPathAbEmpty,
+      genPathAbsolute,
+      genPathNoScheme,
+      genPathRootless,
+      pure ""
+    ]
+
+-- @
+-- path-abempty  = *( "/" segment )
+-- @
+genPathAbEmpty :: Gen String
+genPathAbEmpty = do
+  segments <- genListOf genSegment
+  pure $ concatMap (\s -> '/' : s) segments
+
+-- @
+-- path-absolute = "/" [ segment-nz *( "/" segment ) ]
+-- @
+genPathAbsolute :: Gen String
+genPathAbsolute = do
+  firstSegment <- genSegmentNz
+  restSegments <- genListOf genSegment
+  pure $ '/' : firstSegment ++ concatMap (\s -> '/' : s) restSegments
+
+-- @
+-- path-noscheme = segment-nz-nc *( "/" segment )
+-- @
+genPathNoScheme :: Gen String
+genPathNoScheme = do
+  firstSegment <- genSegmentNzNc
+  restSegments <- genListOf genSegment
+  pure $ firstSegment ++ concatMap (\s -> '/' : s) restSegments
+
+-- @
+-- path-rootless = segment-nz *( "/" segment )
+-- @
+genPathRootless :: Gen String
+genPathRootless = do
+  firstSegment <- genSegmentNz
+  restSegments <- genListOf genSegment
+  pure $ firstSegment ++ concatMap (\s -> '/' : s) restSegments
+
+-- @
+-- segment       = *pchar
+-- @
+genSegment :: Gen String
+genSegment = concat <$> genListOf genPChar
+
+-- @
+-- segment-nz    = 1*pchar
+-- @
+genSegmentNz :: Gen String
+genSegmentNz = concat <$> genListOf1 genPChar
+
+-- @
+-- segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
+--               ; non-zero-length segment without any colon ":"
+-- @
+genSegmentNzNc :: Gen String
+genSegmentNzNc =
+  concat
+    <$> genListOf1
+      ( oneof
+          [ (: []) <$> genCharUnreserved,
+            genPercentEncodedChar,
+            (: []) <$> genCharSubDelim,
+            pure "@"
+          ]
+      )
+
+-- @
+-- pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+-- @
+genPChar :: Gen String
+genPChar =
+  oneof
+    [ (: []) <$> genCharUnreserved,
+      genPercentEncodedChar,
+      (: []) <$> genCharSubDelim,
+      elements [":", "@"]
+    ]
 
 genCharUnreserved :: Gen Char
 genCharUnreserved =
