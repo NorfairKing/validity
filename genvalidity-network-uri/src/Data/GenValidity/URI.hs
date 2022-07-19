@@ -21,8 +21,7 @@ instance GenValid URIAuth where
 
     uriRegName <- genHost
 
-    port <- genValid :: Gen Word16
-    let uriPort = ':' : show port
+    uriPort <- genPort
 
     pure $ URIAuth {..}
 
@@ -70,7 +69,12 @@ genUserInfo =
       )
 
 genHost :: Gen String
-genHost = oneof [genIPLiteral, genIPv4Address, genRegName]
+genHost =
+  oneof
+    [ genIPLiteral,
+      genIPv4Address,
+      genRegName
+    ]
 
 genIPLiteral :: Gen String
 genIPLiteral = do
@@ -106,6 +110,11 @@ genRegName =
             (: []) <$> genCharSubDelim
           ]
       )
+
+genPort :: Gen String
+genPort = do
+  port <- genValid :: Gen Word16
+  pure $ ':' : show port
 
 genPercentEncodedChar :: Gen String
 genPercentEncodedChar = do
