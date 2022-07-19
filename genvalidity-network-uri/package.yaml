@@ -17,6 +17,7 @@ library:
   source-dirs: src
   dependencies:
   - genvalidity >=1.0
+  - iproute
   - validity >=0.5
   - validity-network-uri
 

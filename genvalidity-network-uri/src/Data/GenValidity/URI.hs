@@ -7,6 +7,7 @@ import Control.Monad
 import Data.Char
 import Data.Char as Char
 import Data.GenValidity
+import Data.IP
 import Data.List
 import Data.Validity.URI ()
 import Data.Word
@@ -18,12 +19,12 @@ instance GenValid URIAuth where
   genValid = (`suchThat` isValid) $ do
     uriUserInfo <- genUserInfo
 
-    uriRegName <- genURIStringSeparatedBy '.'
+    uriRegName <- genHost
 
     port <- genValid :: Gen Word16
     let uriPort = ':' : show port
 
-    pure $ rectifyAuth URIAuth {..}
+    pure $ URIAuth {..}
 
 instance GenValid URI where
   genValid = (`suchThat` isValid) $ do
@@ -37,7 +38,7 @@ instance GenValid URI where
 
     uriFragment <- nullOrPrepend '#' <$> genURIComponentString
 
-    pure $ rectify URI {..}
+    pure $ URI {..}
 
 genScheme :: Gen String
 genScheme =
@@ -65,6 +66,44 @@ genUserInfo =
             genPercentEncodedChar,
             (: []) <$> genCharSubDelim,
             pure ":"
+          ]
+      )
+
+genHost :: Gen String
+genHost = oneof [genIPLiteral, genIPv4Address, genRegName]
+
+genIPLiteral :: Gen String
+genIPLiteral = do
+  a <- oneof [genIPv6Address, genIPvFuture]
+  pure $ "[" ++ a ++ "]"
+
+genIPv6Address :: Gen String
+genIPv6Address = show . toIPv6w <$> genValid
+
+genIPvFuture :: Gen String
+genIPvFuture = do
+  hd <- genStringBy1 genCharHEXDIG
+  s <-
+    genStringBy1
+      ( oneof
+          [ genCharUnreserved,
+            genCharSubDelim,
+            pure ':'
+          ]
+      )
+  pure $ concat ["v", hd, ".", s]
+
+genIPv4Address :: Gen String
+genIPv4Address = show . toIPv4w <$> genValid
+
+genRegName :: Gen String
+genRegName =
+  concat
+    <$> genListOf
+      ( oneof
+          [ (: []) <$> genCharUnreserved,
+            genPercentEncodedChar,
+            (: []) <$> genCharSubDelim
           ]
       )
 
@@ -115,6 +154,9 @@ genCharSubDelim =
       ';',
       '='
     ]
+
+genCharHEXDIG :: Gen Char
+genCharHEXDIG = elements $ ['1' .. '9'] ++ ['A' .. 'F'] ++ ['a' .. 'f']
 
 genCharALPHA :: Gen Char
 genCharALPHA =

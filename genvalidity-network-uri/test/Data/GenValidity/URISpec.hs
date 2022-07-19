@@ -46,6 +46,13 @@ spec = do
             Nothing -> pure ()
             Just err -> expectationFailure err
 
+    describe "genHost" $ do
+      it "generates user info  that are considered valid by validateHost" $
+        forAll genHost $ \hostCandidate ->
+          case prettyValidation (validateHost hostCandidate) of
+            Nothing -> pure ()
+            Just err -> expectationFailure err
+
     -- describe "genURI" $ do
     --   it "generates valid URI values" $
     --     genGeneratesValid genURI

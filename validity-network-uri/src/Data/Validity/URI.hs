@@ -16,8 +16,6 @@ instance Validity URIAuth where
   validate ua@URIAuth {..} =
     mconcat
       [ genericValidate ua,
-        declare "looks rectified" $
-          rectifyAuth ua == ua,
         validateUserInfo uriUserInfo,
         validatePort uriPort
       ]
@@ -32,8 +30,6 @@ instance Validity URI where
           case parseURI (unsafeURIToString u) of
             Nothing -> False
             Just u' -> u' == u,
-        declare "The URI looks rectified" $
-          rectify u == u,
         validateScheme uriScheme,
         validatePath uriPath,
         validateQuery uriQuery,
@@ -78,6 +74,45 @@ validateUserInfoChar c =
           -- However, this is good enough because we do the extra parsing elsewhere
           charIsPossiblyPartOfPercentEncoding c
           || charIsSubDelim c
+
+-- [RFC 3986, section 3.2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2)
+-- @
+-- host        = IP-literal / IPv4address / reg-name
+-- @
+--
+-- @
+-- IP-literal = "[" ( IPv6address / IPvFuture  ) "]"
+--
+-- IPvFuture  = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+-- @
+--
+-- @
+-- reg-name    = *( unreserved / pct-encoded / sub-delims )
+-- @
+validateHost :: String -> Validation
+validateHost s =
+  declare "The host looks like an IP literal, an IPv4 Address, or a reg-name" $
+    stringIsIPLiteral s
+      || isIPv4address s
+      || stringIsRegName s
+
+stringIsIPLiteral :: String -> Bool
+stringIsIPLiteral =
+  -- NOTE this is technically not good enough but it is made up for in other parts of the validation.
+  const True
+
+stringIsRegName :: String -> Bool
+stringIsRegName = all isRegNameChar
+
+isRegNameChar :: Char -> Bool
+isRegNameChar c =
+  charIsUnreserved c
+    ||
+    -- NOTE:
+    -- Technically this is not good enough, because incorrectly-percent-encoded values should be disallowed.
+    -- However, this is good enough because we do the extra parsing elsewhere
+    charIsPossiblyPartOfPercentEncoding c
+    || charIsSubDelim c
 
 validatePort :: String -> Validation
 validatePort uriPort =

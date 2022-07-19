@@ -31,6 +31,7 @@ library
       QuickCheck
     , base >=4.7 && <5
     , genvalidity >=1.0
+    , iproute
     , network-uri
     , validity >=0.5
     , validity-network-uri
