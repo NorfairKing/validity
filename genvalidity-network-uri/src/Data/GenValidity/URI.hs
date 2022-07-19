@@ -112,9 +112,7 @@ genRegName =
       )
 
 genPort :: Gen String
-genPort = do
-  port <- genValid :: Gen Word16
-  pure $ ':' : show port
+genPort = nullOrPrepend ':' <$> genStringBy genCharDIGIT
 
 genPercentEncodedChar :: Gen String
 genPercentEncodedChar = do

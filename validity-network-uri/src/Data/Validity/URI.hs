@@ -114,17 +114,28 @@ isRegNameChar c =
     charIsPossiblyPartOfPercentEncoding c
     || charIsSubDelim c
 
+-- [RFC 3986, section 3.2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3)
+-- @
+-- port        = *DIGIT
+-- @
+--
+-- NOTE: The spec does not specify a maximum length of ports so we do not validate this either.
 validatePort :: String -> Validation
 validatePort uriPort =
   mconcat
-    [ declare (unwords ["The port", show uriPort, "is empty or starts with ':'"]) $
-        -- Laziness prevents the partial 'head' from blowing up.
-        null uriPort || head uriPort == ':',
-      declare (unwords ["The port", show uriPort, "looks like a port"]) $ case uriPort of
-        [] -> True
-        (':' : rest) -> isJust (readMaybe rest :: Maybe Word16)
-        _ -> False
+    [ case uriPort of
+        [] -> valid
+        [':'] -> invalid "The port must not just be a ':'"
+        (':' : rest) -> decorateString rest validatePortChar
+        _ -> invalid "The port is empty or starts with ':'"
     ]
+
+-- [RFC 3986, section 3.2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3)
+-- @
+-- port        = *DIGIT
+-- @
+validatePortChar :: Char -> Validation
+validatePortChar c = declare "The character is a digit" $ charIsDIGIT c
 
 -- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
 -- @
