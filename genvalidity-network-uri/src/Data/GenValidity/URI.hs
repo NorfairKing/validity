@@ -1,12 +1,17 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -Wno-orphans -Wno-duplicate-exports #-}
 
+-- | 'GenValid' instances for 'URI' and 'URIAuth'
+--
+-- The main API of this module is in the orphan instances @GenValid URI@ and @GenValid URIAuth@.
 module Data.GenValidity.URI
-  ( genURIReference,
+  ( -- ** Specific Generators
+    genURIReference,
     genURI,
     genRelativeReference,
     genAbsoluteURI,
-    -- Export everything for testing
+
+    -- * Export everything for testing, **You probably do not want to use any of the functions below**.
     module Data.GenValidity.URI,
   )
 where
@@ -20,6 +25,7 @@ import Network.URI
 import Test.QuickCheck
 import Text.Printf
 
+-- | Generate an 'URI' that parses using 'parseURIReference'.
 genURIReference :: Gen URI
 genURIReference =
   oneof
@@ -27,6 +33,7 @@ genURIReference =
       genRelativeReference
     ]
 
+-- | Generate an 'URI' that parses using 'parseURI'.
 genURI :: Gen URI
 genURI = (`suchThat` isValid) $ do
   uriScheme <- genScheme `suchThat` (not . null)
@@ -43,6 +50,7 @@ genURI = (`suchThat` isValid) $ do
   uriFragment <- genFragment
   pure URI {..}
 
+-- | Generate an 'URI' that parses using 'parseRelativeReference'.
 genRelativeReference :: Gen URI
 genRelativeReference = (`suchThat` isValid) $ do
   let uriScheme = ""
@@ -59,6 +67,7 @@ genRelativeReference = (`suchThat` isValid) $ do
   uriFragment <- genFragment
   pure URI {..}
 
+-- | Generate an 'URI' that parses using 'parseAbsoluteURI'.
 genAbsoluteURI :: Gen URI
 genAbsoluteURI = (`suchThat` isValid) $ do
   uriScheme <- genScheme `suchThat` (not . null)

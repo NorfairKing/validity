@@ -2,10 +2,16 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -Wno-orphans -Wno-duplicate-exports #-}
 
+-- | 'Validity' instances for 'URI' and 'URIAuth'
+--
+-- The main API of this module is in the orphan instances @Validity URI@ and @Validity URIAuth@.
+--
 -- [RFC 3986, section 3](https://datatracker.ietf.org/doc/html/rfc3986#section-3)
 module Data.Validity.URI
-  ( dangerousURIToString,
-    -- Export everything for testing
+  ( -- ** Helper function
+    dangerousURIToString,
+
+    -- * Export everything for testing, **You probably do not want to use any of the functions below**.
     module Data.Validity.URI,
   )
 where
@@ -47,6 +53,10 @@ instance Validity URI where
         validateFragment uriFragment
       ]
 
+-- | Validate the 'uriScheme' part of an URI
+--
+-- NOTE: Watch out with using this validation separately, it may not reject enough.
+--
 -- [RFC 3986, section 3.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.1)
 -- @
 -- scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
@@ -83,6 +93,10 @@ validateSchemeChar c =
       '.' -> True
       _ -> charIsALPHA c || charIsDIGIT c
 
+-- | Validate the 'uriUserInfo' part of an URI
+--
+-- NOTE: Watch out with using this validation separately, it may not reject enough.
+--
 -- [RFC 3986, section 3.2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1)
 --
 -- @
@@ -122,6 +136,10 @@ validateUserInfoChar c =
           charIsPossiblyPartOfPercentEncoding c
           || charIsSubDelim c
 
+-- | Validate the 'uriRegName' part of an URI
+--
+-- NOTE: Watch out with using this validation separately, it may not reject enough.
+--
 -- [RFC 3986, section 3.2.2](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2)
 -- @
 -- host        = IP-literal / IPv4address / reg-name
@@ -161,6 +179,10 @@ isRegNameChar c =
     charIsPossiblyPartOfPercentEncoding c
     || charIsSubDelim c
 
+-- | Validate the 'uriPort' part of an URI
+--
+-- NOTE: Watch out with using this validation separately, it may not reject enough.
+--
 -- [RFC 3986, section 3.2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3)
 -- @
 -- port        = *DIGIT
@@ -279,6 +301,9 @@ charIsDIGIT c =
   let o = Char.ord c
    in (0x30 <= o && o <= 0x39)
 
+-- | Validate the 'uriPath' part of an URI
+--
+-- NOTE: Watch out with using this validation separately, it may not reject enough.
 validatePath :: String -> Validation
 validatePath _uriPath =
   mconcat
@@ -292,6 +317,9 @@ validatePath _uriPath =
       valid
     ]
 
+-- | Validate the 'uriQuery' part of an URI
+--
+-- NOTE: Watch out with using this validation separately, it may not reject enough.
 validateQuery :: String -> Validation
 validateQuery uriQuery =
   declare (unwords ["The query", show uriQuery, "is empty or starts with '?'"]) $
@@ -306,7 +334,7 @@ validateFragment uriFragment =
 
 -- | Render a URI to a 'String', for use in testing
 --
--- This uses 'uriToString id' as the docs specify.
+-- This uses @uriToString id@ as the docs specify.
 -- It potentially exposes passwords, so only use it if you know what you're
 -- doing.
 dangerousURIToString :: URI -> String
