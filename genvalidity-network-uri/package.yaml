@@ -1,5 +1,5 @@
 name: genvalidity-network-uri
-version: '0.0.0.0'
+version: '0.1.0.0'
 synopsis: GenValidity support for URI
 category: Testing
 author: Tom Sydney Kerckhove

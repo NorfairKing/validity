@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -Wno-orphans -Wno-duplicate-exports #-}
 
@@ -90,6 +91,9 @@ instance GenValid URIAuth where
     uriRegName <- genHost
     uriPort <- genPort
     pure $ URIAuth {..}
+  shrinkValid (URIAuth ui rn p) = filter isValid $ do
+    ((ui', rn'), p') <- shrinkTuple (shrinkTuple shrinkUserInfo shrinkHost) shrinkPort ((ui, rn), p)
+    pure (URIAuth ui' rn' p')
 
 instance GenValid URI where
   genValid = (`suchThat` isValid) . (`suchThatMap` (parseURIReference . dangerousURIToString)) $ do
@@ -99,6 +103,16 @@ instance GenValid URI where
     uriQuery <- genQuery
     uriFragment <- genFragment
     pure $ URI {..}
+  shrinkValid (URI s mAuth p q f) = filter isValid $ do
+    (((s', mAuth'), (p', q')), f') <-
+      shrinkTuple
+        ( shrinkTuple
+            (shrinkTuple shrinkScheme shrinkValid)
+            (shrinkTuple shrinkPath shrinkQuery)
+        )
+        shrinkFragment
+        (((s, mAuth), (p, q)), f)
+    pure (URI s' mAuth' p' q' f')
 
 genScheme :: Gen String
 genScheme =
@@ -132,6 +146,15 @@ genScheme =
         ]
     ]
 
+-- Shrinking this is complicated, so we only shrink to more secure versions and to "no scheme"
+shrinkScheme :: String -> [String]
+shrinkScheme = \case
+  "" -> []
+  "http:" -> ["", "https:"]
+  "ftp:" -> ["", "ftps:"]
+  "ws:" -> ["", "wss:"]
+  _ -> [""]
+
 genUserInfo :: Gen String
 genUserInfo =
   nullOrAppend '@' . concat
@@ -144,6 +167,12 @@ genUserInfo =
           ]
       )
 
+-- Shrinking this is quite complex, so we only try to shrink to no user info.
+shrinkUserInfo :: String -> [String]
+shrinkUserInfo = \case
+  "" -> []
+  _ -> [""]
+
 genHost :: Gen String
 genHost =
   oneof
@@ -151,6 +180,12 @@ genHost =
       genIPv4Address,
       genRegName
     ]
+
+-- Shrinking this is quite complex, so we only try to shrink to localhost
+shrinkHost :: String -> [String]
+shrinkHost = \case
+  "localhost" -> []
+  _ -> ["localhost"]
 
 genIPLiteral :: Gen String
 genIPLiteral = do
@@ -193,6 +228,13 @@ genRegName =
 
 genPort :: Gen String
 genPort = nullOrPrepend ':' <$> genStringBy genCharDIGIT
+
+-- Shrinking this requires parsing the port, which we don't care about, so we
+-- only try to shrink to "no port".
+shrinkPort :: String -> [String]
+shrinkPort = \case
+  "" -> []
+  _ -> [""]
 
 genPercentEncodedChar :: Gen String
 genPercentEncodedChar = do
@@ -297,6 +339,12 @@ genPathChar =
       (1, elements [":", "@"])
     ]
 
+-- Shrinking this is complicated so we only shrink to "no path"
+shrinkPath :: String -> [String]
+shrinkPath = \case
+  "" -> []
+  _ -> [""]
+
 -- @
 -- query       = *( pchar / "/" / "?" )
 -- @
@@ -316,6 +364,12 @@ genQuery =
           ]
       )
 
+-- | Shrinking this is complicated so we only shrink to "no query".
+shrinkQuery :: String -> [String]
+shrinkQuery = \case
+  "" -> []
+  _ -> [""]
+
 -- @
 -- fragment    = *( pchar / "/" / "?" )
 -- @
@@ -328,6 +382,12 @@ genFragment =
             (1, elements ["/", "?"])
           ]
       )
+
+-- | Shrinking this is complicated so we only shrink to "no fragment".
+shrinkFragment :: String -> [String]
+shrinkFragment = \case
+  "" -> []
+  _ -> [""]
 
 genCharUnreserved :: Gen Char
 genCharUnreserved =

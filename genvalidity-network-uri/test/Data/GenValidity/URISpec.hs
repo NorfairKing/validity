@@ -13,6 +13,7 @@ spec :: Spec
 spec = do
   describe "GenValid URIAuth" $ do
     genValidSpec @URIAuth
+    shrinkValidSpec @URIAuth
 
   describe "URI" $ do
     describe "considers these examples from the spec valid" $ do
@@ -133,6 +134,7 @@ spec = do
             Nothing -> expectationFailure "Should have parsed."
             Just uri' -> uri' `shouldBe` uri
 
+    shrinkValidSpec @URI
     modifyMaxSuccess (* 10) $
       describe "GenValid URI" $ do
         genValidSpec @URI
