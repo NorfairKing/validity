@@ -1,5 +1,5 @@
 name: genvalidity-case-insensitive
-version: '0.0.0.0'
+version: '0.0.0.1'
 synopsis: GenValidity support for case-insensitive
 category: Testing
 license: MIT
@@ -43,7 +43,7 @@ benchmarks:
     - -Wall
     dependencies:
     - genvalidity-case-insensitive
-    - genvalidity-criterion
+    - genvalidity-criterion >=1.1.0.0
     - criterion
     - QuickCheck
     - genvalidity

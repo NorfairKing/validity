@@ -12,6 +12,14 @@ import Network.URI
 main :: IO ()
 main =
   Criterion.defaultMain
-    [ genValidBench @URIAuth,
-      genValidBench @URI
+    [ bgroup
+        "generators"
+        [ genValidBench @URIAuth,
+          genValidBench @URI
+        ],
+      bgroup
+        "shrinkers"
+        [ shrinkValidBench @URIAuth,
+          shrinkValidBench @URI
+        ]
     ]

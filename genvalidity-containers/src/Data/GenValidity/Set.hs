@@ -2,6 +2,7 @@
 
 module Data.GenValidity.Set
   ( genSetOf,
+    shrinkSetOf,
     genSeperate,
     genSeperateFor,
     genSeperateForNE,
@@ -20,11 +21,14 @@ import Data.Validity.Set ()
 import Test.QuickCheck
 
 instance (Ord v, GenValid v) => GenValid (Set v) where
-  genValid = S.fromList <$> genValid
-  shrinkValid = fmap S.fromList . shrinkValid . S.toList
+  genValid = genSetOf genValid
+  shrinkValid = shrinkSetOf shrinkValid
 
 genSetOf :: Ord v => Gen v -> Gen (Set v)
 genSetOf g = S.fromList <$> genListOf g
+
+shrinkSetOf :: Ord v => (v -> [v]) -> Set v -> [Set v]
+shrinkSetOf shrinker = fmap S.fromList . shrinkList shrinker . S.toList
 
 genValidSeperateFor :: (GenValid b, Eq b) => [a] -> Gen [(b, a)]
 genValidSeperateFor = genSeperateFor genValid

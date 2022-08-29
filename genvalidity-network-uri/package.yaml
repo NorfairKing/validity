@@ -48,5 +48,5 @@ benchmarks:
     - QuickCheck
     - criterion
     - genvalidity
-    - genvalidity-criterion
+    - genvalidity-criterion >=1.1.0.0
     - genvalidity-network-uri

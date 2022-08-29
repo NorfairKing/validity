@@ -1,18 +1,18 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.34.7.
 --
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-uuid
-version:        1.0.0.0
+version:        1.0.0.1
 synopsis:       GenValidity support for UUID
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme
 bug-reports:    https://github.com/NorfairKing/validity/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
-copyright:      Copyright: (c) 2016-2021 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2016-2022 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
@@ -72,7 +72,7 @@ benchmark genvalidity-uuid-bench
     , base >=4.7 && <5
     , criterion
     , genvalidity
-    , genvalidity-criterion
+    , genvalidity-criterion >=1.0.0.1
     , genvalidity-uuid
     , uuid
   default-language: Haskell2010

@@ -10,5 +10,6 @@ import Data.GenValidity.Criterion
 main :: IO ()
 main =
   defaultMain
-    [ genValidBench @(CI String)
+    [ genValidBench @(CI String),
+      shrinkValidBench @(CI String)
     ]

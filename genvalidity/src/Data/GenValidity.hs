@@ -86,7 +86,7 @@ import Data.Char (chr)
 import Data.Fixed (Fixed (..), HasResolution)
 import Data.GenValidity.Utils
 import Data.Int (Int16, Int32, Int64, Int8)
-import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty (NonEmpty)
 import Data.Ratio ((%))
 import Data.Validity
 import Data.Word (Word16, Word32, Word64, Word8)
@@ -174,10 +174,7 @@ instance (GenValid a, GenValid b, GenValid c) => GenValid (a, b, c) where
       b <- resize s genValid
       c <- resize t genValid
       return (a, b, c)
-  shrinkValid (a, b, c) =
-    [ (a', b', c')
-      | (a', (b', c')) <- shrinkValid (a, (b, c))
-    ]
+  shrinkValid = shrinkTriple shrinkValid shrinkValid shrinkValid
 
 instance
   (GenValid a, GenValid b, GenValid c, GenValid d) =>
@@ -191,10 +188,7 @@ instance
       c <- resize t genValid
       d <- resize u genValid
       return (a, b, c, d)
-  shrinkValid (a, b, c, d) =
-    [ (a', b', c', d')
-      | (a', (b', (c', d'))) <- shrinkValid (a, (b, (c, d)))
-    ]
+  shrinkValid = shrinkQuadruple shrinkValid shrinkValid shrinkValid shrinkValid
 
 instance
   (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e) =>
@@ -215,13 +209,12 @@ instance
     ]
 
 instance GenValid a => GenValid (Maybe a) where
-  genValid = oneof [pure Nothing, Just <$> genValid]
-  shrinkValid Nothing = []
-  shrinkValid (Just a) = Nothing : (Just <$> shrinkValid a)
+  genValid = genMaybe genValid
+  shrinkValid = shrinkMaybe shrinkValid
 
 instance GenValid a => GenValid (NonEmpty a) where
   genValid = genNonEmptyOf genValid
-  shrinkValid (v :| vs) = [e :| es | (e, es) <- shrinkValid (v, vs)]
+  shrinkValid = shrinkNonEmpty shrinkValid
 
 instance GenValid a => GenValid [a] where
   genValid = genListOf genValid
@@ -330,8 +323,7 @@ instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
     )
       `suchThat` isValid
   shrinkValid (n :% d) = do
-    (n', d') <- shrinkValid (n, d)
-    guard $ d' > 0
+    (n', d') <- shrinkTuple shrinkValid (filter (> 0) . shrinkValid) (n, d)
     let candidate = n' :% d'
     guard $ isValid candidate
     pure $ n' % d'

@@ -1,10 +1,21 @@
 # Changelog
 
-## [1.0.0.2] - Unreleased
+## [1.1.0.0] - 2022-08-30
 
 ### Added
 
 * `genListOf1`
+* `genMaybe`
+* `shrinkMaybe`
+* `shrinkNonEmpty`
+* `shrinkTriple`
+* `shrinkQuadruple`
+
+### Changed
+
+* Sped up shrinking of `NonEmpty` lists by an order of magnitude.
+* Changed shrinking of `Ratio`s to be 10x faster.
+* Reimplemented `shrinkT2`, `shrinkT3` and `shrinkT4` in terms of `shrinkTuple`, `shrinkTriple` and `shrinkQuadruple`.
 
 ## [1.0.0.1] - 2021-11-20
 

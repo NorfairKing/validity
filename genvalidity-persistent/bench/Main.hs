@@ -53,6 +53,14 @@ instance NFData (Entity Thing) where
 main :: IO ()
 main =
   defaultMain
-    [ genValidBench @ThingId,
-      genValidBench @(Entity Thing)
+    [ bgroup
+        "generators"
+        [ genValidBench @ThingId,
+          genValidBench @(Entity Thing)
+        ],
+      bgroup
+        "shrinkers"
+        [ shrinkValidBench @ThingId,
+          shrinkValidBench @(Entity Thing)
+        ]
     ]

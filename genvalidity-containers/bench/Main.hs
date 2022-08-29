@@ -17,12 +17,28 @@ import Test.QuickCheck
 main :: IO ()
 main =
   Criterion.defaultMain
-    [ genValidBench @(Set Int),
-      genValidBench @(Seq Int),
-      genValidBench @(Tree Int),
-      genValidBench @(Forest Int),
-      genValidBench @(Map Int Int),
-      genBenchSizes "genSeqOf" $ genSeqOf (genValid :: Gen Int),
-      genBenchSizes "genSetOf" $ genSetOf (genValid :: Gen Int),
-      genBenchSizes "genMapOf" $ genMapOf (genValid :: Gen (Int, Int))
+    [ bgroup
+        "generators"
+        [ genValidBench @(Set Int),
+          genValidBench @(Seq Int),
+          genValidBench @(Tree Int),
+          genValidBench @(Forest Int),
+          genValidBench @(Map Int Int),
+          genBench "genSeqOf" $ genSeqOf (genValid :: Gen Int),
+          genBench "genSetOf" $ genSetOf (genValid :: Gen Int),
+          genBench "genMapOf" $ genMapOf (genValid :: Gen (Int, Int)),
+          genBench "genTreeOf" $ genTreeOf (genValid :: Gen (Int, Int))
+        ],
+      bgroup
+        "shrinkers"
+        [ shrinkValidBench @(Set Int),
+          shrinkValidBench @(Seq Int),
+          shrinkValidBench @(Tree Int),
+          shrinkValidBench @(Forest Int),
+          shrinkValidBench @(Map Int Int),
+          shrinkBench "shrinkSeqOf" $ shrinkSeqOf (shrinkValid :: Int -> [Int]),
+          shrinkBench "shrinkSetOf" $ shrinkSetOf (shrinkValid :: Int -> [Int]),
+          shrinkBench "shrinkMapOf" $ shrinkMapOf (shrinkValid :: (Int, Int) -> [(Int, Int)]),
+          shrinkBench "shrinkTreeOf" $ shrinkTreeOf (shrinkValid :: Int -> [Int])
+        ]
     ]

@@ -10,8 +10,18 @@ import Path
 main :: IO ()
 main =
   defaultMain
-    [ genValidBench @(Path Abs File),
-      genValidBench @(Path Rel File),
-      genValidBench @(Path Abs Dir),
-      genValidBench @(Path Rel Dir)
+    [ bgroup
+        "generators"
+        [ genValidBench @(Path Abs File),
+          genValidBench @(Path Rel File),
+          genValidBench @(Path Abs Dir),
+          genValidBench @(Path Rel Dir)
+        ],
+      bgroup
+        "shrinkers"
+        [ shrinkValidBench @(Path Abs File),
+          shrinkValidBench @(Path Rel File),
+          shrinkValidBench @(Path Abs Dir),
+          shrinkValidBench @(Path Rel Dir)
+        ]
     ]

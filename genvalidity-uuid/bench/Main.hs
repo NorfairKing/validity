@@ -12,5 +12,6 @@ import Data.UUID
 main :: IO ()
 main =
   Criterion.defaultMain
-    [ genValidBench @UUID
+    [ genValidBench @UUID,
+      shrinkValidBench @UUID
     ]

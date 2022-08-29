@@ -12,4 +12,16 @@ import Data.GenValidity.Criterion
 main :: IO ()
 main =
   Criterion.defaultMain
-    [genValidBench @Array, genValidBench @Object, genValidBench @Value]
+    [ bgroup
+        "generators"
+        [ genValidBench @Array,
+          genValidBench @Object,
+          genValidBench @Value
+        ],
+      bgroup
+        "shrinkers"
+        [ shrinkValidBench @Array,
+          shrinkValidBench @Object,
+          shrinkValidBench @Value
+        ]
+    ]

@@ -37,19 +37,26 @@ instance GenValid TimeOfDay where
   genValid =
     TimeOfDay <$> (choose (0, 23)) <*> (choose (0, 59))
       <*> (MkFixed <$> choose (0, 60999999999999))
-  shrinkValid (TimeOfDay h m s) =
-    filter isValid [TimeOfDay h' m' s' | (h', m', s') <- shrinkValid (h, m, s)]
+  shrinkValid (TimeOfDay h m s) = do
+    (h', m', s') <-
+      shrinkTriple
+        (filter (\hh -> 0 <= hh && hh < 24) . shrinkValid)
+        (filter (\mm -> 0 <= mm && mm < 60) . shrinkValid)
+        (filter (\ss -> 0 <= ss && ss < 61) . shrinkValid)
+        (h, m, s)
+    pure (TimeOfDay h' m' s')
 
 instance GenValid LocalTime where
   genValid = LocalTime <$> genValid <*> genValid
   shrinkValid (LocalTime d tod) =
-    filter isValid [LocalTime d' tod' | (d', tod') <- shrinkValid (d, tod)]
+    [LocalTime d' tod' | (d', tod') <- shrinkValid (d, tod)]
 
 instance GenValid ZonedTime where
   genValid = ZonedTime <$> genValid <*> genValid
   shrinkValid (ZonedTime lt tz) =
-    filter isValid [ZonedTime lt' tz' | (lt', tz') <- shrinkValid (lt, tz)]
+    [ZonedTime lt' tz' | (lt', tz') <- shrinkValid (lt, tz)]
 
 instance GenValid CalendarDiffTime where
   genValid = CalendarDiffTime <$> genValid <*> genValid
-  shrinkValid (CalendarDiffTime ms t) = [CalendarDiffTime ms' t' | (ms', t') <- shrinkValid (ms, t)]
+  shrinkValid (CalendarDiffTime ms t) =
+    [CalendarDiffTime ms' t' | (ms', t') <- shrinkValid (ms, t)]

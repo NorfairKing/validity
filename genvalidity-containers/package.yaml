@@ -1,10 +1,10 @@
 name: genvalidity-containers
-version: '1.0.0.0'
+version: '1.0.0.1'
 synopsis: GenValidity support for containers
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
-copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
+copyright: ! 'Copyright: (c) 2016-2022 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 
@@ -55,4 +55,4 @@ benchmarks:
     - criterion
     - genvalidity
     - genvalidity-containers
-    - genvalidity-criterion
+    - genvalidity-criterion >=1.1.0.0

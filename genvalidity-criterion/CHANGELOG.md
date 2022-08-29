@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.1.0.0] - 2022-08-30
+
+### Added
+
+* `shrinkValidBench`
+* `shrinkBench`
+* `shrinkBenchN`
+* `shrinkBenchVector`
+
+### Changed
+
+* Renamed `genBenchSizes` to `genBench` and removed the old `genBench`.
+* Changed the generator benchmarks to generate 100 values instead of 1.
+  This corresponds to how long the generating part of a property test might take
+  and corrects for some of the difference in generating different values.
+
 ## [1.0.0.0] - 2021-11-20
 
 ### Changed

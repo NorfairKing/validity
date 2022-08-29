@@ -20,8 +20,8 @@ import Test.QuickCheck
 
 #if MIN_VERSION_aeson(2,0,0)
 instance GenValid Key where
-  genValid = K.fromString <$> genValid
-  shrinkValid = fmap K.fromString . shrinkValid . K.toString
+   genValid = K.fromText <$> genValid
+   shrinkValid = fmap K.fromText . shrinkValid . K.toText
 
 instance (GenValid v) => GenValid (KeyMap v) where
   genValid = KM.fromList <$> genValid
@@ -39,12 +39,12 @@ instance GenValid Value where
         pure Null
       ]
   shrinkValid (Object hm) =
-    toList hm
-      ++ (Object <$> shrinkValid hm)
+    Null :
+    (toList hm ++ (Object <$> shrinkValid hm))
   shrinkValid (Array a) =
-    toList a
-      ++ (Array <$> shrinkValid a)
-  shrinkValid (String s) = String <$> shrinkValid s
-  shrinkValid (Number s) = Number <$> shrinkValid s
-  shrinkValid (Bool s) = Bool <$> shrinkValid s
+    Null :
+    (toList a ++ (Array <$> shrinkValid a))
+  shrinkValid (String s) = Null : (String <$> shrinkValid s)
+  shrinkValid (Number s) = Null : (Number <$> shrinkValid s)
+  shrinkValid (Bool s) = Null : (Bool <$> shrinkValid s)
   shrinkValid Null = []

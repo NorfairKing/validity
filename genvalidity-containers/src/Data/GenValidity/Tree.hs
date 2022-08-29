@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Data.GenValidity.Tree where
+module Data.GenValidity.Tree (genTreeOf, shrinkTreeOf) where
 
 import Data.GenValidity
 import Data.List.NonEmpty (NonEmpty (..))
@@ -11,7 +11,11 @@ import Test.QuickCheck
 
 instance GenValid a => GenValid (Tree a) where
   genValid = genTreeOf genValid
-  shrinkValid (Node v ts) = [Node v' ts' | (v', ts') <- shrinkValid (v, ts)]
+  shrinkValid = shrinkTreeOf shrinkValid
+
+shrinkTreeOf :: (a -> [a]) -> Tree a -> [Tree a]
+shrinkTreeOf shrinker (Node v ts) =
+  [Node v' ts' | (v', ts') <- shrinkTuple shrinker (shrinkList (shrinkTreeOf shrinker)) (v, ts)]
 
 -- | Generate a tree of values that are generated as specified.
 --

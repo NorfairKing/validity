@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 
@@ -20,25 +21,32 @@ module Data.GenValidity.Utils
     genStringBy1,
     genListOf,
     genListOf1,
+    genMaybe,
     genNonEmptyOf,
-
-    -- ** Helper functions for implementing shrinking functions
-    shrinkTuple,
-    shrinkT2,
-    shrinkT3,
-    shrinkT4,
     genIntX,
     genWordX,
     genFloat,
     genDouble,
     genFloatX,
     genInteger,
+
+    -- ** Helper functions for implementing shrinking functions
+    shrinkMaybe,
+    shrinkTuple,
+    shrinkTriple,
+    shrinkQuadruple,
+    shrinkT2,
+    shrinkT3,
+    shrinkT4,
+    shrinkList,
+    shrinkNonEmpty,
   )
 where
 
 import Control.Monad (forM, replicateM)
 import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
+import Data.Maybe
 import Data.Ratio
 import GHC.Float (castWord32ToFloat, castWord64ToDouble)
 import System.Random
@@ -135,6 +143,9 @@ arbPartition i = genListLengthWithSize i >>= go i
     invE :: Double -> Double -> Double
     invE lambda u = (-log (1 - u)) / lambda
 
+genMaybe :: Gen a -> Gen (Maybe a)
+genMaybe gen = oneof [pure Nothing, Just <$> gen]
+
 genNonEmptyOf :: Gen a -> Gen (NonEmpty a)
 genNonEmptyOf gen = do
   l <- genListOf gen
@@ -186,23 +197,57 @@ genListOf func =
 genListOf1 :: Gen a -> Gen [a]
 genListOf1 gen = NE.toList <$> genNonEmptyOf gen
 
+-- | Lift a shrinker function into a maybe
+shrinkMaybe :: (a -> [a]) -> Maybe a -> [Maybe a]
+shrinkMaybe shrinker = \case
+  Nothing -> []
+  Just a -> Nothing : (Just <$> shrinker a)
+
+-- | Combine two shrinking functions to shrink a tuple.
 shrinkTuple :: (a -> [a]) -> (b -> [b]) -> (a, b) -> [(a, b)]
 shrinkTuple sa sb (a, b) =
   ((,) <$> sa a <*> sb b)
     ++ [(a', b) | a' <- sa a]
     ++ [(a, b') | b' <- sb b]
 
+-- | Like 'shrinkTuple', but for triples
+shrinkTriple ::
+  (a -> [a]) ->
+  (b -> [b]) ->
+  (c -> [c]) ->
+  (a, b, c) ->
+  [(a, b, c)]
+shrinkTriple sa sb sc (a, b, c) = do
+  (a', (b', c')) <- shrinkTuple sa (shrinkTuple sb sc) (a, (b, c))
+  pure (a', b', c')
+
+-- | Like 'shrinkTuple', but for quadruples
+shrinkQuadruple ::
+  (a -> [a]) ->
+  (b -> [b]) ->
+  (c -> [c]) ->
+  (d -> [d]) ->
+  (a, b, c, d) ->
+  [(a, b, c, d)]
+shrinkQuadruple sa sb sc sd (a, b, c, d) = do
+  ((a', b'), (c', d')) <- shrinkTuple (shrinkTuple sa sb) (shrinkTuple sc sd) ((a, b), (c, d))
+  pure (a', b', c', d')
+
 -- | Turn a shrinking function into a function that shrinks tuples.
 shrinkT2 :: (a -> [a]) -> (a, a) -> [(a, a)]
-shrinkT2 s (a, b) = (,) <$> s a <*> s b
+shrinkT2 s = shrinkTuple s s
 
 -- | Turn a shrinking function into a function that shrinks triples.
 shrinkT3 :: (a -> [a]) -> (a, a, a) -> [(a, a, a)]
-shrinkT3 s (a, b, c) = (,,) <$> s a <*> s b <*> s c
+shrinkT3 s = shrinkTriple s s s
 
 -- | Turn a shrinking function into a function that shrinks quadruples.
 shrinkT4 :: (a -> [a]) -> (a, a, a, a) -> [(a, a, a, a)]
-shrinkT4 s (a, b, c, d) = (,,,) <$> s a <*> s b <*> s c <*> s d
+shrinkT4 s = shrinkQuadruple s s s s
+
+-- Shrink a nonempty list given a shrinker for values.
+shrinkNonEmpty :: (a -> [a]) -> NonEmpty a -> [NonEmpty a]
+shrinkNonEmpty shrinker = mapMaybe NE.nonEmpty . shrinkList shrinker . NE.toList
 
 -- | Generate Int, Int8, Int16, Int32 and Int64 values smartly.
 --

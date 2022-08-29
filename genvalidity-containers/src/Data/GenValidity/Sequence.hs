@@ -2,6 +2,7 @@
 
 module Data.GenValidity.Sequence
   ( genSeqOf,
+    shrinkSeqOf,
   )
 where
 
@@ -14,7 +15,10 @@ import Test.QuickCheck
 
 instance GenValid v => GenValid (Seq v) where
   genValid = genSeqOf genValid
-  shrinkValid = fmap S.fromList . shrinkValid . toList
+  shrinkValid = shrinkSeqOf shrinkValid
 
 genSeqOf :: Gen v -> Gen (Seq v)
 genSeqOf g = S.fromList <$> genListOf g
+
+shrinkSeqOf :: (v -> [v]) -> Seq v -> [Seq v]
+shrinkSeqOf shrinker = fmap S.fromList . shrinkList shrinker . toList

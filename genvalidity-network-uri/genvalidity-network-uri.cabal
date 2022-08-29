@@ -72,7 +72,7 @@ benchmark genvalidity-network-uri-bench
     , base >=4.7 && <5
     , criterion
     , genvalidity
-    , genvalidity-criterion
+    , genvalidity-criterion >=1.1.0.0
     , genvalidity-network-uri
     , network-uri
   default-language: Haskell2010
