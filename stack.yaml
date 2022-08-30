@@ -47,20 +47,20 @@ packages:
 
 extra-deps:
 - github: NorfairKing/autodocodec
-  commit: 00649ce4174bc693de36077ffdfc3e0d7151ef08
+  commit: 98135d2b24c4c52f56f53c6650a169aeec61c7f1
   subdirs:
     - autodocodec
     - autodocodec-schema
     - autodocodec-yaml
 
 - github: NorfairKing/safe-coloured-text
-  commit: 71c5940a3b84eeb498304d8e584e7638f875d51b
+  commit: 675cb01fce5f46718416d7746de5b856ed90a63f
   subdirs:
     - safe-coloured-text
     - safe-coloured-text-terminfo
 
 - github: NorfairKing/sydtest
-  commit: 263745786c277fab6d82ff6f48b6d745ade7a314
+  commit: 9db39de44641f28a2c26de80fcfe08616fcf3054
   subdirs:
     - sydtest
     - sydtest-discover
