@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -68,7 +69,11 @@ instance Functor Anon where
 -- but it has been copied here for convenience.
 -- https://github.com/hspec/hspec/commit/020c7ecc4a73c24af38e9fab049f60bb9aec6981#diff-29cb22f0ef6e98086a71fc045847bd21L22
 mapSpecTree' :: (SpecTree a -> SpecTree b) -> SpecM a r -> SpecM b r
+#if MIN_VERSION_hspec(2,10,0)
+mapSpecTree' f (SpecM specs) = SpecM (mapWriterT (fmap (second (fmap (map f)))) specs)
+#else
 mapSpecTree' f (SpecM specs) = SpecM (mapWriterT (fmap (second (map f))) specs)
+#endif
 
 -- | Asserts that a given 'Spec' tree fails _somewhere_.
 --
