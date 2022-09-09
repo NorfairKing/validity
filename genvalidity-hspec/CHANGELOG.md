@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0.1] - 2022-09-02
+
+### Changed
+
+* Compatibility with `hspec-core >= 2.10`
+
+## [1.0.0.0] - 2021-11-20
+
 ### Changed
 
 * Compatibility with `validity >= 0.12.0.0`
