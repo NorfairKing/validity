@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.0.2] - 2022-09-20
+
+Same as 1.0.0.1, but with the right commit.
+
 ## [1.0.0.1] - 2022-09-02
 
 ### Changed

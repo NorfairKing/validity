@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-hspec
-version:        1.0.0.1
+version:        1.0.0.2
 synopsis:       Standard spec's for GenValidity instances
 description:    Note: There are companion packages for this library:
                 .
