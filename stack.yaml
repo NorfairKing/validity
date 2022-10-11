@@ -68,6 +68,7 @@ extra-deps:
 ghc-options:
   "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
 
-
+system-ghc: true
 nix:
-  shell-file: shell.nix
+  enable: false
+with-hpack: hpack
