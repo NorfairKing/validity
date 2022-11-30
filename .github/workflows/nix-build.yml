@@ -16,7 +16,6 @@ jobs:
           - .#devShells.x86_64-linux.default
           - .#packages.x86_64-linux.default
           - .#checks.x86_64-linux.pre-commit
-          - .#checks.x86_64-linux.nixpkgs-21_05
           - .#checks.x86_64-linux.nixpkgs-21_11
           - .#checks.x86_64-linux.nixpkgs-22_05
     steps:
