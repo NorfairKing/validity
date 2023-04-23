@@ -41,17 +41,34 @@ runGen = flip go
               0 -> (UV.empty, UV.empty)
               1 -> (UV.empty, UV.empty)
               n ->
-                let leftSize = genSplit (pred len) (UV.head ws)
+                let leftSize = computeSplit (pred len) (UV.head ws)
                     restRandomness = UV.tail ws
                  in (UV.take leftSize ws, UV.drop leftSize ws)
          in (go leftWs ff) (go rightWs fa)
 
--- We want to generate a value between 0 and totalSize (both inclusinve)
--- uniformly (I.e. not shrinkable)
-genSplit :: Int -> Word64 -> Int
-genSplit totalSize randomWord =
+-- | Compute an arbitrarily split value
+--
+-- Input: number n
+-- Output: number between 0 and n (inclusive), distributed uniformly
+--
+-- When randomWord is 0, the split is shrunk as much as possible.
+-- In that case we want to return the most shrunk split, so (0, n)
+computeSplit :: Int -> Word64 -> Int
+computeSplit totalSize randomWord =
   let left = randomWord `rem` (fromIntegral (totalSize + 1))
    in fromIntegral left
+
+-- | Compute an arbitrary partition
+--
+-- Input: number n
+-- Output: list ls such that sum ls equals 'n'
+--
+-- When randomWord is 0, the split is shrunk as much as possible.
+-- In that case we want to return the most shrunk partition,
+-- so either [] (for size 0), or [size] for nonzero size.
+computePartition :: Int -> Word64 -> [Int]
+computePartition totalSize randomWord =
+  undefined
 
 -- Laws:
 -- 1: Every generated value must be valid
@@ -70,6 +87,9 @@ genBool minimal = Gen $ \v ->
 
 instance (GenValid a, GenValid b) => GenValid (a, b) where
   genValid = (,) <$> genValid <*> genValid
+
+instance GenValid a => GenValid [a] where
+  genValid = genListOf genValid
 
 instance GenValid Word8 where
   genValid = Gen $ \v ->

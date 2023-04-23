@@ -12,6 +12,16 @@ import Test.Syd
 
 spec :: Spec
 spec = do
+  describe "computeSplit" $
+    it "shrinks to 0" $
+      computeSplit 30 0 `shouldBe` 0
+
+  describe "computePartition" $ do
+    it "shrinks to [] for a zero size" $
+      computePartition 0 0 `shouldBe` []
+    it "shrinks to [size] for a nonzero size" $
+      computePartition 30 0 `shouldBe` [30]
+
   describe "shrinkRandomness" $
     it "does not shrink an empty vector" $
       shrinkRandomness UV.empty `shouldBe` []
@@ -24,6 +34,7 @@ spec = do
     goldenGenSpec @Bool "bool"
     goldenGenSpec @Word8 "word8"
     goldenGenSpec @(Word8, Word8) "tuple-word8-word8"
+    goldenGenSpec @[Word8] "tuple-word8-word8"
     goldenGenSpec @Word64 "word64"
 
 goldenGenSpec :: forall a. (Show a, GenValid a) => FilePath -> Spec
@@ -32,7 +43,7 @@ goldenGenSpec fp = do
       sizes = [0 .. nbValues]
       seeds = [42 ..]
   it "generates the same values" $ do
-    let randomnesses = zipWith (uncurry computeRandomness) sizes seeds
+    let randomnesses = zipWith computeRandomness sizes seeds
         values :: [a]
         values = map (runGen genValid) randomnesses
     pureGoldenStringFile ("test_resources/gen/" <> fp <> ".txt") $
