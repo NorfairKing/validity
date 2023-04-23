@@ -1,0 +1,32 @@
+name: trying
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd@cs-syd.eu
+
+dependencies:
+- base >=4.13 && <5
+
+library:
+  ghc-options: -Wno-redundant-constraints
+  source-dirs: src
+  dependencies:
+  - selective
+  - splitmix
+  - validity >=0.12
+  - vector
+
+tests:
+  trying-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - splitmix
+    - sydtest
+    - validity
+    - vector
+    - trying

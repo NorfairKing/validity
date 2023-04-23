@@ -1,5 +1,6 @@
 resolver: lts-19.32
 packages:
+- 'trying'
 - 'genvalidity'
 - 'genvalidity-aeson'
 - 'genvalidity-bytestring'
