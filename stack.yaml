@@ -1,4 +1,4 @@
-resolver: lts-19.6
+resolver: lts-19.32
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
@@ -47,20 +47,20 @@ packages:
 
 extra-deps:
 - github: NorfairKing/autodocodec
-  commit: 98135d2b24c4c52f56f53c6650a169aeec61c7f1
+  commit: b49e3f42012168006955e5e4c6a5dcf8e6f94ba6
   subdirs:
     - autodocodec
     - autodocodec-schema
     - autodocodec-yaml
 
 - github: NorfairKing/safe-coloured-text
-  commit: 675cb01fce5f46718416d7746de5b856ed90a63f
+  commit: f173907488eb51407a59c22cf36f422d872378e5
   subdirs:
     - safe-coloured-text
     - safe-coloured-text-terminfo
 
 - github: NorfairKing/sydtest
-  commit: 9db39de44641f28a2c26de80fcfe08616fcf3054
+  commit: 65dbb63fa32110d8e11fd9ae5a5b62449e9f53d9
   subdirs:
     - sydtest
     - sydtest-discover
