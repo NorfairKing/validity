@@ -56,26 +56,26 @@ spec = do
     goldenGenSpec @Word64 "word64"
 
   describe "runIsProperty" $ do
-    let findsCounterexampleSpec ::
+    let findsCounterExampleSpec ::
           (Show (PList ls), Eq (PList ls), IsProperty ls prop) =>
           prop ->
           PList ls ->
           IO ()
-        findsCounterexampleSpec prop counterexample = runIsProperty 100 1000 42 prop `shouldBe` Just counterexample
+        findsCounterExampleSpec prop counterexample = runIsProperty 100 1000 42 prop `shouldBe` Just counterexample
     it "finds a counterexample for False" $
-      findsCounterexampleSpec False PNil
+      findsCounterExampleSpec False PNil
     it "finds a counterexample for const False" $
-      findsCounterexampleSpec (\b -> (b :: Bool)) (PCons False PNil)
+      findsCounterExampleSpec (\b -> (b :: Bool)) (PCons False PNil)
     it "finds a counterexample for w < 2" $
-      findsCounterexampleSpec
+      findsCounterExampleSpec
         (\w -> w < (2 :: Word8))
         (PCons (2 :: Word8) PNil)
     it "finds a counterexample for w1 >= w2" $
-      findsCounterexampleSpec
+      findsCounterExampleSpec
         (\w1 w2 -> w1 >= (w2 :: Word8))
         (PCons (0 :: Word8) (PCons (1 :: Word8) PNil))
     it "finds a counterexample for w1 <= w2" $
-      findsCounterexampleSpec
+      findsCounterExampleSpec
         (\w1 w2 -> w1 <= (w2 :: Word8))
         (PCons (1 :: Word8) (PCons (0 :: Word8) PNil))
 
