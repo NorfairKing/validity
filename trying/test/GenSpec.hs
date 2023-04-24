@@ -34,7 +34,7 @@ spec = do
       let shrinks = shrinkRandomness $ UV.fromList [1, 2, 3]
        in shrinks `shouldSatisfy` (UV.fromList [1, 2] `elem`)
 
-  describe "runProperty" $ do
+  describe "shrinking" $ do
     shrinksToSpec
       -- \w -> w < 1
       (PropGen genValid (\w -> PropBool ((w :: Word8) < 1)))
@@ -55,6 +55,30 @@ spec = do
     -- goldenGenSpec @[Word8] "tuple-word8-word8"
     goldenGenSpec @Word64 "word64"
 
+  describe "runIsProperty" $ do
+    let findsCounterexampleSpec ::
+          (Show (PList ls), Eq (PList ls), IsProperty ls prop) =>
+          prop ->
+          PList ls ->
+          IO ()
+        findsCounterexampleSpec prop counterexample = runIsProperty 100 1000 42 prop `shouldBe` Just counterexample
+    it "finds a counterexample for False" $
+      findsCounterexampleSpec False PNil
+    it "finds a counterexample for const False" $
+      findsCounterexampleSpec (\b -> (b :: Bool)) (PCons False PNil)
+    it "finds a counterexample for w < 2" $
+      findsCounterexampleSpec
+        (\w -> w < (2 :: Word8))
+        (PCons (2 :: Word8) PNil)
+    it "finds a counterexample for w1 >= w2" $
+      findsCounterexampleSpec
+        (\w1 w2 -> w1 >= (w2 :: Word8))
+        (PCons (0 :: Word8) (PCons (1 :: Word8) PNil))
+    it "finds a counterexample for w1 <= w2" $
+      findsCounterexampleSpec
+        (\w1 w2 -> w1 <= (w2 :: Word8))
+        (PCons (1 :: Word8) (PCons (0 :: Word8) PNil))
+
 shrinksToSpec ::
   (Show (PList ls), Eq (PList ls)) =>
   Property ls ->
@@ -63,7 +87,7 @@ shrinksToSpec ::
 shrinksToSpec property shrunk = do
   let randomness = computeRandomness 100 32
   it "fails the property" $
-    let (_, result) = runProperty randomness property
+    let (_, result) = runPropertyOnce randomness property
      in result `shouldBe` False
 
   it ("shrinks to " <> show shrunk) $

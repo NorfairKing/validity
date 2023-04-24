@@ -12,6 +12,7 @@
 module Gen where
 
 import Control.Monad
+import Data.Kind
 import Data.Maybe
 import Data.Validity
 import Data.Vector.Unboxed (Vector)
@@ -199,7 +200,7 @@ data Property ls where
   PropBool :: Bool -> Property '[]
   PropGen :: Gen a -> (a -> Property ls) -> Property (a ': ls)
 
-data family PList (l :: [*])
+data family PList (l :: [Type])
 
 data instance PList '[] = PNil
 
@@ -217,11 +218,61 @@ deriving instance Ord (PList '[])
 
 deriving instance (Ord x, Ord (PList xs)) => Ord (PList (x ': xs))
 
+runIsProperty ::
+  (Show (PList ls), IsProperty ls prop) =>
+  Int ->
+  Int ->
+  Word64 ->
+  prop ->
+  Maybe (PList ls) -- Counterexample
+runIsProperty successes maxSize seed prop =
+  runProperty successes maxSize seed $
+    toProperty prop
+
 runProperty ::
+  Show (PList ls) =>
+  Int ->
+  Int ->
+  Word64 ->
+  Property ls ->
+  Maybe (PList ls) -- Counterexample
+runProperty successes maxSize seed prop =
+  let sizes = computeSizes successes maxSize
+   in go $ zip sizes [seed ..]
+  where
+    go = \case
+      [] -> Nothing
+      ((size, seed) : rest) ->
+        let t@(values, result) = runPropertyOn (computeRandomness size seed) prop
+         in if result then traceShow values (go rest) else Just (traceShowId values)
+
+computeSizes :: Int -> Int -> [Int]
+computeSizes successes maxSize = case successes of
+  0 -> []
+  1 -> [0]
+  2 -> [0, maxSize]
+  3 -> [0, maxSize `div` 2, maxSize]
+  4 -> [0, maxSize `div` 3, (2 * maxSize) `div` 3, maxSize]
+  n -> [0] ++ [i * maxSize `div` (n - 1) | i <- [1 .. n - 2]] ++ [maxSize]
+
+runPropertyOn ::
+  Show (PList ls) =>
   Vector Word64 ->
   Property ls ->
   (PList ls, Bool)
-runProperty = go
+runPropertyOn ws prop =
+  let (values, result) = runPropertyOnce ws prop
+   in if result
+        then (values, result)
+        else case shrinkProperty ws prop of
+          Nothing -> (values, result)
+          Just values' -> (values', result)
+
+runPropertyOnce ::
+  Vector Word64 ->
+  Property ls ->
+  (PList ls, Bool)
+runPropertyOnce = go
   where
     go :: Vector Word64 -> Property ls -> (PList ls, Bool)
     go ws = \case
@@ -252,16 +303,14 @@ shrinkPropertyAsMuchAsPossible ::
 shrinkPropertyAsMuchAsPossible r prop = go r
   where
     run :: Vector Word64 -> (PList ls, Bool)
-    run ws' = runProperty ws' prop
+    run ws' = runPropertyOnce ws' prop
     go :: Vector Word64 -> [PList ls]
     go ws =
-      traceShow ws $
-        let shrinks = shrinkPropertyOneStep ws prop
-         in case listToMaybe shrinks of
-              Nothing -> []
-              Just (ws', values) ->
-                trace ("Successfully shrunk " <> show ws <> " to " <> show ws' <> " yielding " <> show values) $
-                  traceShowId values : go ws'
+      let shrinks = shrinkPropertyOneStep ws prop
+       in case listToMaybe shrinks of
+            Nothing -> []
+            Just (ws', values) ->
+              values : go ws'
 
 shrinkPropertyOneStep ::
   Show (PList ls) =>
@@ -270,8 +319,7 @@ shrinkPropertyOneStep ::
   [(Vector Word64, PList ls)]
 shrinkPropertyOneStep ws prop = do
   ws' <- shrinkRandomness ws
-  let (vals, result) = runProperty ws' prop
-  traceShowM (ws', vals, result)
+  let (vals, result) = runPropertyOnce ws' prop
   guard $ not result
   pure (ws', vals)
 
