@@ -15,6 +15,7 @@ module Gen where
 import Control.Applicative
 import Control.Monad
 import Control.Selective
+import Data.Either (rights)
 import Data.Kind
 import Data.Maybe
 import Data.Tuple (swap)
@@ -41,9 +42,9 @@ type Randomness = Vector Word64
 -- That's how much randomness the generator is allowed to use.
 data Gen a where
   -- | Generator that uses a fixed amount of randomness
-  GenFixedSize :: Size -> (Randomness -> a) -> Gen a
+  GenFixedSize :: Size -> (Randomness -> Either String a) -> Gen a
   -- | Generator that uses a variable amount of randomness.
-  GenVariableSize :: (Randomness -> a) -> Gen a
+  GenVariableSize :: (Randomness -> Either String a) -> Gen a
   -- | Generator that uses the amount of randomness left over to decide what to do.
   GenSized :: (Size -> Gen a) -> Gen a
   -- | For the Functor instance
@@ -104,40 +105,40 @@ sizeOfGen = go
       GenBind _ _ -> Nothing
       GenFail _ -> Just 0
 
-runGen :: Gen a -> Randomness -> a
+runGen :: Gen a -> Randomness -> Either String a
 runGen = flip go
   where
-    go :: Randomness -> Gen a -> a
+    go :: Randomness -> Gen a -> Either String a
     go ws = \case
       GenFixedSize size fun -> fun (UV.take size ws)
       GenVariableSize fun -> fun ws
       GenSized fun -> go ws (fun (UV.length ws))
-      GenPure a -> a
-      GenFMap f g' -> f $ go ws g'
+      GenPure a -> pure a
+      GenFMap f g' -> f <$> go ws g'
       GenAp gf ga ->
         -- TODO the way this is called is O(n^2). That can probably be done better.
         let (leftWs, rightWs) = case (sizeOfGen gf, sizeOfGen ga) of
               (Nothing, Nothing) -> computeSplitRandomness ws
               (Just fsize, _) -> splitRandomnessAt fsize ws
               (_, Just asize) -> swap $ splitRandomnessAt asize ws
-         in (go leftWs gf) (go rightWs ga)
-      GenAlt g1 g2 -> error "can only be implemented once runGen can fail."
-      GenSelect gEither gFun ->
+         in go leftWs gf <*> go rightWs ga
+      GenAlt g1 g2 -> (Left <$> go ws g1) <|> (Right <$> go ws g2)
+      GenSelect gEither gFun -> do
         let (leftWs, rightWs) = case (sizeOfGen gEither, sizeOfGen gFun) of
               (Nothing, Nothing) -> computeSplitRandomness ws
               (Just fsize, _) -> splitRandomnessAt fsize ws
               (_, Just asize) -> swap $ splitRandomnessAt asize ws
-            e = go leftWs gEither
-         in case e of
-              Left a -> go rightWs gFun a
-              Right b -> b
-      GenBind ga mb ->
+        e <- go leftWs gEither
+        case e of
+          Left a -> ($ a) <$> go rightWs gFun
+          Right b -> pure b
+      GenBind ga mb -> do
         let (leftWs, rightWs) =
               case sizeOfGen ga of
                 Nothing -> computeSplitRandomness ws
                 Just asize -> splitRandomnessAt asize ws
-            a = go leftWs ga
-         in go rightWs (mb a)
+        a <- go leftWs ga
+        go rightWs (mb a)
       GenFail err -> error err -- TODO let runGen fail
 
 -- | Compute an arbitrarily split value
@@ -168,10 +169,11 @@ computeSplitRandomness ws =
 
 genFromSingleRandomWord :: (Maybe RandomWord -> a) -> Gen a
 genFromSingleRandomWord func = GenFixedSize 1 $ \v ->
-  func $
-    if UV.null v
-      then Nothing
-      else Just $ UV.head v
+  pure $
+    func $
+      if UV.null v
+        then Nothing
+        else Just $ UV.head v
 
 takeNextRandomWord :: Gen RandomWord
 takeNextRandomWord = genFromSingleRandomWord $ \case
@@ -303,22 +305,25 @@ genMaybeOf gen = frequency [(1, pure Nothing), (3, Just <$> gen)]
 genListOf :: forall a. Gen a -> Gen [a]
 genListOf gen = case sizeOfGen gen of
   Just asize ->
-    GenVariableSize $ \ws ->
-      let s = UV.length ws
-          maxLen = (s - 1) `div` asize
-          len = runGen (genFixedSizeListLenghtWithMaximum maxLen) (UV.take 1 ws)
-       in go ws (replicate len asize)
+    GenVariableSize $ \ws -> case UV.length ws of
+      0 -> pure []
+      1 -> pure $ rights [runGen gen ws]
+      _ -> do
+        let s = UV.length ws
+            maxLen = (s - 1) `div` asize
+            len = computeIntFromTriangleDistribution 0 maxLen maxLen (ws UV.! 0)
+        pure $ rights $ go (UV.drop 1 ws) (replicate len asize)
   Nothing ->
-    GenVariableSize $ \ws ->
+    GenVariableSize $ \ws -> do
       let s = UV.length ws
           sizeForPartition = s `div` 10
           sizeForValues = s - sizeForPartition
           -- We use the first 10% of the randomness for computing the partition
           (forThePartition, forTheValues) = splitRandomnessAt sizeForPartition ws
-          partition = runGen (genPartition sizeForValues) forThePartition
-       in go forTheValues partition
+      partition <- runGen (genPartition sizeForValues) forThePartition
+      pure $ rights $ go forTheValues partition
   where
-    go :: Randomness -> [Size] -> [a]
+    go :: Randomness -> [Size] -> [Either String a]
     go rs = \case
       [] -> []
       (s : rest) ->
@@ -328,12 +333,12 @@ genListOf gen = case sizeOfGen gen of
 -- | 'genPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 genPartition :: Int -> Gen [Int]
 genPartition total = GenVariableSize $ \ws ->
-  case UV.length ws of
+  pure $ case UV.length ws of
     0 -> [total]
     1 -> [total]
     _ ->
       let maxLen = UV.length ws - 1
-          len = runGen (genIntFromTriangleDistribution 0 maxLen maxLen) (UV.take 1 ws)
+          len = computeIntFromTriangleDistribution 0 maxLen maxLen (ws UV.! 0)
           us = map computeProperFraction (UV.toList (UV.take len (UV.drop 1 ws)))
           invs = map (invE 0.25) us
        in -- Rescale the sizes to (approximately) sum to the given size.
@@ -364,18 +369,22 @@ genVariableListLengthWithMaximum maxLen =
 
 genIntFromTriangleDistribution :: Int -> Int -> Int -> Gen Int
 genIntFromTriangleDistribution minimal maximal mode =
-  round <$> genDoubleFromTriangleDistribution (fromIntegral minimal) (fromIntegral maximal) (fromIntegral mode)
+  computeIntFromTriangleDistribution minimal maximal mode <$> takeNextRandomWord
+
+computeIntFromTriangleDistribution :: Int -> Int -> Int -> RandomWord -> Int
+computeIntFromTriangleDistribution minimal maximal mode rw =
+  round $ computeDoubleFromTriangleDistribution (fromIntegral minimal) (fromIntegral maximal) (fromIntegral mode) rw
 
 genDoubleFromTriangleDistribution :: Double -> Double -> Double -> Gen Double
 genDoubleFromTriangleDistribution minimal maximal mode =
-  computeInverseTriangleDistributionChoice minimal maximal mode <$> takeNextRandomWord
+  computeDoubleFromTriangleDistribution minimal maximal mode <$> takeNextRandomWord
 
 -- | Choose a value from a triangel distribution with given minimal value,
 -- maximal value, mode, and random Double
 --
 -- See https://en.wikipedia.org/wiki/Triangular_distribution
-computeInverseTriangleDistributionChoice :: Double -> Double -> Double -> RandomWord -> Double
-computeInverseTriangleDistributionChoice minimal maximal mode rw =
+computeDoubleFromTriangleDistribution :: Double -> Double -> Double -> RandomWord -> Double
+computeDoubleFromTriangleDistribution minimal maximal mode rw =
   let u = computeProperFraction rw
       a = minimal
       b = maximal
@@ -387,17 +396,17 @@ computeInverseTriangleDistributionChoice minimal maximal mode rw =
 
 -- | Run a generator. The size passed to the generator is always 30;
 -- if you want another size then you should explicitly use 'resize'.
-generate :: Gen a -> IO a
+generate :: Gen a -> IO (Either String a)
 generate = generateOfSize 30
 
-generateOfSize :: Size -> Gen a -> IO a
+generateOfSize :: Size -> Gen a -> IO (Either String a)
 generateOfSize size g = do
   smGen <- initSMGen
   let randomness = computeRandomnessWithSMGen size smGen
   pure $ runGen g randomness
 
 -- | Generates some example values.
-sample' :: Gen a -> IO [a]
+sample' :: Gen a -> IO [Either String a]
 sample' g = mapM (\size -> generateOfSize size g) [0, 2 .. 20]
 
 -- | Generates some example values and prints them to 'stdout'.
@@ -565,17 +574,17 @@ runPropertyOn maxShrinks ws prop =
 runPropertyOnce ::
   Randomness ->
   Property ls ->
-  (PList ls, Bool)
+  Either String (PList ls, Bool)
 runPropertyOnce = go
   where
-    go :: Randomness -> Property ls -> (PList ls, Bool)
+    go :: Randomness -> Property ls -> Either String (PList ls, Bool)
     go ws = \case
       PropBool b -> (PNil, b)
-      PropGen gen func ->
+      PropGen gen func -> do
         let (usedRandomness, restRandomness) = computeSplitRandomness ws
-            value = runGen gen usedRandomness
-            (generateds, result) = go restRandomness (func value)
-         in (PCons value generateds, result)
+        value <- runGen gen usedRandomness
+        (generateds, result) <- go restRandomness (func value)
+        pure (PCons value generateds, result)
 
 shrinkProperty ::
   forall ls.
