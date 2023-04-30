@@ -17,12 +17,6 @@ spec = do
     it "shrinks to 0" $
       computeSplit 30 0 `shouldBe` 0
 
-  xdescribe "computePartition" $ do
-    it "shrinks to [] for a zero size" $
-      computePartition 0 0 `shouldBe` []
-    it "shrinks to [size] for a nonzero size" $
-      computePartition 30 0 `shouldBe` [30]
-
   describe "shrinkRandomness" $ do
     it "does not shrink an empty vector" $
       shrinkRandomness UV.empty
@@ -34,26 +28,17 @@ spec = do
       let shrinks = shrinkRandomness $ UV.fromList [1, 2, 3]
        in shrinks `shouldSatisfy` (UV.fromList [1, 2] `elem`)
 
-  describe "shrinking" $ do
-    shrinksToSpec
-      -- \w -> w < 1
-      (PropGen genValid (\w -> PropBool ((w :: Word8) < 1)))
-      (PCons 1 PNil)
-    shrinksToSpec
-      -- \w1 -> w2 -> w1 + w2 < 2
-      (PropGen genValid (\w1 -> (PropGen genValid (\w2 -> PropBool ((w1 + w2 :: Word8) < 2)))))
-      (PCons 1 (PCons 1 PNil))
-    shrinksToSpec
-      -- \w1 -> w2 -> w1 >= w2
-      (PropGen genValid (\w1 -> (PropGen genValid (\w2 -> PropBool (w1 >= (w2 :: Word8))))))
-      (PCons 0 (PCons 1 PNil))
+  describe "computeSizes" $ do
+    it "returns [0..n] when successes is one more than maxSize" $
+      computeSizes 11 10 `shouldBe` [0 .. 10]
 
   describe "runGen" $ do
-    goldenGenSpec @Bool "bool"
-    goldenGenSpec @Word8 "word8"
-    goldenGenSpec @(Word8, Word8) "tuple-word8-word8"
-    -- goldenGenSpec @[Word8] "tuple-word8-word8"
-    goldenGenSpec @Word64 "word64"
+    goldenGenValidSpec @Bool "bool"
+    goldenGenValidSpec @Word8 "word8"
+    goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
+    goldenGenValidSpec @[Word8] "list-word8"
+    goldenGenValidSpec @Word64 "word64"
+    goldenGenSpec genProperFraction "proper-fraction"
 
   describe "runIsProperty" $ do
     let findsCounterExampleSpec ::
@@ -61,7 +46,7 @@ spec = do
           prop ->
           PList ls ->
           IO ()
-        findsCounterExampleSpec prop counterexample = runIsProperty 100 1000 42 prop `shouldBe` Just counterexample
+        findsCounterExampleSpec prop counterexample = runIsProperty 100 1000 100000 42 prop `shouldBe` Just counterexample
     it "finds a counterexample for False" $
       findsCounterExampleSpec False PNil
     it "finds a counterexample for const False" $
@@ -78,41 +63,32 @@ spec = do
       findsCounterExampleSpec
         (\w1 w2 -> w1 <= (w2 :: Word8))
         (PCons (1 :: Word8) (PCons (0 :: Word8) PNil))
+    it "finds a counterexample for reverse ls == ls" $
+      findsCounterExampleSpec
+        (\ls -> reverse ls == (ls :: [Word8]))
+        (PCons ([0, 1] :: [Word8]) PNil)
 
-shrinksToSpec ::
-  (Show (PList ls), Eq (PList ls)) =>
-  Property ls ->
-  PList ls ->
-  Spec
-shrinksToSpec property shrunk = do
-  let randomness = computeRandomness 100 32
-  it "fails the property" $
-    let (_, result) = runPropertyOnce randomness property
-     in result `shouldBe` False
+goldenGenValidSpec :: forall a. (Show a, GenValid a) => FilePath -> Spec
+goldenGenValidSpec = goldenGenSpec (genValid @a)
 
-  it ("shrinks to " <> show shrunk) $
-    case shrinkProperty randomness property of
-      Nothing -> expectationFailure "should have been able to shrink"
-      Just values -> values `shouldBe` shrunk
-
-goldenGenSpec :: forall a. (Show a, GenValid a) => FilePath -> Spec
-goldenGenSpec fp = do
+goldenGenSpec :: forall a. (Show a) => Gen a -> FilePath -> Spec
+goldenGenSpec gen fp = do
   let nbValues = 100
       sizes = [0 .. nbValues]
       seeds = [42 ..]
   it ("generates the same " <> fp <> " values") $ do
     let randomnesses = zipWith computeRandomness sizes seeds
         values :: [a]
-        values = map (runGen genValid) randomnesses
+        values = map (runGen gen) randomnesses
     pureGoldenStringFile ("test_resources/gen/" <> fp <> ".txt") $
       unlines $
         map show values
   it ("shrinks to the same " <> fp <> " values") $ do
     let randomness = computeRandomness nbValues 42
         maxValue :: a
-        maxValue = runGen genValid randomness
+        maxValue = runGen gen randomness
         shrinks :: [a]
-        shrinks = map (runGen genValid) $ take 10 $ computeAllShrinks randomness
+        shrinks = map (runGen gen) $ take 10 $ computeAllShrinks randomness
     pureGoldenStringFile ("test_resources/shrink/" <> fp <> ".txt") $
       unlines $
         show maxValue
