@@ -36,6 +36,7 @@ spec = do
     goldenGenValidSpec @Bool "bool"
     goldenGenValidSpec @Word8 "word8"
     goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
+    goldenGenValidSpec @(Maybe Word8) "maybe-word8"
     goldenGenValidSpec @[Word8] "list-word8"
     goldenGenValidSpec @Word64 "word64"
     goldenGenSpec (genInt (0, 100)) "percentage"

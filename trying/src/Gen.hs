@@ -22,7 +22,6 @@ import Data.Vector.Unboxed (Vector)
 import qualified Data.Vector.Unboxed as UV
 import qualified Data.Vector.Unboxed.Mutable as MUV
 import Data.Word
-import Debug.Trace
 import GHC.Float (castWord64ToDouble)
 import System.Random.SplitMix as SM
 
@@ -181,6 +180,9 @@ genBool minimal = genFromSingleRandomWord $ \case
 instance (GenValid a, GenValid b) => GenValid (a, b) where
   genValid = (,) <$> genValid <*> genValid
 
+instance GenValid a => GenValid (Maybe a) where
+  genValid = genMaybeOf genValid
+
 instance GenValid a => GenValid [a] where
   genValid = genListOf genValid
 
@@ -219,6 +221,11 @@ genDouble (lo, hi) = do
 -- | Generate a 'Double' uniformly within '[0,1]' and shrink to 0.
 genProperFraction :: Gen Double
 genProperFraction = genDouble (0, 1)
+
+-- | TODO: generate 'Just' with slightly higher frequency.
+-- Maybe 3:1?
+genMaybeOf :: Gen a -> Gen (Maybe a)
+genMaybeOf gen = oneof [pure Nothing, Just <$> gen]
 
 -- Better splitting with fixed size lists
 genListOf :: forall a. Gen a -> Gen [a]
@@ -393,7 +400,7 @@ deriving instance (Ord x, Ord (PList xs)) => Ord (PList (x ': xs))
 
 runIsProperty ::
   forall ls prop.
-  (Show (PList ls), IsProperty ls prop) =>
+  IsProperty ls prop =>
   Int ->
   Int ->
   Int ->
@@ -406,7 +413,6 @@ runIsProperty successes maxSize maxShrinks seed prop =
 
 runProperty ::
   forall ls.
-  Show (PList ls) =>
   Int ->
   Int ->
   Int ->
@@ -434,7 +440,6 @@ computeSizes successes maxSize = case successes of
   n -> [0] ++ [i * maxSize `div` (n - 1) | i <- [1 .. n - 2]] ++ [maxSize]
 
 runPropertyOn ::
-  Show (PList ls) =>
   Int ->
   Randomness ->
   Property ls ->
@@ -464,7 +469,6 @@ runPropertyOnce = go
 
 shrinkProperty ::
   forall ls.
-  Show (PList ls) =>
   Int ->
   Randomness ->
   Property ls ->
@@ -477,24 +481,22 @@ shrinkProperty maxShrinks r prop =
 -- TODO record how many shrinks were done
 shrinkPropertyAndReturnAllShrinks ::
   forall ls.
-  Show (PList ls) =>
   Int ->
   Randomness ->
   Property ls ->
   [PList ls]
-shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go (traceShow ("At start:", maxShrinks) maxShrinks) r
+shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go maxShrinks r
   where
     go :: Int -> Randomness -> [PList ls]
     go currentShrinksLeft ws =
-      let shrinks = traceShow ("Before:", currentShrinksLeft) $ shrinkPropertyOneStep currentShrinksLeft ws prop
+      let shrinks = shrinkPropertyOneStep currentShrinksLeft ws prop
        in case listToMaybe shrinks of
             Nothing -> []
             Just (triesDone, (ws', values)) ->
               let newShrinksLeft = max 0 (currentShrinksLeft - triesDone)
-               in values : traceShow ("After:", newShrinksLeft) (go newShrinksLeft ws')
+               in values : go newShrinksLeft ws'
 
 shrinkPropertyOneStep ::
-  Show (PList ls) =>
   Int ->
   Randomness ->
   Property ls ->
@@ -505,7 +507,7 @@ shrinkPropertyOneStep maxShrinksThisRound ws prop =
         (triesDone, ws') <- zip [1 ..] shrunkRandomnesses
         let (vals, result) = runPropertyOnce ws' prop
         guard $ not result
-        pure $ traceShowId (triesDone, (ws', vals))
+        pure (triesDone, (ws', vals))
 
 class IsProperty ls a | a -> ls where
   toProperty :: a -> Property ls
