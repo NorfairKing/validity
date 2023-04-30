@@ -12,8 +12,10 @@
 module Gen where
 
 import Control.Monad
+import Control.Selective
 import Data.Kind
 import Data.Maybe
+import Data.Tuple (swap)
 import Data.Validity
 import Data.Vector.Unboxed (Vector)
 import qualified Data.Vector.Unboxed as UV
@@ -42,12 +44,14 @@ data Gen a where
   GenVariableSize :: (Randomness -> a) -> Gen a
   -- | Generator that uses the amount of randomness left over to decide what to do.
   GenSized :: (Size -> Gen a) -> Gen a
-  -- | For the functor instance
+  -- | For the Functor instance
   GenPure :: a -> Gen a
-  -- | For the applicative instance
+  -- | For the Applicative instance
   GenFMap :: (a -> b) -> Gen a -> Gen b
   GenAp :: Gen (a -> b) -> Gen a -> Gen b
-  -- | For the monad instance
+  -- | For the Selective instance
+  GenSelect :: Gen (Either a b) -> Gen (a -> b) -> Gen b
+  -- | For the Monad instance
   GenBind :: Gen a -> (a -> Gen b) -> Gen b
 
 instance Functor Gen where
@@ -56,6 +60,9 @@ instance Functor Gen where
 instance Applicative Gen where
   pure = GenPure
   (<*>) = GenAp
+
+instance Selective Gen where
+  select = GenSelect
 
 instance Monad Gen where
   (>>=) = GenBind
@@ -75,6 +82,9 @@ sizeOfGen = go
       GenPure _ -> Just 0
       GenFMap _ g -> go g
       GenAp g1 g2 -> (+) <$> go g1 <*> go g2
+      GenSelect g1 g2 ->
+        -- This may not be the actual size, but is definitely an upper bound
+        (+) <$> go g1 <*> go g2
       GenBind _ _ -> Nothing
 
 runGen :: Gen a -> Randomness -> a
@@ -89,26 +99,27 @@ runGen = flip go
       GenFMap f g' -> f $ go ws g'
       GenAp gf ga ->
         -- TODO the way this is called is O(n^2). That can probably be done better.
-        case (sizeOfGen gf, sizeOfGen ga) of
-          (Nothing, Nothing) ->
-            let (leftWs, rightWs) = computeSplitRandomness ws
-             in (go leftWs gf) (go rightWs ga)
-          (Just fsize, _) ->
-            let (leftWs, rightWs) = splitRandomnessAt (fromIntegral fsize) ws
-             in (go leftWs gf) (go rightWs ga)
-          (_, Just asize) ->
-            let (rightWs, leftWs) = splitRandomnessAt (fromIntegral asize) ws
-             in (go leftWs gf) (go rightWs ga)
+        let (leftWs, rightWs) = case (sizeOfGen gf, sizeOfGen ga) of
+              (Nothing, Nothing) -> computeSplitRandomness ws
+              (Just fsize, _) -> splitRandomnessAt (fromIntegral fsize) ws
+              (_, Just asize) -> swap $ splitRandomnessAt (fromIntegral asize) ws
+         in (go leftWs gf) (go rightWs ga)
+      GenSelect gEither gFun ->
+        let (leftWs, rightWs) = case (sizeOfGen gEither, sizeOfGen gFun) of
+              (Nothing, Nothing) -> computeSplitRandomness ws
+              (Just fsize, _) -> splitRandomnessAt (fromIntegral fsize) ws
+              (_, Just asize) -> swap $ splitRandomnessAt (fromIntegral asize) ws
+            e = go leftWs gEither
+         in case e of
+              Left a -> go rightWs gFun a
+              Right b -> b
       GenBind ga mb ->
-        case sizeOfGen ga of
-          Nothing ->
-            let (leftWs, rightWs) = computeSplitRandomness ws
-                a = go leftWs ga
-             in go rightWs (mb a)
-          Just asize ->
-            let (leftWs, rightWs) = splitRandomnessAt (fromIntegral asize) ws
-                a = go leftWs ga
-             in go rightWs (mb a)
+        let (leftWs, rightWs) =
+              case sizeOfGen ga of
+                Nothing -> computeSplitRandomness ws
+                Just asize -> splitRandomnessAt (fromIntegral asize) ws
+            a = go leftWs ga
+         in go rightWs (mb a)
 
 -- | Compute an arbitrarily split value
 --
