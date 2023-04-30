@@ -28,6 +28,7 @@ import System.Random.SplitMix as SM
 -- TODO: Newtype?
 type Size = Int
 
+-- TODO: Newtype?
 type RandomWord = Word64
 
 -- TODO: Newtype?
@@ -92,23 +93,23 @@ runGen = flip go
   where
     go :: Randomness -> Gen a -> a
     go ws = \case
-      GenFixedSize size fun -> fun (UV.take (fromIntegral size) ws)
+      GenFixedSize size fun -> fun (UV.take size ws)
       GenVariableSize fun -> fun ws
-      GenSized fun -> go ws (fun (fromIntegral (UV.length ws)))
+      GenSized fun -> go ws (fun (UV.length ws))
       GenPure a -> a
       GenFMap f g' -> f $ go ws g'
       GenAp gf ga ->
         -- TODO the way this is called is O(n^2). That can probably be done better.
         let (leftWs, rightWs) = case (sizeOfGen gf, sizeOfGen ga) of
               (Nothing, Nothing) -> computeSplitRandomness ws
-              (Just fsize, _) -> splitRandomnessAt (fromIntegral fsize) ws
-              (_, Just asize) -> swap $ splitRandomnessAt (fromIntegral asize) ws
+              (Just fsize, _) -> splitRandomnessAt fsize ws
+              (_, Just asize) -> swap $ splitRandomnessAt asize ws
          in (go leftWs gf) (go rightWs ga)
       GenSelect gEither gFun ->
         let (leftWs, rightWs) = case (sizeOfGen gEither, sizeOfGen gFun) of
               (Nothing, Nothing) -> computeSplitRandomness ws
-              (Just fsize, _) -> splitRandomnessAt (fromIntegral fsize) ws
-              (_, Just asize) -> swap $ splitRandomnessAt (fromIntegral asize) ws
+              (Just fsize, _) -> splitRandomnessAt fsize ws
+              (_, Just asize) -> swap $ splitRandomnessAt asize ws
             e = go leftWs gEither
          in case e of
               Left a -> go rightWs gFun a
@@ -117,7 +118,7 @@ runGen = flip go
         let (leftWs, rightWs) =
               case sizeOfGen ga of
                 Nothing -> computeSplitRandomness ws
-                Just asize -> splitRandomnessAt (fromIntegral asize) ws
+                Just asize -> splitRandomnessAt asize ws
             a = go leftWs ga
          in go rightWs (mb a)
 
@@ -142,7 +143,7 @@ computeSplitRandomness ws =
    in case len of
         0 -> (UV.empty, UV.empty)
         1 -> (UV.empty, UV.empty)
-        n ->
+        _ ->
           let leftSize = computeSplit (pred len) (UV.head ws)
               restRandomness = UV.tail ws
            in UV.splitAt leftSize restRandomness
@@ -332,17 +333,18 @@ shrinkRandomness ws =
     tryToLog = \case
       0 -> Nothing
       1 -> Nothing
-      w -> Just $ floor $ logBase 2 $ fromIntegral w
+      w -> Just $ floor (logBase 2 (fromIntegral w) :: Double)
     tryToSqrt = \case
       0 -> Nothing
       1 -> Nothing
-      w -> Just $ floor $ sqrt $ fromIntegral w
+      w -> Just $ floor (sqrt (fromIntegral w) :: Double)
     tryToDivideByTwo = \case
       0 -> Nothing
       w -> Just $ w `div` 2
-    tryToPred = \case
-      0 -> Nothing
-      w -> Just $ pred w
+
+-- tryToPred = \case
+--  0 -> Nothing
+--  w -> Just $ pred w
 
 data Property ls where
   PropBool :: Bool -> Property '[]
@@ -386,14 +388,14 @@ runProperty ::
   Word64 ->
   Property ls ->
   Maybe (PList ls) -- Counterexample
-runProperty successes maxSize maxShrinks seed prop =
+runProperty successes maxSize maxShrinks initialSeed prop =
   let sizes = computeSizes successes maxSize
-   in go $ zip sizes [seed ..]
+   in go $ zip sizes [initialSeed ..]
   where
     go = \case
       [] -> Nothing
       ((size, seed) : rest) ->
-        let t@(values, result) = runPropertyOn maxShrinks (computeRandomness size seed) prop
+        let (values, result) = runPropertyOn maxShrinks (computeRandomness size seed) prop
          in if result then go rest else Just values
 
 computeSizes :: Int -> Int -> [Int]
@@ -454,8 +456,6 @@ shrinkPropertyAndReturnAllShrinks ::
   [PList ls]
 shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go (traceShow ("At start:", maxShrinks) maxShrinks) r
   where
-    run :: Randomness -> (PList ls, Bool)
-    run ws' = runPropertyOnce ws' prop
     go :: Int -> Randomness -> [PList ls]
     go currentShrinksLeft ws =
       let (triesDone, shrinks) = traceShow ("Before:", currentShrinksLeft) $ shrinkPropertyOneStep currentShrinksLeft ws prop
