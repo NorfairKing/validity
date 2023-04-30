@@ -1,13 +1,14 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Gen where
 
@@ -163,6 +164,9 @@ takeNextRandomWord = genFromSingleRandomWord $ \case
 -- Laws:
 -- 1: Every generated value must be valid
 -- 2: With enough randomness, every valid value must be generated eventually.
+--
+-- Ideally the generated values are particularly anoying.
+-- So we try to generate values around the bounds with increased probability
 class Validity a => GenValid a where
   genValid :: Gen a
 
@@ -191,6 +195,18 @@ instance GenValid Word64 where
 instance GenValid Double where
   genValid = castWord64ToDouble <$> takeNextRandomWord
 
+oneof :: [Gen a] -> Gen a
+oneof ls = do
+  ix <- genInt (0, length ls - 1)
+  ls !! ix
+
+elements :: [a] -> Gen a
+elements = oneof . map pure
+
+-- | Generate a 'Double' within a range, shrink to the lower end
+genInt :: (Int, Int) -> Gen Int
+genInt (lo, hi) = round <$> genDouble (fromIntegral lo, fromIntegral hi)
+
 -- | Generate a 'Double' within a range, shrink to the lower end
 genDouble :: (Double, Double) -> Gen Double
 genDouble (lo, hi) = do
@@ -200,7 +216,7 @@ genDouble (lo, hi) = do
   -- n: (hi - lo) / maxBound * w
   pure $ ((hi - lo) / fromIntegral (maxBound :: Word64)) * fromIntegral w
 
--- | Generate a 'Double' within '[0,1]' and shrink to 0.
+-- | Generate a 'Double' uniformly within '[0,1]' and shrink to 0.
 genProperFraction :: Gen Double
 genProperFraction = genDouble (0, 1)
 
@@ -209,13 +225,12 @@ genListOf :: forall a. Gen a -> Gen [a]
 genListOf gen = case sizeOfGen gen of
   Just asize -> sized $ \s -> do
     let maxLen = s `div` asize
-    len <- genListLengthWithMaximum maxLen
+    len <- genFixedSizeListLenghtWithMaximum maxLen
     GenVariableSize $ \ws -> do
       go ws (replicate len asize)
   Nothing ->
     sized $ \s -> do
-      len <- genListLengthWithMaximum (max 0 (s - 1))
-      partition <- genPartition len
+      partition <- genPartition (max 0 (s - 1))
       GenVariableSize $ \ws ->
         go ws partition
   where
@@ -230,7 +245,7 @@ genListOf gen = case sizeOfGen gen of
 genPartition :: Int -> Gen [Int]
 genPartition = \case
   0 -> pure []
-  i -> genListLengthWithMaximum i >>= go i
+  i -> genVariableListLengthWithMaximum i >>= go i
   where
     go :: Int -> Int -> Gen [Int]
     go size len = do
@@ -244,27 +259,41 @@ genPartition = \case
     invE :: Double -> Double -> Double
     invE lambda u = (-log (1 - u)) / lambda
 
--- | Generate a list length leq the given size
-genListLengthWithMaximum :: Size -> Gen Int
-genListLengthWithMaximum maxLen = computeListLengthWithMaximum maxLen <$> genProperFraction
+-- | Generate a list length leq the given size for a generator with fixed size
+genFixedSizeListLenghtWithMaximum :: Size -> Gen Int
+genFixedSizeListLenghtWithMaximum maxLen =
+  -- Use a triangle distribution for generating the
+  -- length of the list
+  -- with minimum length '0', mode length 'maxLen'
+  -- and given max length.
+  round <$> genFromTriangleDistribution 0 (fromIntegral maxLen) (fromIntegral maxLen)
 
-computeListLengthWithMaximum :: Size -> Double -> Int
-computeListLengthWithMaximum maxLen =
-  round . invT (fromIntegral maxLen)
-  where
-    -- Use a triangle distribution for generating the
-    -- length of the list
-    -- with minimum length '0', mode length '2'
-    -- and given max length.
-    invT :: Double -> Double -> Double
-    invT m u =
-      let a = 0
-          b = m
-          c = 2
-          fc = (c - a) / (b - a)
-       in if u < fc
-            then a + sqrt (u * (b - a) * (c - a))
-            else b - sqrt ((1 - u) * (b - a) * (b - c))
+-- | Generate a list length leq the given size for a generator with variable size
+genVariableListLengthWithMaximum :: Size -> Gen Int
+genVariableListLengthWithMaximum maxLen =
+  -- Use a triangle distribution for generating the
+  -- length of the list
+  -- with minimum length '0', mode length '2'
+  -- and given max length.
+  round <$> genFromTriangleDistribution 0 (fromIntegral maxLen) 2
+
+genFromTriangleDistribution :: Double -> Double -> Double -> Gen Double
+genFromTriangleDistribution minimal maximal mode =
+  computeInverseTriangleDistributionChoice minimal maximal mode <$> genProperFraction
+
+-- | Choose a value from a triangel distribution with given minimal value,
+-- maximal value, mode, and random Double
+--
+-- See https://en.wikipedia.org/wiki/Triangular_distribution
+computeInverseTriangleDistributionChoice :: Double -> Double -> Double -> Double -> Double
+computeInverseTriangleDistributionChoice minimal maximal mode u =
+  let a = minimal
+      b = maximal
+      c = mode
+      fc = (c - a) / (b - a)
+   in if u < fc
+        then a + sqrt (u * (b - a) * (c - a))
+        else b - sqrt ((1 - u) * (b - a) * (b - c))
 
 -- | Compute a randomness vector based on a size and seed
 computeRandomness :: Int -> Word64 -> Randomness
@@ -363,6 +392,7 @@ deriving instance Ord (PList '[])
 deriving instance (Ord x, Ord (PList xs)) => Ord (PList (x ': xs))
 
 runIsProperty ::
+  forall ls prop.
   (Show (PList ls), IsProperty ls prop) =>
   Int ->
   Int ->
@@ -375,6 +405,7 @@ runIsProperty successes maxSize maxShrinks seed prop =
     toProperty prop
 
 runProperty ::
+  forall ls.
   Show (PList ls) =>
   Int ->
   Int ->
@@ -386,11 +417,14 @@ runProperty successes maxSize maxShrinks initialSeed prop =
   let sizes = computeSizes successes maxSize
    in go $ zip sizes [initialSeed ..]
   where
+    go :: [(Int, Word64)] -> Maybe (PList ls)
     go = \case
       [] -> Nothing
       ((size, seed) : rest) ->
         let (values, result) = runPropertyOn maxShrinks (computeRandomness size seed) prop
-         in if result then go rest else Just values
+         in if result
+              then go rest
+              else Just values
 
 computeSizes :: Int -> Int -> [Int]
 computeSizes successes maxSize = case successes of
@@ -473,7 +507,7 @@ shrinkPropertyOneStep maxShrinksThisRound ws prop =
         guard $ not result
         pure $ traceShowId (triesDone, (ws', vals))
 
-class IsProperty ls a where
+class IsProperty ls a | a -> ls where
   toProperty :: a -> Property ls
 
 instance IsProperty '[] Bool where
