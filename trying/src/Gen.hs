@@ -297,13 +297,11 @@ shrinkRandomness ws =
     [ every tryToLog,
       every tryToSqrt,
       every tryToDivideByTwo,
-      -- every tryToPred,
       shorteningsFromBack,
       shorteningsFromFront,
       each tryToLog,
       each tryToSqrt,
-      each tryToDivideByTwo -- ,
-      -- each tryToPred
+      each tryToDivideByTwo
     ]
   where
     -- TODO keep a cache of the randomnesses we've
@@ -341,10 +339,6 @@ shrinkRandomness ws =
     tryToDivideByTwo = \case
       0 -> Nothing
       w -> Just $ w `div` 2
-
--- tryToPred = \case
---  0 -> Nothing
---  w -> Just $ pred w
 
 data Property ls where
   PropBool :: Bool -> Property '[]
@@ -458,28 +452,26 @@ shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go (traceShow ("At start:"
   where
     go :: Int -> Randomness -> [PList ls]
     go currentShrinksLeft ws =
-      let (triesDone, shrinks) = traceShow ("Before:", currentShrinksLeft) $ shrinkPropertyOneStep currentShrinksLeft ws prop
-          newShrinksLeft = max 0 (currentShrinksLeft - triesDone)
-       in traceShow ("After:", newShrinksLeft) $ case listToMaybe shrinks of
+      let shrinks = traceShow ("Before:", currentShrinksLeft) $ shrinkPropertyOneStep currentShrinksLeft ws prop
+       in case listToMaybe shrinks of
             Nothing -> []
-            Just (ws', values) -> values : go newShrinksLeft ws'
+            Just (triesDone, (ws', values)) ->
+              let newShrinksLeft = max 0 (currentShrinksLeft - triesDone)
+               in values : traceShow ("After:", newShrinksLeft) (go newShrinksLeft ws')
 
 shrinkPropertyOneStep ::
   Show (PList ls) =>
   Int ->
   Randomness ->
   Property ls ->
-  (Int, [(Randomness, PList ls)])
+  [(Int, (Randomness, PList ls))]
 shrinkPropertyOneStep maxShrinksThisRound ws prop =
   let shrunkRandomnesses = take maxShrinksThisRound (shrinkRandomness ws)
-      triesDone = length shrunkRandomnesses
-   in ( triesDone,
-        do
-          ws' <- shrunkRandomnesses
-          let (vals, result) = runPropertyOnce ws' prop
-          guard $ not result
-          pure $ traceShowId (ws', vals)
-      )
+   in do
+        (triesDone, ws') <- zip [1 ..] shrunkRandomnesses
+        let (vals, result) = runPropertyOnce ws' prop
+        guard $ not result
+        pure $ traceShowId (triesDone, (ws', vals))
 
 class IsProperty ls a where
   toProperty :: a -> Property ls

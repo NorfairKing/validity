@@ -5,7 +5,6 @@
 
 module GenSpec (spec) where
 
-import Data.Vector.Unboxed (Vector)
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
 import Gen
@@ -46,7 +45,9 @@ spec = do
           prop ->
           PList ls ->
           IO ()
-        findsCounterExampleSpec prop counterexample = runIsProperty 100 1000 100000 42 prop `shouldBe` Just counterexample
+        findsCounterExampleSpec property counterexample =
+          runIsProperty 100 1000 100000 42 property
+            `shouldBe` Just counterexample
     it "finds a counterexample for False" $
       findsCounterExampleSpec False PNil
     it "finds a counterexample for const False" $
