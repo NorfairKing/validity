@@ -1,101 +1,101 @@
 Nothing
 Nothing
 Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Just 43
-Nothing
-Just 136
-Nothing
-Nothing
-Just 104
-Just 170
-Nothing
-Nothing
-Nothing
 Just 219
+Just 237
 Nothing
 Nothing
+Just 182
 Nothing
-Just 244
+Just 184
+Just 154
+Just 19
+Just 27
+Just 130
+Just 116
+Just 152
 Nothing
-Nothing
-Nothing
-Nothing
-Just 180
-Nothing
-Nothing
-Just 208
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Nothing
-Just 0
-Just 99
-Nothing
-Nothing
-Nothing
-Just 0
+Just 140
+Just 181
 Just 76
-Just 229
-Just 75
-Nothing
-Just 122
-Nothing
-Just 88
-Just 77
-Nothing
-Just 225
-Just 35
-Just 220
-Nothing
-Just 5
-Nothing
-Nothing
-Nothing
 Just 100
 Nothing
-Just 143
+Just 200
 Nothing
-Just 157
+Just 133
+Just 14
+Just 16
+Just 57
 Nothing
-Just 105
-Just 171
 Nothing
+Just 194
 Nothing
 Just 136
 Nothing
-Just 133
-Just 58
+Just 30
+Just 192
+Just 18
+Just 38
+Just 168
+Just 84
+Just 12
+Just 243
+Just 48
 Nothing
-Just 179
-Just 114
-Just 206
+Just 116
+Just 59
+Just 79
+Nothing
+Just 171
+Just 9
+Just 51
+Just 79
+Just 54
+Just 82
+Just 200
+Just 212
+Just 150
+Just 238
+Just 215
+Just 19
+Just 160
+Just 117
+Just 109
+Just 90
 Nothing
 Nothing
-Just 154
 Nothing
-Just 15
-Just 167
+Just 230
+Just 158
+Just 118
+Just 152
+Just 195
+Just 227
+Just 252
+Just 138
+Just 197
+Just 137
+Just 77
+Just 92
+Just 33
+Just 220
+Just 88
+Just 116
+Just 203
+Just 104
+Just 12
+Just 250
+Just 23
 Nothing
-Just 244
-Just 65
-Nothing
-Nothing
-Just 46
-Nothing
-Just 179
-Nothing
-Nothing
-Nothing
-Nothing
+Just 234
+Just 93
+Just 135
+Just 149
+Just 8
+Just 49
+Just 119
+Just 113
+Just 47
+Just 236
+Just 116
+Just 235

@@ -38,9 +38,37 @@ spec = do
     goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
     goldenGenValidSpec @(Maybe Word8) "maybe-word8"
     goldenGenValidSpec @[Word8] "list-word8"
+    goldenGenValidSpec @[[Word8]] "list-list-word8"
     goldenGenValidSpec @Word64 "word64"
     goldenGenSpec (genInt (0, 100)) "percentage"
     goldenGenSpec genProperFraction "proper-fraction"
+    goldenGenSpec (genPartition 100) "partition-100"
+
+  describe "generator tests" $ do
+    describe "genInt" $
+      it "generates values in the given range" $
+        let lo = 6
+            hi = 17
+         in generatorProperty (genInt (lo, hi)) (\a -> lo <= a && a <= hi)
+    describe "genDouble" $
+      it "generates values in the given range" $
+        let lo = 6
+            hi = 17
+         in generatorProperty (genDouble (lo, hi)) (\a -> lo <= a && a <= hi)
+    describe "genProperFraction" $
+      it "generates values in the range [0,1]" $
+        generatorProperty genProperFraction (\a -> 0 <= a && a <= 1)
+
+    describe "genPartition" $
+      it "generates values that sum up to the original value" $
+        generatorProperty
+          (genPartition 1000)
+          ( \ls ->
+              let total = sum ls
+                  expected = 1000
+                  diff = abs $ total - expected
+               in diff < 50
+          )
 
   describe "runIsProperty" $ do
     let findsCounterExampleSpec ::
@@ -89,11 +117,16 @@ spec = do
     it "finds a counterexample for reverse ls == ls" $
       findsCounterExampleSpec
         (\ls -> reverse ls == (ls :: [Word8]))
-        (PCons ([0, 1] :: [Word8]) PNil)
+        (PCons ([1, 0] :: [Word8]) PNil)
     it "finds a counterexample for reverse ls < ls" $
       findsCounterExampleSpec
         (\ls -> reverse ls < (ls :: [Word8]))
         (PCons ([] :: [Word8]) PNil)
+
+generatorProperty :: forall a. (Show a, Eq a) => Gen a -> (a -> Bool) -> IO ()
+generatorProperty gen predicate = do
+  let p = forAll gen predicate
+  runIsProperty 100 1000 0 42 p `shouldBe` Nothing
 
 goldenGenValidSpec :: forall a. (Show a, GenValid a) => FilePath -> Spec
 goldenGenValidSpec = goldenGenSpec (genValid @a)
