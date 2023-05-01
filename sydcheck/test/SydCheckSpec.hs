@@ -4,11 +4,11 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
-module GenSpec (spec) where
+module SydCheckSpec (spec) where
 
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
-import Gen
+import SydCheck
 import Test.Syd
 
 spec :: Spec

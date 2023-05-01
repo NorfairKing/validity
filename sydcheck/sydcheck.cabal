@@ -13,7 +13,7 @@ build-type:     Simple
 
 library
   exposed-modules:
-      Gen
+      SydCheck
   other-modules:
       Paths_sydcheck
   hs-source-dirs:
@@ -30,7 +30,7 @@ test-suite sydcheck-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      GenSpec
+      SydCheckSpec
       Paths_sydcheck
   hs-source-dirs:
       test

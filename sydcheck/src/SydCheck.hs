@@ -10,7 +10,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Gen where
+module SydCheck where
 
 import Control.Applicative
 import Control.Monad
