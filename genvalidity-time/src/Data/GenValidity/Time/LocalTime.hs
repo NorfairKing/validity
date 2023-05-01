@@ -21,11 +21,13 @@ genTimeZoneName =
   frequency
     [ (1, pure ""),
       ( 4, -- Any three characters
-        (:) <$> genValid
+        (:)
+          <$> genValid
           <*> ((:) <$> genValid <*> ((:) <$> genValid <*> pure []))
       ),
       ( 4, -- A +HHMM string
-        (:) <$> elements ['-', '+']
+        (:)
+          <$> elements ['-', '+']
           <*> ( formatTime defaultTimeLocale "%H%M"
                   <$> (TimeOfDay <$> choose (0, 23) <*> choose (0, 59) <*> pure 0)
               )
@@ -35,7 +37,9 @@ genTimeZoneName =
 
 instance GenValid TimeOfDay where
   genValid =
-    TimeOfDay <$> (choose (0, 23)) <*> (choose (0, 59))
+    TimeOfDay
+      <$> (choose (0, 23))
+      <*> (choose (0, 59))
       <*> (MkFixed <$> choose (0, 60999999999999))
   shrinkValid (TimeOfDay h m s) = do
     (h', m', s') <-

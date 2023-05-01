@@ -71,19 +71,19 @@ checkGen gen genname s =
   parallel $ do
     let name = nameOf @a
         hashablestr = unwords ["hashWithSalt :: Int ->", name, "-> Int"]
-    describe ("Hashable " ++ name) $
-      describe hashablestr $
-        it
-          ( unwords
-              [ "satisfies (a == b) => (hashWithSalt n a) ==",
-                "(hashWithSalt n b), for every n and for",
-                genname,
-                name
-              ]
-          )
-          $ let ss (a, b) = (,) <$> s a <*> s b
-             in forAllShrink gen ss $ \(a1, a2) ->
-                  forAllValid $ \int ->
-                    when (a1 == a2) $
-                      let h = hashWithSalt int
-                       in h a1 `shouldBe` h a2
+    describe ("Hashable " ++ name)
+      $ describe hashablestr
+      $ it
+        ( unwords
+            [ "satisfies (a == b) => (hashWithSalt n a) ==",
+              "(hashWithSalt n b), for every n and for",
+              genname,
+              name
+            ]
+        )
+      $ let ss (a, b) = (,) <$> s a <*> s b
+         in forAllShrink gen ss $ \(a1, a2) ->
+              forAllValid $ \int ->
+                when (a1 == a2) $
+                  let h = hashWithSalt int
+                   in h a1 `shouldBe` h a2

@@ -16,7 +16,8 @@ instance (Show k, Ord k, Validity k, Validity v) => Validity (Map k v) where
     mconcat
       [ declare "The Map structure is valid." $ M.valid m,
         decorate "Map elements" $
-          decorateMap m $ \k v -> mconcat [delve "The key" k, delve "The value" v]
+          decorateMap m $
+            \k v -> mconcat [delve "The key" k, delve "The value" v]
       ]
 
 decorateMap :: Show k => Map k v -> (k -> v -> Validation) -> Validation

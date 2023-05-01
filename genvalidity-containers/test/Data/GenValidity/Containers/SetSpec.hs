@@ -20,9 +20,11 @@ spec = do
   genValidSpec @(Set Rational)
   describe "genSeperate" $ do
     it "generates values that are seperate" $
-      forAll (genSeperate genValid) $ \ls -> distinctOrd (ls :: [Int])
+      forAll (genSeperate genValid) $
+        \ls -> distinctOrd (ls :: [Int])
     it "generates values that are seperate" $
-      forAll (genSeperate genValid) $ \ls -> distinctOrd (ls :: [Int])
+      forAll (genSeperate genValid) $
+        \ls -> distinctOrd (ls :: [Int])
   describe "genSeperateFor" $ do
     it "generates values that are seperate" $
       forAllValid $ \ls ->

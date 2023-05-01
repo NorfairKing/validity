@@ -91,8 +91,8 @@ monoidSpecOnGen gen genname s =
       let mem = mempty @a
           mapp = mappend @a
           mcon = mconcat @a
-      describe memptystr $
-        it
+      describe memptystr
+        $ it
           ( unwords
               [ "is the identity for",
                 mappendstr,
@@ -100,20 +100,20 @@ monoidSpecOnGen gen genname s =
                 genDescr @a genname
               ]
           )
-          $ identityOnGen mapp mem gen s
-      describe mappendstr $
-        it
+        $ identityOnGen mapp mem gen s
+      describe mappendstr
+        $ it
           ( unwords
               [ "is an associative operation for",
                 genDescr @(a, a, a) genname
               ]
           )
-          $ associativeOnGens mapp gen3 s3
-      describe mconcatstr $
-        it
+        $ associativeOnGens mapp gen3 s3
+      describe mconcatstr
+        $ it
           ( unwords
               [ "is equivalent to its default implementation for",
                 genDescr @[a] genname
               ]
           )
-          $ equivalentOnGen mcon (foldr mapp mem) genl sl
+        $ equivalentOnGen mcon (foldr mapp mem) genl sl

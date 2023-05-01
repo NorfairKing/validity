@@ -33,7 +33,8 @@ arbitrarySpec = do
   let name = nameOf @a
   describe ("Arbitrary " ++ name) $
     describe ("arbitrary :: Gen " ++ name) $
-      it "only generates valid values" $ arbitraryGeneratesOnlyValid @a
+      it "only generates valid values" $
+        arbitraryGeneratesOnlyValid @a
 
 -- | @arbitrary@ only generates valid data
 --

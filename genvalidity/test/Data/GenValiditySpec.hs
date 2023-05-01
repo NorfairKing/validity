@@ -23,7 +23,8 @@ spec = do
       forAll genSingleLineString (`shouldSatisfy` isSingleLine)
   describe "upTo" $ do
     it "returns only positive integers" $
-      forAll arbitrary $ \n -> forAll (upTo n) (`shouldSatisfy` (>= 0))
+      forAll arbitrary $
+        \n -> forAll (upTo n) (`shouldSatisfy` (>= 0))
     it "returns only integers smaller than or equal to the given number" $
       forAll arbitrary $ \n ->
         forAll (upTo n) (`shouldSatisfy` (<= (max n 0)))

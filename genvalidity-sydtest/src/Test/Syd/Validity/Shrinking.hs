@@ -35,7 +35,8 @@ shrinkValidSpec ::
 shrinkValidSpec =
   describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $ do
     it "preserves validity" $
-      forAll (genValid @a) $ \a -> forM_ (shrinkValid a) shouldBeValid
+      forAll (genValid @a) $
+        \a -> forM_ (shrinkValid a) shouldBeValid
     it "never shrinks to itself for valid values" $
       shrinkValidDoesNotShrinkToItself @a
 

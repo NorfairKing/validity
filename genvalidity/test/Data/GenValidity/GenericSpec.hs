@@ -82,10 +82,12 @@ shrinkValidstructurallySpec proxy = do
     ( unwords
         ["never shrinks to itself for valid", "\"" ++ nameOf proxy ++ "\"s"]
     )
-    $ forAll (genValid :: Gen a) $ \a ->
+    $ forAll (genValid :: Gen a)
+    $ \a ->
       forM_ (shrinkValidStructurally a) $ \subA ->
         when (subA == a) $
-          expectationFailure $ unlines [show a, "was shrunk to itself."]
+          expectationFailure $
+            unlines [show a, "was shrunk to itself."]
 
 nameOf ::
   forall a.

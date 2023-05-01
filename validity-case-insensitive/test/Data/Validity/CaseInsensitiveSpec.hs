@@ -12,6 +12,8 @@ import Test.Validity
 spec :: Spec
 spec = do
   it "says that this case-insensitive string is valid" $
-    shouldBeValid $ CI.mk "hello world"
+    shouldBeValid $
+      CI.mk "hello world"
   it "says that this unsafely constructed unfolded string is invalid" $
-    shouldBeInvalid $ CI.unsafeMk "HeLlO wOrLd"
+    shouldBeInvalid $
+      CI.unsafeMk "HeLlO wOrLd"

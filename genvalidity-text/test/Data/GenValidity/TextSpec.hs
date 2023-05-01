@@ -24,12 +24,14 @@ showTextDebug (ST.Text arr off len) =
     [ unwords
         [ "arr:   ",
           intercalate "," $
-            map (printf "%4d") $ A.toList arr off len
+            map (printf "%4d") $
+              A.toList arr off len
         ],
       unwords
         [ "hexarr:",
           intercalate "," $
-            map (printf "%4x") $ A.toList arr off len
+            map (printf "%4x") $
+              A.toList arr off len
         ],
       unwords ["off:      ", show off],
       unwords ["len:      ", show len]
@@ -102,4 +104,5 @@ spec = do
       it "generates valid text" $
         forAll (genValid) $ \t ->
           unless (isValid t) $
-            expectationFailure $ showLazyTextDebug t
+            expectationFailure $
+              showLazyTextDebug t

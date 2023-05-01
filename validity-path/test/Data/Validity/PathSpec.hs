@@ -21,16 +21,21 @@ spec = do
     it "checks for absolute paths" $
       forAllValid $ \path ->
         unless (System.FilePath.isAbsolute path) $
-          shouldBeInvalid $ p path
+          shouldBeInvalid $
+            p path
     it "negatively checks for trailing path separators" $
-      shouldBeInvalid $ p "/test/"
+      shouldBeInvalid $
+        p "/test/"
     it "positively checks for trailing path separators" $
-      shouldBeValid $ p "/test"
+      shouldBeValid $
+        p "/test"
     it "negatively checks for being \".\"" $ shouldBeInvalid $ p "."
     it "negatively checks for ending in \"/.\"" $
-      shouldBeInvalid $ p "/test/."
+      shouldBeInvalid $
+        p "/test/."
     it "negatively checks for containing \"..\"" $
-      shouldBeInvalid $ p "/test/../file"
+      shouldBeInvalid $
+        p "/test/../file"
     it "checks for isValid from System.FilePath" $
       forAllValid $ \path ->
         unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path
@@ -40,13 +45,16 @@ spec = do
     it "checks for relative paths" $
       forAllValid $ \path ->
         unless (System.FilePath.isRelative path) $
-          shouldBeInvalid $ p path
+          shouldBeInvalid $
+            p path
     it "checks that the path is not empty" $ shouldBeInvalid $ p ""
     it "negatively checks for being \".\"" $ shouldBeInvalid $ p "."
     it "negatively checks for ending in \"/.\"" $
-      shouldBeInvalid $ p "test/."
+      shouldBeInvalid $
+        p "test/."
     it "negatively checks for containing \"..\"" $
-      shouldBeInvalid $ p "/test/../file"
+      shouldBeInvalid $
+        p "/test/../file"
     it "checks for isValid from System.FilePath" $
       forAllValid $ \path ->
         unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path
@@ -56,9 +64,11 @@ spec = do
     it "checks for absolute paths" $
       forAllValid $ \path ->
         unless (System.FilePath.isAbsolute path) $
-          shouldBeInvalid $ p path
+          shouldBeInvalid $
+            p path
     it "negatively checks for containing \"..\"" $
-      shouldBeInvalid $ p "/test/../dir"
+      shouldBeInvalid $
+        p "/test/../dir"
     it "checks for isValid from System.FilePath" $
       forAllValid $ \path ->
         unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path
@@ -68,10 +78,12 @@ spec = do
     it "checks for relative paths" $
       forAllValid $ \path ->
         unless (System.FilePath.isRelative path) $
-          shouldBeInvalid $ p path
+          shouldBeInvalid $
+            p path
     it "checks that the path is not empty" $ shouldBeInvalid $ p ""
     it "negatively checks for containing \"..\"" $
-      shouldBeInvalid $ p "test/../dir"
+      shouldBeInvalid $
+        p "test/../dir"
     it "checks for isValid from System.FilePath" $
       forAllValid $ \path ->
         unless (System.FilePath.isValid path) $ shouldBeInvalid $ p path

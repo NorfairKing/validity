@@ -1,4 +1,4 @@
-name: trying
+name: sydcheck
 category: Testing
 author: Tom Sydney Kerckhove
 maintainer: syd@cs-syd.eu
@@ -7,7 +7,6 @@ dependencies:
 - base >=4.13 && <5
 
 library:
-  ghc-options: -Wno-redundant-constraints
   source-dirs: src
   dependencies:
   - selective
@@ -16,7 +15,7 @@ library:
   - vector
 
 tests:
-  trying-test:
+  sydcheck-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -29,4 +28,4 @@ tests:
     - sydtest
     - validity
     - vector
-    - trying
+    - sydcheck

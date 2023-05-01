@@ -9,7 +9,10 @@ import Data.Validity.Time.Format ()
 
 instance GenValid TimeLocale where
   genValid =
-    TimeLocale <$> genValid <*> genValid <*> genValid
+    TimeLocale
+      <$> genValid
+      <*> genValid
+      <*> genValid
       <*> genValid
       <*> genValid
       <*> genValid

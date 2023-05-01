@@ -1,6 +1,5 @@
 resolver: lts-19.32
 packages:
-- 'trying'
 - 'genvalidity'
 - 'genvalidity-aeson'
 - 'genvalidity-bytestring'
@@ -29,6 +28,7 @@ packages:
 - 'genvalidity-unordered-containers'
 - 'genvalidity-uuid'
 - 'genvalidity-vector'
+- 'sydcheck'
 - 'validity'
 - 'validity-aeson'
 - 'validity-bytestring'

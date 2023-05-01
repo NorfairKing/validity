@@ -72,7 +72,7 @@ jsonSpecOnGen gen genname s =
                 name ++ "\""
               ]
           )
-          $ neverFailsToEncodeOnGen gen s
+        $ neverFailsToEncodeOnGen gen s
       describe
         ( "decode :: Data.ByteString.Lazy.ByteString -> Either String "
             ++ name
@@ -84,7 +84,7 @@ jsonSpecOnGen gen genname s =
                 name ++ "\"" ++ "'s"
               ]
           )
-          $ encodeAndDecodeAreInversesOnGen gen s
+        $ encodeAndDecodeAreInversesOnGen gen s
 
 -- |
 --
