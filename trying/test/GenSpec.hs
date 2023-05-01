@@ -134,7 +134,7 @@ spec = do
 generatorProperty :: forall a. (Show a, Eq a) => Gen a -> (a -> Bool) -> IO ()
 generatorProperty gen predicate = do
   let p = forAll gen predicate
-  runIsProperty 100 1000 0 1000 42 p `shouldBe` Right Nothing
+  runIsProperty 100 1000 0 100 42 p `shouldBe` Right Nothing
 
 goldenGenValidSpec :: forall a. (Show a, GenValid a) => FilePath -> Spec
 goldenGenValidSpec = goldenGenSpec (genValid @a)

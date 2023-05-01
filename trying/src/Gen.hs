@@ -546,8 +546,8 @@ runIsProperty ::
   Seed ->
   prop ->
   Either [String] (Maybe (PList ls)) -- Counterexample
-runIsProperty successes maxSize maxShrinks maxDiscards seed prop =
-  runProperty successes maxSize maxShrinks maxDiscards seed $
+runIsProperty successes maxSize maxShrinks maxDiscardRatio seed prop =
+  runProperty successes maxSize maxShrinks maxDiscardRatio seed $
     toProperty prop
 
 -- | Run a property test and shrink if it Fails'
@@ -563,20 +563,20 @@ runProperty ::
   Seed ->
   Property ls ->
   Either [String] (Maybe (PList ls)) -- Counterexample
-runProperty successes maxSize maxShrinks maxDiscards initialSeed prop =
+runProperty successes maxSize maxShrinks maxDiscardRatio initialSeed prop =
   let sizes = computeSizes successes maxSize
    in -- TODO make sure the seeds are randomly generated instead of sequential
-      go [] maxDiscards $ zip sizes [initialSeed ..]
+      go [] $ zip sizes [initialSeed ..]
   where
-    go :: [String] -> Int -> [(Size, Seed)] -> Either [String] (Maybe (PList ls))
-    go generationErrors discardsLeft = \case
+    go :: [String] -> [(Size, Seed)] -> Either [String] (Maybe (PList ls))
+    go generationErrors = \case
       [] -> Right Nothing -- Could not find a counterexample
       ((size, seed) : rest) ->
-        case runPropertyOn maxShrinks discardsLeft size seed prop of
+        case runPropertyOn maxShrinks maxDiscardRatio size seed prop of
           Left errs -> Left (generationErrors ++ errs)
           Right (errs, (values, result)) ->
             if result
-              then go (generationErrors ++ errs) (discardsLeft - length errs) rest
+              then go (generationErrors ++ errs) rest
               else Right $ Just values -- Fonud a counterexample
 
 computeSizes :: Int -> Size -> [Size]
