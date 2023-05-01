@@ -71,22 +71,23 @@ spec = do
           )
 
   describe "runIsProperty" $ do
-    let findsCounterExampleSpec ::
+    let -- TODO multiple acceptable counterexamples
+        findsCounterExampleSpec ::
           (Show (PList ls), Eq (PList ls), IsProperty ls prop) =>
           prop ->
           PList ls ->
           IO ()
         findsCounterExampleSpec property counterexample =
-          runIsProperty 100 1000 100000 42 property
-            `shouldBe` Just counterexample
+          runIsProperty 100 1000 100000 100 42 property
+            `shouldBe` Right (Just counterexample)
         doesNotFindCounterExampleSpec ::
           forall ls prop.
           (Show (PList ls), Eq (PList ls), IsProperty ls prop) =>
           prop ->
           IO ()
         doesNotFindCounterExampleSpec property =
-          runIsProperty @ls 100 1000 100000 42 property
-            `shouldBe` Nothing
+          runIsProperty @ls 100 1000 100000 100 42 property
+            `shouldBe` Right Nothing
     it "finds a counterexample for False" $
       findsCounterExampleSpec False PNil
     it "finds no counterexample for True" $
@@ -117,7 +118,7 @@ spec = do
     it "finds a counterexample for reverse ls == ls" $
       findsCounterExampleSpec
         (\ls -> reverse ls == (ls :: [Word8]))
-        (PCons ([1, 0] :: [Word8]) PNil)
+        (PCons ([0, 1] :: [Word8]) PNil)
     it "finds a counterexample for reverse ls < ls" $
       findsCounterExampleSpec
         (\ls -> reverse ls < (ls :: [Word8]))
@@ -126,7 +127,7 @@ spec = do
 generatorProperty :: forall a. (Show a, Eq a) => Gen a -> (a -> Bool) -> IO ()
 generatorProperty gen predicate = do
   let p = forAll gen predicate
-  runIsProperty 100 1000 0 42 p `shouldBe` Nothing
+  runIsProperty 100 1000 0 1000 42 p `shouldBe` Right Nothing
 
 goldenGenValidSpec :: forall a. (Show a, GenValid a) => FilePath -> Spec
 goldenGenValidSpec = goldenGenSpec (genValid @a)
@@ -134,23 +135,22 @@ goldenGenValidSpec = goldenGenSpec (genValid @a)
 goldenGenSpec :: forall a. (Show a) => Gen a -> FilePath -> Spec
 goldenGenSpec gen fp = do
   let nbValues = 100
-      sizes = [0 .. nbValues]
+      maxSize = nbValues
+      sizes = [0 .. maxSize]
       seeds = [42 ..]
   it ("generates the same " <> fp <> " values") $ do
     let randomnesses = zipWith computeRandomness sizes seeds
-        values :: [a]
+        values :: [Either String a]
         values = map (runGen gen) randomnesses
     pureGoldenStringFile ("test_resources/gen/" <> fp <> ".txt") $
       unlines $
-        map show values
+        map (either id show) values
   it ("shrinks to the same " <> fp <> " values") $ do
-    let randomness = computeRandomness nbValues 42
-        maxValue :: a
-        maxValue = runGen gen randomness
-        shrinks :: [a]
+    let (randomness, maxValue) = runGenUntilSucceeds maxSize 42 gen
+        shrinks :: [Either String a]
         shrinks = map (runGen gen) $ take 10 $ computeAllShrinks randomness
     pureGoldenStringFile ("test_resources/shrink/" <> fp <> ".txt") $
       unlines $
         show maxValue
           : ""
-          : map show shrinks
+          : map (either id show) shrinks

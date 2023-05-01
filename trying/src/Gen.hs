@@ -102,6 +102,7 @@ sizeOfGen = go
       GenPure _ -> Just 0
       GenFMap _ g -> go g
       GenAp g1 g2 -> (+) <$> go g1 <*> go g2
+      GenAlt g1 g2 -> max <$> go g1 <*> go g2
       GenSelect g1 g2 ->
         -- This may not be the actual size, but is definitely an upper bound
         (+) <$> go g1 <*> go g2
@@ -143,6 +144,15 @@ runGen = flip go
         a <- go leftWs ga
         go rightWs (mb a)
       GenFail err -> error err -- TODO let runGen fail
+
+runGenUntilSucceeds :: Size -> Seed -> Gen a -> (Randomness, a)
+runGenUntilSucceeds initialSize initialSeed gen = go initialSize initialSeed
+  where
+    go size seed =
+      let ws = computeRandomness size seed
+       in case runGen gen ws of
+            Left _ -> go (succ size) (succ seed)
+            Right a -> (ws, a)
 
 -- | Compute an arbitrarily split value
 --
@@ -524,6 +534,8 @@ deriving instance (Ord x, Ord (PList xs)) => Ord (PList (x ': xs))
 --
 -- Returns a counterexample if it succeeds, and
 -- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
+--
+-- TODO use a record instead of this many parameters
 runIsProperty ::
   forall ls prop.
   IsProperty ls prop =>
@@ -553,7 +565,8 @@ runProperty ::
   Either [String] (Maybe (PList ls)) -- Counterexample
 runProperty successes maxSize maxShrinks maxDiscards initialSeed prop =
   let sizes = computeSizes successes maxSize
-   in go [] maxDiscards $ zip sizes [initialSeed ..]
+   in -- TODO make sure the seeds are randomly generated instead of sequential
+      go [] maxDiscards $ zip sizes [initialSeed ..]
   where
     go :: [String] -> Int -> [(Size, Seed)] -> Either [String] (Maybe (PList ls))
     go generationErrors discardsLeft = \case
@@ -583,25 +596,48 @@ runPropertyOn ::
   Seed ->
   Property ls ->
   Either [String] ([String], (PList ls, Bool))
-runPropertyOn maxShrinks maxDiscards size seed prop =
-  let (values, result) = runPropertyOnceWithDiscards maxDiscards size seed prop
-   in if result
+runPropertyOn maxShrinks maxDiscards size seed prop = do
+  ((ws, errs), (values, result)) <- runPropertyOnRandomnessWithDiscards maxDiscards size seed prop
+  pure
+    ( errs,
+      if result
         then (values, result)
         else case shrinkProperty maxShrinks ws prop of
           Nothing -> (values, result)
           Just values' -> (values', result)
+    )
 
 -- | Evaluate a property once with a maximum number of discarded generation attemtps.
 --
 -- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
-runPropertyOnceWithDiscards = undefined
+runPropertyOnRandomnessWithDiscards ::
+  Int ->
+  Size ->
+  Seed ->
+  Property ls ->
+  Either [String] ((Randomness, [String]), (PList ls, Bool))
+runPropertyOnRandomnessWithDiscards maxDiscards initialSize initialSeed prop = go [] maxDiscards initialSize initialSeed
+  where
+    go errs discardsLeft size seed =
+      if discardsLeft <= 0
+        then Left errs
+        else
+          let ws = computeRandomness size seed
+           in case runPropertyOnRandomness ws prop of
+                Left err ->
+                  go
+                    (err : errs)
+                    (pred discardsLeft)
+                    (succ size) -- TODO maybe increase the size faster?
+                    (succ seed) -- TODO maybe use a more random seed instead of just the next one?
+                Right (values, result) -> Right ((ws, errs), (values, result))
 
 -- | Evaluate a property once, 'Left' if the values couldn't be generated.
-runPropertyOnce ::
+runPropertyOnRandomness ::
   Randomness ->
   Property ls ->
   Either String (PList ls, Bool)
-runPropertyOnce = go
+runPropertyOnRandomness = go
   where
     go :: Randomness -> Property ls -> Either String (PList ls, Bool)
     go ws = \case
@@ -657,7 +693,7 @@ shrinkPropertyOneStep maxShrinksThisRound ws prop =
   let shrunkRandomnesses = take maxShrinksThisRound (shrinkRandomness ws)
    in do
         (triesDone, ws') <- zip [1 ..] shrunkRandomnesses
-        case runPropertyOnce ws' prop of
+        case runPropertyOnRandomness ws' prop of
           Left _ -> []
           Right (vals, result) -> do
             guard $ not result
