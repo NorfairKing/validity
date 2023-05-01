@@ -143,7 +143,7 @@ runGen = flip go
                 Just asize -> splitRandomnessAt asize ws
         a <- go leftWs ga
         go rightWs (mb a)
-      GenFail err -> error err -- TODO let runGen fail
+      GenFail err -> Left err -- TODO let runGen fail
 
 runGenUntilSucceeds :: Size -> Seed -> Gen a -> (Randomness, a)
 runGenUntilSucceeds initialSize initialSeed gen = go initialSize initialSeed
@@ -242,7 +242,7 @@ frequency ls = do
     pick n ((k, x) : xs)
       | n <= k = x
       | otherwise = pick (n - k) xs
-    pick _ [] = error "TODO LOCATION.frequency: pick used with empty list"
+    pick _ [] = fail "TODO LOCATION.frequency: pick used with empty list"
 
 -- | Run one of the following generators and shrink to the first.
 oneof :: [Gen a] -> Gen a

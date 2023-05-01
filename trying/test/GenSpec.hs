@@ -55,6 +55,7 @@ spec = do
         let lo = 6
             hi = 17
          in generatorProperty (genDouble (lo, hi)) (\a -> lo <= a && a <= hi)
+
     describe "genProperFraction" $
       it "generates values in the range [0,1]" $
         generatorProperty genProperFraction (\a -> 0 <= a && a <= 1)
@@ -69,6 +70,12 @@ spec = do
                   diff = abs $ total - expected
                in diff < 50
           )
+
+    describe "suchThat" $ do
+      it "generates values that satisfy the predicate" $
+        generatorProperty
+          (genInt (0, 1) `suchThat` (>= 1))
+          (>= 1)
 
   describe "runIsProperty" $ do
     let -- TODO multiple acceptable counterexamples
