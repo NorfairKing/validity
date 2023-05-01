@@ -558,12 +558,14 @@ computeSizes successes maxSize = case successes of
   2 -> [0, maxSize]
   n -> [0] ++ [i * maxSize `div` (n - 1) | i <- [1 .. n - 2]] ++ [maxSize]
 
+-- | Evaluate a property once and shrink if it fails.
 runPropertyOn ::
+  Int ->
   Int ->
   Randomness ->
   Property ls ->
-  (PList ls, Bool)
-runPropertyOn maxShrinks ws prop =
+  Either [String] (PList ls, Bool)
+runPropertyOn maxShrinks maxDiscards ws prop =
   let (values, result) = runPropertyOnce ws prop
    in if result
         then (values, result)
@@ -571,6 +573,12 @@ runPropertyOn maxShrinks ws prop =
           Nothing -> (values, result)
           Just values' -> (values', result)
 
+-- | Evaluate a property once with a maximum number of discarded generation attemtps.
+--
+-- 'Left' with all the errors if no values could be generated
+runPropertyOnceWithDiscards = undefined
+
+-- | Evaluate a property once, 'Left' if the values couldn't be generated.
 runPropertyOnce ::
   Randomness ->
   Property ls ->
@@ -586,6 +594,9 @@ runPropertyOnce = go
         (generateds, result) <- go restRandomness (func value)
         pure (PCons value generateds, result)
 
+-- | Shrink a property a given maximum number of times.
+--
+-- Return the shrunk inputs
 shrinkProperty ::
   forall ls.
   Int ->
@@ -597,6 +608,10 @@ shrinkProperty maxShrinks r prop =
     [] -> Nothing
     ls -> Just $ last ls
 
+-- | Shrink a property a given maximum number of times
+--
+-- Return all shrunk versions of the inputs.
+--
 -- TODO record how many shrinks were done
 shrinkPropertyAndReturnAllShrinks ::
   forall ls.
