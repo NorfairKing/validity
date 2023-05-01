@@ -6,11 +6,11 @@
 |-----------------------------|-----------|-------------|----------|------------|----------|
 | Default Generator Typeclass | ✔️         | ✔️           | ✖️        | ✔️          | ✖️        |
 | Free Default Generator      | ✔️         | ✔️           | ✖️        | C          | ✖️        |
-| Free Shrinking              | ✔️         | ✔️           | ✔️        | ✖️          | ✔️        |
+| Free Default Shrinker       | ✔️         | ✔️           | ✔️        | ✖️          | ✔️        |
 | Integrated Shrinking        | ✔️         | ✖️           | ✔️        | ✖️          | ✔️        |
 | Internal Shrinking          | ✔️         | ✖️           | ✔️        | ✖️          | ✖️        |
 | Integrated Size             | ✔️         | ✖️           | ✖️        | ✖️          | ✖️        |
-| Typed counterexamples       | ✔️         | ✖️           | ✔️        | ✖️          | ✖️        |
+| Typed counterexamples       | ✔️         | ✖️           | ✔️        | Lib        | ✖️        |
 | `suchThat`/`filter`         | ✔️         | ✔️           | ✖️        | ✔️          | ✔️        |
 
 * ✔️: Supported 
