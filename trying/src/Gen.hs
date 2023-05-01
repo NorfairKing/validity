@@ -31,6 +31,9 @@ import System.Random.SplitMix as SM
 type Size = Int
 
 -- TODO: Newtype?
+type Seed = RandomWord
+
+-- TODO: Newtype?
 type RandomWord = Word64
 
 -- TODO: Newtype?
@@ -416,7 +419,7 @@ sample g = do
   mapM_ print samples
 
 -- | Compute a randomness vector based on a size and seed
-computeRandomness :: Int -> Word64 -> Randomness
+computeRandomness :: Int -> Seed -> Randomness
 computeRandomness size seed = computeRandomnessWithSMGen size (mkSMGen seed)
 
 -- | Compute a randomness vector based on a size and splitmix generator
@@ -517,41 +520,53 @@ deriving instance Ord (PList '[])
 
 deriving instance (Ord x, Ord (PList xs)) => Ord (PList (x ': xs))
 
+-- | Run a property test for any 'IsProperty'
+--
+-- Returns a counterexample if it succeeds, and
+-- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runIsProperty ::
   forall ls prop.
   IsProperty ls prop =>
   Int ->
+  Size ->
   Int ->
   Int ->
-  Word64 ->
+  Seed ->
   prop ->
-  Maybe (PList ls) -- Counterexample
-runIsProperty successes maxSize maxShrinks seed prop =
-  runProperty successes maxSize maxShrinks seed $
+  Either [String] (Maybe (PList ls)) -- Counterexample
+runIsProperty successes maxSize maxShrinks maxDiscards seed prop =
+  runProperty successes maxSize maxShrinks maxDiscards seed $
     toProperty prop
 
+-- | Run a property test and shrink if it Fails'
+--
+-- Returns a counterexample if it succeeds, and
+-- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runProperty ::
   forall ls.
   Int ->
+  Size ->
   Int ->
   Int ->
-  Word64 ->
+  Seed ->
   Property ls ->
-  Maybe (PList ls) -- Counterexample
-runProperty successes maxSize maxShrinks initialSeed prop =
+  Either [String] (Maybe (PList ls)) -- Counterexample
+runProperty successes maxSize maxShrinks maxDiscards initialSeed prop =
   let sizes = computeSizes successes maxSize
-   in go $ zip sizes [initialSeed ..]
+   in go [] maxDiscards $ zip sizes [initialSeed ..]
   where
-    go :: [(Int, Word64)] -> Maybe (PList ls)
-    go = \case
-      [] -> Nothing
+    go :: [String] -> Int -> [(Size, Seed)] -> Either [String] (Maybe (PList ls))
+    go generationErrors discardsLeft = \case
+      [] -> Right Nothing -- Could not find a counterexample
       ((size, seed) : rest) ->
-        let (values, result) = runPropertyOn maxShrinks (computeRandomness size seed) prop
-         in if result
-              then go rest
-              else Just values
+        case runPropertyOn maxShrinks discardsLeft size seed prop of
+          Left errs -> Left (generationErrors ++ errs)
+          Right (errs, (values, result)) ->
+            if result
+              then go (generationErrors ++ errs) (discardsLeft - length errs) rest
+              else Right $ Just values -- Fonud a counterexample
 
-computeSizes :: Int -> Int -> [Int]
+computeSizes :: Int -> Size -> [Size]
 computeSizes successes maxSize = case successes of
   0 -> []
   1 -> [0]
@@ -559,14 +574,17 @@ computeSizes successes maxSize = case successes of
   n -> [0] ++ [i * maxSize `div` (n - 1) | i <- [1 .. n - 2]] ++ [maxSize]
 
 -- | Evaluate a property once and shrink if it fails.
+--
+-- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runPropertyOn ::
   Int ->
   Int ->
-  Randomness ->
+  Size ->
+  Seed ->
   Property ls ->
-  Either [String] (PList ls, Bool)
-runPropertyOn maxShrinks maxDiscards ws prop =
-  let (values, result) = runPropertyOnce ws prop
+  Either [String] ([String], (PList ls, Bool))
+runPropertyOn maxShrinks maxDiscards size seed prop =
+  let (values, result) = runPropertyOnceWithDiscards maxDiscards size seed prop
    in if result
         then (values, result)
         else case shrinkProperty maxShrinks ws prop of
@@ -575,7 +593,7 @@ runPropertyOn maxShrinks maxDiscards ws prop =
 
 -- | Evaluate a property once with a maximum number of discarded generation attemtps.
 --
--- 'Left' with all the errors if no values could be generated
+-- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runPropertyOnceWithDiscards = undefined
 
 -- | Evaluate a property once, 'Left' if the values couldn't be generated.
@@ -587,7 +605,7 @@ runPropertyOnce = go
   where
     go :: Randomness -> Property ls -> Either String (PList ls, Bool)
     go ws = \case
-      PropBool b -> (PNil, b)
+      PropBool b -> Right (PNil, b)
       PropGen gen func -> do
         let (usedRandomness, restRandomness) = computeSplitRandomness ws
         value <- runGen gen usedRandomness
@@ -639,9 +657,11 @@ shrinkPropertyOneStep maxShrinksThisRound ws prop =
   let shrunkRandomnesses = take maxShrinksThisRound (shrinkRandomness ws)
    in do
         (triesDone, ws') <- zip [1 ..] shrunkRandomnesses
-        let (vals, result) = runPropertyOnce ws' prop
-        guard $ not result
-        pure (triesDone, (ws', vals))
+        case runPropertyOnce ws' prop of
+          Left _ -> []
+          Right (vals, result) -> do
+            guard $ not result
+            pure (triesDone, (ws', vals))
 
 class IsProperty ls a | a -> ls where
   toProperty :: a -> Property ls
