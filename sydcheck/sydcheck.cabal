@@ -14,6 +14,9 @@ build-type:     Simple
 library
   exposed-modules:
       SydCheck
+      SydCheck.Gen
+      SydCheck.PList
+      SydCheck.Shrinking
   other-modules:
       Paths_sydcheck
   hs-source-dirs:
@@ -30,6 +33,7 @@ test-suite sydcheck-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      SydCheck.GenSpec
       SydCheckSpec
       Paths_sydcheck
   hs-source-dirs:
