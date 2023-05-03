@@ -1,7 +1,9 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -19,8 +21,13 @@ import qualified Data.Vector.Unboxed as UV
 import Data.Word
 import System.Random.SplitMix as SM
 
--- TODO: Newtype?
-type Size = Int
+-- | Size parameter
+--
+-- The size parameter represents how much randomness a generator can/is allowed to take.
+-- Some generators generate larger structures if more randomness is presented.
+newtype Size = Size {unSize :: Int}
+  deriving stock (Show, Read, Eq, Ord)
+  deriving newtype (Num, Enum, Bounded)
 
 -- TODO: Newtype?
 type Seed = RandomWord
@@ -106,9 +113,9 @@ runGen = flip go
   where
     go :: Randomness -> Gen a -> Either String a
     go ws = \case
-      GenFixedSize size fun -> fun (UV.take size ws)
+      GenFixedSize size fun -> fun (takeRandomness size ws)
       GenVariableSize fun -> fun ws
-      GenSized fun -> go ws (fun (UV.length ws))
+      GenSized fun -> go ws (fun (sizeRandomness ws))
       GenPure a -> pure a
       GenFMap f g' -> f <$> go ws g'
       GenAp gf ga ->
@@ -146,14 +153,6 @@ runGenUntilSucceeds initialSize initialSeed gen = go initialSize initialSeed
             Left _ -> go (succ size) (succ seed)
             Right a -> (ws, a)
 
--- | Compute a randomness vector based on a size and seed
-computeRandomness :: Int -> Seed -> Randomness
-computeRandomness size seed = computeRandomnessWithSMGen size (mkSMGen seed)
-
--- | Compute a randomness vector based on a size and splitmix generator
-computeRandomnessWithSMGen :: Int -> SMGen -> Randomness
-computeRandomnessWithSMGen size = UV.unfoldrExactN size SM.nextWord64
-
 -- | Compute an arbitrarily split value
 --
 -- Input: number n
@@ -166,8 +165,25 @@ computeSplit totalSize randomWord =
   let left = randomWord `rem` (fromIntegral (totalSize + 1))
    in fromIntegral left
 
+-- | Compute a randomness vector based on a size and seed
+computeRandomness :: Size -> Seed -> Randomness
+computeRandomness size seed = computeRandomnessWithSMGen size (mkSMGen seed)
+
+-- | Compute a randomness vector based on a size and splitmix generator
+computeRandomnessWithSMGen :: Size -> SMGen -> Randomness
+computeRandomnessWithSMGen (Size size) = UV.unfoldrExactN size SM.nextWord64
+
+sizeRandomness :: Randomness -> Size
+sizeRandomness = Size . UV.length
+
+takeRandomness :: Size -> Randomness -> Randomness
+takeRandomness = UV.take . unSize
+
+dropRandomness :: Size -> Randomness -> Randomness
+dropRandomness = UV.drop . unSize
+
 splitRandomnessAt :: Size -> Randomness -> (Randomness, Randomness)
-splitRandomnessAt = UV.splitAt
+splitRandomnessAt = UV.splitAt . unSize
 
 computeSplitRandomness :: Randomness -> (Randomness, Randomness)
 computeSplitRandomness ws =
@@ -285,23 +301,25 @@ genMaybeOf gen = frequency [(1, pure Nothing), (3, Just <$> gen)]
 -- Better splitting with fixed size lists
 genListOf :: forall a. Gen a -> Gen [a]
 genListOf gen = case sizeOfGen gen of
-  Just asize ->
+  Just (Size asize) ->
     GenVariableSize $ \ws -> case UV.length ws of
       0 -> pure []
       1 -> pure $ rights [runGen gen ws]
       _ -> do
-        let s = UV.length ws
+        let Size s = sizeRandomness ws
             maxLen = (s - 1) `div` asize
+            -- Use longer lists where possible, but not always
             len = computeIntFromTriangleDistribution 0 maxLen maxLen (ws UV.! 0)
-        pure $ rights $ go (UV.drop 1 ws) (replicate len asize)
+        pure $ rights $ go (dropRandomness 1 ws) (replicate len (Size asize))
   Nothing ->
     GenVariableSize $ \ws -> do
-      let s = UV.length ws
-          sizeForPartition = s `div` 10
-          sizeForValues = s - sizeForPartition
+      let Size s = sizeRandomness ws
           -- We use the first 10% of the randomness for computing the partition
-          (forThePartition, forTheValues) = splitRandomnessAt sizeForPartition ws
-      partition <- runGen (genPartition sizeForValues) forThePartition
+          sizeForPartition = s `div` 10
+          (forThePartition, forTheValues) = splitRandomnessAt (Size sizeForPartition) ws
+          sizeForValues = s - sizeForPartition
+          genSizePartition = map Size <$> genPartition sizeForValues
+      partition <- runGen genSizePartition forThePartition
       pure $ rights $ go forTheValues partition
   where
     go :: Randomness -> [Size] -> [Either String a]
@@ -331,7 +349,7 @@ genPartition total = GenVariableSize $ \ws ->
     invE lambda u = (-log (1 - u)) / lambda
 
 -- | Generate a list length leq the given size for a generator with fixed size
-genFixedSizeListLenghtWithMaximum :: Size -> Gen Int
+genFixedSizeListLenghtWithMaximum :: Int -> Gen Int
 genFixedSizeListLenghtWithMaximum maxLen =
   -- Use a triangle distribution for generating the
   -- length of the list
@@ -340,7 +358,7 @@ genFixedSizeListLenghtWithMaximum maxLen =
   genIntFromTriangleDistribution 0 maxLen maxLen
 
 -- | Generate a list length leq the given size for a generator with variable size
-genVariableListLengthWithMaximum :: Size -> Gen Int
+genVariableListLengthWithMaximum :: Int -> Gen Int
 genVariableListLengthWithMaximum maxLen =
   -- Use a triangle distribution for generating the
   -- length of the list

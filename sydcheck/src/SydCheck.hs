@@ -88,11 +88,11 @@ runProperty successes maxSize maxShrinks maxDiscardRatio initialSeed prop =
               else Right $ Just values -- Fonud a counterexample
 
 computeSizes :: Int -> Size -> [Size]
-computeSizes successes maxSize = case successes of
+computeSizes successes (Size maxSize) = case successes of
   0 -> []
   1 -> [0]
-  2 -> [0, maxSize]
-  n -> [0] ++ [i * maxSize `div` (n - 1) | i <- [1 .. n - 2]] ++ [maxSize]
+  2 -> [0, Size maxSize]
+  n -> [0] ++ [Size $ i * maxSize `div` (n - 1) | i <- [1 .. n - 2]] ++ [Size maxSize]
 
 -- | Evaluate a property once and shrink if it fails.
 --
