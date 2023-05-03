@@ -43,9 +43,9 @@ spec = do
     goldenGenValidSpec @(Maybe Word8) "maybe-word8"
     goldenGenValidSpec @(Either Word8 Word8) "either-word8-word8"
     goldenGenValidSpec @[Word8] "list-word8"
-    goldenGenValidSpec @[Word8] []
+    genValidDefinitelyGeneratesSpec @[Word8] []
     goldenGenValidSpec @[()] "list-unit"
-    goldenGenValidSpec @[()] []
+    genValidDefinitelyGeneratesSpec @[()] []
     goldenGenValidSpec @(NonEmpty Word8) "nonempty-word8"
     goldenGenValidSpec @(NonEmpty ()) "nonempty-unit"
     goldenGenValidSpec @(NonEmpty (NonEmpty Word8)) "nonempty-nonempty-word8"
