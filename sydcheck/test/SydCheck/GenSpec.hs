@@ -15,20 +15,32 @@ import Test.Syd
 spec :: Spec
 spec = do
   describe "runGen" $ do
-    goldenGenSpec (genInt (0, 100)) "percentage"
+    goldenGenSpec (genInt (0, 100)) "percentage-int"
+    goldenGenSpec (genWord (0, 100)) "percentage-word"
     goldenGenSpec genProperFraction "proper-fraction"
     goldenGenSpec (genPartition 100) "partition-100"
+    goldenGenSpec (genMaybeOf (genWord (0, 100))) "maybe-percentage-word"
+    goldenGenSpec (genEitherOf (genWord (0, 100)) (genWord (0, 100))) "either-percentage-percentage"
+    goldenGenSpec (genListOf (genWord (0, 100))) "list-percentage-word"
+    goldenGenSpec (genNonEmptyOf (genWord (0, 100))) "nonempty-percentage-word"
 
   describe "generator tests" $ do
     describe "genInt" $
       it "generates values in the given range" $
         let lo = 6
             hi = 17
-         in generatorProperty (genInt (lo, hi)) (\a -> lo <= a && a <= hi)
+         in generatorProperty
+              (genInt (lo, hi))
+              (\a -> lo <= a && a <= hi)
+    describe "genWord" $ do
+      it "generates values in the given range" $
+        let lo = 7
+            hi = 18
+         in generatorProperty (genWord (lo, hi)) (\a -> lo <= a && a <= hi)
     describe "genDouble" $
       it "generates values in the given range" $
-        let lo = 6
-            hi = 17
+        let lo = 8
+            hi = 19
          in generatorProperty (genDouble (lo, hi)) (\a -> lo <= a && a <= hi)
 
     describe "genProperFraction" $

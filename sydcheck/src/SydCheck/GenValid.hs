@@ -9,6 +9,7 @@
 
 module SydCheck.GenValid where
 
+import Data.List.NonEmpty (NonEmpty)
 import Data.Validity
 import Data.Word
 import GHC.Float (castWord64ToDouble)
@@ -24,17 +25,41 @@ import SydCheck.Gen
 class Validity a => GenValid a where
   genValid :: Gen a
 
+instance GenValid () where
+  genValid = pure ()
+
 instance GenValid Bool where
   genValid = genBool False
+
+instance GenValid Ordering where
+  genValid = genOrdering LT
 
 instance (GenValid a, GenValid b) => GenValid (a, b) where
   genValid = (,) <$> genValid <*> genValid
 
+instance (GenValid a, GenValid b, GenValid c) => GenValid (a, b, c) where
+  genValid = (,,) <$> genValid <*> genValid <*> genValid
+
+instance (GenValid a, GenValid b, GenValid c, GenValid d) => GenValid (a, b, c, d) where
+  genValid = (,,,) <$> genValid <*> genValid <*> genValid <*> genValid
+
+instance (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e) => GenValid (a, b, c, d, e) where
+  genValid = (,,,,) <$> genValid <*> genValid <*> genValid <*> genValid <*> genValid
+
+instance (GenValid a, GenValid b, GenValid c, GenValid d, GenValid e, GenValid f) => GenValid (a, b, c, d, e, f) where
+  genValid = (,,,,,) <$> genValid <*> genValid <*> genValid <*> genValid <*> genValid <*> genValid
+
 instance GenValid a => GenValid (Maybe a) where
   genValid = genMaybeOf genValid
 
+instance (GenValid a, GenValid b) => GenValid (Either a b) where
+  genValid = genEitherOf genValid genValid
+
 instance GenValid a => GenValid [a] where
   genValid = genListOf genValid
+
+instance GenValid a => GenValid (NonEmpty a) where
+  genValid = genNonEmptyOf genValid
 
 instance GenValid Word8 where
   genValid = genFromSingleRandomWord $ \case

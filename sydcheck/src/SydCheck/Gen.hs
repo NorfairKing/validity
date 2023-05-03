@@ -14,6 +14,7 @@ import Control.Applicative
 import Control.Monad
 import Control.Selective
 import Data.Either (rights)
+import Data.List.NonEmpty (NonEmpty (..))
 import Data.Tuple (swap)
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
@@ -171,8 +172,13 @@ takeNextRandomWord = genFromSingleRandomWord $ \case
   Nothing -> 0
   Just w -> w
 
+-- | Generate a 'Bool' and shrink to the given bool
 genBool :: Bool -> Gen Bool
-genBool minimal = genFromSingleRandomWord $ \case
+genBool minimal = genFromSingleRandomWord $ undefined
+
+-- | Generate an 'Ordering' and shrink to the given ordering
+genOrdering :: Ordering -> Gen Ordering
+genOrdering minimal = genFromSingleRandomWord $ \case
   Nothing -> minimal
   Just w -> even w
 
@@ -228,12 +234,21 @@ suchThatMaybe gen predicate = do
     guard $ predicate a
     pure a
 
--- | Generate a 'Double' within a range, shrink to the lower end
+-- | Generate an 'Int' within a range, shrink to the lower end
 genInt :: (Int, Int) -> Gen Int
 genInt (lo, hi) = computeInt (lo, hi) <$> takeNextRandomWord
 
+-- | Generate a 'Word' within a range, shrink to the lower end
+genWord :: (Word, Word) -> Gen Word
+genWord (lo, hi) = computeWord (lo, hi) <$> takeNextRandomWord
+
 computeInt :: (Int, Int) -> RandomWord -> Int
 computeInt (lo, hi) rw =
+  -- TODO this probably fails for very large integers because of double precision (?)
+  round $ computeDouble (fromIntegral lo, fromIntegral hi) rw
+
+computeWord :: (Word, Word) -> RandomWord -> Word
+computeWord (lo, hi) rw =
   -- TODO this probably fails for very large integers because of double precision (?)
   round $ computeDouble (fromIntegral lo, fromIntegral hi) rw
 
@@ -260,7 +275,26 @@ computeProperFraction = computeDouble (0, 1)
 genMaybeOf :: Gen a -> Gen (Maybe a)
 genMaybeOf gen = frequency [(1, pure Nothing), (3, Just <$> gen)]
 
--- Better splitting with fixed size lists
+-- | Generate an 'Either' and shrink to the 'Left'
+genEitherOf :: Gen a -> Gen b -> Gen (Either a b)
+genEitherOf = genEitherToLeft
+
+-- | Generate an 'Either' and shrink to the 'Left'
+genEitherToLeft :: Gen a -> Gen b -> Gen (Either a b)
+genEitherToLeft genLeft genRight =
+  oneof
+    [ Left <$> genLeft,
+      Right <$> genRight
+    ]
+
+-- | Generate an 'Either' and shrink to the 'Right'
+genEitherToRight :: Gen a -> Gen b -> Gen (Either a b)
+genEitherToRight genLeft genRight =
+  oneof
+    [ Right <$> genRight,
+      Left <$> genLeft
+    ]
+
 genListOf :: forall a. Gen a -> Gen [a]
 genListOf gen = case sizeOfGen gen of
   Just (Size asize) ->
@@ -290,6 +324,9 @@ genListOf gen = case sizeOfGen gen of
       (s : rest) ->
         let (forThisGen, forTheRest) = splitRandomnessAt s rs
          in runGen gen forThisGen : go forTheRest rest
+
+genNonEmptyOf :: forall a. Gen a -> Gen (NonEmpty a)
+genNonEmptyOf = undefined
 
 -- | 'genPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 genPartition :: Int -> Gen [Int]
