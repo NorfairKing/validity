@@ -32,7 +32,7 @@ type RandomWord = Word64
 -- | A fixed amount of randomness.
 --
 -- This structure supports efficient splitting.
-newtype Randomness = Randomness {unRandomness :: Vector Word64}
+newtype Randomness = Randomness {unRandomness :: Vector RandomWord}
   deriving stock (Show, Read, Eq, Ord)
 
 -- Integrated shrinking AND size handling.

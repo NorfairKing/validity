@@ -33,30 +33,54 @@ data Gen a where
   -- | For the Functor instance
   GenPure :: a -> Gen a
   -- | For the Applicative instance
-  GenFMap :: (a -> b) -> Gen a -> Gen b
-  GenAp :: Gen (a -> b) -> Gen a -> Gen b
+  GenFMap ::
+    -- The size, so it doesn't have to be computed again.
+    -- Must be equal to sizeOfGen of the contained gen
+    Maybe Size ->
+    (a -> b) ->
+    Gen a ->
+    Gen b
+  GenAp ::
+    -- The size, so it doesn't have to be computed again.
+    -- Must be equal to the sum of the sizeOfGen of the contained gens
+    Maybe Size ->
+    Gen (a -> b) ->
+    Gen a ->
+    Gen b
   -- | For the Alternative instance
-  GenAlt :: Gen a -> Gen b -> Gen (Either a b)
+  GenAlt ::
+    -- The size, so it doesn't have to be computed again.
+    -- Must be equal to the maximum of the sizeOfGen of the contained gens
+    Maybe Size ->
+    Gen a ->
+    Gen b ->
+    Gen (Either a b)
   -- | For the Selective instance
-  GenSelect :: Gen (Either a b) -> Gen (a -> b) -> Gen b
+  GenSelect ::
+    -- The size, so it doesn't have to be computed again.
+    -- Must be equal to the sum of the sizes of the contained gens
+    Maybe Size ->
+    Gen (Either a b) ->
+    Gen (a -> b) ->
+    Gen b
   -- | For the Monad instance
   GenBind :: Gen a -> (a -> Gen b) -> Gen b
   -- | For MonadFail
   GenFail :: String -> Gen a
 
 instance Functor Gen where
-  fmap = GenFMap
+  fmap f g = GenFMap (sizeOfGen g) f g
 
 instance Applicative Gen where
   pure = GenPure
-  (<*>) = GenAp
+  g1 <*> g2 = GenAp ((+) <$> sizeOfGen g1 <*> sizeOfGen g2) g1 g2
 
 instance Alternative Gen where
   empty = fail ""
-  (<|>) g1 g2 = either id id <$> GenAlt g1 g2
+  (<|>) g1 g2 = either id id <$> GenAlt (max <$> sizeOfGen g1 <*> sizeOfGen g2) g1 g2
 
 instance Selective Gen where
-  select = GenSelect
+  select g1 g2 = GenSelect ((+) <$> sizeOfGen g1 <*> sizeOfGen g2) g1 g2
 
 instance Monad Gen where
   (>>=) = GenBind
@@ -80,12 +104,12 @@ sizeOfGen = go
       GenVariableSize _ -> Nothing
       GenSized _ -> Nothing
       GenPure _ -> Just 0
-      GenFMap _ g -> go g
-      GenAp g1 g2 -> (+) <$> go g1 <*> go g2
-      GenAlt g1 g2 -> max <$> go g1 <*> go g2
-      GenSelect g1 g2 ->
+      GenFMap ms _ _ -> ms
+      GenAp ms _ _ -> ms
+      GenAlt ms _ _ -> ms
+      GenSelect ms _ _ ->
         -- This may not be the actual size, but is definitely an upper bound
-        (+) <$> go g1 <*> go g2
+        ms
       GenBind _ _ -> Nothing
       GenFail _ -> Just 0
 
@@ -98,16 +122,16 @@ runGen = flip go
       GenVariableSize fun -> fun ws
       GenSized fun -> go ws (fun (sizeRandomness ws))
       GenPure a -> pure a
-      GenFMap f g' -> f <$> go ws g'
-      GenAp gf ga ->
+      GenFMap _ f g' -> f <$> go ws g'
+      GenAp _ gf ga ->
         -- TODO the way this is called is O(n^2). That can probably be done better.
         let (leftWs, rightWs) = case (sizeOfGen gf, sizeOfGen ga) of
               (Nothing, Nothing) -> computeSplitRandomness ws
               (Just fsize, _) -> splitRandomnessAt fsize ws
               (_, Just asize) -> swap $ splitRandomnessAt asize ws
          in go leftWs gf <*> go rightWs ga
-      GenAlt g1 g2 -> (Left <$> go ws g1) <|> (Right <$> go ws g2)
-      GenSelect gEither gFun -> do
+      GenAlt _ g1 g2 -> (Left <$> go ws g1) <|> (Right <$> go ws g2)
+      GenSelect _ gEither gFun -> do
         let (leftWs, rightWs) = case (sizeOfGen gEither, sizeOfGen gFun) of
               (Nothing, Nothing) -> computeSplitRandomness ws
               (Just fsize, _) -> splitRandomnessAt fsize ws
