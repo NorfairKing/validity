@@ -331,6 +331,38 @@ genInt (lo, hi) = computeInt (lo, hi) <$> takeNextRandomWord
 genWord :: (Word, Word) -> Gen Word
 genWord (lo, hi) = computeWord (lo, hi) <$> takeNextRandomWord
 
+-- | Generate Word, Word8, Word16, Word32 and Word64 values smartly.
+--
+-- * Some at the border
+-- * Some around zero
+-- * Mostly uniformly
+genWordX :: forall a. (Integral a, Bounded a) => Gen a
+genWordX =
+  frequency
+    [ (1, small),
+      (1, extreme),
+      (8, uniformWord)
+    ]
+  where
+    extreme :: Gen a
+    extreme = genFromSingleRandomWord $ \case
+      Nothing -> maxBound
+      Just 0 -> maxBound
+      Just w -> maxBound - round (logBase 2 (fromIntegral w :: Double))
+    small :: Gen a
+    small = genFromSingleRandomWord $ \case
+      Nothing -> 0
+      Just 0 -> minBound
+      Just w -> 0 + round (logBase 2 (fromIntegral w :: Double))
+    uniformWord :: Gen a
+    uniformWord = genFromSingleRandomWord $ \case
+      Nothing -> 0
+      Just 0 -> 0
+      Just w -> fromIntegral (w `quot` (fromIntegral (maxBound :: a)))
+
+-- uniformWord :: Gen a
+-- uniformWord = genWord (minBound, maxBound)
+
 computeInt :: (Int, Int) -> RandomWord -> Int
 computeInt (lo, hi) rw =
   -- TODO this probably fails for very large integers because of double precision (?)
@@ -458,7 +490,7 @@ genNonEmptyOf gen = case sizeOfGen gen of
 genPartition :: Int -> Gen [Int]
 genPartition total = GenVariableSize $ \ws ->
   pure $ case sizeRandomness ws of
-    0 -> [total]
+    0 -> []
     1 -> [total]
     _ ->
       let Size maxLen = sizeRandomness ws - 1

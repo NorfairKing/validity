@@ -2,7 +2,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -65,12 +64,19 @@ instance GenValid a => GenValid (NonEmpty a) where
   genValid = genNonEmptyOf genValid
 
 instance GenValid Word8 where
-  genValid = genFromSingleRandomWord $ \case
-    Nothing -> 0
-    Just w -> fromIntegral (w `rem` (fromIntegral (maxBound :: Word8)))
+  genValid = genWordX
+
+instance GenValid Word16 where
+  genValid = genWordX
+
+instance GenValid Word32 where
+  genValid = genWordX
 
 instance GenValid Word64 where
-  genValid = takeNextRandomWord
+  genValid = genWordX
+
+instance GenValid Word where
+  genValid = genWordX
 
 instance GenValid Double where
   genValid = castWord64ToDouble <$> takeNextRandomWord

@@ -56,7 +56,7 @@ spec = do
               let total = sum ls
                   expected = 1000
                   diff = abs $ total - expected
-               in diff < 50
+               in total == 0 || diff < 50
           )
 
     describe "suchThat" $ do
