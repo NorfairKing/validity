@@ -70,7 +70,7 @@ data Gen a where
   -- | For MonadFail
   GenFail :: String -> Gen a
 
--- \| Map the result of a 'Gen'
+-- | Map the result of a 'Gen'
 --
 -- We have some trouble with laws.
 --
@@ -96,7 +96,6 @@ instance Functor Gen where
 -- We have more trouble with the laws.
 --
 -- Further, any definition must satisfy the following:
-
 --
 -- Applicative law: Identity
 --
@@ -140,10 +139,20 @@ instance Applicative Gen where
       g2
 
 instance Alternative Gen where
-  empty = fail ""
+  empty = GenFail "Alternative.empty"
   (<|>) g1 g2 = either id id <$> GenAlt (max <$> sizeOfGen g1 <*> sizeOfGen g2) g1 g2
+  many = genListOf
+  some gen = NE.toList <$> (genNonEmptyOf gen)
 
 instance Selective Gen where
+  select (GenPure aOrB) (GenPure makeB) = pure $ case aOrB of
+    Left a -> makeB a
+    Right b -> b
+  select (GenPure aOrB) genB = case aOrB of
+    Left a -> ($ a) <$> genB
+    Right b -> pure b
+  select genAOrB (GenPure makeB) =
+    either makeB id <$> genAOrB
   select g1 g2 = GenSelect ((+) <$> sizeOfGen g1 <*> sizeOfGen g2) g1 g2
 
 instance Monad Gen where
