@@ -17,6 +17,7 @@ spec = do
   describe "runGen" $ do
     goldenGenSpec (genInt (0, 100)) "percentage-int"
     goldenGenSpec (genWord (0, 100)) "percentage-word"
+    goldenGenSpec (genChar ('a', 'z')) "alphabet"
     goldenGenSpec genProperFraction "proper-fraction"
     goldenGenSpec (genPartition 100) "partition-100"
     goldenGenSpec (genMaybeOf (genWord (0, 100))) "maybe-percentage-word"

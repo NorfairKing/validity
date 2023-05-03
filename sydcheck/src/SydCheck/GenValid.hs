@@ -34,6 +34,9 @@ instance GenValid Bool where
 instance GenValid Ordering where
   genValid = genOrdering LT
 
+instance GenValid Char where
+  genValid = genChar (minBound, maxBound)
+
 instance (GenValid a, GenValid b) => GenValid (a, b) where
   genValid = (,) <$> genValid <*> genValid
 

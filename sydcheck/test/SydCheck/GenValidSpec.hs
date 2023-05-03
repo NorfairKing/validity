@@ -21,6 +21,7 @@ spec = do
     goldenGenValidSpec @Bool "bool"
     goldenGenValidSpec @Ordering "ordering"
     goldenGenValidSpec @Word8 "word8"
+    goldenGenValidSpec @Char "char"
     goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
     goldenGenValidSpec @(Maybe Word8) "maybe-word8"
     goldenGenValidSpec @(Either Word8 Word8) "either-word8-word8"

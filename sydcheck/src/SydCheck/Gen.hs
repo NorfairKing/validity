@@ -13,6 +13,7 @@ module SydCheck.Gen where
 import Control.Applicative
 import Control.Monad
 import Control.Selective
+import Data.Char
 import Data.Either (rights)
 import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
@@ -266,6 +267,9 @@ genOrdering minimal = genFromSingleRandomWord $ \case
     1 -> EQ
     2 -> GT
     _ -> minimal
+
+genChar :: (Char, Char) -> Gen Char
+genChar (lo, hi) = chr <$> genInt (ord lo, ord hi)
 
 -- | Run one of the following elements with corresponding frequency and shrink
 -- to the first.
