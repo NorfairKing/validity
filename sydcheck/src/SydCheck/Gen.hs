@@ -15,6 +15,7 @@ import Control.Monad
 import Control.Selective
 import Data.Char
 import Data.Either (rights)
+import Data.Int
 import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
 import Data.Tuple (swap)
@@ -346,9 +347,73 @@ suchThatMaybe gen predicate = do
 genInt :: (Int, Int) -> Gen Int
 genInt (lo, hi) = computeInt (lo, hi) <$> takeNextRandomWord
 
+genIntegralAroundZero :: Integral a => Gen a
+genIntegralAroundZero =
+  oneof
+    [ genIntegralAroundZeroPositive,
+      genIntegralAroundZeroNegative
+    ]
+
+genIntegralAroundZeroNegative :: Integral a => Gen a
+genIntegralAroundZeroNegative = genFromSingleRandomWord $ \case
+  Nothing -> 0
+  Just 0 -> 0
+  Just w -> negate $ round (computeDoubleFromExponentialDistribution 0.5 w)
+
+genIntegralAroundZeroPositive :: Integral a => Gen a
+genIntegralAroundZeroPositive = genFromSingleRandomWord $ \case
+  Nothing -> 0
+  Just 0 -> 0
+  Just w -> round (computeDoubleFromExponentialDistribution 0.5 w)
+
+genIntegralAroundMinbound :: (Integral a, Bounded a) => Gen a
+genIntegralAroundMinbound = genFromSingleRandomWord $ \case
+  Nothing -> minBound
+  Just 0 -> minBound
+  Just w -> minBound + round (computeDoubleFromExponentialDistribution 0.5 w)
+
+genIntegralAroundMaxbound :: (Integral a, Bounded a) => Gen a
+genIntegralAroundMaxbound = genFromSingleRandomWord $ \case
+  Nothing -> maxBound
+  Just 0 -> maxBound
+  Just w -> maxBound - round (computeDoubleFromExponentialDistribution 0.5 w)
+
+genUniformInt :: forall a. (Integral a, Bounded a) => Gen a
+genUniformInt = genFromSingleRandomWord $ \case
+  Nothing -> 0
+  Just 0 -> 0
+  Just w ->
+    if fromIntegral (maxBound :: a) == (maxBound :: Int64)
+      then fromIntegral w
+      else fromIntegral (w `quot` (fromIntegral (maxBound :: a)))
+
+-- | Generate Int, Int8, Int16, Int32 and Int64 values smartly.
+--
+-- * Some at the border
+-- * Some around zero
+-- * Mostly uniformly
+genIntX :: forall a. (Integral a, Bounded a) => Gen a
+genIntX =
+  frequency
+    [ (1, genIntegralAroundZeroPositive),
+      (1, genIntegralAroundZeroNegative),
+      (6, genUniformInt),
+      (1, genIntegralAroundMinbound),
+      (1, genIntegralAroundMaxbound)
+    ]
+
 -- | Generate a 'Word' within a range, shrink to the lower end
 genWord :: (Word, Word) -> Gen Word
 genWord (lo, hi) = computeWord (lo, hi) <$> takeNextRandomWord
+
+genUniformWord :: forall a. (Integral a, Bounded a) => Gen a
+genUniformWord = genFromSingleRandomWord $ \case
+  Nothing -> 0
+  Just 0 -> 0
+  Just w ->
+    if fromIntegral (maxBound :: a) == (maxBound :: Word64)
+      then fromIntegral w
+      else fromIntegral (w `quot` (fromIntegral (maxBound :: a)))
 
 -- | Generate Word, Word8, Word16, Word32 and Word64 values smartly.
 --
@@ -358,33 +423,10 @@ genWord (lo, hi) = computeWord (lo, hi) <$> takeNextRandomWord
 genWordX :: forall a. (Integral a, Bounded a) => Gen a
 genWordX =
   frequency
-    [ (1, small),
-      (8, uniformWord),
-      (1, extreme)
+    [ (1, genIntegralAroundZeroPositive),
+      (8, genUniformWord),
+      (1, genIntegralAroundMaxbound)
     ]
-  where
-    extreme :: Gen a
-    extreme = genFromSingleRandomWord $ \case
-      Nothing -> maxBound
-      Just 0 -> maxBound
-      Just w -> maxBound - round (computeDoubleFromExponentialDistribution lambda w)
-    small :: Gen a
-    small = genFromSingleRandomWord $ \case
-      Nothing -> 0
-      Just 0 -> minBound
-      Just w -> 0 + round (computeDoubleFromExponentialDistribution lambda w)
-    lambda = 0.5
-    uniformWord :: Gen a
-    uniformWord = genFromSingleRandomWord $ \case
-      Nothing -> 0
-      Just 0 -> 0
-      Just w ->
-        if fromIntegral (maxBound :: a) == (maxBound :: Word64)
-          then fromIntegral w
-          else fromIntegral (w `quot` (fromIntegral (maxBound :: a)))
-
--- uniformWord :: Gen a
--- uniformWord = genWord (minBound, maxBound)
 
 computeInt :: (Int, Int) -> RandomWord -> Int
 computeInt (lo, hi) rw =

@@ -105,4 +105,4 @@ genDefinitelyGenerates gen value = do
   it ("definitely generates " <> show value) $ do
     let randomnesses = zipWith computeRandomness sizes seeds
         values = map (runGen gen) randomnesses
-    values `shouldSatisfy` (elem (Right value))
+    shouldSatisfyNamed values ("contains " <> show value) (elem (Right value))

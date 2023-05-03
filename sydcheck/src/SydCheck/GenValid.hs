@@ -8,6 +8,7 @@
 
 module SydCheck.GenValid where
 
+import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Validity
 import Data.Word
@@ -62,6 +63,21 @@ instance GenValid a => GenValid [a] where
 
 instance GenValid a => GenValid (NonEmpty a) where
   genValid = genNonEmptyOf genValid
+
+instance GenValid Int8 where
+  genValid = genIntX
+
+instance GenValid Int16 where
+  genValid = genIntX
+
+instance GenValid Int32 where
+  genValid = genIntX
+
+instance GenValid Int64 where
+  genValid = genIntX
+
+instance GenValid Int where
+  genValid = genIntX
 
 instance GenValid Word8 where
   genValid = genWordX

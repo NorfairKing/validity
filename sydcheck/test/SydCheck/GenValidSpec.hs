@@ -6,6 +6,7 @@
 
 module SydCheck.GenValidSpec (spec) where
 
+import Data.Int
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Word
 import SydCheck.GenSpec (genDefinitelyGenerates, goldenGenSpec)
@@ -38,6 +39,26 @@ spec = do
     goldenGenValidSpec @Word "word"
     genValidDefinitelyGeneratesSpec @Word 0
     genValidDefinitelyGeneratesSpec @Word maxBound
+    goldenGenValidSpec @Int8 "int8"
+    genValidDefinitelyGeneratesSpec @Int8 0
+    genValidDefinitelyGeneratesSpec @Int8 minBound
+    genValidDefinitelyGeneratesSpec @Int8 maxBound
+    goldenGenValidSpec @Int16 "int16"
+    genValidDefinitelyGeneratesSpec @Int16 0
+    genValidDefinitelyGeneratesSpec @Int16 minBound
+    genValidDefinitelyGeneratesSpec @Int16 maxBound
+    goldenGenValidSpec @Int32 "int32"
+    genValidDefinitelyGeneratesSpec @Int32 0
+    genValidDefinitelyGeneratesSpec @Int32 minBound
+    genValidDefinitelyGeneratesSpec @Int32 maxBound
+    goldenGenValidSpec @Int64 "int64"
+    genValidDefinitelyGeneratesSpec @Int64 0
+    genValidDefinitelyGeneratesSpec @Int64 minBound
+    genValidDefinitelyGeneratesSpec @Int64 maxBound
+    goldenGenValidSpec @Int "int"
+    genValidDefinitelyGeneratesSpec @Int 0
+    genValidDefinitelyGeneratesSpec @Int minBound
+    genValidDefinitelyGeneratesSpec @Int maxBound
     goldenGenValidSpec @Char "char"
     goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
     goldenGenValidSpec @(Maybe Word8) "maybe-word8"
