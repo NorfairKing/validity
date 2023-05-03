@@ -138,9 +138,9 @@ genFromSingleRandomWord :: (Maybe RandomWord -> a) -> Gen a
 genFromSingleRandomWord func = GenFixedSize 1 $ \v ->
   pure $
     func $
-      if UV.null v
+      if nullRandomness v
         then Nothing
-        else Just $ UV.head v
+        else Just $ UV.head $ unRandomness v
 
 takeNextRandomWord :: Gen RandomWord
 takeNextRandomWord = genFromSingleRandomWord $ \case
@@ -240,14 +240,14 @@ genMaybeOf gen = frequency [(1, pure Nothing), (3, Just <$> gen)]
 genListOf :: forall a. Gen a -> Gen [a]
 genListOf gen = case sizeOfGen gen of
   Just (Size asize) ->
-    GenVariableSize $ \ws -> case UV.length ws of
+    GenVariableSize $ \ws -> case sizeRandomness ws of
       0 -> pure []
       1 -> pure $ rights [runGen gen ws]
       _ -> do
         let Size s = sizeRandomness ws
             maxLen = (s - 1) `div` asize
             -- Use longer lists where possible, but not always
-            len = computeIntFromTriangleDistribution 0 maxLen maxLen (ws UV.! 0)
+            len = computeIntFromTriangleDistribution 0 maxLen maxLen (UV.head (unRandomness ws))
         pure $ rights $ go (dropRandomness 1 ws) (replicate len (Size asize))
   Nothing ->
     GenVariableSize $ \ws -> do
@@ -270,13 +270,13 @@ genListOf gen = case sizeOfGen gen of
 -- | 'genPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 genPartition :: Int -> Gen [Int]
 genPartition total = GenVariableSize $ \ws ->
-  pure $ case UV.length ws of
+  pure $ case sizeRandomness ws of
     0 -> [total]
     1 -> [total]
     _ ->
-      let maxLen = UV.length ws - 1
-          len = computeIntFromTriangleDistribution 0 maxLen maxLen (ws UV.! 0)
-          us = map computeProperFraction (UV.toList (UV.take len (UV.drop 1 ws)))
+      let Size maxLen = sizeRandomness ws - 1
+          len = computeIntFromTriangleDistribution 0 maxLen maxLen (UV.head (unRandomness ws))
+          us = map computeProperFraction (UV.toList (unRandomness (takeRandomness (Size len) (dropRandomness 1 ws))))
           invs = map (invE 0.25) us
        in -- Rescale the sizes to (approximately) sum to the given size.
           map (round . (* (fromIntegral total / sum invs))) invs

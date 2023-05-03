@@ -18,7 +18,7 @@ import SydCheck.Randomness
 -- Pretend every shrunk version still fails.
 computeAllShrinks :: Randomness -> [Randomness]
 computeAllShrinks v =
-  if UV.null v
+  if nullRandomness v
     then []
     else
       let vs = shrinkRandomness v
@@ -34,7 +34,7 @@ computeAllShrinks v =
 --
 -- These needs to be in order of "must shrinking progress first"
 shrinkRandomness :: Randomness -> [Randomness]
-shrinkRandomness ws =
+shrinkRandomness r@(Randomness ws) =
   concat
     [ every tryToLog,
       every tryToSqrt,
@@ -53,11 +53,11 @@ shrinkRandomness ws =
     every :: (Word64 -> Maybe Word64) -> [Randomness]
     every fun =
       let ws' = UV.map (\v -> fromMaybe v $ fun v) ws
-       in [ws' | ws /= ws']
+       in [Randomness ws' | ws /= ws']
     shorteningsFromBack :: [Randomness]
-    shorteningsFromBack = [UV.take l ws | l <- [1 .. (UV.length ws) - 1]]
+    shorteningsFromBack = [takeRandomness l r | l <- [1 .. sizeRandomness r - 1]]
     shorteningsFromFront :: [Randomness]
-    shorteningsFromFront = [UV.drop l ws | l <- [UV.length ws - 1, UV.length ws - 2 .. 1]]
+    shorteningsFromFront = [dropRandomness l r | l <- [sizeRandomness r - 1, sizeRandomness r - 2 .. 1]]
     each :: (Word64 -> Maybe Word64) -> [Randomness]
     each fun =
       mapMaybe
@@ -65,11 +65,12 @@ shrinkRandomness ws =
             let v = UV.unsafeIndex ws ix
             v' <- fun v
             pure $
-              UV.modify
-                ( \mv ->
-                    MUV.write mv ix v'
-                )
-                ws
+              Randomness $
+                UV.modify
+                  ( \mv ->
+                      MUV.write mv ix v'
+                  )
+                  ws
         )
         [0 .. UV.length ws - 1]
     tryToLog = \case

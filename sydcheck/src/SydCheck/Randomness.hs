@@ -29,8 +29,11 @@ type Seed = RandomWord
 -- TODO: Newtype?
 type RandomWord = Word64
 
--- TODO: Newtype?
-type Randomness = Vector Word64
+-- | A fixed amount of randomness.
+--
+-- This structure supports efficient splitting.
+newtype Randomness = Randomness {unRandomness :: Vector Word64}
+  deriving stock (Show, Read, Eq, Ord)
 
 -- Integrated shrinking AND size handling.
 
@@ -41,10 +44,9 @@ type Randomness = Vector Word64
 --
 -- When randomWord is 0, the split is shrunk as much as possible.
 -- In that case we want to return the most shrunk split, so (0, n)
-computeSplit :: Int -> RandomWord -> Int
-computeSplit totalSize randomWord =
-  let left = randomWord `rem` (fromIntegral (totalSize + 1))
-   in fromIntegral left
+computeSplit :: Size -> RandomWord -> Size
+computeSplit (Size totalSize) randomWord =
+  Size $ fromIntegral $ randomWord `rem` (fromIntegral (totalSize + 1))
 
 -- | Compute a randomness vector based on a size and seed
 computeRandomness :: Size -> Seed -> Randomness
@@ -52,27 +54,40 @@ computeRandomness size seed = computeRandomnessWithSMGen size (mkSMGen seed)
 
 -- | Compute a randomness vector based on a size and splitmix generator
 computeRandomnessWithSMGen :: Size -> SMGen -> Randomness
-computeRandomnessWithSMGen (Size size) = UV.unfoldrExactN size SM.nextWord64
+computeRandomnessWithSMGen (Size size) = Randomness . UV.unfoldrExactN size SM.nextWord64
 
 sizeRandomness :: Randomness -> Size
-sizeRandomness = Size . UV.length
+sizeRandomness = Size . UV.length . unRandomness
 
+{-# INLINE emptyRandomness #-}
+emptyRandomness :: Randomness
+emptyRandomness = Randomness UV.empty
+
+{-# INLINE nullRandomness #-}
+nullRandomness :: Randomness -> Bool
+nullRandomness = UV.null . unRandomness
+
+{-# INLINE takeRandomness #-}
 takeRandomness :: Size -> Randomness -> Randomness
-takeRandomness = UV.take . unSize
+takeRandomness (Size s) = Randomness . UV.take s . unRandomness
 
+{-# INLINE dropRandomness #-}
 dropRandomness :: Size -> Randomness -> Randomness
-dropRandomness = UV.drop . unSize
+dropRandomness (Size s) = Randomness . UV.drop s . unRandomness
 
+{-# INLINE splitRandomnessAt #-}
 splitRandomnessAt :: Size -> Randomness -> (Randomness, Randomness)
-splitRandomnessAt = UV.splitAt . unSize
+splitRandomnessAt (Size s) (Randomness ws) =
+  let (ws1, ws2) = UV.splitAt s ws
+   in (Randomness ws1, Randomness ws2)
 
 computeSplitRandomness :: Randomness -> (Randomness, Randomness)
 computeSplitRandomness ws =
-  let len = UV.length ws
+  let Size len = sizeRandomness ws
    in case len of
-        0 -> (UV.empty, UV.empty)
-        1 -> (UV.empty, UV.empty)
+        0 -> (emptyRandomness, emptyRandomness)
+        1 -> (emptyRandomness, ws)
         _ ->
-          let leftSize = computeSplit (pred len) (UV.head ws)
-              restRandomness = UV.tail ws
-           in UV.splitAt leftSize restRandomness
+          let leftSize = computeSplit (Size (pred len)) (UV.head (unRandomness ws))
+              restRandomness = UV.tail (unRandomness ws)
+           in splitRandomnessAt leftSize (Randomness restRandomness)
