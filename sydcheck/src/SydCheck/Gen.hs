@@ -156,11 +156,16 @@ instance Selective Gen where
   select g1 g2 = GenSelect ((+) <$> sizeOfGen g1 <*> sizeOfGen g2) g1 g2
 
 instance Monad Gen where
-  (>>=) = GenBind
+  -- Special case for the Left Identity law
+  GenPure a >>= makeBGen = makeBGen a
+  mkA >>= makeBGen = GenBind mkA makeBGen
 
 instance MonadFail Gen where
   fail = GenFail
 
+-- | Make a generator based on how much randomness is available.
+--
+-- Note that the result is always a variable-size generator.
 sized :: (Size -> Gen a) -> Gen a
 sized = GenSized
 
