@@ -70,12 +70,74 @@ data Gen a where
   -- | For MonadFail
   GenFail :: String -> Gen a
 
+-- \| Map the result of a 'Gen'
+--
+-- We have some trouble with laws.
+--
+-- Functor law 1:
+--
+-- > fmap id == id
+--
+-- This cannot hold with the `Gen` structure, strictly, but it'll have to morally instead.
+--
+-- Functor law 2:
+--
+-- > fmap (f . g) = fmap f . fmap g
+--
+-- We can make this hold with a special case
 instance Functor Gen where
-  fmap f g = GenFMap (sizeOfGen g) f g
+  fmap f = \case
+    -- \| Special case for the second functor law.
+    GenFMap ms g g' -> GenFMap ms (f . g) g'
+    g -> GenFMap (sizeOfGen g) f g
 
+-- | Applicative 'Gen'
+--
+-- We have more trouble with the laws.
+--
+-- Further, any definition must satisfy the following:
+
+--
+-- Applicative law: Identity
+--
+-- > pure id <*> v = v
+--
+-- We can make this hold with a special case.
+--
+--
+-- Applicative law: Composition
+--
+-- > pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
+--
+-- We can't make this hold, strictly, so we will have to make it work morally.
+--
+--
+-- Applicative law: Homomorphism
+--
+-- > pure f <*> pure x = pure (f x)
+--
+-- We can make this hold with a special case.
+--
+--
+-- Applicative law: Interchange
+--
+-- > u <*> pure y = pure ($ y) <*> u
+--
+-- We can make this hold with a special case.
 instance Applicative Gen where
   pure = GenPure
-  g1 <*> g2 = GenAp ((+) <$> sizeOfGen g1 <*> sizeOfGen g2) g1 g2
+
+  -- Special case for the Homomorphism law.
+  GenPure f <*> GenPure a = GenPure (f a)
+  -- Special case for the Interchange law
+  g1 <*> GenPure a = ($ a) <$> g1
+  -- Special case for the Identity law
+  GenPure f <*> g2 = f <$> g2
+  g1 <*> g2 =
+    GenAp
+      ((+) <$> sizeOfGen g1 <*> sizeOfGen g2)
+      g1
+      g2
 
 instance Alternative Gen where
   empty = fail ""
