@@ -12,7 +12,7 @@ import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Validity
 import Data.Word
-import GHC.Float (castWord64ToDouble)
+import GHC.Float (castWord32ToFloat, castWord64ToDouble)
 import SydCheck.Gen
 
 -- Laws:
@@ -94,5 +94,8 @@ instance GenValid Word64 where
 instance GenValid Word where
   genValid = genWordX
 
+instance GenValid Float where
+  genValid = genFloatX castWord32ToFloat
+
 instance GenValid Double where
-  genValid = castWord64ToDouble <$> takeNextRandomWord
+  genValid = genFloatX castWord64ToDouble

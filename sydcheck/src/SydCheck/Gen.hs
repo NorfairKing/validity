@@ -428,6 +428,70 @@ genWordX =
       (1, genIntegralAroundMaxbound)
     ]
 
+-- | Generate floating point numbers smartly:
+--
+-- * Some denormalised
+-- * Some around zero
+-- * Some around the bounds
+-- * Some by encoding an Integer and an Int to a floating point number.
+-- * Some accross the entire range
+-- * Mostly uniformly via the bitrepresentation
+--
+-- The function parameter is to go from the bitrepresentation to the floating point value.
+genFloatX ::
+  forall a w.
+  (Read a, RealFloat a, Bounded w) =>
+  (w -> a) ->
+  Gen a
+genFloatX func =
+  frequency
+    [ (1, pure (read "NaN")),
+      (1, pure (read "Infinity")),
+      (1, pure (read "-Infinity")),
+      (1, pure (read "-0")),
+      (4, small),
+      (4, aroundBounds),
+      (4, uniformViaEncoding),
+      (24, reallyUniform)
+    ]
+  where
+    -- This is what Quickcheck does,
+    -- but inlined so QuickCheck cannot change
+    -- it behind the scenes in the future.
+    small :: Gen a
+    small = sized $ \n -> do
+      let n' = toInteger n
+      let precision = 9999999999999 :: Integer
+      b <- choose (1, precision)
+      a <- choose ((-n') * b, n' * b)
+      pure (fromRational (a % b))
+    upperSignificand :: Integer
+    upperSignificand = floatRadix (0.0 :: a) ^ floatDigits (0.0 :: a)
+    lowerSignificand :: Integer
+    lowerSignificand = (-upperSignificand)
+    (lowerExponent, upperExponent) = floatRange (0.0 :: a)
+    aroundBounds :: Gen a
+    aroundBounds = do
+      s <- sized $ \n ->
+        oneof
+          [ choose (lowerSignificand, lowerSignificand + fromIntegral n),
+            choose (upperSignificand - fromIntegral n, upperSignificand)
+          ]
+      e <- sized $ \n ->
+        oneof
+          [ choose (lowerExponent, lowerExponent + n),
+            choose (upperExponent - n, upperExponent)
+          ]
+      pure $ encodeFloat s e
+    uniformViaEncoding :: Gen a
+    uniformViaEncoding = do
+      s <- choose (lowerSignificand, upperSignificand)
+      e <- choose $ floatRange (0.0 :: a)
+      pure $ encodeFloat s e
+    -- Not really uniform, but good enough
+    reallyUniform :: Gen a
+    reallyUniform = func <$> choose (minBound, maxBound)
+
 computeInt :: (Int, Int) -> RandomWord -> Int
 computeInt (lo, hi) rw =
   -- TODO this probably fails for very large integers because of double precision (?)

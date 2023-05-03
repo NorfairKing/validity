@@ -24,6 +24,7 @@ spec = do
     genValidDefinitelyGeneratesSpec @Ordering LT
     genValidDefinitelyGeneratesSpec @Ordering EQ
     genValidDefinitelyGeneratesSpec @Ordering GT
+    goldenGenValidSpec @Char "char"
     goldenGenValidSpec @Word8 "word8"
     genValidDefinitelyGeneratesSpec @Word8 0
     genValidDefinitelyGeneratesSpec @Word8 maxBound
@@ -59,7 +60,7 @@ spec = do
     genValidDefinitelyGeneratesSpec @Int 0
     genValidDefinitelyGeneratesSpec @Int minBound
     genValidDefinitelyGeneratesSpec @Int maxBound
-    goldenGenValidSpec @Char "char"
+    goldenGenValidSpec @Double "double"
     goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
     goldenGenValidSpec @(Maybe Word8) "maybe-word8"
     goldenGenValidSpec @(Either Word8 Word8) "either-word8-word8"
