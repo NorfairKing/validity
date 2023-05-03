@@ -274,10 +274,19 @@ genChar (lo, hi) = chr <$> genInt (ord lo, ord hi)
 -- | Run one of the following elements with corresponding frequency and shrink
 -- to the first.
 frequency :: [(Int, Gen a)] -> Gen a
+frequency [] = fail "TODO LOCATION.frequency: called with empty list"
 frequency ls = do
   let total = sum $ map fst ls
-  ix <- genInt (1, total)
-  pick ix ls
+  case maximum <$> mapM (sizeOfGen . snd) ls of
+    Nothing -> do
+      ix <- genInt (1, total)
+      pick ix ls
+    Just maxSize -> GenFixedSize (maxSize + 1) $ \ws -> case sizeRandomness ws of
+      0 -> runGen (snd (head ls)) ws
+      1 -> runGen (snd (head ls)) ws
+      _ -> do
+        ix <- runGen (genInt (1, total)) (takeRandomness 1 ws)
+        runGen (pick ix ls) (dropRandomness 1 ws)
   where
     pick :: Int -> [(Int, Gen a)] -> Gen a
     pick n ((k, x) : xs)
@@ -287,9 +296,19 @@ frequency ls = do
 
 -- | Run one of the following generators and shrink to the first.
 oneof :: [Gen a] -> Gen a
+oneof [] = fail "TODO LOCATION.oneof: called with empty list."
 oneof ls = do
-  ix <- genInt (0, length ls - 1)
-  ls !! ix
+  -- Not all are fixed-size
+  case maximum <$> mapM sizeOfGen ls of
+    Nothing -> do
+      ix <- genInt (0, length ls - 1)
+      ls !! ix
+    Just maxSize -> GenFixedSize (maxSize + 1) $ \ws -> case sizeRandomness ws of
+      0 -> runGen (head ls) ws
+      1 -> runGen (head ls) ws
+      _ -> do
+        ix <- runGen (genInt (0, length ls - 1)) (takeRandomness 1 ws)
+        runGen (ls !! ix) (dropRandomness 1 ws)
 
 -- | Generate one of the following elements and shrink to the first.
 elements :: [a] -> Gen a
@@ -340,25 +359,29 @@ genWordX :: forall a. (Integral a, Bounded a) => Gen a
 genWordX =
   frequency
     [ (1, small),
-      (1, extreme),
-      (8, uniformWord)
+      (8, uniformWord),
+      (1, extreme)
     ]
   where
     extreme :: Gen a
     extreme = genFromSingleRandomWord $ \case
       Nothing -> maxBound
       Just 0 -> maxBound
-      Just w -> maxBound - round (logBase 2 (fromIntegral w :: Double))
+      Just w -> maxBound - round (computeDoubleFromExponentialDistribution lambda w)
     small :: Gen a
     small = genFromSingleRandomWord $ \case
       Nothing -> 0
       Just 0 -> minBound
-      Just w -> 0 + round (logBase 2 (fromIntegral w :: Double))
+      Just w -> 0 + round (computeDoubleFromExponentialDistribution lambda w)
+    lambda = 0.5
     uniformWord :: Gen a
     uniformWord = genFromSingleRandomWord $ \case
       Nothing -> 0
       Just 0 -> 0
-      Just w -> fromIntegral (w `quot` (fromIntegral (maxBound :: a)))
+      Just w ->
+        if fromIntegral (maxBound :: a) == (maxBound :: Word64)
+          then fromIntegral w
+          else fromIntegral (w `quot` (fromIntegral (maxBound :: a)))
 
 -- uniformWord :: Gen a
 -- uniformWord = genWord (minBound, maxBound)
@@ -522,6 +545,11 @@ genNonEmptyPartition total = GenVariableSize $ \ws ->
                       ne
                in -- Rescale the sizes to (approximately) sum to the given size.
                   NE.map (round . (* (fromIntegral total / sum invs))) invs
+
+genDoubleFromExponentialDistribution :: Double -> Gen Double
+genDoubleFromExponentialDistribution lambda = genFromSingleRandomWord $ \case
+  Nothing -> 0
+  Just w -> computeDoubleFromExponentialDistribution lambda w
 
 computeDoubleFromExponentialDistribution :: Double -> RandomWord -> Double
 computeDoubleFromExponentialDistribution lambda rw =
