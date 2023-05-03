@@ -13,7 +13,7 @@ import Data.Maybe
 import qualified Data.Vector.Unboxed as UV
 import qualified Data.Vector.Unboxed.Mutable as MUV
 import Data.Word
-import SydCheck.Gen
+import SydCheck.Randomness
 
 -- Pretend every shrunk version still fails.
 computeAllShrinks :: Randomness -> [Randomness]

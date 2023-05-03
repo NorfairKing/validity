@@ -8,15 +8,12 @@ module SydCheck.GenSpec (spec) where
 import SydCheck
 import SydCheck.Gen
 import SydCheck.Property
+import SydCheck.Randomness
 import SydCheck.Shrinking
 import Test.Syd
 
 spec :: Spec
 spec = do
-  describe "computeSplit" $
-    it "shrinks to 0" $
-      computeSplit 30 0 `shouldBe` 0
-
   describe "runGen" $ do
     goldenGenSpec (genInt (0, 100)) "percentage"
     goldenGenSpec genProperFraction "proper-fraction"

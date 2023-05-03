@@ -18,6 +18,7 @@ library
       SydCheck.GenValid
       SydCheck.PList
       SydCheck.Property
+      SydCheck.Randomness
       SydCheck.Shrinking
   other-modules:
       Paths_sydcheck
@@ -37,6 +38,7 @@ test-suite sydcheck-test
   other-modules:
       SydCheck.GenSpec
       SydCheck.GenValidSpec
+      SydCheck.RandomnessSpec
       SydCheck.ShrinkingSpec
       SydCheckSpec
       Paths_sydcheck

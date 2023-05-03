@@ -14,11 +14,12 @@ import Data.Maybe
 import SydCheck.Gen
 import SydCheck.PList
 import SydCheck.Property
+import SydCheck.Randomness
 import SydCheck.Shrinking
 import System.Random.SplitMix as SM
 
 -- | Run a generator. The size passed to the generator is always 30;
--- if you want another size then you should explicitly use 'resize'.
+-- if you want another size then you should explicitly use 'generateOfSize'.
 generate :: Gen a -> IO (Either String a)
 generate = generateOfSize 30
 

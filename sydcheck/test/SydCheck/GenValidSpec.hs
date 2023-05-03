@@ -9,6 +9,7 @@ module SydCheck.GenValidSpec (spec) where
 import Data.Word
 import SydCheck.Gen
 import SydCheck.GenValid
+import SydCheck.Randomness
 import SydCheck.Shrinking
 import Test.Syd
 
