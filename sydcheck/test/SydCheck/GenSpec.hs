@@ -7,6 +7,7 @@ module SydCheck.GenSpec (spec) where
 
 import SydCheck
 import SydCheck.Gen
+import SydCheck.Property
 import SydCheck.Shrinking
 import Test.Syd
 

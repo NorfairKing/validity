@@ -6,39 +6,17 @@
 
 module SydCheckSpec (spec) where
 
-import qualified Data.Vector.Unboxed as UV
 import Data.Word
 import SydCheck
-import SydCheck.Gen
 import SydCheck.PList
-import SydCheck.Shrinking
+import SydCheck.Property
 import Test.Syd
 
 spec :: Spec
 spec = do
-  describe "shrinkRandomness" $ do
-    it "does not shrink an empty vector" $
-      shrinkRandomness UV.empty
-        `shouldBe` []
-    it "always tries to shrink to a smaller vector from the beginning" $
-      let shrinks = shrinkRandomness $ UV.fromList [1, 2, 3]
-       in shrinks `shouldSatisfy` (UV.fromList [2, 3] `elem`)
-    it "always tries to shrink to a smaller vector from the end" $
-      let shrinks = shrinkRandomness $ UV.fromList [1, 2, 3]
-       in shrinks `shouldSatisfy` (UV.fromList [1, 2] `elem`)
-
   describe "computeSizes" $ do
     it "returns [0..n] when successes is one more than maxSize" $
       computeSizes 11 10 `shouldBe` [0 .. 10]
-
-  describe "runGen" $ do
-    goldenGenValidSpec @Bool "bool"
-    goldenGenValidSpec @Word8 "word8"
-    goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
-    goldenGenValidSpec @(Maybe Word8) "maybe-word8"
-    goldenGenValidSpec @[Word8] "list-word8"
-    goldenGenValidSpec @[[Word8]] "list-list-word8"
-    goldenGenValidSpec @Word64 "word64"
 
   describe "runIsProperty" $ do
     let -- TODO multiple acceptable counterexamples
@@ -93,29 +71,3 @@ spec = do
       findsCounterExampleSpec
         (\ls -> reverse ls < (ls :: [Word8]))
         (PCons ([] :: [Word8]) PNil)
-
-goldenGenValidSpec :: forall a. (Show a, GenValid a) => FilePath -> Spec
-goldenGenValidSpec = goldenGenSpec (genValid @a)
-
-goldenGenSpec :: forall a. (Show a) => Gen a -> FilePath -> Spec
-goldenGenSpec gen fp = do
-  let nbValues = 100
-      maxSize = nbValues
-      sizes = [0 .. maxSize]
-      seeds = [42 ..]
-  it ("generates the same " <> fp <> " values") $ do
-    let randomnesses = zipWith computeRandomness sizes seeds
-        values :: [Either String a]
-        values = map (runGen gen) randomnesses
-    pureGoldenStringFile ("test_resources/gen/" <> fp <> ".txt") $
-      unlines $
-        map (either id show) values
-  it ("shrinks to the same " <> fp <> " values") $ do
-    let (randomness, maxValue) = runGenUntilSucceeds maxSize 42 gen
-        shrinks :: [Either String a]
-        shrinks = map (runGen gen) $ take 10 $ computeAllShrinks randomness
-    pureGoldenStringFile ("test_resources/shrink/" <> fp <> ".txt") $
-      unlines $
-        show maxValue
-          : ""
-          : map (either id show) shrinks

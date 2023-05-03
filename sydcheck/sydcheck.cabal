@@ -15,7 +15,9 @@ library
   exposed-modules:
       SydCheck
       SydCheck.Gen
+      SydCheck.GenValid
       SydCheck.PList
+      SydCheck.Property
       SydCheck.Shrinking
   other-modules:
       Paths_sydcheck
@@ -34,6 +36,8 @@ test-suite sydcheck-test
   main-is: Spec.hs
   other-modules:
       SydCheck.GenSpec
+      SydCheck.GenValidSpec
+      SydCheck.ShrinkingSpec
       SydCheckSpec
       Paths_sydcheck
   hs-source-dirs:

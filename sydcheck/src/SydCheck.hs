@@ -1,57 +1,21 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module SydCheck where
 
 import Control.Monad
 import Data.Maybe
-import Data.Validity
-import Data.Word
-import GHC.Float (castWord64ToDouble)
 import SydCheck.Gen
 import SydCheck.PList
+import SydCheck.Property
 import SydCheck.Shrinking
 import System.Random.SplitMix as SM
-
--- Laws:
--- 1: Every generated value must be valid
--- 2: With enough randomness, every valid value must be generated eventually.
---
--- Ideally the generated values are particularly anoying.
--- So we try to generate values around the bounds with increased probability
-class Validity a => GenValid a where
-  genValid :: Gen a
-
-instance GenValid Bool where
-  genValid = genBool False
-
-instance (GenValid a, GenValid b) => GenValid (a, b) where
-  genValid = (,) <$> genValid <*> genValid
-
-instance GenValid a => GenValid (Maybe a) where
-  genValid = genMaybeOf genValid
-
-instance GenValid a => GenValid [a] where
-  genValid = genListOf genValid
-
-instance GenValid Word8 where
-  genValid = genFromSingleRandomWord $ \case
-    Nothing -> 0
-    Just w -> fromIntegral (w `rem` (fromIntegral (maxBound :: Word8)))
-
-instance GenValid Word64 where
-  genValid = takeNextRandomWord
-
-instance GenValid Double where
-  genValid = castWord64ToDouble <$> takeNextRandomWord
 
 -- | Run a generator. The size passed to the generator is always 30;
 -- if you want another size then you should explicitly use 'resize'.
@@ -73,10 +37,6 @@ sample :: Show a => Gen a -> IO ()
 sample g = do
   samples <- sample' g
   mapM_ print samples
-
-data Property ls where
-  PropBool :: Bool -> Property '[]
-  PropGen :: Gen a -> (a -> Property ls) -> Property (a ': ls)
 
 -- | Run a property test for any 'IsProperty'
 --
@@ -246,20 +206,3 @@ shrinkPropertyOneStep maxShrinksThisRound ws prop =
           Right (vals, result) -> do
             guard $ not result
             pure (triesDone, (ws', vals))
-
-class IsProperty ls a | a -> ls where
-  toProperty :: a -> Property ls
-
-instance IsProperty ls (Property ls) where
-  toProperty = id
-
-instance IsProperty '[] Bool where
-  toProperty = PropBool
-
-instance (GenValid a, IsProperty ls b) => IsProperty (a ': ls) (a -> b) where
-  toProperty func = forAll genValid $ \a -> func a
-
-forAll :: IsProperty ls prop => Gen a -> (a -> prop) -> Property (a ': ls)
-forAll gen func = PropGen gen $ \a -> toProperty (func a)
-
--- forAllShrink does not exist anymore, yay
