@@ -28,6 +28,7 @@ spec = do
     goldenGenValidSpec @[()] "list-unit"
     goldenGenValidSpec @(NonEmpty Word8) "nonempty-word8"
     goldenGenValidSpec @(NonEmpty ()) "nonempty-unit"
+    goldenGenValidSpec @(NonEmpty (NonEmpty Word8)) "nonempty-nonempty-word8"
     goldenGenValidSpec @[[Word8]] "list-list-word8"
     goldenGenValidSpec @Word64 "word64"
 

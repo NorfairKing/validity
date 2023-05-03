@@ -15,6 +15,7 @@ import Control.Monad
 import Control.Selective
 import Data.Either (rights)
 import Data.List.NonEmpty (NonEmpty (..))
+import qualified Data.List.NonEmpty as NE
 import Data.Tuple (swap)
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
@@ -174,13 +175,21 @@ takeNextRandomWord = genFromSingleRandomWord $ \case
 
 -- | Generate a 'Bool' and shrink to the given bool
 genBool :: Bool -> Gen Bool
-genBool minimal = genFromSingleRandomWord $ undefined
+genBool minimal = genFromSingleRandomWord $ \case
+  Nothing -> minimal
+  Just 0 -> minimal
+  Just w -> even w
 
 -- | Generate an 'Ordering' and shrink to the given ordering
 genOrdering :: Ordering -> Gen Ordering
 genOrdering minimal = genFromSingleRandomWord $ \case
   Nothing -> minimal
-  Just w -> even w
+  Just 0 -> minimal
+  Just w -> case w `mod` 3 of
+    0 -> LT
+    1 -> EQ
+    2 -> GT
+    _ -> minimal
 
 -- | Run one of the following elements with corresponding frequency and shrink
 -- to the first.
@@ -297,16 +306,24 @@ genEitherToRight genLeft genRight =
 
 genListOf :: forall a. Gen a -> Gen [a]
 genListOf gen = case sizeOfGen gen of
-  Just (Size asize) ->
-    GenVariableSize $ \ws -> case sizeRandomness ws of
-      0 -> pure []
-      1 -> pure $ rights [runGen gen ws]
-      _ -> do
-        let Size s = sizeRandomness ws
-            maxLen = (s - 1) `div` asize
-            -- Use longer lists where possible, but not always
-            len = computeIntFromTriangleDistribution 0 maxLen maxLen (UV.head (unRandomness ws))
-        pure $ rights $ go (dropRandomness 1 ws) (replicate len (Size asize))
+  Just gensize -> case gensize of
+    0 -> genFromSingleRandomWord $ \case
+      Nothing -> []
+      Just w ->
+        -- TODO 256 here is magic
+        let len = computeIntFromTriangleDistribution 0 256 2 w
+         in -- TODO is using rights here a good idea?
+            rights $ replicate len (runGen gen emptyRandomness)
+    Size asize ->
+      GenVariableSize $ \ws -> case sizeRandomness ws of
+        0 -> pure []
+        1 -> pure $ rights [runGen gen ws]
+        Size s -> do
+          let maxLen = (s - 1) `div` asize
+              -- Use longer lists where possible, but not always
+              len = computeIntFromTriangleDistribution 0 maxLen maxLen (UV.head (unRandomness ws))
+          -- TODO is using rights here a good idea?
+          pure $ rights $ go (dropRandomness 1 ws) (replicate len (Size asize))
   Nothing ->
     GenVariableSize $ \ws -> do
       let Size s = sizeRandomness ws
@@ -316,19 +333,48 @@ genListOf gen = case sizeOfGen gen of
           sizeForValues = s - sizeForPartition
           genSizePartition = map Size <$> genPartition sizeForValues
       partition <- runGen genSizePartition forThePartition
+      -- TODO is using rights here a good idea?
       pure $ rights $ go forTheValues partition
   where
     go :: Randomness -> [Size] -> [Either String a]
     go rs = \case
       [] -> []
+      [_] -> [runGen gen rs]
       (s : rest) ->
         let (forThisGen, forTheRest) = splitRandomnessAt s rs
          in runGen gen forThisGen : go forTheRest rest
 
 genNonEmptyOf :: forall a. Gen a -> Gen (NonEmpty a)
-genNonEmptyOf = undefined
+genNonEmptyOf gen = case sizeOfGen gen of
+  Just gensize -> GenVariableSize $ \ws ->
+    let (forFirst, forRest) = splitRandomnessAt gensize ws
+     in (:|)
+          <$> runGen gen forFirst
+          <*> runGen (genListOf gen) forRest
+  Nothing -> GenVariableSize $ \ws -> do
+    let Size s = sizeRandomness ws
+        -- We use the first 10% of the randomness for computing the partition
+        sizeForPartition = s `div` 10
+        (forThePartition, forTheValues) = splitRandomnessAt (Size sizeForPartition) ws
+        sizeForValues = s - sizeForPartition
+        genSizePartition = NE.map Size <$> genNonEmptyPartition sizeForValues
+    partition <- runGen genSizePartition forThePartition
+    -- TODO is using rights here a good idea?
+    go forTheValues partition
+  where
+    go :: Randomness -> NonEmpty Size -> Either String (NonEmpty a)
+    go rs = \case
+      (s :| rest) -> case NE.nonEmpty rest of
+        Nothing -> (:| []) <$> runGen gen rs
+        Just ne ->
+          let (forThisGen, forTheRest) = splitRandomnessAt s rs
+           in case runGen gen forThisGen of
+                Left _ -> go forTheRest ne
+                Right v -> (v NE.<|) <$> go forTheRest ne
 
 -- | 'genPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
+--
+-- TODO Refactor this out specifically for sizes
 genPartition :: Int -> Gen [Int]
 genPartition total = GenVariableSize $ \ws ->
   pure $ case sizeRandomness ws of
@@ -337,15 +383,38 @@ genPartition total = GenVariableSize $ \ws ->
     _ ->
       let Size maxLen = sizeRandomness ws - 1
           len = computeIntFromTriangleDistribution 0 maxLen maxLen (UV.head (unRandomness ws))
-          us = map computeProperFraction (UV.toList (unRandomness (takeRandomness (Size len) (dropRandomness 1 ws))))
-          invs = map (invE 0.25) us
+          invs =
+            map
+              (computeDoubleFromExponentialDistribution 0.25)
+              (UV.toList (unRandomness (takeRandomness (Size len) (dropRandomness 1 ws))))
        in -- Rescale the sizes to (approximately) sum to the given size.
           map (round . (* (fromIntegral total / sum invs))) invs
-  where
-    -- Use an exponential distribution for generating the
-    -- sizes in the partition.
-    invE :: Double -> Double -> Double
-    invE lambda u = (-log (1 - u)) / lambda
+
+-- | 'genPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
+--
+-- TODO Refactor this out specifically for sizes
+genNonEmptyPartition :: Int -> Gen (NonEmpty Int)
+genNonEmptyPartition total = GenVariableSize $ \ws ->
+  pure $ case sizeRandomness ws of
+    0 -> total :| []
+    1 -> total :| []
+    _ ->
+      let Size maxLen = sizeRandomness ws - 1
+          len = computeIntFromTriangleDistribution 1 maxLen maxLen (UV.head (unRandomness ws))
+       in case NE.nonEmpty (UV.toList (unRandomness (takeRandomness (Size len) (dropRandomness 1 ws)))) of
+            Nothing -> total :| []
+            Just ne ->
+              let invs =
+                    NE.map
+                      (computeDoubleFromExponentialDistribution 0.25)
+                      ne
+               in -- Rescale the sizes to (approximately) sum to the given size.
+                  NE.map (round . (* (fromIntegral total / sum invs))) invs
+
+computeDoubleFromExponentialDistribution :: Double -> RandomWord -> Double
+computeDoubleFromExponentialDistribution lambda rw =
+  let u = computeProperFraction rw
+   in (-log (1 - u)) / lambda
 
 -- | Generate a list length leq the given size for a generator with fixed size
 genFixedSizeListLenghtWithMaximum :: Int -> Gen Int
