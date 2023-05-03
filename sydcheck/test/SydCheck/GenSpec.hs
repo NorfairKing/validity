@@ -3,7 +3,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module SydCheck.GenSpec (spec) where
+module SydCheck.GenSpec (spec, goldenGenSpec, genDefinitelyGenerates) where
 
 import SydCheck
 import SydCheck.Gen
@@ -23,6 +23,7 @@ spec = do
     goldenGenSpec (genMaybeOf (genWord (0, 100))) "maybe-percentage-word"
     goldenGenSpec (genEitherOf (genWord (0, 100)) (genWord (0, 100))) "either-percentage-percentage"
     goldenGenSpec (genListOf (genWord (0, 100))) "list-percentage-word"
+    genDefinitelyGenerates (genListOf (genWord (0, 100))) []
     goldenGenSpec (genNonEmptyOf (genWord (0, 100))) "nonempty-percentage-word"
 
   describe "generator tests" $ do
@@ -75,7 +76,8 @@ goldenGenSpec gen fp = do
   let nbValues = 100
       maxSize = nbValues
       sizes = [0 .. maxSize]
-      seeds = [42 ..]
+      initialSeed = 42
+      seeds = [initialSeed ..]
   it ("generates the same " <> fp <> " values") $ do
     let randomnesses = zipWith computeRandomness sizes seeds
         values :: [Either String a]
@@ -84,7 +86,7 @@ goldenGenSpec gen fp = do
       unlines $
         map (either id show) values
   it ("shrinks to the same " <> fp <> " values") $ do
-    let (randomness, maxValue) = runGenUntilSucceeds maxSize 42 gen
+    let (randomness, maxValue) = runGenUntilSucceeds maxSize initialSeed gen
         shrinks :: [Either String a]
         shrinks = map (runGen gen) $ take 10 $ computeAllShrinks randomness
     pureGoldenStringFile ("test_resources/shrink/" <> fp <> ".txt") $
@@ -92,3 +94,15 @@ goldenGenSpec gen fp = do
         show maxValue
           : ""
           : map (either id show) shrinks
+
+genDefinitelyGenerates :: (Show a, Eq a) => Gen a -> a -> Spec
+genDefinitelyGenerates gen value = do
+  let nbValues = 100
+      maxSize = nbValues
+      sizes = [0 .. maxSize]
+      initialSeed = 42
+      seeds = [initialSeed ..]
+  it ("definitely generates " <> show value) $ do
+    let randomnesses = zipWith computeRandomness sizes seeds
+        values = map (runGen gen) randomnesses
+    values `shouldSatisfy` (elem (Right value))
