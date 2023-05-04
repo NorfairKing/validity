@@ -59,6 +59,16 @@ instance Applicative Gen where
           genParse genF leftRs <*> genParse genA rightRs
       }
 
+instance Alternative Gen where
+  empty = fail "Alternative.empty"
+  (<|>) g1 g2 =
+    Gen
+      { genSize = max <$> genSize g1 <*> genSize g2,
+        genParse = \rs -> genParse g1 rs <|> genParse g2 rs
+      }
+  many = genListOf
+  some gen = NE.toList <$> (genNonEmptyOf gen)
+
 instance Monad Gen where
   genA >>= mkBGen =
     Gen
@@ -71,6 +81,21 @@ instance Monad Gen where
           a <- genParse genA leftWs
           let genB = mkBGen a
           genParse genB rightWs
+      }
+
+instance Selective Gen where
+  select genAOrB genMakeB =
+    Gen
+      { genSize = (+) <$> genSize genAOrB <*> genSize genMakeB,
+        genParse = \rs -> do
+          let (leftWs, rightWs) = case (genSize genAOrB, genSize genMakeB) of
+                (Nothing, Nothing) -> computeSplitRandomness rs
+                (Just fsize, _) -> splitRandomnessAt fsize rs
+                (_, Just asize) -> swap $ splitRandomnessAt asize rs
+          e <- genParse genAOrB leftWs
+          case e of
+            Left a -> ($ a) <$> genParse genMakeB rightWs
+            Right b -> pure b
       }
 
 instance MonadFail Gen where
@@ -86,204 +111,11 @@ sized func =
       genParse = \rs -> genParse (func (sizeRandomness rs)) rs
     }
 
--- -- Integrated shrinking AND size handling.
--- --
--- -- The length of the vector is the size paremeter, in some sense.
--- -- That's how much randomness the generator is allowed to use.
--- data Gen a where
---   -- | Generator that uses a fixed amount of randomness
---   genFixedSize :: Size -> (Randomness -> Either String a) -> Gen a
---   -- | Generator that uses a variable amount of randomness.
---   genVariableSize :: (Randomness -> Either String a) -> Gen a
---   -- | Generator that uses the amount of randomness left over to decide what to do.
---   GenSized :: (Size -> Gen a) -> Gen a
---   -- | For the Functor instance
---   GenPure :: a -> Gen a
---   -- | For the Applicative instance
---   GenFMap ::
---     -- The size, so it doesn't have to be computed again.
---     -- Must be equal to genSize of the contained gen
---     Maybe Size ->
---     (a -> b) ->
---     Gen a ->
---     Gen b
---   GenAp ::
---     -- The size, so it doesn't have to be computed again.
---     -- Must be equal to the sum of the genSize of the contained gens
---     Maybe Size ->
---     Gen (a -> b) ->
---     Gen a ->
---     Gen b
---   -- | For the Alternative instance
---   GenAlt ::
---     -- The size, so it doesn't have to be computed again.
---     -- Must be equal to the maximum of the genSize of the contained gens
---     Maybe Size ->
---     Gen a ->
---     Gen b ->
---     Gen (Either a b)
---   -- | For the Selective instance
---   GenSelect ::
---     -- The size, so it doesn't have to be computed again.
---     -- Must be equal to the sum of the sizes of the contained gens
---     Maybe Size ->
---     Gen (Either a b) ->
---     Gen (a -> b) ->
---     Gen b
---   -- | For the Monad instance
---   GenBind :: Gen a -> (a -> Gen b) -> Gen b
---   -- | For MonadFail
---   GenFail :: String -> Gen a
---
--- -- | Map the result of a 'Gen'
--- --
--- -- We have some trouble with laws.
--- --
--- -- Functor law 1:
--- --
--- -- > fmap id == id
--- --
--- -- This cannot hold with the `Gen` structure, strictly, but it'll have to morally instead.
--- --
--- -- Functor law 2:
--- --
--- -- > fmap (f . g) = fmap f . fmap g
--- --
--- -- We can make this hold with a special case
--- instance Functor Gen where
---   fmap f = \case
---     -- \| Special case for the second functor law.
---     GenFMap ms g g' -> GenFMap ms (f . g) g'
---     g -> GenFMap (genSize g) f g
---
--- -- | Applicative 'Gen'
--- --
--- -- We have more trouble with the laws.
--- --
--- -- Further, any definition must satisfy the following:
--- --
--- -- Applicative law: Identity
--- --
--- -- > pure id <*> v = v
--- --
--- -- We can make this hold with a special case.
--- --
--- --
--- -- Applicative law: Composition
--- --
--- -- > pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
--- --
--- -- We can't make this hold, strictly, so we will have to make it work morally.
--- --
--- --
--- -- Applicative law: Homomorphism
--- --
--- -- > pure f <*> pure x = pure (f x)
--- --
--- -- We can make this hold with a special case.
--- --
--- --
--- -- Applicative law: Interchange
--- --
--- -- > u <*> pure y = pure ($ y) <*> u
--- --
--- -- We can make this hold with a special case.
--- instance Applicative Gen where
---   pure = GenPure
---
---   -- Special case for the Homomorphism law.
---   GenPure f <*> GenPure a = GenPure (f a)
---   -- Special case for the Interchange law
---   g1 <*> GenPure a = ($ a) <$> g1
---   -- Special case for the Identity law
---   GenPure f <*> g2 = f <$> g2
---   g1 <*> g2 =
---     GenAp
---       ((+) <$> genSize g1 <*> genSize g2)
---       g1
---       g2
---
--- instance Alternative Gen where
---   empty = GenFail "Alternative.empty"
---   (<|>) g1 g2 = either id id <$> GenAlt (max <$> genSize g1 <*> genSize g2) g1 g2
---   many = genListOf
---   some gen = NE.toList <$> (genNonEmptyOf gen)
---
--- instance Selective Gen where
---   select (GenPure aOrB) (GenPure makeB) = pure $ case aOrB of
---     Left a -> makeB a
---     Right b -> b
---   select (GenPure aOrB) genB = case aOrB of
---     Left a -> ($ a) <$> genB
---     Right b -> pure b
---   select genAOrB (GenPure makeB) =
---     either makeB id <$> genAOrB
---   select g1 g2 = GenSelect ((+) <$> genSize g1 <*> genSize g2) g1 g2
---
--- instance Monad Gen where
---   -- Special case for the Left Identity law
---   GenPure a >>= makeBGen = makeBGen a
---   mkA >>= makeBGen = GenBind mkA makeBGen
---
--- instance MonadFail Gen where
---   fail = GenFail
-
 -- resize is not available
 -- scale is not available
 
---   where
---     -- Nothing here means both "we don't know" and "Not fixed size".
---     go :: Gen a -> Maybe Size
---     go = \case
---       genFixedSize w _ -> Just w
---       genVariableSize _ -> Nothing
---       GenSized _ -> Nothing
---       GenPure _ -> Just 0
---       GenFMap ms _ _ -> ms
---       GenAp ms _ _ -> ms
---       GenAlt ms _ _ -> ms
---       GenSelect ms _ _ ->
---         -- This may not be the actual size, but is definitely an upper bound
---         ms
---       GenBind _ _ -> Nothing
---       GenFail _ -> Just 0
-
 runGen :: Gen a -> Randomness -> Either String a
 runGen = genParse
-
---   where
---     go :: Randomness -> Gen a -> Either String a
---     go ws = \case
---       genFixedSize size fun -> fun (takeRandomness size ws)
---       genVariableSize fun -> fun ws
---       GenSized fun -> go ws (fun (sizeRandomness ws))
---       GenPure a -> pure a
---       GenFMap _ f g' -> f <$> go ws g'
---       GenAp _ gf ga ->
---         -- TODO the way this is called is O(n^2). That can probably be done better.
---         let (leftWs, rightWs) = case (genSize gf, genSize ga) of
---               (Nothing, Nothing) -> computeSplitRandomness ws
---               (Just fsize, _) -> splitRandomnessAt fsize ws
---               (_, Just asize) -> swap $ splitRandomnessAt asize ws
---          in go leftWs gf <*> go rightWs ga
---       GenAlt _ g1 g2 -> (Left <$> go ws g1) <|> (Right <$> go ws g2)
---       GenSelect _ gEither gFun -> do
---         let (leftWs, rightWs) = case (genSize gEither, genSize gFun) of
---               (Nothing, Nothing) -> computeSplitRandomness ws
---               (Just fsize, _) -> splitRandomnessAt fsize ws
---               (_, Just asize) -> swap $ splitRandomnessAt asize ws
---         e <- go leftWs gEither
---         case e of
---           Left a -> ($ a) <$> go rightWs gFun
---           Right b -> pure b
---       GenBind ga mb -> do
---         let (leftWs, rightWs) =
---               case genSize ga of
---                 Nothing -> computeSplitRandomness ws
---                 Just asize -> splitRandomnessAt asize ws
---         a <- go leftWs ga
---         go rightWs (mb a)
---       GenFail err -> Left err -- TODO let runGen fail
 
 runGenUntilSucceeds :: Size -> Seed -> Gen a -> (Randomness, a)
 runGenUntilSucceeds initialSize initialSeed gen = go initialSize initialSeed
