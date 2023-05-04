@@ -205,21 +205,43 @@ elements ls =
   (ls !!) <$> genInt (0, length ls - 1)
 
 -- | Generates a value that satisfies a predicate.
-suchThat :: Gen a -> (a -> Bool) -> Gen a
-suchThat gen predicate = do
-  a <- gen
-  if predicate a
-    then pure a
-    else fail "suchThat: predicate rejected the value."
+--
+-- Note that this makes any generator variable-size.
+suchThat :: forall a. Gen a -> (a -> Bool) -> Gen a
+suchThat gen predicate = Gen {genSize = Nothing, genParse = go}
+  where
+    go :: Randomness -> Either String a
+    go rs = do
+      let (forThisTry, forTheNextTries) = case genSize gen of
+            Nothing -> computeSplitRandomness rs
+            Just size -> splitRandomnessAt size rs
+      a <- genParse gen forThisTry
+      if predicate a
+        then Right a
+        else
+          if nullRandomness forThisTry
+            then Left "SydCheck.Gen.suchThat: predicate rejected the value."
+            else go forTheNextTries
 
 -- | Generates a value for which the given function returns a 'Just', and then
--- applies the function.
-suchThatMap :: Gen a -> (a -> Maybe b) -> Gen b
-suchThatMap gen fun = do
-  a <- gen
-  case fun a of
-    Nothing -> fail "suchThatMap: Failed to map the value."
-    Just b -> pure b
+-- returns that value.
+--
+-- Note that this makes any generator variable-size.
+suchThatMap :: forall a b. Gen a -> (a -> Maybe b) -> Gen b
+suchThatMap gen fun = Gen {genSize = Nothing, genParse = go}
+  where
+    go :: Randomness -> Either String b
+    go rs = do
+      let (forThisTry, forTheNextTries) = case genSize gen of
+            Nothing -> computeSplitRandomness rs
+            Just size -> splitRandomnessAt size rs
+      a <- genParse gen forThisTry
+      case fun a of
+        Just b -> Right b
+        Nothing -> do
+          if nullRandomness forThisTry
+            then Left "SydCheck.Gen.suchThatMap: Failed to map the value."
+            else go forTheNextTries
 
 -- | Tries to generate a value that satisfies a predicate.
 --
