@@ -1,9 +1,11 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module SydCheck.GenValid where
@@ -13,6 +15,7 @@ import Data.List.NonEmpty (NonEmpty)
 import Data.Validity
 import Data.Word
 import GHC.Float (castWord32ToFloat, castWord64ToDouble)
+import GHC.Generics
 import SydCheck.Gen
 
 -- Laws:
@@ -24,6 +27,8 @@ import SydCheck.Gen
 -- So we try to generate values around the bounds with increased probability
 class Validity a => GenValid a where
   genValid :: Gen a
+  default genValid :: (Generic a, GGenValid (Rep a)) => Gen a
+  genValid = genValidStructurally
 
 instance GenValid () where
   genValid = pure ()
@@ -99,3 +104,40 @@ instance GenValid Float where
 
 instance GenValid Double where
   genValid = genFloatX castWord64ToDouble
+
+-- | Generate a valid value by generating all the sub parts using the 'Generic' instance,
+-- and trying that until a valid value has been generated
+--
+-- > genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
+--
+-- This is probably the function that you are looking for.
+genValidStructurally :: (Validity a, Generic a, GGenValid (Rep a)) => Gen a
+genValidStructurally = genValidStructurallyWithoutExtraChecking `suchThat` isValid
+
+-- | Generate a valid value by generating all the sub parts using the 'Generic' instance,
+--
+-- This generator is _not_ guaranteed to generate a valid value.
+--
+-- This is probably _not_ the function that you are looking for when overriding
+-- `genValid` _unless_ the type in question has no _extra_ validity constraints on top of
+-- the validity of its sub parts.
+genValidStructurallyWithoutExtraChecking :: (Generic a, GGenValid (Rep a)) => Gen a
+genValidStructurallyWithoutExtraChecking = to <$> gGenValid
+
+class GGenValid f where
+  gGenValid :: Gen (f a)
+
+instance GGenValid U1 where
+  gGenValid = pure U1
+
+instance (GGenValid a, GGenValid b) => GGenValid (a :*: b) where
+  gGenValid = (:*:) <$> gGenValid <*> gGenValid
+
+instance (GGenValid a, GGenValid b) => GGenValid (a :+: b) where
+  gGenValid = oneof [L1 <$> gGenValid, R1 <$> gGenValid]
+
+instance (GGenValid a) => GGenValid (M1 i c a) where
+  gGenValid = M1 <$> gGenValid
+
+instance (GenValid a) => GGenValid (K1 i a) where
+  gGenValid = K1 <$> genValid

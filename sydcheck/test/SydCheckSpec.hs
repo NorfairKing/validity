@@ -1,13 +1,17 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
 module SydCheckSpec (spec) where
 
+import Data.Validity
 import Data.Word
+import GHC.Generics (Generic)
 import SydCheck
+import SydCheck.GenValid
 import SydCheck.PList
 import SydCheck.Property
 import Test.Syd
@@ -71,3 +75,25 @@ spec = do
       findsCounterExampleSpec
         (\ls -> reverse ls < (ls :: [Word8]))
         (PCons ([] :: [Word8]) PNil)
+    it "finds a counterexample for 'all even numbers are smaller than 3'" $
+      findsCounterExampleSpec
+        (forAll ((* 2) <$> genValid) (\i -> i < (3 :: Int)))
+        (PCons 4 PNil)
+    it "finds a counterexample in this generic structure" $
+      findsCounterExampleSpec
+        exampleBool
+        (PCons (Example {exampleBool = False, exampleInt = 0}) PNil)
+    it "finds a counterexample in this generic structure" $
+      findsCounterExampleSpec
+        (\example -> not (exampleBool example) || even (exampleInt example))
+        (PCons (Example {exampleBool = True, exampleInt = 1}) PNil)
+
+data Example = Example
+  { exampleBool :: Bool,
+    exampleInt :: Int
+  }
+  deriving (Show, Eq, Generic)
+
+instance Validity Example
+
+instance GenValid Example
