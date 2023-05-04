@@ -433,64 +433,55 @@ genWordX =
 -- * Some denormalised
 -- * Some around zero
 -- * Some around the bounds
--- * Some by encoding an Integer and an Int to a floating point number.
 -- * Some accross the entire range
 -- * Mostly uniformly via the bitrepresentation
 --
 -- The function parameter is to go from the bitrepresentation to the floating point value.
 genFloatX ::
-  forall a w.
-  (Read a, RealFloat a, Bounded w) =>
-  (w -> a) ->
+  forall a.
+  (Read a, RealFloat a) =>
+  (Word64 -> a) ->
   Gen a
 genFloatX func =
   frequency
-    [ (1, pure (read "NaN")),
+    [ (24, reallyUniform),
+      (1, pure (read "NaN")),
       (1, pure (read "Infinity")),
       (1, pure (read "-Infinity")),
-      (1, pure (read "-0")),
-      (4, small),
-      (4, aroundBounds),
-      (4, uniformViaEncoding),
-      (24, reallyUniform)
+      (1, pure (read "-0"))
+      -- (4, small),
+      -- (4, aroundBounds),
     ]
   where
-    -- This is what Quickcheck does,
-    -- but inlined so QuickCheck cannot change
-    -- it behind the scenes in the future.
-    small :: Gen a
-    small = sized $ \n -> do
-      let n' = toInteger n
-      let precision = 9999999999999 :: Integer
-      b <- choose (1, precision)
-      a <- choose ((-n') * b, n' * b)
-      pure (fromRational (a % b))
-    upperSignificand :: Integer
-    upperSignificand = floatRadix (0.0 :: a) ^ floatDigits (0.0 :: a)
-    lowerSignificand :: Integer
-    lowerSignificand = (-upperSignificand)
-    (lowerExponent, upperExponent) = floatRange (0.0 :: a)
-    aroundBounds :: Gen a
-    aroundBounds = do
-      s <- sized $ \n ->
-        oneof
-          [ choose (lowerSignificand, lowerSignificand + fromIntegral n),
-            choose (upperSignificand - fromIntegral n, upperSignificand)
-          ]
-      e <- sized $ \n ->
-        oneof
-          [ choose (lowerExponent, lowerExponent + n),
-            choose (upperExponent - n, upperExponent)
-          ]
-      pure $ encodeFloat s e
-    uniformViaEncoding :: Gen a
-    uniformViaEncoding = do
-      s <- choose (lowerSignificand, upperSignificand)
-      e <- choose $ floatRange (0.0 :: a)
-      pure $ encodeFloat s e
-    -- Not really uniform, but good enough
+    -- -- This is what Quickcheck does,
+    -- -- but inlined so QuickCheck cannot change
+    -- -- it behind the scenes in the future.
+    -- small :: Gen a
+    -- small = sized $ \n -> do
+    --   let precision = 9999999999999 :: Int
+    --   b <- genInt (1, precision)
+    --   a <- genInt ((-n) * b, n * b)
+    --   pure (realToFrac (a % b))
+    -- upperSignificand :: Int
+    -- upperSignificand = fromIntegral $ floatRadix (0.0 :: a) ^ floatDigits (0.0 :: a)
+    -- lowerSignificand :: Int
+    -- lowerSignificand = fromIntegral $ (-upperSignificand)
+    -- (lowerExponent, upperExponent) = floatRange (0.0 :: a)
+    -- aroundBounds :: Gen a
+    -- aroundBounds = do
+    --   s <- sized $ \n ->
+    --     oneof
+    --       [ genInt (lowerSignificand, lowerSignificand + fromIntegral n),
+    --         genInt (upperSignificand - fromIntegral n, upperSignificand)
+    --       ]
+    --   e <- sized $ \n ->
+    --     oneof
+    --       [ genInt (lowerExponent, lowerExponent + n),
+    --         genInt (upperExponent - n, upperExponent)
+    --       ]
+    --   pure $ encodeFloat s e
     reallyUniform :: Gen a
-    reallyUniform = func <$> choose (minBound, maxBound)
+    reallyUniform = genFromSingleRandomWord $ maybe 0 func
 
 computeInt :: (Int, Int) -> RandomWord -> Int
 computeInt (lo, hi) rw =

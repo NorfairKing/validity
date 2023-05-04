@@ -60,6 +60,7 @@ spec = do
     genValidDefinitelyGeneratesSpec @Int 0
     genValidDefinitelyGeneratesSpec @Int minBound
     genValidDefinitelyGeneratesSpec @Int maxBound
+    goldenGenValidSpec @Float "float"
     goldenGenValidSpec @Double "double"
     goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
     goldenGenValidSpec @(Maybe Word8) "maybe-word8"

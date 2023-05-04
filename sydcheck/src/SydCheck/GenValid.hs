@@ -95,7 +95,7 @@ instance GenValid Word where
   genValid = genWordX
 
 instance GenValid Float where
-  genValid = genFloatX castWord32ToFloat
+  genValid = genFloatX (castWord32ToFloat . fromIntegral)
 
 instance GenValid Double where
   genValid = genFloatX castWord64ToDouble
