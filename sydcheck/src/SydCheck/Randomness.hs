@@ -10,6 +10,7 @@
 
 module SydCheck.Randomness where
 
+import Data.Bits (shiftR)
 import Data.Vector.Unboxed (Vector)
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
@@ -91,3 +92,6 @@ computeSplitRandomness ws =
           let leftSize = computeSplit (Size (pred len)) (UV.head (unRandomness ws))
               restRandomness = UV.tail (unRandomness ws)
            in splitRandomnessAt leftSize (Randomness restRandomness)
+
+splitWord64 :: Word64 -> (Word32, Word32)
+splitWord64 w = (fromIntegral (w `shiftR` 32), fromIntegral w)

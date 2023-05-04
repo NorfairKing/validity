@@ -13,6 +13,7 @@ module SydCheck.Gen where
 import Control.Applicative
 import Control.Monad
 import Control.Selective
+import Data.Bits
 import Data.Char
 import Data.Either (rights)
 import Data.Int
@@ -428,12 +429,54 @@ genWordX =
       (1, genIntegralAroundMaxbound)
     ]
 
+genUniformFloatX :: Real a => (Word64 -> a) -> Gen a
+genUniformFloatX func = genFromSingleRandomWord $ maybe 0 func
+
+genSmallFloatX :: (Real a, RealFloat a) => Gen a
+genSmallFloatX = genFromSingleRandomWord $ \case
+  Nothing -> 0
+  Just w ->
+    let (w1, w2) = splitWord64 w
+     in fromIntegral w1 / fromIntegral w2
+
+genFloatXAroundBounds :: forall a. (Real a, RealFloat a) => Gen a
+genFloatXAroundBounds = GenFixedSize 1 $ \rs -> case sizeRandomness rs of
+  0 -> pure 0
+  _ -> do
+    let w :: Word64
+        w = UV.head $ unRandomness rs
+    let choice = shiftR w 62
+    let (significandChoice, exponentChoice) = case choice of
+          0 -> (False, False)
+          1 -> (False, True)
+          2 -> (True, False)
+          3 -> (True, True)
+          _ -> (False, False)
+    let (w1, w2) = splitWord64 (shiftR (shiftL w 2) 2)
+    diffExponent <- runGen genIntegralAroundZeroPositive (Randomness (UV.singleton (fromIntegral w1)))
+    diffSignificand <- runGen genIntegralAroundZeroPositive (Randomness (UV.singleton (fromIntegral w2)))
+    let e =
+          if exponentChoice
+            then lowerExponent + diffExponent
+            else upperExponent - diffExponent
+    let s =
+          if significandChoice
+            then lowerSignificand + diffSignificand
+            else upperSignificand - diffSignificand
+    pure $ encodeFloat (fromIntegral s) e
+  where
+    upperSignificand :: Int
+    upperSignificand = fromIntegral $ floatRadix (0.0 :: a) ^ floatDigits (0.0 :: a)
+    lowerSignificand :: Int
+    lowerSignificand = -upperSignificand
+    lowerExponent, upperExponent :: Int
+    (lowerExponent, upperExponent) = floatRange (0.0 :: a)
+
 -- | Generate floating point numbers smartly:
 --
 -- * Some denormalised
 -- * Some around zero
 -- * Some around the bounds
--- * Some accross the entire range
 -- * Mostly uniformly via the bitrepresentation
 --
 -- The function parameter is to go from the bitrepresentation to the floating point value.
@@ -444,44 +487,14 @@ genFloatX ::
   Gen a
 genFloatX func =
   frequency
-    [ (24, reallyUniform),
+    [ (24, genUniformFloatX func),
       (1, pure (read "NaN")),
       (1, pure (read "Infinity")),
       (1, pure (read "-Infinity")),
-      (1, pure (read "-0"))
-      -- (4, small),
-      -- (4, aroundBounds),
+      (1, pure (read "-0")),
+      (4, genSmallFloatX),
+      (4, genFloatXAroundBounds)
     ]
-  where
-    -- -- This is what Quickcheck does,
-    -- -- but inlined so QuickCheck cannot change
-    -- -- it behind the scenes in the future.
-    -- small :: Gen a
-    -- small = sized $ \n -> do
-    --   let precision = 9999999999999 :: Int
-    --   b <- genInt (1, precision)
-    --   a <- genInt ((-n) * b, n * b)
-    --   pure (realToFrac (a % b))
-    -- upperSignificand :: Int
-    -- upperSignificand = fromIntegral $ floatRadix (0.0 :: a) ^ floatDigits (0.0 :: a)
-    -- lowerSignificand :: Int
-    -- lowerSignificand = fromIntegral $ (-upperSignificand)
-    -- (lowerExponent, upperExponent) = floatRange (0.0 :: a)
-    -- aroundBounds :: Gen a
-    -- aroundBounds = do
-    --   s <- sized $ \n ->
-    --     oneof
-    --       [ genInt (lowerSignificand, lowerSignificand + fromIntegral n),
-    --         genInt (upperSignificand - fromIntegral n, upperSignificand)
-    --       ]
-    --   e <- sized $ \n ->
-    --     oneof
-    --       [ genInt (lowerExponent, lowerExponent + n),
-    --         genInt (upperExponent - n, upperExponent)
-    --       ]
-    --   pure $ encodeFloat s e
-    reallyUniform :: Gen a
-    reallyUniform = genFromSingleRandomWord $ maybe 0 func
 
 computeInt :: (Int, Int) -> RandomWord -> Int
 computeInt (lo, hi) rw =
