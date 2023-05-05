@@ -41,10 +41,7 @@ genVariableSize :: (Randomness -> Either String a) -> Gen a
 genVariableSize = Gen Nothing
 
 instance Functor Gen where
-  fmap f gen =
-    gen
-      { genParse = fmap f . genParse gen
-      }
+  fmap f gen = gen {genParse = fmap f . genParse gen}
 
 instance Applicative Gen where
   pure a = genFixedSize 0 $ const $ Right a

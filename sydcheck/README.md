@@ -22,3 +22,10 @@
 
 Please let me know if I made a mistake anywhere, and feel free to fill in the question marks
 
+
+## Migrating from genvalidity
+
+```
+find . -type f -name '*.hs' -exec sed -i 's/Data.GenValidity/SydCheck/g' {} +
+find . -type f -name '*.hs' -exec sed -i 's/Test.QuickCheck/SydCheck.Compatibility.QuickCheck/g' {} +
+```

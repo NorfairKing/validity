@@ -5,7 +5,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
-module SydCheckSpec (spec) where
+module SydCheck.RunnerSpec (spec) where
 
 import Data.Validity
 import Data.Word
@@ -14,6 +14,7 @@ import SydCheck
 import SydCheck.GenValid
 import SydCheck.PList
 import SydCheck.Property
+import SydCheck.Runner
 import Test.Syd
 
 spec :: Spec
@@ -25,20 +26,20 @@ spec = do
   describe "runIsProperty" $ do
     let -- TODO multiple acceptable counterexamples
         findsCounterExampleSpec ::
-          (Show (PList ls), Eq (PList ls), IsProperty ls prop) =>
+          (Show (PList ls), Eq (PList ls), IsTypedProperty ls prop) =>
           prop ->
           PList ls ->
           IO ()
         findsCounterExampleSpec property counterexample =
-          runIsProperty 100 1000 100000 100 42 property
+          runIsTypedProperty 100 1000 100000 100 42 property
             `shouldBe` Right (Just counterexample)
         doesNotFindCounterExampleSpec ::
           forall ls prop.
-          (Show (PList ls), Eq (PList ls), IsProperty ls prop) =>
+          (Show (PList ls), Eq (PList ls), IsTypedProperty ls prop) =>
           prop ->
           IO ()
         doesNotFindCounterExampleSpec property =
-          runIsProperty @ls 100 1000 100000 100 42 property
+          runIsTypedProperty @ls 100 1000 100000 100 42 property
             `shouldBe` Right Nothing
     it "finds a counterexample for False" $
       findsCounterExampleSpec False PNil

@@ -9,6 +9,7 @@ import SydCheck
 import SydCheck.Gen
 import SydCheck.Property
 import SydCheck.Randomness
+import SydCheck.Runner
 import SydCheck.Shrinking
 import Test.Syd
 
@@ -69,7 +70,7 @@ spec = do
 generatorProperty :: forall a. (Show a, Eq a) => Gen a -> (a -> Bool) -> IO ()
 generatorProperty gen predicate = do
   let p = forAll gen predicate
-  runIsProperty 100 1000 0 100 42 p `shouldBe` Right Nothing
+  runIsTypedProperty 100 1000 0 100 42 p `shouldBe` Right Nothing
 
 goldenGenSpec :: forall a. (Show a) => Gen a -> FilePath -> Spec
 goldenGenSpec gen fp = do

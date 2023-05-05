@@ -13,23 +13,21 @@ module SydCheck.Property where
 import SydCheck.Gen
 import SydCheck.GenValid
 
-data Property ls where
-  PropBool :: Bool -> Property '[]
-  PropGen :: Gen a -> (a -> Property ls) -> Property (a ': ls)
+data TypedProperty ls where
+  PropBool :: Bool -> TypedProperty '[]
+  PropGen :: Gen a -> (a -> TypedProperty ls) -> TypedProperty (a ': ls)
 
-class IsProperty ls a | a -> ls where
-  toProperty :: a -> Property ls
+class IsTypedProperty ls a | a -> ls where
+  toTypedProperty :: a -> TypedProperty ls
 
-instance IsProperty ls (Property ls) where
-  toProperty = id
+instance IsTypedProperty ls (TypedProperty ls) where
+  toTypedProperty = id
 
-instance IsProperty '[] Bool where
-  toProperty = PropBool
+instance IsTypedProperty '[] Bool where
+  toTypedProperty = PropBool
 
-instance (GenValid a, IsProperty ls b) => IsProperty (a ': ls) (a -> b) where
-  toProperty func = forAll genValid $ \a -> func a
+instance (GenValid a, IsTypedProperty ls b) => IsTypedProperty (a ': ls) (a -> b) where
+  toTypedProperty func = forAll genValid $ \a -> func a
 
-forAll :: IsProperty ls prop => Gen a -> (a -> prop) -> Property (a ': ls)
-forAll gen func = PropGen gen $ \a -> toProperty (func a)
-
--- forAllShrink does not exist anymore, yay
+forAll :: IsTypedProperty ls prop => Gen a -> (a -> prop) -> TypedProperty (a ': ls)
+forAll gen func = PropGen gen $ \a -> toTypedProperty (func a)

@@ -14,11 +14,13 @@ build-type:     Simple
 library
   exposed-modules:
       SydCheck
+      SydCheck.Compatibility.QuickCheck
       SydCheck.Gen
       SydCheck.GenValid
       SydCheck.PList
       SydCheck.Property
       SydCheck.Randomness
+      SydCheck.Runner
       SydCheck.Shrinking
   other-modules:
       Paths_sydcheck
@@ -39,8 +41,8 @@ test-suite sydcheck-test
       SydCheck.GenSpec
       SydCheck.GenValidSpec
       SydCheck.RandomnessSpec
+      SydCheck.RunnerSpec
       SydCheck.ShrinkingSpec
-      SydCheckSpec
       Paths_sydcheck
   hs-source-dirs:
       test
