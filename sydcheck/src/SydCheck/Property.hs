@@ -29,5 +29,15 @@ instance IsTypedProperty '[] Bool where
 instance (GenValid a, IsTypedProperty ls b) => IsTypedProperty (a ': ls) (a -> b) where
   toTypedProperty func = forAll genValid $ \a -> func a
 
-forAll :: IsTypedProperty ls prop => Gen a -> (a -> prop) -> TypedProperty (a ': ls)
+forAll ::
+  IsTypedProperty ls prop =>
+  Gen a ->
+  (a -> prop) ->
+  TypedProperty (a ': ls)
 forAll gen func = PropGen gen $ \a -> toTypedProperty (func a)
+
+forAllValid ::
+  (GenValid a, IsTypedProperty ls prop) =>
+  (a -> prop) ->
+  TypedProperty (a ': ls)
+forAllValid = forAll genValid

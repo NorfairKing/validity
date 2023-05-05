@@ -3,8 +3,15 @@ module SydCheck
     TypedProperty (..),
     IsTypedProperty,
 
+    -- ** Constructing properties
+    forAll,
+    forAllValid,
+
     -- * Generator typeclass
     GenValid (..),
+
+    -- ** Implementing 'GenValid'
+    genValidStructurallyWithoutExtraChecking,
 
     -- * Generators
     Gen (..),

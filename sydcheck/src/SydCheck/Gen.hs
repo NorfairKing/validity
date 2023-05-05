@@ -20,7 +20,11 @@ import Data.Either (rights)
 import Data.Int
 import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
+import Data.Map (Map)
+import qualified Data.Map as Map
 import Data.Tuple (swap)
+import qualified Data.Vector as V
+import qualified Data.Vector.Storable as SV
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
 import GHC.Generics (Generic)
@@ -522,6 +526,18 @@ genNonEmptyOf gen = case genSize gen of
            in case runGen gen forThisGen of
                 Left _ -> go forTheRest ne
                 Right v -> (v NE.<|) <$> go forTheRest ne
+
+genMapOf :: Ord k => Gen (k, v) -> Gen (Map k v)
+genMapOf g = Map.fromList <$> genListOf g
+
+genVectorOf :: Gen a -> Gen (V.Vector a)
+genVectorOf g = V.fromList <$> genListOf g
+
+genStorableVectorOf :: SV.Storable a => Gen a -> Gen (SV.Vector a)
+genStorableVectorOf g = SV.fromList <$> genListOf g
+
+genUnboxedVectorOf :: UV.Unbox a => Gen a -> Gen (UV.Vector a)
+genUnboxedVectorOf g = UV.fromList <$> genListOf g
 
 -- | 'genPartition n' generates a list 'ls' such that 'sum ls' equals 'n', approximately.
 --

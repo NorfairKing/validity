@@ -29,6 +29,7 @@ packages:
 - 'genvalidity-uuid'
 - 'genvalidity-vector'
 - 'sydcheck'
+- 'sydcheck-sydtest'
 - 'validity'
 - 'validity-aeson'
 - 'validity-bytestring'

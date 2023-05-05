@@ -9,9 +9,12 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+  - containers
   - selective
   - splitmix
-  - validity >=0.12
+  - validity
+  - validity-containers
+  - validity-vector
   - vector
 
 tests:

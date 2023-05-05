@@ -1,12 +1,13 @@
-{ mkDerivation, base, lib, selective, splitmix, sydtest, validity
-, vector
+{ mkDerivation, base, containers, lib, selective, splitmix, sydtest
+, validity, validity-containers, validity-vector, vector
 }:
 mkDerivation {
   pname = "sydcheck";
   version = "0.0.0";
   src = ./.;
   libraryHaskellDepends = [
-    base selective splitmix validity vector
+    base containers selective splitmix validity validity-containers
+    validity-vector vector
   ];
   testHaskellDepends = [ base splitmix sydtest validity vector ];
   license = "unknown";

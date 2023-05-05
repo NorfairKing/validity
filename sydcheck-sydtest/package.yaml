@@ -1,0 +1,37 @@
+name: sydcheck-sydtest
+version: '0.0.0.0'
+synopsis: Standard properties for functions on `Validity` types for the sydtest framework
+category: Testing
+author: Tom Sydney Kerckhove
+maintainer: syd@cs-syd.eu
+copyright: ! 'Copyright: (c) 2023 Tom Sydney Kerckhove'
+
+dependencies:
+- base >=4.7 && <5
+
+library:
+  source-dirs: src
+  ghc-options:
+  - -Wall
+  - -fwarn-redundant-constraints
+  dependencies:
+  - validity
+  - sydcheck
+  - sydtest
+  - pretty-show
+
+tests:
+  sydcheck-sydtest-test:
+    main: Spec.hs
+    source-dirs: test
+    build-tools: sydtest-discover
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    dependencies:
+    - sydcheck
+    - sydcheck-sydtest
+    - sydtest
+    - QuickCheck

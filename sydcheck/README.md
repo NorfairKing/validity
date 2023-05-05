@@ -25,7 +25,15 @@ Please let me know if I made a mistake anywhere, and feel free to fill in the qu
 
 ## Migrating from genvalidity
 
+1. Run these sed commands:
+
 ```
+find . -type f -name 'package.yaml' -exec sed -i 's/genvalidity-sydtest/sydcheck-sydtest/g' {} +
+find . -type f -name 'package.yaml' -exec sed -i 's/genvalidity/sydcheck/g' {} +
+
 find . -type f -name '*.hs' -exec sed -i 's/Data.GenValidity/SydCheck/g' {} +
 find . -type f -name '*.hs' -exec sed -i 's/Test.QuickCheck/SydCheck.Compatibility.QuickCheck/g' {} +
+find . -type f -name '*.hs' -exec sed -i 's/Test.Syd.Validity/Test.Syd.SydCheck/g' {} +
 ```
+
+2. Remove all the `shrinkValid` implementations.
