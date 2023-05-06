@@ -52,16 +52,17 @@ runSydCheckPropertyWithArgs computeProperty TestRunSettings {..} progressReporte
     runTypedPropertyT
       testRunSettingMaxSuccess
       (Size testRunSettingMaxSize)
-      testRunSettingMaxShrinks
+      (fromIntegral testRunSettingMaxShrinks)
       testRunSettingMaxDiscardRatio
       mSeed
       (computeProperty outers inner)
   report ProgressTestDone
 
-  let (testRunResultStatus, testRunResultException, testRunResultNumTests, testRunResultFailingInputs, testRunResultExtraInfo) = case errOrResult of
+  let (testRunResultStatus, testRunResultException, testRunResultNumTests, testRunResultNumShrinks, testRunResultFailingInputs, testRunResultExtraInfo) = case errOrResult of
         Left someException ->
           ( TestFailed,
             Just someException,
+            Nothing,
             Nothing,
             [],
             Nothing
@@ -70,28 +71,29 @@ runSydCheckPropertyWithArgs computeProperty TestRunSettings {..} progressReporte
           ResultGeneratorFailed errs ->
             ( TestFailed,
               Nothing,
-              Just $ length errs,
+              Just $ fromIntegral $ length errs,
+              Nothing,
               [],
               Just $ unlines $ "Failed to generate enough values: " : errs
             )
           ResultNoCounterexample ->
             ( TestPassed,
               Nothing,
-              Just testRunSettingMaxSuccess,
+              Just $ fromIntegral testRunSettingMaxSuccess,
+              Nothing,
               [],
               Nothing
             )
-          ResultCounterexample counterexample exception ->
+          ResultCounterexample counterexample shrinksUsed exception ->
             -- TODO: number of tests when a counterexample is found.
             ( TestFailed,
               Just exception,
               Nothing,
+              Just shrinksUsed,
               showPList counterexample,
               Nothing
             )
 
-  let testRunResultNumTests = Nothing
-  let testRunResultNumShrinks = Nothing
   let testRunResultLabels = Nothing
   let testRunResultClasses = Nothing
   let testRunResultTables = Nothing

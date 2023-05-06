@@ -8,6 +8,5 @@ spec = do
   expectPassing $
     specify "(==) is symmetric for Ints" $
       symmetry ((==) :: Int -> Int -> Bool)
-  expectFailing $
-    specify "(<) is not symmetric for Ints" $
-      symmetry ((<) :: Int -> Int -> Bool)
+  specify "(<) is not symmetric for Ints" $
+    symmetry ((<) :: Int -> Int -> Bool)

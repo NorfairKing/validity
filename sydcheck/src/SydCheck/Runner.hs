@@ -43,7 +43,13 @@ sample g = do
 data Result ls
   = ResultNoCounterexample
   | ResultGeneratorFailed ![String]
-  | ResultCounterexample !(PList ls) !SomeException
+  | ResultCounterexample
+      !(PList ls)
+      -- ^ Counterexample
+      !Word
+      -- ^ Shrinks used
+      !SomeException
+      -- ^ Exception that caused the test to fail
   deriving (Show)
 
 -- | Run a property test for any 'IsTypedTypedPropertyT
@@ -57,7 +63,7 @@ runIsTypedPropertyT ::
   IsTypedPropertyT ls IO prop =>
   Int ->
   Size ->
-  Int ->
+  Word ->
   Int ->
   Maybe Seed ->
   prop ->
@@ -74,7 +80,7 @@ runTypedPropertyT ::
   forall ls.
   Int ->
   Size ->
-  Int ->
+  Word ->
   Int ->
   Maybe Seed ->
   TypedPropertyT ls IO ->
@@ -94,12 +100,12 @@ runTypedPropertyT successes maxSize maxShrinks maxDiscardRatio mSeed prop = do
         trip <- runPropertyOn maxShrinks maxDiscardRatio size thisGen prop
         case trip of
           Left errs -> pure $ ResultGeneratorFailed (generationErrors ++ errs)
-          Right (errs, (values, mException)) ->
-            case mException of
+          Right (errs, (values, mShrinksAndException)) ->
+            case mShrinksAndException of
               Nothing -> go nextGen (generationErrors ++ errs) rest
-              Just exception ->
+              Just (shrinksUsed, exception) ->
                 -- Found a counterexample
-                pure $ ResultCounterexample values exception
+                pure $ ResultCounterexample values shrinksUsed exception
 
 computeSizes :: Int -> Size -> [Size]
 computeSizes successes (Size maxSize) = case successes of
@@ -112,12 +118,12 @@ computeSizes successes (Size maxSize) = case successes of
 --
 -- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runPropertyOn ::
-  Int ->
+  Word ->
   Int ->
   Size ->
   SMGen ->
   TypedPropertyT ls IO ->
-  IO (Either [String] ([String], (PList ls, Maybe SomeException)))
+  IO (Either [String] ([String], (PList ls, Maybe (Word, SomeException))))
 runPropertyOn maxShrinks maxDiscards size gen prop = do
   errOrTup <- runPropertyOnRandomnessWithDiscards maxDiscards size gen prop
   case errOrTup of
@@ -128,8 +134,8 @@ runPropertyOn maxShrinks maxDiscards size gen prop = do
         Just exception -> do
           mShrunk <- shrinkProperty maxShrinks ws prop
           pure $ case mShrunk of
-            Nothing -> (values, Just exception)
-            Just (values', exception') -> (values', Just exception')
+            Nothing -> (values, Just (0, exception))
+            Just (shrinkIx, (values', exception')) -> (values', Just (shrinkIx, exception'))
       pure $ Right (errs, rightTup)
 
 -- | Evaluate a property once with a maximum number of discarded generation attemtps.
@@ -214,10 +220,10 @@ exceptionHandlers =
 -- Return the shrunk inputs
 shrinkProperty ::
   forall ls.
-  Int ->
+  Word ->
   Randomness ->
   TypedPropertyT ls IO ->
-  IO (Maybe (PList ls, SomeException))
+  IO (Maybe (Word, (PList ls, SomeException)))
 shrinkProperty maxShrinks r prop = do
   shrinks <- shrinkPropertyAndReturnAllShrinks maxShrinks r prop
   pure $ case shrinks of
@@ -229,32 +235,32 @@ shrinkProperty maxShrinks r prop = do
 -- Return all shrunk versions of the inputs.
 --
 -- TODO do we need this to be separate from 'shrinkProperty' at all?
--- TODO report how many shrinks were done.
 shrinkPropertyAndReturnAllShrinks ::
   forall ls.
-  Int ->
+  Word ->
   Randomness ->
   TypedPropertyT ls IO ->
-  IO [(PList ls, SomeException)]
+  IO [(Word, (PList ls, SomeException))]
 shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go maxShrinks r
   where
-    go :: Int -> Randomness -> IO [(PList ls, SomeException)]
+    go :: Word -> Randomness -> IO [(Word, (PList ls, SomeException))]
     go currentShrinksLeft ws = do
       mShrink <- shrinkPropertyOneStep currentShrinksLeft ws prop
       case mShrink of
         Nothing -> pure []
         Just (triesDone, (ws', values)) -> do
-          let newShrinksLeft = max 0 (currentShrinksLeft - triesDone)
-          (values :) <$> go newShrinksLeft ws'
+          -- TODO: is this correct when it's a word?
+          let newShrinksLeft = currentShrinksLeft - triesDone
+          ((triesDone, values) :) <$> go newShrinksLeft ws'
 
 shrinkPropertyOneStep ::
   forall ls.
-  Int ->
+  Word ->
   Randomness ->
   TypedPropertyT ls IO ->
-  IO (Maybe (Int, (Randomness, (PList ls, SomeException))))
+  IO (Maybe (Word, (Randomness, (PList ls, SomeException))))
 shrinkPropertyOneStep maxShrinksThisRound ws prop =
-  go $ zip [1 ..] (take maxShrinksThisRound (shrinkRandomness ws))
+  go $ zip [1 ..] (take (fromIntegral maxShrinksThisRound) (shrinkRandomness ws))
   where
     go [] = pure Nothing
     go ((triesDone, shrunkRandomness) : rest) = do
