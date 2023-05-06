@@ -4,6 +4,8 @@
 - ignore: { name: "Use ++" }
 - ignore: { name: "Use min" }
 - ignore: { name: "Use max" }
+- ignore: { name: "Use unless" }
+- ignore: { name: "Use uncurry" }
 - ignore: { name: "Use <&>" }
 - ignore: { name: "Redundant <$>" }
 - ignore: { name: "Avoid lambda using `infix`" }

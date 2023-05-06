@@ -9,5 +9,5 @@ spec = do
     specify "(==) is symmetric for Ints" $
       symmetry ((==) :: Int -> Int -> Bool)
   -- expectFailing $
-  specify "(==) is not symmetric for Doubles" $
-    symmetry ((==) :: Double -> Double -> Bool)
+  specify "(<) is not symmetric for Ints" $
+    symmetry ((<) :: Int -> Int -> Bool)

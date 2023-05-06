@@ -16,5 +16,10 @@ type IsProperty a = forall ls. (IsTypedPropertyT ls IO a)
 
 -- | A synonym for 'forAll' that ignores the shrinker.
 {-# DEPRECATED forAllShrink "This function ignores the shrinker, you can use forAll instead." #-}
-forAllShrink :: IsTypedPropertyT ls m prop => Gen a -> (a -> [a]) -> (a -> prop) -> TypedPropertyT (a ': ls) m
+forAllShrink ::
+  (Show a, IsTypedPropertyT ls m prop) =>
+  Gen a ->
+  (a -> [a]) ->
+  (a -> prop) ->
+  TypedPropertyT (a ': ls) m
 forAllShrink gen _ = forAll gen

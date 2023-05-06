@@ -16,6 +16,9 @@ module SydCheck
 
     -- * Generators
     Gen (..),
+    Size (..),
+    Seed (..),
+    Randomness (..),
   )
 where
 

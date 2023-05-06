@@ -9,6 +9,7 @@
 
 module SydCheck.Runner where
 
+import Control.Exception
 import Control.Monad
 import Data.Maybe
 import SydCheck.Gen
@@ -46,16 +47,15 @@ sample g = do
 --
 -- TODO use a record instead of this many parameters
 runIsTypedPropertyT ::
-  forall m ls prop.
-  Monad m =>
-  IsTypedPropertyT ls m prop =>
+  forall ls prop.
+  IsTypedPropertyT ls IO prop =>
   Int ->
   Size ->
   Int ->
   Int ->
-  Seed ->
+  Maybe Seed ->
   prop ->
-  m (Either [String] (Maybe (PList ls))) -- Counterexample
+  IO (Either [String] (Maybe (PList ls))) -- Counterexample
 runIsTypedPropertyT successes maxSize maxShrinks maxDiscardRatio seed prop =
   runTypedPropertyT successes maxSize maxShrinks maxDiscardRatio seed $
     toTypedPropertyT prop
@@ -65,30 +65,32 @@ runIsTypedPropertyT successes maxSize maxShrinks maxDiscardRatio seed prop =
 -- Returns a counterexample if it succeeds, and
 -- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runTypedPropertyT ::
-  forall m ls.
-  Monad m =>
+  forall ls.
   Int ->
   Size ->
   Int ->
   Int ->
-  Seed ->
-  TypedPropertyT ls m ->
-  m (Either [String] (Maybe (PList ls))) -- Counterexample
-runTypedPropertyT successes maxSize maxShrinks maxDiscardRatio initialSeed prop =
+  Maybe Seed ->
+  TypedPropertyT ls IO ->
+  IO (Either [String] (Maybe (PList ls))) -- Counterexample
+runTypedPropertyT successes maxSize maxShrinks maxDiscardRatio mSeed prop = do
+  initialGen <- case mSeed of
+    Just seed -> pure $ mkSMGen seed
+    Nothing -> newSMGen
   let sizes = computeSizes successes maxSize
-   in -- TODO make sure the seeds are randomly generated instead of sequential
-      go [] $ zip sizes [initialSeed ..]
+  go initialGen [] sizes
   where
-    go :: [String] -> [(Size, Seed)] -> m (Either [String] (Maybe (PList ls)))
-    go generationErrors = \case
+    go :: SMGen -> [String] -> [Size] -> IO (Either [String] (Maybe (PList ls)))
+    go gen generationErrors = \case
       [] -> pure (Right Nothing) -- Could not find a counterexample
-      ((size, seed) : rest) -> do
-        trip <- runPropertyOn maxShrinks maxDiscardRatio size seed prop
+      (size : rest) -> do
+        let (thisGen, nextGen) = splitSMGen gen
+        trip <- runPropertyOn maxShrinks maxDiscardRatio size thisGen prop
         case trip of
           Left errs -> pure $ Left (generationErrors ++ errs)
           Right (errs, (values, result)) ->
             if result
-              then go (generationErrors ++ errs) rest
+              then go nextGen (generationErrors ++ errs) rest
               else pure $ Right $ Just values -- Found a counterexample
 
 computeSizes :: Int -> Size -> [Size]
@@ -102,15 +104,14 @@ computeSizes successes (Size maxSize) = case successes of
 --
 -- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runPropertyOn ::
-  Monad m =>
   Int ->
   Int ->
   Size ->
-  Seed ->
-  TypedPropertyT ls m ->
-  m (Either [String] ([String], (PList ls, Bool)))
-runPropertyOn maxShrinks maxDiscards size seed prop = do
-  errOrTup <- runPropertyOnRandomnessWithDiscards maxDiscards size seed prop
+  SMGen ->
+  TypedPropertyT ls IO ->
+  IO (Either [String] ([String], (PList ls, Bool)))
+runPropertyOn maxShrinks maxDiscards size gen prop = do
+  errOrTup <- runPropertyOnRandomnessWithDiscards maxDiscards size gen prop
   case errOrTup of
     Left err -> pure $ Left err
     Right ((ws, errs), (values, result)) -> do
@@ -128,26 +129,27 @@ runPropertyOn maxShrinks maxDiscards size seed prop = do
 --
 -- 'Left' with all the generation errors if no values could be generated within the given number of allowed discard attempts.
 runPropertyOnRandomnessWithDiscards ::
-  forall m ls.
-  Monad m =>
+  forall ls.
   Int ->
   Size ->
-  Seed ->
-  TypedPropertyT ls m ->
-  m (Either [String] ((Randomness, [String]), (PList ls, Bool)))
-runPropertyOnRandomnessWithDiscards maxDiscards initialSize initialSeed prop = go [] maxDiscards initialSize initialSeed
+  SMGen ->
+  TypedPropertyT ls IO ->
+  IO (Either [String] ((Randomness, [String]), (PList ls, Bool)))
+runPropertyOnRandomnessWithDiscards maxDiscards initialSize gen prop =
+  go [] maxDiscards initialSize gen
   where
     go ::
       [String] ->
       Int ->
       Size ->
-      Seed ->
-      m (Either [String] ((Randomness, [String]), (PList ls, Bool)))
-    go errs discardsLeft size seed =
+      SMGen ->
+      IO (Either [String] ((Randomness, [String]), (PList ls, Bool)))
+    go errs discardsLeft size gen =
       if discardsLeft <= 0
         then pure $ Left errs
         else do
-          let ws = computeRandomness size seed
+          let (thisGen, nextGen) = splitSMGen gen
+          let ws = computeRandomnessWithSMGen size thisGen
           errOrResult <- runPropertyOnRandomness ws prop
           case errOrResult of
             Left err ->
@@ -155,27 +157,33 @@ runPropertyOnRandomnessWithDiscards maxDiscards initialSize initialSeed prop = g
                 (err : errs)
                 (pred discardsLeft)
                 (succ size) -- TODO maybe increase the size faster?
-                (succ seed) -- TODO maybe use a more random seed instead of just the next one?
+                nextGen
             Right (values, result) ->
               pure $ Right ((ws, errs), (values, result))
 
 -- | Evaluate a property once, 'Left' if the values couldn't be generated.
 runPropertyOnRandomness ::
-  forall m ls.
-  Monad m =>
+  forall ls.
   Randomness ->
-  TypedPropertyT ls m ->
-  m (Either String (PList ls, Bool))
+  TypedPropertyT ls IO ->
+  IO (Either String (PList ls, Bool))
 runPropertyOnRandomness = go
   where
     go ::
-      forall m ls.
-      Monad m =>
+      forall ls.
       Randomness ->
-      TypedPropertyT ls m ->
-      m (Either String (PList ls, Bool))
+      TypedPropertyT ls IO ->
+      IO (Either String (PList ls, Bool))
     go ws = \case
-      PropBool b -> pure $ Right (PNil, b)
+      PropAction m -> do
+        errOrUnit <- (Right <$> m) `catches` exceptionHandlers
+        pure $
+          Right
+            ( PNil,
+              case errOrUnit of
+                Left _ -> False
+                Right () -> True
+            )
       PropGen gen func -> do
         let (usedRandomness, restRandomness) = computeSplitRandomness ws
         case runGen gen usedRandomness of
@@ -186,16 +194,23 @@ runPropertyOnRandomness = go
               (generateds, result) <- errOrTup
               pure (PCons value generateds, result)
 
+exceptionHandlers :: [Handler (Either SomeException a)]
+exceptionHandlers =
+  [ -- Re-throw AsyncException, otherwise execution will not terminate on SIGINT (ctrl-c).
+    Handler (\e -> throwIO (e :: AsyncException)),
+    -- Catch all the rest
+    Handler (\e -> return $ Left (e :: SomeException))
+  ]
+
 -- | Shrink a property a given maximum number of times.
 --
 -- Return the shrunk inputs
 shrinkProperty ::
-  forall m ls.
-  Monad m =>
+  forall ls.
   Int ->
   Randomness ->
-  TypedPropertyT ls m ->
-  m (Maybe (PList ls))
+  TypedPropertyT ls IO ->
+  IO (Maybe (PList ls))
 shrinkProperty maxShrinks r prop = do
   shrinks <- shrinkPropertyAndReturnAllShrinks maxShrinks r prop
   pure $ case shrinks of
@@ -206,17 +221,17 @@ shrinkProperty maxShrinks r prop = do
 --
 -- Return all shrunk versions of the inputs.
 --
--- TODO record how many shrinks were done
+-- TODO do we need this to be separate from 'shrinkProperty' at all?
+-- TODO report how many shrinks were done.
 shrinkPropertyAndReturnAllShrinks ::
-  forall m ls.
-  Monad m =>
+  forall ls.
   Int ->
   Randomness ->
-  TypedPropertyT ls m ->
-  m [PList ls]
+  TypedPropertyT ls IO ->
+  IO [PList ls]
 shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go maxShrinks r
   where
-    go :: Int -> Randomness -> m [PList ls]
+    go :: Int -> Randomness -> IO [PList ls]
     go currentShrinksLeft ws = do
       mShrink <- shrinkPropertyOneStep currentShrinksLeft ws prop
       case mShrink of
@@ -226,12 +241,11 @@ shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go maxShrinks r
           (values :) <$> go newShrinksLeft ws'
 
 shrinkPropertyOneStep ::
-  forall m ls.
-  Monad m =>
+  forall ls.
   Int ->
   Randomness ->
-  TypedPropertyT ls m ->
-  m (Maybe (Int, (Randomness, PList ls)))
+  TypedPropertyT ls IO ->
+  IO (Maybe (Int, (Randomness, PList ls)))
 shrinkPropertyOneStep maxShrinksThisRound ws prop =
   go $ zip [1 ..] (take maxShrinksThisRound (shrinkRandomness ws))
   where

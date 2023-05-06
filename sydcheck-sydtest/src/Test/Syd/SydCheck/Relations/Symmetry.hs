@@ -28,7 +28,8 @@ symmetryOnGens ::
   Gen (a, a) ->
   TypedPropertyT '[(a, a)] IO
 symmetryOnGens func gen =
-  forAll gen $ uncurry $ symmetricOnElems func
+  forAll gen $ \(a, b) ->
+    symmetricOnElems func a b
 
 -- |
 --
@@ -44,5 +45,12 @@ symmetricOnElems ::
   -- | Two elements
   a ->
   IO ()
-symmetricOnElems func a b =
-  func a b `shouldBe` func b a
+symmetricOnElems func a b = do
+  let oneWay = func a b
+  let otherWay = func b a
+  let ctx =
+        unlines
+          [ unwords ["a `rel` b:", show oneWay],
+            unwords ["b `rel` a:", show otherWay]
+          ]
+  context ctx $ oneWay `shouldBe` otherWay

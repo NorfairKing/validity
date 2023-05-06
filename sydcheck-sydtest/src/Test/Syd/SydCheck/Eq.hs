@@ -62,7 +62,7 @@ eqSpecOnGen gen genname =
                 name ++ "\"" ++ "s"
               ]
           )
-          $ symmetryOnGens @a @IO eq gen2
+          $ symmetryOnGens eq gen2
 
 -- it
 --   ( unwords
