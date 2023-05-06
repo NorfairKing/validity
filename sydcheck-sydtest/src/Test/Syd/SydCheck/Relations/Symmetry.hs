@@ -39,6 +39,7 @@ symmetryOnGens func gen =
 --   \forall a, b: (a \prec b) \Leftrightarrow (b \prec a)
 -- \]
 symmetricOnElems ::
+  Show a =>
   -- | A relation
   (a -> a -> Bool) ->
   a ->
@@ -50,7 +51,7 @@ symmetricOnElems func a b = do
   let otherWay = func b a
   let ctx =
         unlines
-          [ unwords ["a `rel` b:", show oneWay],
-            unwords ["b `rel` a:", show otherWay]
+          [ unwords [ppShow a, "`rel`", ppShow b, ":", show oneWay],
+            unwords [ppShow b, "`rel`", ppShow a, ":", show otherWay]
           ]
   context ctx $ oneWay `shouldBe` otherWay

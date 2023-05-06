@@ -58,7 +58,6 @@ runSydCheckPropertyWithArgs computeProperty TestRunSettings {..} progressReporte
       (computeProperty outers inner)
   report ProgressTestDone
 
-  print errOrResult
   let (testRunResultStatus, testRunResultException, testRunResultNumTests, testRunResultFailingInputs, testRunResultExtraInfo) = case errOrResult of
         Left someException ->
           ( TestFailed,
@@ -67,31 +66,29 @@ runSydCheckPropertyWithArgs computeProperty TestRunSettings {..} progressReporte
             [],
             Nothing
           )
-        Right failedToGenOrMCounterexample -> case failedToGenOrMCounterexample of
-          Left errs ->
+        Right result -> case result of
+          ResultGeneratorFailed errs ->
             ( TestFailed,
               Nothing,
               Just $ length errs,
               [],
               Just $ unlines $ "Failed to generate enough values: " : errs
             )
-          Right mCounterexample ->
-            case mCounterexample of
-              Nothing ->
-                ( TestPassed,
-                  Nothing,
-                  Just testRunSettingMaxSuccess,
-                  [],
-                  Nothing
-                )
-              Just counterexample ->
-                -- TODO: number of tests when a counterexample is found.
-                ( TestFailed,
-                  Nothing,
-                  Nothing,
-                  showPList counterexample,
-                  Nothing
-                )
+          ResultNoCounterexample ->
+            ( TestPassed,
+              Nothing,
+              Just testRunSettingMaxSuccess,
+              [],
+              Nothing
+            )
+          ResultCounterexample counterexample exception ->
+            -- TODO: number of tests when a counterexample is found.
+            ( TestFailed,
+              Just exception,
+              Nothing,
+              showPList counterexample,
+              Nothing
+            )
 
   let testRunResultNumTests = Nothing
   let testRunResultNumShrinks = Nothing
