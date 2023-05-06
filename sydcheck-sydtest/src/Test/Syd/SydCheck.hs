@@ -17,8 +17,14 @@ module Test.Syd.SydCheck
     producesValid2,
 
     -- * Relation specifications
+
+    -- ** Symmetry
     symmetry,
     symmetryOnGens,
+
+    -- ** Reflexivity
+    reflexivity,
+    reflexivityOnGen,
 
     -- ** Utils
     nameOf,

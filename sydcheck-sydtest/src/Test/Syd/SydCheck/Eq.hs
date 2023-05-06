@@ -11,7 +11,7 @@ where
 import Data.Typeable
 import SydCheck
 import Test.Syd
-import Test.Syd.SydCheck.Relations.Symmetry
+import Test.Syd.SydCheck.Relations
 import Test.Syd.SydCheck.Runner ()
 import Test.Syd.SydCheck.Utils
 
@@ -47,14 +47,14 @@ eqSpecOnGen gen genname =
       let eq = (==) @a
           neq = (/=) @a
       describe funeqstr $ do
-        -- it
-        --  ( unwords
-        --      [ "is reflexive for",
-        --        "\"" ++ genname,
-        --        name ++ "\"" ++ "s"
-        --      ]
-        --  )
-        --  $ reflexivityOnGen eq gen s
+        it
+          ( unwords
+              [ "is reflexive for",
+                "\"" ++ genname,
+                name ++ "\"" ++ "s"
+              ]
+          )
+          $ reflexivityOnGen eq gen
         it
           ( unwords
               [ "is symmetric for",

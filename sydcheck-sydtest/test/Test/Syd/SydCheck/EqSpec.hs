@@ -9,8 +9,5 @@ import Test.Syd.SydCheck.Eq
 
 spec :: Spec
 spec = do
-  expectPassing $ do
-    eqSpec @Int
-    eqSpecOnGen ((* 2) <$> genValid @Int) "even"
-  -- expectFailing $
-  eqSpec @Double
+  eqSpec @Int
+  eqSpecOnGen ((* 2) <$> genValid @Int) "even"

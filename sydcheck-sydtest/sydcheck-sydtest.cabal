@@ -18,6 +18,7 @@ library
       Test.Syd.SydCheck
       Test.Syd.SydCheck.Eq
       Test.Syd.SydCheck.Relations
+      Test.Syd.SydCheck.Relations.Reflexivity
       Test.Syd.SydCheck.Relations.Symmetry
       Test.Syd.SydCheck.Runner
       Test.Syd.SydCheck.Utils
@@ -39,6 +40,7 @@ test-suite sydcheck-sydtest-test
   main-is: Spec.hs
   other-modules:
       Test.Syd.SydCheck.EqSpec
+      Test.Syd.SydCheck.Relations.ReflexivitySpec
       Test.Syd.SydCheck.Relations.SymmetrySpec
       Paths_sydcheck_sydtest
   hs-source-dirs:
