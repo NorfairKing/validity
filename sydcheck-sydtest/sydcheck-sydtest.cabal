@@ -16,6 +16,11 @@ build-type:     Simple
 library
   exposed-modules:
       Test.Syd.SydCheck
+      Test.Syd.SydCheck.Eq
+      Test.Syd.SydCheck.Relations
+      Test.Syd.SydCheck.Relations.Symmetry
+      Test.Syd.SydCheck.Runner
+      Test.Syd.SydCheck.Utils
   other-modules:
       Paths_sydcheck_sydtest
   hs-source-dirs:
@@ -33,6 +38,8 @@ test-suite sydcheck-sydtest-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Test.Syd.SydCheck.EqSpec
+      Test.Syd.SydCheck.Relations.SymmetrySpec
       Paths_sydcheck_sydtest
   hs-source-dirs:
       test
