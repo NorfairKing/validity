@@ -84,11 +84,11 @@ runSydCheckPropertyWithArgs computeProperty TestRunSettings {..} progressReporte
               [],
               Nothing
             )
-          ResultCounterexample counterexample shrinksUsed exception ->
+          ResultCounterexample counterexample examplesRun shrinksUsed exception ->
             -- TODO: number of tests when a counterexample is found.
             ( TestFailed,
               Just exception,
-              Nothing,
+              Just examplesRun,
               Just shrinksUsed,
               showPList counterexample,
               Nothing

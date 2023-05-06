@@ -47,6 +47,8 @@ data Result ls
       !(PList ls)
       -- ^ Counterexample
       !Word
+      -- ^ Tests run
+      !Word
       -- ^ Shrinks used
       !SomeException
       -- ^ Exception that caused the test to fail
@@ -105,7 +107,12 @@ runTypedPropertyT successes maxSize maxShrinks maxDiscardRatio mSeed prop = do
               Nothing -> go nextGen (generationErrors ++ errs) rest
               Just (shrinksUsed, exception) ->
                 -- Found a counterexample
-                pure $ ResultCounterexample values shrinksUsed exception
+                pure $
+                  ResultCounterexample
+                    values
+                    (fromIntegral (successes - length rest))
+                    shrinksUsed
+                    exception
 
 computeSizes :: Int -> Size -> [Size]
 computeSizes successes (Size maxSize) = case successes of
