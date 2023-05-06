@@ -83,7 +83,7 @@ spec = do
         (PCons ([] :: [Word8]) PNil)
     it "finds a counterexample for 'all even numbers are smaller than 3'" $
       findsCounterExampleSpec
-        (forAll ((* 2) <$> genValid) (\i -> i < (3 :: Int)) :: TypedPropertyT '[Int] IO)
+        (forAll ((* 2) <$> genValid) (\i -> i < (3 :: Int)) :: TypedPropertyT '[Int] IO ())
         (PCons (4 :: Int) PNil :: PList '[Int])
     it "finds a counterexample in this generic structure" $
       findsCounterExampleSpec

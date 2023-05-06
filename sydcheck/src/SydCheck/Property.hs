@@ -17,22 +17,22 @@ import Data.Kind
 import SydCheck.Gen
 import SydCheck.GenValid
 
-type TypedProperty ls = TypedPropertyT ls IO
+type TypedProperty ls = TypedPropertyT ls IO ()
 
 type IsTypedProperty ls = IsTypedPropertyT ls IO
 
-data TypedPropertyT (ls :: [Type]) (m :: Type -> Type) where
-  PropAction :: m () -> TypedPropertyT '[] m
+data TypedPropertyT (ls :: [Type]) (m :: Type -> Type) a where
+  PropAction :: m r -> TypedPropertyT '[] m r
   PropGen ::
     Show a =>
     Gen a ->
-    (a -> TypedPropertyT ls m) ->
-    TypedPropertyT (a ': ls) m
+    (a -> TypedPropertyT ls m r) ->
+    TypedPropertyT (a ': ls) m r
 
 class IsTypedPropertyT ls m a where
-  toTypedPropertyT :: a -> TypedPropertyT ls m
+  toTypedPropertyT :: a -> TypedPropertyT ls m ()
 
-instance IsTypedPropertyT ls m (TypedPropertyT ls m) where
+instance IsTypedPropertyT ls m (TypedPropertyT ls m ()) where
   toTypedPropertyT = id
 
 instance IsTypedPropertyT '[] IO Bool where
@@ -52,11 +52,11 @@ forAll ::
   (Show a, IsTypedPropertyT ls m prop) =>
   Gen a ->
   (a -> prop) ->
-  TypedPropertyT (a ': ls) m
+  TypedPropertyT (a ': ls) m ()
 forAll gen func = PropGen gen $ \a -> toTypedPropertyT (func a)
 
 forAllValid ::
   (Show a, GenValid a, IsTypedPropertyT ls m prop) =>
   (a -> prop) ->
-  TypedPropertyT (a ': ls) m
+  TypedPropertyT (a ': ls) m ()
 forAllValid = forAll genValid

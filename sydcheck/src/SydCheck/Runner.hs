@@ -85,7 +85,7 @@ runTypedPropertyT ::
   Word ->
   Int ->
   Maybe Seed ->
-  TypedPropertyT ls IO ->
+  TypedProperty ls ->
   IO (Result ls)
 runTypedPropertyT successes maxSize maxShrinks maxDiscardRatio mSeed prop = do
   initialGen <- case mSeed of
@@ -129,7 +129,7 @@ runPropertyOn ::
   Int ->
   Size ->
   SMGen ->
-  TypedPropertyT ls IO ->
+  TypedProperty ls ->
   IO (Either [String] ([String], (PList ls, Maybe (Word, SomeException))))
 runPropertyOn maxShrinks maxDiscards size gen prop = do
   errOrTup <- runPropertyOnRandomnessWithDiscards maxDiscards size gen prop
@@ -153,7 +153,7 @@ runPropertyOnRandomnessWithDiscards ::
   Int ->
   Size ->
   SMGen ->
-  TypedPropertyT ls IO ->
+  TypedProperty ls ->
   IO (Either [String] ((Randomness, [String]), (PList ls, Maybe SomeException)))
 runPropertyOnRandomnessWithDiscards maxDiscards initialSize gen prop =
   go [] maxDiscards initialSize gen
@@ -185,14 +185,14 @@ runPropertyOnRandomnessWithDiscards maxDiscards initialSize gen prop =
 runPropertyOnRandomness ::
   forall ls.
   Randomness ->
-  TypedPropertyT ls IO ->
+  TypedProperty ls ->
   IO (Either String (PList ls, Maybe SomeException))
 runPropertyOnRandomness = go
   where
     go ::
       forall ls'.
       Randomness ->
-      TypedPropertyT ls' IO ->
+      TypedProperty ls' ->
       IO (Either String (PList ls', Maybe SomeException))
     go ws = \case
       PropAction m -> do
@@ -229,7 +229,7 @@ shrinkProperty ::
   forall ls.
   Word ->
   Randomness ->
-  TypedPropertyT ls IO ->
+  TypedProperty ls ->
   IO (Maybe (Word, (PList ls, SomeException)))
 shrinkProperty maxShrinks r prop = do
   shrinks <- shrinkPropertyAndReturnAllShrinks maxShrinks r prop
@@ -246,7 +246,7 @@ shrinkPropertyAndReturnAllShrinks ::
   forall ls.
   Word ->
   Randomness ->
-  TypedPropertyT ls IO ->
+  TypedProperty ls ->
   IO [(Word, (PList ls, SomeException))]
 shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go S.empty maxShrinks r
   where
@@ -265,10 +265,10 @@ shrinkPropertyOneStep ::
   Set Randomness ->
   Word ->
   Randomness ->
-  TypedPropertyT ls IO ->
+  TypedProperty ls ->
   IO (Set Randomness, Maybe (Word, (Randomness, (PList ls, SomeException))))
-shrinkPropertyOneStep attempts maxShrinksThisRound ws prop =
-  go attempts 0 $ take (fromIntegral maxShrinksThisRound) (shrinkRandomness ws)
+shrinkPropertyOneStep initialAttempts maxShrinksThisRound ws prop =
+  go initialAttempts 0 $ take (fromIntegral maxShrinksThisRound) (shrinkRandomness ws)
   where
     go attempts triesDoneThisRound = \case
       [] -> pure (attempts, Nothing)

@@ -58,7 +58,7 @@ spec = do
 
 generatorProperty :: forall a. (Show a, Eq a) => Gen a -> (a -> Bool) -> IO ()
 generatorProperty gen predicate = do
-  let p = forAll gen predicate :: TypedPropertyT '[a] IO
+  let p = forAll gen predicate :: TypedPropertyT '[a] IO ()
   result <- runTypedPropertyT 100 1000 0 100 (Just 42) p
   case result of
     ResultNoCounterexample -> pure ()

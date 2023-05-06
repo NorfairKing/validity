@@ -21,5 +21,5 @@ forAllShrink ::
   Gen a ->
   (a -> [a]) ->
   (a -> prop) ->
-  TypedPropertyT (a ': ls) m
+  TypedPropertyT (a ': ls) m ()
 forAllShrink gen _ = forAll gen
