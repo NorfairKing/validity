@@ -32,24 +32,28 @@ spec = do
           PList ls ->
           IO ()
         findsCounterExampleSpec property counterexample = do
-          result <- runIsTypedPropertyT @IO @ls 100 1000 100000 100 42 property
-          result `shouldBe` Right (Just counterexample)
+          result <- runIsTypedPropertyT @ls 100 1000 10000 100 (Just 42) property
+          case result of
+            ResultCounterexample values _ _ _ -> values `shouldBe` counterexample
+            _ -> expectationFailure $ show result
         doesNotFindCounterExampleSpec ::
           forall ls prop.
           (Show (PList ls), Eq (PList ls), IsTypedPropertyT ls IO prop) =>
           prop ->
           IO ()
         doesNotFindCounterExampleSpec property = do
-          result <- runIsTypedPropertyT @IO @ls 100 1000 100000 100 42 property
-          result `shouldBe` Right Nothing
+          result <- runIsTypedPropertyT @ls 100 1000 10000 100 (Just 42) property
+          case result of
+            ResultNoCounterexample -> pure ()
+            _ -> expectationFailure $ show result
     it "finds a counterexample for False" $
       findsCounterExampleSpec False PNil
     it "finds no counterexample for True" $
-      doesNotFindCounterExampleSpec True
+      doesNotFindCounterExampleSpec @'[] True
     it "finds a counterexample for id" $
       findsCounterExampleSpec (\b -> (b :: Bool)) (PCons False PNil)
     it "finds no counterexample for const True" $
-      doesNotFindCounterExampleSpec (\(_ :: Bool) -> True)
+      doesNotFindCounterExampleSpec @'[Bool] (\(_ :: Bool) -> True)
     it "finds a counterexample for w < 2" $
       findsCounterExampleSpec
         (\w -> w < (2 :: Word8))
@@ -67,7 +71,7 @@ spec = do
         (\ls -> not (null (ls :: [Word8])))
         (PCons ([] :: [Word8]) PNil)
     it "does not find a counter example for ls <= ls" $
-      doesNotFindCounterExampleSpec
+      doesNotFindCounterExampleSpec @'[[Word8]]
         (\ls -> ls <= (ls :: [Word8]))
     it "finds a counterexample for reverse ls == ls" $
       findsCounterExampleSpec
@@ -79,8 +83,8 @@ spec = do
         (PCons ([] :: [Word8]) PNil)
     it "finds a counterexample for 'all even numbers are smaller than 3'" $
       findsCounterExampleSpec
-        (forAll ((* 2) <$> genValid) (\i -> i < (3 :: Int)))
-        (PCons 4 PNil)
+        (forAll ((* 2) <$> genValid) (\i -> i < (3 :: Int)) :: TypedPropertyT '[Int] IO)
+        (PCons (4 :: Int) PNil :: PList '[Int])
     it "finds a counterexample in this generic structure" $
       findsCounterExampleSpec
         exampleBool

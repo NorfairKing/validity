@@ -10,8 +10,8 @@
 module SydCheck.Runner where
 
 import Control.Exception
-import Control.Monad
-import Data.Maybe
+import Data.Set (Set)
+import qualified Data.Set as S
 import SydCheck.Gen
 import SydCheck.PList
 import SydCheck.Property
@@ -164,11 +164,11 @@ runPropertyOnRandomnessWithDiscards maxDiscards initialSize gen prop =
       Size ->
       SMGen ->
       IO (Either [String] ((Randomness, [String]), (PList ls, Maybe SomeException)))
-    go errs discardsLeft size gen =
+    go errs discardsLeft size g =
       if discardsLeft <= 0
         then pure $ Left errs
         else do
-          let (thisGen, nextGen) = splitSMGen gen
+          let (thisGen, nextGen) = splitSMGen g
           let ws = computeRandomnessWithSMGen size thisGen
           errOrResult <- runPropertyOnRandomness ws prop
           case errOrResult of
@@ -190,10 +190,10 @@ runPropertyOnRandomness ::
 runPropertyOnRandomness = go
   where
     go ::
-      forall ls.
+      forall ls'.
       Randomness ->
-      TypedPropertyT ls IO ->
-      IO (Either String (PList ls, Maybe SomeException))
+      TypedPropertyT ls' IO ->
+      IO (Either String (PList ls', Maybe SomeException))
     go ws = \case
       PropAction m -> do
         errOrUnit <- (Right <$> m) `catches` exceptionHandlers
@@ -248,32 +248,41 @@ shrinkPropertyAndReturnAllShrinks ::
   Randomness ->
   TypedPropertyT ls IO ->
   IO [(Word, (PList ls, SomeException))]
-shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go maxShrinks r
+shrinkPropertyAndReturnAllShrinks maxShrinks r prop = go S.empty maxShrinks r
   where
-    go :: Word -> Randomness -> IO [(Word, (PList ls, SomeException))]
-    go currentShrinksLeft ws = do
-      mShrink <- shrinkPropertyOneStep currentShrinksLeft ws prop
+    go :: Set Randomness -> Word -> Randomness -> IO [(Word, (PList ls, SomeException))]
+    go attempts currentShrinksLeft ws = do
+      (newAttempts, mShrink) <- shrinkPropertyOneStep attempts currentShrinksLeft ws prop
       case mShrink of
         Nothing -> pure []
         Just (triesDone, (ws', values)) -> do
           -- TODO: is this correct when it's a word?
           let newShrinksLeft = currentShrinksLeft - triesDone
-          ((triesDone, values) :) <$> go newShrinksLeft ws'
+          ((maxShrinks - newShrinksLeft, values) :) <$> go newAttempts newShrinksLeft ws'
 
 shrinkPropertyOneStep ::
   forall ls.
+  Set Randomness ->
   Word ->
   Randomness ->
   TypedPropertyT ls IO ->
-  IO (Maybe (Word, (Randomness, (PList ls, SomeException))))
-shrinkPropertyOneStep maxShrinksThisRound ws prop =
-  go $ zip [1 ..] (take (fromIntegral maxShrinksThisRound) (shrinkRandomness ws))
+  IO (Set Randomness, Maybe (Word, (Randomness, (PList ls, SomeException))))
+shrinkPropertyOneStep attempts maxShrinksThisRound ws prop =
+  go attempts 0 $ take (fromIntegral maxShrinksThisRound) (shrinkRandomness ws)
   where
-    go [] = pure Nothing
-    go ((triesDone, shrunkRandomness) : rest) = do
-      errOrTup <- runPropertyOnRandomness shrunkRandomness prop
-      case errOrTup of
-        Left _ -> go rest
-        Right (values, result) -> case result of
-          Nothing -> go rest
-          Just exception -> pure $ Just (triesDone, (shrunkRandomness, (values, exception)))
+    go attempts triesDoneThisRound = \case
+      [] -> pure (attempts, Nothing)
+      (shrunkRandomness : rest) -> do
+        if S.member shrunkRandomness attempts
+          then go attempts triesDoneThisRound rest
+          else do
+            errOrTup <- runPropertyOnRandomness shrunkRandomness prop
+            let newAttempts = S.insert shrunkRandomness attempts
+            let newTriesDone = succ triesDoneThisRound
+            case errOrTup of
+              Left _ -> go newAttempts newTriesDone rest
+              Right (values, result) -> do
+                case result of
+                  Nothing -> go newAttempts newTriesDone rest
+                  Just exception -> do
+                    pure (newAttempts, Just (newTriesDone, (shrunkRandomness, (values, exception))))

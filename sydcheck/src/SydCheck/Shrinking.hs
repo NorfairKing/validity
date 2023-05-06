@@ -39,7 +39,7 @@ shrinkRandomness r@(Randomness ws) =
     [ every tryToLog,
       every tryToSqrt,
       every (tryToDivideBy 2),
-      every tryToPred,
+      -- every tryToPred,
       shorteningsFromBack,
       shorteningsFromFront,
       each tryToLog,

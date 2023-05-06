@@ -14,6 +14,7 @@ import Data.Bits (shiftR)
 import Data.Vector.Unboxed (Vector)
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
+import Debug.Trace
 import System.Random.SplitMix as SM
 
 -- | Size parameter
@@ -38,17 +39,6 @@ newtype Randomness = Randomness {unRandomness :: Vector RandomWord}
 
 -- Integrated shrinking AND size handling.
 
--- | Compute an arbitrarily split value
---
--- Input: number n
--- Output: number between 0 and n (inclusive), distributed uniformly
---
--- When randomWord is 0, the split is shrunk as much as possible.
--- In that case we want to return the most shrunk split, so (0, n)
-computeSplit :: Size -> RandomWord -> Size
-computeSplit (Size totalSize) randomWord =
-  Size $ fromIntegral $ randomWord `rem` (fromIntegral (totalSize + 1))
-
 -- | Compute a randomness vector based on a size and seed
 computeRandomness :: Size -> Seed -> Randomness
 computeRandomness size seed = computeRandomnessWithSMGen size (mkSMGen seed)
@@ -67,6 +57,13 @@ emptyRandomness = Randomness UV.empty
 {-# INLINE nullRandomness #-}
 nullRandomness :: Randomness -> Bool
 nullRandomness = UV.null . unRandomness
+
+{-# INLINE headRandomness #-}
+headRandomness :: Randomness -> Maybe RandomWord
+headRandomness (Randomness uv) =
+  if UV.length uv == 0
+    then Nothing
+    else Just (uv UV.! 0)
 
 {-# INLINE takeRandomness #-}
 takeRandomness :: Size -> Randomness -> Randomness
@@ -87,11 +84,30 @@ computeSplitRandomness ws =
   let Size len = sizeRandomness ws
    in case len of
         0 -> (emptyRandomness, emptyRandomness)
-        1 -> (emptyRandomness, ws)
-        _ ->
-          let leftSize = computeSplit (Size (pred len)) (UV.head (unRandomness ws))
-              restRandomness = UV.tail (unRandomness ws)
-           in splitRandomnessAt leftSize (Randomness restRandomness)
+        1 ->
+          -- No point trying to split if there's only one word
+          (emptyRandomness, ws)
+        _ -> case headRandomness ws of
+          Nothing -> (emptyRandomness, emptyRandomness)
+          Just rw ->
+            let leftSize = computeSplit (Size (pred len)) rw
+                restRandomness = dropRandomness 1 ws
+             in splitRandomnessAt leftSize restRandomness
+
+-- | Compute an arbitrarily split value
+--
+-- Input: number n
+-- Output: number between 0 and n (inclusive), distributed uniformly
+--
+-- When randomWord is 0, the split is shrunk as much as possible.
+-- In that case we want to return the most shrunk split, so (0, n)
+computeSplit :: Size -> RandomWord -> Size
+computeSplit (Size totalSize) randomWord =
+  Size $
+    round $
+      (fromIntegral randomWord :: Double)
+        / fromIntegral (maxBound :: RandomWord)
+        * fromIntegral totalSize
 
 splitWord64 :: Word64 -> (Word32, Word32)
 splitWord64 w = (fromIntegral (w `shiftR` 32), fromIntegral w)

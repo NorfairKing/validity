@@ -32,7 +32,7 @@ data TypedPropertyT (ls :: [Type]) (m :: Type -> Type) where
 class IsTypedPropertyT ls m a where
   toTypedPropertyT :: a -> TypedPropertyT ls m
 
-instance m1 ~ m2 => IsTypedPropertyT ls m1 (TypedPropertyT ls m2) where
+instance IsTypedPropertyT ls m (TypedPropertyT ls m) where
   toTypedPropertyT = id
 
 instance IsTypedPropertyT '[] IO Bool where

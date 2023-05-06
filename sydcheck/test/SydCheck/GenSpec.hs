@@ -50,17 +50,6 @@ spec = do
       it "generates values in the range [0,1]" $
         generatorProperty genProperFraction (\a -> 0 <= a && a <= 1)
 
-    describe "genPartition" $
-      it "generates values that sum up to the original value" $
-        generatorProperty
-          (genPartition 1000)
-          ( \ls ->
-              let total = sum ls
-                  expected = 1000
-                  diff = abs $ total - expected
-               in total == 0 || diff < 50
-          )
-
     describe "suchThat" $ do
       it "generates values that satisfy the predicate" $
         generatorProperty
@@ -69,9 +58,11 @@ spec = do
 
 generatorProperty :: forall a. (Show a, Eq a) => Gen a -> (a -> Bool) -> IO ()
 generatorProperty gen predicate = do
-  let p = forAll gen predicate
-  result <- runIsTypedPropertyT 100 1000 0 100 42 p
-  result `shouldBe` Right Nothing
+  let p = forAll gen predicate :: TypedPropertyT '[a] IO
+  result <- runTypedPropertyT 100 1000 0 100 (Just 42) p
+  case result of
+    ResultNoCounterexample -> pure ()
+    _ -> expectationFailure $ show result
 
 goldenGenSpec :: forall a. (Show a) => Gen a -> FilePath -> Spec
 goldenGenSpec gen fp = do

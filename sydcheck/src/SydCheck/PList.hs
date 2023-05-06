@@ -20,4 +20,14 @@ data PList (ls :: [Type]) where
 instance Show (PList ls) where
   showsPrec d = \case
     PNil -> showString "PNil"
-    PCons a ls -> showString "PCons " . showsPrec 10 a . showsPrec d ls
+    PCons a ls ->
+      showString "PCons "
+        . showsPrec 10 a
+        . showString " "
+        . showsPrec d ls
+
+instance Eq (PList '[]) where
+  PNil == PNil = True
+
+instance (Eq a, Eq (PList ls)) => Eq (PList (a ': ls)) where
+  PCons a1 ls1 == PCons a2 ls2 = a1 == a2 && ls1 == ls2
