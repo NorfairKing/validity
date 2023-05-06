@@ -1,3 +1,4 @@
+{-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -10,34 +11,39 @@
 
 module SydCheck.Property where
 
+import Data.Kind
 import SydCheck.Gen
 import SydCheck.GenValid
 
-data TypedProperty ls where
-  PropBool :: Bool -> TypedProperty '[]
-  PropGen :: Gen a -> (a -> TypedProperty ls) -> TypedProperty (a ': ls)
+type TypedProperty ls = TypedPropertyT ls IO
 
-class IsTypedProperty ls a | a -> ls where
-  toTypedProperty :: a -> TypedProperty ls
+type IsTypedProperty ls = IsTypedPropertyT ls IO
 
-instance IsTypedProperty ls (TypedProperty ls) where
-  toTypedProperty = id
+data TypedPropertyT (ls :: [Type]) (m :: Type -> Type) where
+  PropBool :: Bool -> TypedPropertyT '[] m
+  PropGen :: Gen a -> (a -> TypedPropertyT ls m) -> TypedPropertyT (a ': ls) m
 
-instance IsTypedProperty '[] Bool where
-  toTypedProperty = PropBool
+class IsTypedPropertyT ls m a | a -> ls where
+  toTypedPropertyT :: a -> TypedPropertyT ls m
 
-instance (GenValid a, IsTypedProperty ls b) => IsTypedProperty (a ': ls) (a -> b) where
-  toTypedProperty func = forAll genValid $ \a -> func a
+instance m1 ~ m2 => IsTypedPropertyT ls m1 (TypedPropertyT ls m2) where
+  toTypedPropertyT = id
+
+instance IsTypedPropertyT '[] m Bool where
+  toTypedPropertyT = PropBool
+
+instance (GenValid a, IsTypedPropertyT ls m b) => IsTypedPropertyT (a ': ls) m (a -> b) where
+  toTypedPropertyT func = forAll genValid $ \a -> func a
 
 forAll ::
-  IsTypedProperty ls prop =>
+  IsTypedPropertyT ls m prop =>
   Gen a ->
   (a -> prop) ->
-  TypedProperty (a ': ls)
-forAll gen func = PropGen gen $ \a -> toTypedProperty (func a)
+  TypedPropertyT (a ': ls) m
+forAll gen func = PropGen gen $ \a -> toTypedPropertyT (func a)
 
 forAllValid ::
-  (GenValid a, IsTypedProperty ls prop) =>
+  (GenValid a, IsTypedPropertyT ls m prop) =>
   (a -> prop) ->
-  TypedProperty (a ': ls)
+  TypedPropertyT (a ': ls) m
 forAllValid = forAll genValid

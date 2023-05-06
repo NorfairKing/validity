@@ -70,7 +70,8 @@ spec = do
 generatorProperty :: forall a. (Show a, Eq a) => Gen a -> (a -> Bool) -> IO ()
 generatorProperty gen predicate = do
   let p = forAll gen predicate
-  runIsTypedProperty 100 1000 0 100 42 p `shouldBe` Right Nothing
+  result <- runIsTypedPropertyT 100 1000 0 100 42 p
+  result `shouldBe` Right Nothing
 
 goldenGenSpec :: forall a. (Show a) => Gen a -> FilePath -> Spec
 goldenGenSpec gen fp = do

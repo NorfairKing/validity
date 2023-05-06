@@ -13,7 +13,6 @@ module SydCheck.GenValid where
 import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
-import qualified Data.Map as M
 import Data.Validity
 import Data.Validity.Containers ()
 import Data.Validity.Vector ()

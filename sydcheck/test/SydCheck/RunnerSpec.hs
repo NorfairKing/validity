@@ -26,21 +26,22 @@ spec = do
   describe "runIsProperty" $ do
     let -- TODO multiple acceptable counterexamples
         findsCounterExampleSpec ::
-          (Show (PList ls), Eq (PList ls), IsTypedProperty ls prop) =>
+          forall ls prop.
+          (Show (PList ls), Eq (PList ls), IsTypedPropertyT ls IO prop) =>
           prop ->
           PList ls ->
           IO ()
-        findsCounterExampleSpec property counterexample =
-          runIsTypedProperty 100 1000 100000 100 42 property
-            `shouldBe` Right (Just counterexample)
+        findsCounterExampleSpec property counterexample = do
+          result <- runIsTypedPropertyT @IO @ls 100 1000 100000 100 42 property
+          result `shouldBe` Right (Just counterexample)
         doesNotFindCounterExampleSpec ::
           forall ls prop.
-          (Show (PList ls), Eq (PList ls), IsTypedProperty ls prop) =>
+          (Show (PList ls), Eq (PList ls), IsTypedPropertyT ls IO prop) =>
           prop ->
           IO ()
-        doesNotFindCounterExampleSpec property =
-          runIsTypedProperty @ls 100 1000 100000 100 42 property
-            `shouldBe` Right Nothing
+        doesNotFindCounterExampleSpec property = do
+          result <- runIsTypedPropertyT @IO @ls 100 1000 100000 100 42 property
+          result `shouldBe` Right Nothing
     it "finds a counterexample for False" $
       findsCounterExampleSpec False PNil
     it "finds no counterexample for True" $

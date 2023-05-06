@@ -1,7 +1,8 @@
 module SydCheck
   ( -- * Properties
-    TypedProperty (..),
-    IsTypedProperty,
+    TypedProperty,
+    TypedPropertyT (..),
+    IsTypedPropertyT,
 
     -- ** Constructing properties
     forAll,
