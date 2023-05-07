@@ -22,12 +22,14 @@ import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
 import Data.Map (Map)
 import qualified Data.Map as Map
+import Data.Ratio
 import Data.Tuple (swap)
 import qualified Data.Vector as V
 import qualified Data.Vector.Storable as SV
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
 import GHC.Generics (Generic)
+import GHC.Real
 import SydCheck.Randomness
 
 data Gen a = Gen
@@ -434,6 +436,27 @@ genProperFraction = computeProperFraction <$> takeNextRandomWord
 
 computeProperFraction :: RandomWord -> Double
 computeProperFraction = computeDouble (0, 1)
+
+genRatioOf :: (Integral a) => Gen a -> Gen (Ratio a)
+genRatioOf gen =
+  let fixDenominator d = case d of
+        0 -> 1
+        i ->
+          let a = abs i
+           in if a < 0
+                then a - 1 -- a was minbound of a fixed-size number, now it's maxbound.
+                else a
+   in case genSize gen of
+        Nothing -> genVariableSize $ \rs -> do
+          let (forNumerator, forDenominator) = computeSplitRandomness rs
+          numer <- genParse gen forNumerator
+          denom <- fixDenominator <$> genParse gen forDenominator
+          pure $ numer :% denom
+        Just size -> genFixedSize (2 * size) $ \rs -> do
+          let (forNumerator, forDenominator) = splitRandomnessAt size rs
+          numer <- genParse gen forNumerator
+          denom <- fixDenominator <$> genParse gen forDenominator
+          pure $ numer :% denom
 
 -- | Generate a 'Maybe' and shrink to Nothing
 genMaybeOf :: Gen a -> Gen (Maybe a)

@@ -14,7 +14,6 @@ import Data.Bits (shiftR)
 import Data.Vector.Unboxed (Vector)
 import qualified Data.Vector.Unboxed as UV
 import Data.Word
-import Debug.Trace
 import System.Random.SplitMix as SM
 
 -- | Size parameter

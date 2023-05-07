@@ -47,4 +47,4 @@ antireflexiveOnElem ::
   IO ()
 antireflexiveOnElem func a =
   context (unwords [ppShow a, "`rel`", ppShow a, ":", show (func a a)]) $
-    func a a `shouldBe` True
+    func a a `shouldBe` False

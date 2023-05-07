@@ -13,6 +13,7 @@ module SydCheck.GenValid where
 import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
+import Data.Ratio
 import Data.Validity
 import Data.Validity.Containers ()
 import Data.Validity.Vector ()
@@ -83,6 +84,9 @@ instance GenValid Float where
 
 instance GenValid Double where
   genValid = genFloatX castWord64ToDouble
+
+instance (Integral a, GenValid a) => GenValid (Ratio a) where
+  genValid = genRatioOf genValid
 
 instance (GenValid a, GenValid b) => GenValid (a, b) where
   genValid = (,) <$> genValid <*> genValid
