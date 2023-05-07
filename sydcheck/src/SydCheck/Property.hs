@@ -28,6 +28,29 @@ data TypedPropertyT (ls :: [Type]) (m :: Type -> Type) a where
     Gen a ->
     (a -> TypedPropertyT ls m r) ->
     TypedPropertyT (a ': ls) m r
+  PropFmap ::
+    (a -> b) ->
+    TypedPropertyT ls m a ->
+    TypedPropertyT ls m b
+  PropPure :: a -> TypedPropertyT ls m a
+  PropAp ::
+    TypedPropertyT ls m (a -> b) ->
+    TypedPropertyT ls m a ->
+    TypedPropertyT ls m b
+  PropBind ::
+    TypedPropertyT ls m a ->
+    (a -> TypedPropertyT ls m b) ->
+    TypedPropertyT ls m b
+
+instance Functor (TypedPropertyT ls m) where
+  fmap = PropFmap
+
+instance Applicative (TypedPropertyT ls m) where
+  pure = PropPure
+  (<*>) = PropAp
+
+instance Monad (TypedPropertyT ls m) where
+  (>>=) = PropBind
 
 class IsTypedPropertyT ls m a where
   toTypedPropertyT :: a -> TypedPropertyT ls m ()

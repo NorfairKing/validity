@@ -10,7 +10,6 @@ module Test.Syd.SydCheck.Utils
 where
 
 import Data.Typeable
-import SydCheck
 
 nameOf ::
   forall a.

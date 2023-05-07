@@ -10,7 +10,6 @@ where
 
 import SydCheck
 import Test.Syd
-import Test.Syd.SydCheck.Utils
 
 -- |
 --
@@ -19,14 +18,14 @@ import Test.Syd.SydCheck.Utils
 symmetry ::
   (Show a, GenValid a) =>
   (a -> a -> Bool) ->
-  TypedPropertyT '[(a, a)] IO
+  TypedProperty '[(a, a)]
 symmetry func = symmetryOnGens func genValid
 
 symmetryOnGens ::
   Show a =>
   (a -> a -> Bool) ->
   Gen (a, a) ->
-  TypedPropertyT '[(a, a)] IO
+  TypedProperty '[(a, a)]
 symmetryOnGens func gen =
   forAll gen $ \(a, b) ->
     symmetricOnElems func a b

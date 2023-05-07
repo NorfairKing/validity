@@ -10,30 +10,27 @@
 
 module Test.Syd.SydCheck.Runner (runSydCheckPropertyWithArgs) where
 
-import Data.Typeable
 import SydCheck
 import SydCheck.PList
 import SydCheck.Runner
 import Test.Syd
-import Test.Syd.SydCheck.Utils
 
-instance Show (PList ls) => IsTest (TypedPropertyT ls IO) where
-  type Arg1 (TypedPropertyT ls IO) = ()
-  type Arg2 (TypedPropertyT ls IO) = ()
+instance IsTest (TypedProperty ls) where
+  type Arg1 (TypedProperty ls) = ()
+  type Arg2 (TypedProperty ls) = ()
   runTest func = runTest (\() () -> func)
 
-instance Show (PList ls) => IsTest (arg -> TypedPropertyT ls IO) where
-  type Arg1 (arg -> TypedPropertyT ls IO) = ()
-  type Arg2 (arg -> TypedPropertyT ls IO) = arg
+instance IsTest (arg -> TypedProperty ls) where
+  type Arg1 (arg -> TypedProperty ls) = ()
+  type Arg2 (arg -> TypedProperty ls) = arg
   runTest func = runTest (\() arg -> func arg)
 
-instance Show (PList ls) => IsTest (outerArgs -> innerArg -> TypedPropertyT ls IO) where
-  type Arg1 (outerArgs -> innerArg -> TypedPropertyT ls IO) = outerArgs
-  type Arg2 (outerArgs -> innerArg -> TypedPropertyT ls IO) = innerArg
+instance IsTest (outerArgs -> innerArg -> TypedProperty ls) where
+  type Arg1 (outerArgs -> innerArg -> TypedProperty ls) = outerArgs
+  type Arg2 (outerArgs -> innerArg -> TypedProperty ls) = innerArg
   runTest = runSydCheckPropertyWithArgs
 
 runSydCheckPropertyWithArgs ::
-  Show (PList ls) =>
   (outerArgs -> innerArg -> TypedProperty ls) ->
   TestRunSettings ->
   ProgressReporter ->

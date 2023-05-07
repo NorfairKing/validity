@@ -15,14 +15,14 @@ import Test.Syd
 reflexivity ::
   (Show a, GenValid a) =>
   (a -> a -> Bool) ->
-  TypedPropertyT '[a] IO
+  TypedProperty '[a]
 reflexivity func = reflexivityOnGen func genValid
 
 reflexivityOnGen ::
   Show a =>
   (a -> a -> Bool) ->
   Gen a ->
-  TypedPropertyT '[a] IO
+  TypedProperty '[a]
 reflexivityOnGen func gen = forAll gen $ reflexiveOnElem func
 
 -- |
