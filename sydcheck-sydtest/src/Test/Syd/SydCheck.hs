@@ -30,6 +30,14 @@ module Test.Syd.SydCheck
     transitivity,
     transitivityOnGens,
 
+    -- ** Antisymmetry
+    antisymmetry,
+    antisymmetryOnGens,
+
+    -- ** Antisymmetry
+    antireflexivity,
+    antireflexivityOnGen,
+
     -- ** Utils
     nameOf,
 
