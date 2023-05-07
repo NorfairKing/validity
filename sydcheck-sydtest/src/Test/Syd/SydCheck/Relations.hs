@@ -3,7 +3,7 @@ module Test.Syd.SydCheck.Relations
     -- module Test.Syd.SydCheck.Relations.Antisymmetry,
     module Test.Syd.SydCheck.Relations.Reflexivity,
     module Test.Syd.SydCheck.Relations.Symmetry,
-    -- module Test.Syd.SydCheck.Relations.Transitivity,
+    module Test.Syd.SydCheck.Relations.Transitivity,
   )
 where
 
@@ -11,5 +11,4 @@ where
 -- import Test.Syd.SydCheck.Relations.Antisymmetry
 import Test.Syd.SydCheck.Relations.Reflexivity
 import Test.Syd.SydCheck.Relations.Symmetry
-
--- import Test.Syd.SydCheck.Relations.Transitivity
+import Test.Syd.SydCheck.Relations.Transitivity

@@ -64,14 +64,15 @@ eqSpecOnGen gen genname =
           )
           $ symmetryOnGens eq gen2
 
--- it
---   ( unwords
---       [ "is transitive for",
---         "\"" ++ genname,
---         name ++ "\"" ++ "s"
---       ]
---   )
---   $ transitivityOnGens eq gen3 s
+        it
+          ( unwords
+              [ "is transitive for",
+                "\"" ++ genname,
+                name ++ "\"" ++ "s"
+              ]
+          )
+          $ transitivityOnGens eq gen3
+
 -- it
 --   ( unwords
 --       [ "is equivalent to (\\a b -> not $ a /= b) for",

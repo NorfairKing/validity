@@ -20,6 +20,7 @@ library
       Test.Syd.SydCheck.Relations
       Test.Syd.SydCheck.Relations.Reflexivity
       Test.Syd.SydCheck.Relations.Symmetry
+      Test.Syd.SydCheck.Relations.Transitivity
       Test.Syd.SydCheck.Runner
       Test.Syd.SydCheck.Utils
   other-modules:
@@ -42,6 +43,7 @@ test-suite sydcheck-sydtest-test
       Test.Syd.SydCheck.EqSpec
       Test.Syd.SydCheck.Relations.ReflexivitySpec
       Test.Syd.SydCheck.Relations.SymmetrySpec
+      Test.Syd.SydCheck.Relations.TransitivitySpec
       Paths_sydcheck_sydtest
   hs-source-dirs:
       test

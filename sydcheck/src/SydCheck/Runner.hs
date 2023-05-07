@@ -178,7 +178,7 @@ runPropertyOnRandomnessWithDiscards maxDiscards initialSize gen prop =
                 (pred discardsLeft)
                 (succ size) -- TODO maybe increase the size faster?
                 nextGen
-            Right (values, result) ->
+            Right (values, result) -> do
               pure $ Right ((ws, errs), (values, result))
 
 -- | Evaluate a property once, 'Left' if the values couldn't be generated.

@@ -26,6 +26,10 @@ module Test.Syd.SydCheck
     reflexivity,
     reflexivityOnGen,
 
+    -- ** Transitivity
+    transitivity,
+    transitivityOnGens,
+
     -- ** Utils
     nameOf,
 
