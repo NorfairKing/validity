@@ -23,6 +23,7 @@ import qualified Data.Vector.Unboxed as UV
 import Data.Word
 import GHC.Float (castWord32ToFloat, castWord64ToDouble)
 import GHC.Generics
+import Numeric.Natural
 import SydCheck.Gen
 
 -- Laws:
@@ -84,6 +85,12 @@ instance GenValid Float where
 
 instance GenValid Double where
   genValid = genFloatX castWord64ToDouble
+
+instance GenValid Integer where
+  genValid = genInteger
+
+instance GenValid Natural where
+  genValid = fromInteger . abs <$> genValid
 
 instance (Integral a, GenValid a) => GenValid (Ratio a) where
   genValid = genRatioOf genValid

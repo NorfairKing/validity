@@ -10,6 +10,7 @@ import Data.Int
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Ratio
 import Data.Word
+import Numeric.Natural
 import SydCheck.GenSpec (genDefinitelyGenerates, goldenGenSpec)
 import SydCheck.GenValid
 import Test.Syd
@@ -63,6 +64,8 @@ spec = do
     genValidDefinitelyGeneratesSpec @Int maxBound
     goldenGenValidSpec @Float "float"
     goldenGenValidSpec @Double "double"
+    goldenGenValidSpec @Integer "integer"
+    goldenGenValidSpec @Natural "natural"
     goldenGenValidSpec @(Ratio Int) "ratio-int"
     goldenGenValidSpec @(Word8, Word8) "tuple-word8-word8"
     goldenGenValidSpec @(Maybe Word8) "maybe-word8"

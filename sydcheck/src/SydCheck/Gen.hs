@@ -6,6 +6,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -291,11 +292,13 @@ genIntegralAroundMaxbound = genFromSingleRandomWord $ \case
   Just 0 -> maxBound
   Just w -> maxBound - round (computeDoubleFromExponentialDistribution 0.5 w)
 
-genUniformInt :: forall a. (Integral a, Bounded a) => Gen a
-genUniformInt = genFromSingleRandomWord $ \case
-  Nothing -> 0
-  Just 0 -> 0
-  Just w ->
+genUniformIntegral :: forall a. (Integral a, Bounded a) => Gen a
+genUniformIntegral = genFromSingleRandomWord $ maybe 0 computeUniformIntegral
+
+computeUniformIntegral :: forall a. (Integral a, Bounded a) => RandomWord -> a
+computeUniformIntegral = \case
+  0 -> 0
+  w ->
     if fromIntegral (maxBound :: a) == (maxBound :: Int64)
       then fromIntegral w
       else fromIntegral (w `quot` (fromIntegral (maxBound :: a)))
@@ -310,7 +313,7 @@ genIntX =
   frequency
     [ (1, genIntegralAroundZeroPositive),
       (1, genIntegralAroundZeroNegative),
-      (6, genUniformInt),
+      (6, genUniformIntegral),
       (1, genIntegralAroundMinbound),
       (1, genIntegralAroundMaxbound)
     ]
@@ -407,6 +410,37 @@ genFloatX func =
       (4, genSmallFloatX),
       (4, genFloatXAroundBounds)
     ]
+
+genBiggerInteger :: Gen Integer
+genBiggerInteger = genVariableSize $ \rs -> do
+  case sizeRandomness rs of
+    0 -> pure 0
+    1 -> pure $ computeIntSizedIntegral (unRandomness rs UV.! 0)
+    2 -> do
+      let a = computeIntSizedIntegral (unRandomness rs UV.! 0)
+      let b = computeIntSizedIntegral (unRandomness rs UV.! 1)
+      pure (a * b)
+    _ -> do
+      let a = computeIntSizedIntegral (unRandomness rs UV.! 0)
+      let c = computeIntSizedIntegral (unRandomness rs UV.! 1)
+      let restRandomness = dropRandomness 2 rs
+      b <- genParse genBiggerInteger restRandomness
+      pure $ a * b + c
+  where
+    computeIntSizedIntegral = fromIntegral . computeUniformIntegral @Int64
+
+genInteger :: Gen Integer
+genInteger = sized $ \s ->
+  frequency $
+    concat
+      [ [(5, genBiggerInteger) | s > 1],
+        [ (1, fromIntegral <$> (genIntegralAroundZeroPositive :: Gen Int64)),
+          (1, fromIntegral <$> (genIntegralAroundZeroNegative :: Gen Int64)),
+          (1, fromIntegral <$> (genUniformIntegral :: Gen Int64)),
+          (1, fromIntegral <$> (genIntegralAroundMinbound :: Gen Int64)),
+          (1, fromIntegral <$> (genIntegralAroundMaxbound :: Gen Int64))
+        ]
+      ]
 
 computeInt :: (Int, Int) -> RandomWord -> Int
 computeInt (lo, hi) rw =
