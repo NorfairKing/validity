@@ -7,17 +7,17 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module SydCheck.Runner where
+module Test.SydCheck.Runner where
 
 import Control.Exception
 import Data.Set (Set)
 import qualified Data.Set as S
-import SydCheck.Gen
-import SydCheck.PList
-import SydCheck.Property
-import SydCheck.Randomness
-import SydCheck.Shrinking
 import System.Random.SplitMix as SM
+import Test.SydCheck.Gen
+import Test.SydCheck.PList
+import Test.SydCheck.Property
+import Test.SydCheck.Randomness
+import Test.SydCheck.Shrinking
 
 -- | Run a generator. The size passed to the generator is always 30;
 -- if you want another size then you should explicitly use 'generateOfSize'.

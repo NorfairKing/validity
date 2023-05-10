@@ -9,8 +9,8 @@ module Test.Syd.SydCheck.Relations.Reflexivity
   )
 where
 
-import SydCheck
 import Test.Syd
+import Test.SydCheck
 
 reflexivity ::
   (Show a, GenValid a) =>

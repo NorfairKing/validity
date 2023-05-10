@@ -5,17 +5,17 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
-module SydCheck.RunnerSpec (spec) where
+module Test.SydCheck.RunnerSpec (spec) where
 
 import Data.Validity
 import Data.Word
 import GHC.Generics (Generic)
-import SydCheck
-import SydCheck.GenValid
-import SydCheck.PList
-import SydCheck.Property
-import SydCheck.Runner
 import Test.Syd
+import Test.SydCheck
+import Test.SydCheck.GenValid
+import Test.SydCheck.PList
+import Test.SydCheck.Property
+import Test.SydCheck.Runner
 
 spec :: Spec
 spec = do

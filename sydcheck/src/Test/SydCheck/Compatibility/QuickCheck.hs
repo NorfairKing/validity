@@ -5,10 +5,10 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeOperators #-}
 
-module SydCheck.Compatibility.QuickCheck where
+module Test.SydCheck.Compatibility.QuickCheck where
 
-import SydCheck.Gen
-import SydCheck.Property
+import Test.SydCheck.Gen
+import Test.SydCheck.Property
 
 type Property = forall ls. (TypedPropertyT ls IO)
 

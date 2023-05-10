@@ -42,7 +42,7 @@ module Test.Syd.SydCheck
     nameOf,
 
     -- ** Reexport SydCheck
-    module SydCheck,
+    module Test.SydCheck,
 
     -- ** Internal
     runSydCheckPropertyWithArgs,
@@ -50,12 +50,12 @@ module Test.Syd.SydCheck
 where
 
 import Data.Typeable
-import SydCheck
 import Test.Syd
 import Test.Syd.SydCheck.Eq
 import Test.Syd.SydCheck.Relations
 import Test.Syd.SydCheck.Runner
 import Test.Syd.SydCheck.Utils
+import Test.SydCheck
 
 ordSpec :: forall a. Spec
 ordSpec = pure ()

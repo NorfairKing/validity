@@ -3,12 +3,12 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module SydCheck.ShrinkingSpec (spec) where
+module Test.SydCheck.ShrinkingSpec (spec) where
 
 import qualified Data.Vector.Unboxed as UV
-import SydCheck.Randomness
-import SydCheck.Shrinking
 import Test.Syd
+import Test.SydCheck.Randomness
+import Test.SydCheck.Shrinking
 
 spec :: Spec
 spec = do

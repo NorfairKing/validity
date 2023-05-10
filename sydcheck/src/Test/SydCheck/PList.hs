@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module SydCheck.PList where
+module Test.SydCheck.PList where
 
 import Data.Kind
 

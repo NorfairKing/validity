@@ -9,8 +9,8 @@ module Test.Syd.SydCheck.Relations.Transitivity
 where
 
 import Control.Monad
-import SydCheck
 import Test.Syd
+import Test.SydCheck
 
 transitivity ::
   (Show a, GenValid a) =>

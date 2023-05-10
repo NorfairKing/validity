@@ -7,13 +7,13 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module SydCheck.Shrinking where
+module Test.SydCheck.Shrinking where
 
 import Data.Maybe
 import qualified Data.Vector.Unboxed as UV
 import qualified Data.Vector.Unboxed.Mutable as MUV
 import Data.Word
-import SydCheck.Randomness
+import Test.SydCheck.Randomness
 
 -- Pretend every shrunk version still fails.
 computeAllShrinks :: Randomness -> [Randomness]

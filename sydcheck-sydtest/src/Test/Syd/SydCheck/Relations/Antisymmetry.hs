@@ -10,8 +10,8 @@ module Test.Syd.SydCheck.Relations.Antisymmetry
 where
 
 import Control.Monad
-import SydCheck
 import Test.Syd
+import Test.SydCheck
 
 -- |
 --

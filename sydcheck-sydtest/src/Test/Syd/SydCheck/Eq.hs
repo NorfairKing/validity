@@ -9,11 +9,11 @@ module Test.Syd.SydCheck.Eq
 where
 
 import Data.Typeable
-import SydCheck
 import Test.Syd
 import Test.Syd.SydCheck.Relations
 import Test.Syd.SydCheck.Runner ()
 import Test.Syd.SydCheck.Utils
+import Test.SydCheck
 
 eqSpec ::
   forall a.

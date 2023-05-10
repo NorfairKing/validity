@@ -8,8 +8,8 @@ module Test.Syd.SydCheck.Relations.Symmetry
   )
 where
 
-import SydCheck
 import Test.Syd
+import Test.SydCheck
 
 -- |
 --

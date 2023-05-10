@@ -9,13 +9,13 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module SydCheck.Property where
+module Test.SydCheck.Property where
 
 import Control.Exception
 import Control.Monad
 import Data.Kind
-import SydCheck.Gen
-import SydCheck.GenValid
+import Test.SydCheck.Gen
+import Test.SydCheck.GenValid
 
 type TypedProperty ls = TypedPropertyT ls IO ()
 

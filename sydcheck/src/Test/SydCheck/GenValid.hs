@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module SydCheck.GenValid where
+module Test.SydCheck.GenValid where
 
 import Data.Int
 import Data.List.NonEmpty (NonEmpty)
@@ -24,7 +24,7 @@ import Data.Word
 import GHC.Float (castWord32ToFloat, castWord64ToDouble)
 import GHC.Generics
 import Numeric.Natural
-import SydCheck.Gen
+import Test.SydCheck.Gen
 
 -- Laws:
 -- 1: Every generated value must be valid

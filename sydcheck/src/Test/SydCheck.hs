@@ -1,4 +1,4 @@
-module SydCheck
+module Test.SydCheck
   ( -- * Properties
     TypedProperty,
     TypedPropertyT (..),
@@ -22,10 +22,10 @@ module SydCheck
   )
 where
 
-import SydCheck.Gen
-import SydCheck.GenValid
-import SydCheck.PList
-import SydCheck.Property
-import SydCheck.Randomness
-import SydCheck.Runner
-import SydCheck.Shrinking
+import Test.SydCheck.Gen
+import Test.SydCheck.GenValid
+import Test.SydCheck.PList
+import Test.SydCheck.Property
+import Test.SydCheck.Randomness
+import Test.SydCheck.Runner
+import Test.SydCheck.Shrinking

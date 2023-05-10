@@ -8,8 +8,8 @@ module Test.Syd.SydCheck.Relations.Antireflexivity
   )
 where
 
-import SydCheck
 import Test.Syd
+import Test.SydCheck
 
 -- |
 --

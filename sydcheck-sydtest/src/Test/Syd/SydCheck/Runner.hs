@@ -10,10 +10,10 @@
 
 module Test.Syd.SydCheck.Runner (runSydCheckPropertyWithArgs) where
 
-import SydCheck
-import SydCheck.PList
-import SydCheck.Runner
 import Test.Syd
+import Test.SydCheck
+import Test.SydCheck.PList
+import Test.SydCheck.Runner
 
 instance IsTest (TypedProperty ls) where
   type Arg1 (TypedProperty ls) = ()

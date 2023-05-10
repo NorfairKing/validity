@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module SydCheck.Randomness where
+module Test.SydCheck.Randomness where
 
 import Data.Bits (shiftR)
 import Data.Vector.Unboxed (Vector)

@@ -1,7 +1,7 @@
-module SydCheck.RandomnessSpec (spec) where
+module Test.SydCheck.RandomnessSpec (spec) where
 
-import SydCheck.Randomness
 import Test.Syd
+import Test.SydCheck.Randomness
 
 spec :: Spec
 spec = do

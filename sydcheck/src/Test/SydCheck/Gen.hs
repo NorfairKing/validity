@@ -10,7 +10,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module SydCheck.Gen where
+module Test.SydCheck.Gen where
 
 import Control.Applicative
 import Control.Monad
@@ -31,7 +31,7 @@ import qualified Data.Vector.Unboxed as UV
 import Data.Word
 import GHC.Generics (Generic)
 import GHC.Real
-import SydCheck.Randomness
+import Test.SydCheck.Randomness
 
 data Gen a = Gen
   { -- | Maximum amount of randomness it uses.

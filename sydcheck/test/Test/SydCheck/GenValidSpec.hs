@@ -4,16 +4,16 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
-module SydCheck.GenValidSpec (spec) where
+module Test.SydCheck.GenValidSpec (spec) where
 
 import Data.Int
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Ratio
 import Data.Word
 import Numeric.Natural
-import SydCheck.GenSpec (genDefinitelyGenerates, goldenGenSpec)
-import SydCheck.GenValid
 import Test.Syd
+import Test.SydCheck.GenSpec (genDefinitelyGenerates, goldenGenSpec)
+import Test.SydCheck.GenValid
 
 spec :: Spec
 spec = do

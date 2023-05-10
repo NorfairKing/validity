@@ -3,15 +3,15 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module SydCheck.GenSpec (spec, goldenGenSpec, genDefinitelyGenerates) where
+module Test.SydCheck.GenSpec (spec, goldenGenSpec, genDefinitelyGenerates) where
 
-import SydCheck
-import SydCheck.Gen
-import SydCheck.Property
-import SydCheck.Randomness
-import SydCheck.Runner
-import SydCheck.Shrinking
 import Test.Syd
+import Test.SydCheck
+import Test.SydCheck.Gen
+import Test.SydCheck.Property
+import Test.SydCheck.Randomness
+import Test.SydCheck.Runner
+import Test.SydCheck.Shrinking
 
 spec :: Spec
 spec = do
