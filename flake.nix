@@ -5,21 +5,23 @@
     extra-trusted-public-keys = "validity.cachix.org-1:CqZp6vt9ir3yB5f8GAtfkJxPZG8hKC5fhIdaQsf7eZE=";
   };
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-22.11";
+    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-23.05";
+    nixpkgs-22_11.url = "github:NixOS/nixpkgs?ref=nixos-22.11";
     nixpkgs-22_05.url = "github:NixOS/nixpkgs?ref=nixos-22.05";
     nixpkgs-21_11.url = "github:NixOS/nixpkgs?ref=nixos-21.11";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    autodocodec.url = "github:NorfairKing/autodocodec?ref=flake";
+    autodocodec.url = "github:NorfairKing/autodocodec";
     autodocodec.flake = false;
-    safe-coloured-text.url = "github:NorfairKing/safe-coloured-text?ref=flake";
+    safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";
     safe-coloured-text.flake = false;
-    sydtest.url = "github:NorfairKing/sydtest?ref=flake";
+    sydtest.url = "github:NorfairKing/sydtest";
     sydtest.flake = false;
   };
 
   outputs =
     { self
     , nixpkgs
+    , nixpkgs-22_11
     , nixpkgs-22_05
     , nixpkgs-21_11
     , pre-commit-hooks
@@ -50,6 +52,7 @@
             in pkgs'.haskellPackages.validityRelease;
           allNixpkgs = {
             inherit
+              nixpkgs-22_11
               nixpkgs-22_05
               nixpkgs-21_11;
           };
