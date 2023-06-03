@@ -85,6 +85,7 @@ module Data.Validity
     checkValidity,
     validationIsValid,
     prettyValidate,
+    prettyValidateFail,
     prettyValidation,
 
     -- * Re-exports
@@ -679,3 +680,10 @@ prettyValidation v =
           case i of
             0 -> segment
             _ -> replicate i ' ' ++ "\\ " ++ segment
+
+-- | Validate a given value and fail the monadic computation if so.
+
+-- This function will fail the moand with a nice error if the value is invalid.
+-- It will return the original value wrapped in the monadic context if it was valid.
+prettyValidateFail :: (Validity a, MonadFail m) => a -> m a
+prettyValidateFail = either fail pure . prettyValidate
