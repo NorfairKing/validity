@@ -19,6 +19,7 @@ where
 
 import Data.Char as Char
 import Data.List (intercalate)
+import Data.Maybe (listToMaybe)
 import Data.Validity
 import Network.URI
 
@@ -325,14 +326,16 @@ validatePath _uriPath =
 validateQuery :: String -> Validation
 validateQuery uriQuery =
   declare (unwords ["The query", show uriQuery, "is empty or starts with '?'"]) $
-    -- Laziness prevents the partial 'head' from blowing up.
-    null uriQuery || head uriQuery == '?'
+    case listToMaybe uriQuery of
+      Nothing -> True
+      Just q -> q == '?'
 
 validateFragment :: String -> Validation
 validateFragment uriFragment =
   declare (unwords ["The fragment", show uriFragment, "is empty or starts with '#'"]) $
-    -- Laziness prevents the partial 'head' from blowing up.
-    null uriFragment || head uriFragment == '#'
+    case listToMaybe uriFragment of
+      Nothing -> True
+      Just f -> f == '#'
 
 -- | Render a URI to a 'String', for use in testing
 --

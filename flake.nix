@@ -9,6 +9,7 @@
     nixpkgs-22_11.url = "github:NixOS/nixpkgs?ref=nixos-22.11";
     nixpkgs-22_05.url = "github:NixOS/nixpkgs?ref=nixos-22.05";
     nixpkgs-21_11.url = "github:NixOS/nixpkgs?ref=nixos-21.11";
+    horizon.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-platform";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     autodocodec.url = "github:NorfairKing/autodocodec";
     autodocodec.flake = false;
@@ -24,6 +25,7 @@
     , nixpkgs-22_11
     , nixpkgs-22_05
     , nixpkgs-21_11
+    , horizon
     , pre-commit-hooks
     , autodocodec
     , safe-coloured-text
@@ -56,7 +58,11 @@
               nixpkgs-22_05
               nixpkgs-21_11;
           };
-          backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
+          backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs // {
+            horizon =
+              let hPackages = horizon.legacyPackages.${system}.extend (pkgs.callPackage ./nix/overrides.nix { });
+              in hPackages.validityRelease;
+          };
         in
         backwardCompatibilityChecks // {
           pre-commit = pre-commit-hooks.lib.${system}.run {

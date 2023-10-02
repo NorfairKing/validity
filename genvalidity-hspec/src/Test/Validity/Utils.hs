@@ -4,6 +4,7 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
+{-# OPTIONS_GHC -Wno-deprecations #-}
 
 -- | Utilities for defining your own validity 'Spec's
 --
@@ -108,7 +109,7 @@ produceResult succesful =
       resultStatus =
         if succesful
           then Success
-          else Failure Nothing $ Reason "Should have failed but didn't."
+          else Failure Nothing $ Test.Hspec.Core.Spec.Reason "Should have failed but didn't."
     }
 
 shouldFail :: Property -> Property

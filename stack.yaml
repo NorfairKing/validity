@@ -1,4 +1,4 @@
-resolver: lts-20.23
+resolver: nightly-2023-10-01
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
@@ -43,7 +43,9 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-
+- '/home/syd/src/sydtest/sydtest'
+- '/home/syd/src/sydtest/sydtest-discover'
+- '/home/syd/src/fast-myers-diff/fast-myers-diff'
 
 extra-deps:
 - github: NorfairKing/autodocodec
@@ -59,11 +61,11 @@ extra-deps:
     - safe-coloured-text
     - safe-coloured-text-terminfo
 
-- github: NorfairKing/sydtest
-  commit: dcd230e48f164594a473925fa0dbbaf956eb6848
-  subdirs:
-    - sydtest
-    - sydtest-discover
+      # - github: NorfairKing/sydtest
+      #   commit: dcd230e48f164594a473925fa0dbbaf956eb6848
+      #   subdirs:
+      #     - sydtest
+      #     - sydtest-discover
 
 ghc-options:
   "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
