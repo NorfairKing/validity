@@ -1,4 +1,4 @@
-resolver: lts-20.23
+resolver: lts-20.25
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
@@ -43,7 +43,6 @@ packages:
 - 'validity-unordered-containers'
 - 'validity-uuid'
 - 'validity-vector'
-
 
 extra-deps:
 - github: NorfairKing/autodocodec

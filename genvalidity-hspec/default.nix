@@ -3,7 +3,7 @@
 }:
 mkDerivation {
   pname = "genvalidity-hspec";
-  version = "1.0.0.2";
+  version = "1.0.0.3";
   src = ./.;
   libraryHaskellDepends = [
     base genvalidity genvalidity-property hspec hspec-core QuickCheck

@@ -1,5 +1,5 @@
 name: genvalidity-sydtest-hashable
-version: '1.0.0.0'
+version: '1.0.0.1'
 synopsis: Standard spec's for Hashable instances for sydtest
 description: Standard spec's for Hashable instances for sydtest
 category: Testing

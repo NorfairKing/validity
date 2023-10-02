@@ -71,7 +71,7 @@ binarySpecOnGen gen genname s =
                 name ++ "\""
               ]
           )
-          $ neverFailsToEncodeOnGen gen s
+        $ neverFailsToEncodeOnGen gen s
       describe
         ("decode :: " ++ name ++ " -> Data.ByteString.Lazy.ByteString")
         $ it
@@ -81,7 +81,7 @@ binarySpecOnGen gen genname s =
                 name ++ "\"" ++ "'s"
               ]
           )
-          $ encodeAndDecodeAreInversesOnGen gen s
+        $ encodeAndDecodeAreInversesOnGen gen s
 
 -- |
 --

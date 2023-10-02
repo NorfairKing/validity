@@ -12,4 +12,5 @@ import Test.QuickCheck
 spec :: Spec
 spec =
   describe "genValid" $
-    it "generates valid UUId's" $ forAll (genValid :: Gen UUID) isValid
+    it "generates valid UUId's" $
+      forAll (genValid :: Gen UUID) isValid

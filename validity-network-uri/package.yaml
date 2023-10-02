@@ -1,5 +1,5 @@
 name: validity-network-uri
-version: '0.0.0.0'
+version: '0.0.0.1'
 synopsis: Validity instances for URI
 category: Validity
 author: Tom Sydney Kerckhove
@@ -12,6 +12,9 @@ dependencies:
 - base >=4.7 && <5
 - validity >=0.12
 - network-uri
+
+extra-source-files:
+- CHANGELOG.md
 
 library:
   source-dirs: src

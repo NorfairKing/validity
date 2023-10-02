@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0.3] - 2022-10-04
+
+### Changed
+
+* Compatibility with `hspec-core >= 2.11`.
+
 ## [1.0.0.2] - 2022-09-20
 
 Same as 1.0.0.1, but with the right commit.

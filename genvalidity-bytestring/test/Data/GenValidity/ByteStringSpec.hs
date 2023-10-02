@@ -23,7 +23,8 @@ checkable gen =
 showable :: Show t => Gen t -> SpecWith ()
 showable gen =
   it "generates bytestrings that can be shown" $
-    forAll gen $ \v -> deepseq (show v) True
+    forAll gen $
+      \v -> deepseq (show v) True
 
 spec :: Spec
 spec = do

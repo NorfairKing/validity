@@ -1,7 +1,7 @@
 { mkDerivation, base, lib, network-uri, validity }:
 mkDerivation {
   pname = "validity-network-uri";
-  version = "0.0.0.0";
+  version = "0.0.0.1";
   src = ./.;
   libraryHaskellDepends = [ base network-uri validity ];
   homepage = "https://github.com/NorfairKing/validity#readme";

@@ -59,15 +59,15 @@ persistSpecOnGen gen genname s =
   parallel $ do
     let name = nameOf @a
     describe ("PersistField " ++ name ++ " (" ++ genname ++ ")") $ do
-      describe ("fromPersistValue :: PersistValue -> Either Text " ++ name) $
-        it
+      describe ("fromPersistValue :: PersistValue -> Either Text " ++ name)
+        $ it
           ( unwords
               [ "ensures that toPersistValue and fromPersistValue are inverses for",
                 "\"" ++ genname,
                 name ++ "\"" ++ "'s"
               ]
           )
-          $ fromPersistValueAndToPersistValueAreInversesOnGen gen s
+        $ fromPersistValueAndToPersistValueAreInversesOnGen gen s
 
 -- |
 --

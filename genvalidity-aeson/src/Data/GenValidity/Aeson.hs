@@ -39,11 +39,11 @@ instance GenValid Value where
         pure Null
       ]
   shrinkValid (Object hm) =
-    Null :
-    (toList hm ++ (Object <$> shrinkValid hm))
+    Null
+      : (toList hm ++ (Object <$> shrinkValid hm))
   shrinkValid (Array a) =
-    Null :
-    (toList a ++ (Array <$> shrinkValid a))
+    Null
+      : (toList a ++ (Array <$> shrinkValid a))
   shrinkValid (String s) = Null : (String <$> shrinkValid s)
   shrinkValid (Number s) = Null : (Number <$> shrinkValid s)
   shrinkValid (Bool s) = Null : (Bool <$> shrinkValid s)

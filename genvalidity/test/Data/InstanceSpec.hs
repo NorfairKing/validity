@@ -54,7 +54,8 @@ spec = do
   tupleTest (Proxy :: Proxy Double)
   genValidTest (Proxy :: Proxy (Ratio Int))
   modifyMaxSuccess (`quot` 2) $
-    modifyMaxSize (`quot` 2) $ genValidTest (Proxy :: Proxy (Either Bool Ordering))
+    modifyMaxSize (`quot` 2) $
+      genValidTest (Proxy :: Proxy (Either Bool Ordering))
   genValidTest (Proxy :: Proxy (Maybe Ordering))
   genValidTest (Proxy :: Proxy (Maybe (Maybe (Ordering))))
   genValidTest (Proxy :: Proxy (Ratio Integer))
@@ -118,22 +119,24 @@ genValidTest proxy = do
             Left err ->
               expectationFailure $
                 unlines ["'validate' reported this value to be invalid:", show v, err, ""]
-  modifyMaxSuccess (`quot` 5) $
-    it
+  modifyMaxSuccess (`quot` 5)
+    $ it
       ( unwords
           ["shrinkValid of", nameOf proxy, "only produces values that do not crash while validating"]
       )
-      $ forAll genValid $ \a ->
-        forM_ (shrinkValid a) $ \v ->
-          case prettyValidate (v :: a) of
-            Right v_ -> seq v_ $ pure () :: IO ()
-            Left err -> seq err $ pure ()
+    $ forAll genValid
+    $ \a ->
+      forM_ (shrinkValid a) $ \v ->
+        case prettyValidate (v :: a) of
+          Right v_ -> seq v_ $ pure () :: IO ()
+          Left err -> seq err $ pure ()
   modifyMaxSuccess (`quot` 5) $
     it (unwords ["shrinkValid of", nameOf proxy, "does not shrink to itself"]) $
       forAll genValid $ \a ->
         forM_ (shrinkValid a) $ \a' ->
           unless (a /= a') $
-            expectationFailure $ unlines ["The value", show (a :: a), "was shrunk to itself"]
+            expectationFailure $
+              unlines ["The value", show (a :: a), "was shrunk to itself"]
 
 nameOf ::
   forall a.

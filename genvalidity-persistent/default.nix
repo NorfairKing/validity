@@ -5,7 +5,7 @@
 }:
 mkDerivation {
   pname = "genvalidity-persistent";
-  version = "1.0.0.1";
+  version = "1.0.0.2";
   src = ./.;
   libraryHaskellDepends = [
     base containers genvalidity genvalidity-containers persistent

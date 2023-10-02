@@ -145,15 +145,16 @@ functorSpecOnGens gena genaname gen genname genf genfname geng gengname =
                 genDescr @(a -> b) gengname
               ]
           )
-          $ forAll (Anon <$> genf) $ \(Anon f) ->
+          $ forAll (Anon <$> genf)
+          $ \(Anon f) ->
             forAll (Anon <$> geng) $ \(Anon g) ->
               equivalentOnGen
                 (fmap (f . g))
                 (fmap f . fmap g)
                 gen
                 shrinkNothing
-      describe (flTypeStr @f) $
-        it
+      describe (flTypeStr @f)
+        $ it
           ( unwords
               [ "is equivalent to its default implementation for",
                 genDescr @a genaname,
@@ -161,5 +162,6 @@ functorSpecOnGens gena genaname gen genname genf genfname geng gengname =
                 genDescr @(f a) genname
               ]
           )
-          $ forAll gena $ \a ->
-            equivalentOnGen (a <$) (fmap $ const a) gen shrinkNothing
+        $ forAll gena
+        $ \a ->
+          equivalentOnGen (a <$) (fmap $ const a) gen shrinkNothing

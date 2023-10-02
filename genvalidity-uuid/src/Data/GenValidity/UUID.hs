@@ -8,7 +8,10 @@ import Data.Validity.UUID ()
 
 instance GenValid UUID where
   genValid =
-    fromWords <$> genValid <*> genValid <*> genValid
+    fromWords
+      <$> genValid
+      <*> genValid
+      <*> genValid
       <*> genValid
   shrinkValid u =
     [ fromWords w1 w2 w3 w4

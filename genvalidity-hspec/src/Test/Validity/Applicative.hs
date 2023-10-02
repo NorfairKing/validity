@@ -218,7 +218,9 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
             )
             $ equivalentOnGens3
               ( \(Anon u) (Anon v) w ->
-                  pure (.) <*> (u :: f (b -> c)) <*> (v :: f (a -> b))
+                  pure (.)
+                    <*> (u :: f (b -> c))
+                    <*> (v :: f (a -> b))
                     <*> (w :: f a) ::
                     f c
               )
@@ -264,8 +266,8 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
               (\(Anon f) x -> pure f <*> x)
               ((,) <$> (Anon <$> genfa) <*> gen)
               shrinkNothing
-        describe (seqrTypeStr @f) $
-          it
+        describe (seqrTypeStr @f)
+          $ it
             ( unwords
                 [ "is equivalent to its default implementation 'u Type> v = pure (const id) <*> u <*> v' for",
                   genDescr @(f a) genname,
@@ -273,13 +275,13 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                   genDescr @b genbname
                 ]
             )
-            $ equivalentOnGens2
-              (\u v -> u *> v)
-              (\u v -> pure (const id) <*> u <*> v)
-              ((,) <$> gen <*> genb)
-              shrinkNothing
-        describe (seqlTypeStr @f) $
-          it
+          $ equivalentOnGens2
+            (\u v -> u *> v)
+            (\u v -> pure (const id) <*> u <*> v)
+            ((,) <$> gen <*> genb)
+            shrinkNothing
+        describe (seqlTypeStr @f)
+          $ it
             ( unwords
                 [ "is equivalent to its default implementation 'u <* v = pure const <*> u <*> v' for",
                   genDescr @b genbname,
@@ -287,8 +289,8 @@ applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname ge
                   genDescr @(f a) genname
                 ]
             )
-            $ equivalentOnGens2
-              (\u v -> u <* v)
-              (\u v -> pure const <*> u <*> v)
-              ((,) <$> gen <*> genb)
-              shrinkNothing
+          $ equivalentOnGens2
+            (\u v -> u <* v)
+            (\u v -> pure const <*> u <*> v)
+            ((,) <$> gen <*> genb)
+            shrinkNothing

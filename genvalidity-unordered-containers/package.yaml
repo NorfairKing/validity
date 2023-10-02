@@ -1,5 +1,5 @@
 name: genvalidity-unordered-containers
-version: '1.0.0.0'
+version: '1.0.0.1'
 synopsis: GenValidity support for unordered-containers
 category: Testing
 author: Tom Sydney Kerckhove

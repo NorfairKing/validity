@@ -194,8 +194,8 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
               ]
           )
           $ equivalentOnGen (\m -> m >>= return) (\m -> m) gen shrinkNothing
-      describe (bindTypeStr @f) $
-        it
+      describe (bindTypeStr @f)
+        $ it
           ( unwords
               [ "satisfies the third Monad law: 'm >>= (x -> k x >>= h) = (m >>= k) >>= h' for",
                 genDescr @(f a) genname,
@@ -204,11 +204,11 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                 genDescr @(b -> f c) gencfname
               ]
           )
-          $ equivalentOnGens3
-            (\m (Anon k) (Anon h) -> m >>= (\x -> k x >>= h))
-            (\m (Anon k) (Anon h) -> (m >>= k) >>= h)
-            ((,,) <$> gen <*> (Anon <$> genbf) <*> (Anon <$> gencf))
-            shrinkNothing
+        $ equivalentOnGens3
+          (\m (Anon k) (Anon h) -> m >>= (\x -> k x >>= h))
+          (\m (Anon k) (Anon h) -> (m >>= k) >>= h)
+          ((,,) <$> gen <*> (Anon <$> genbf) <*> (Anon <$> gencf))
+          shrinkNothing
       describe (unwords ["relation with Applicative", nameOf @f]) $ do
         it
           ( unwords
@@ -237,8 +237,8 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
               ]
           )
           $ equivalentOnGens2 (>>) (*>) ((,) <$> gen <*> genb) shrinkNothing
-      describe (unwords ["relation with Functor", nameOf @f]) $
-        it
+      describe (unwords ["relation with Functor", nameOf @f])
+        $ it
           ( unwords
               [ "satisfies 'fmap f xs = xs >>= return . f' for",
                 genDescr @(a -> b) gengname,
@@ -246,8 +246,8 @@ monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genb
                 genDescr @(f a) genname
               ]
           )
-          $ equivalentOnGens2
-            (\(Anon f) xs -> fmap f xs)
-            (\(Anon f) xs -> xs >>= (return . f))
-            ((,) <$> (Anon <$> geng) <*> gen)
-            shrinkNothing
+        $ equivalentOnGens2
+          (\(Anon f) xs -> fmap f xs)
+          (\(Anon f) xs -> xs >>= (return . f))
+          ((,) <$> (Anon <$> geng) <*> gen)
+          shrinkNothing

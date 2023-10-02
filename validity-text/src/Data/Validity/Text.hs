@@ -27,8 +27,8 @@ instance Validity ST.Text where
         declare "The offset char is valid" $
           let c = A.unsafeIndex arr off
            in len == 0 || offsetCharCheck c,
-        declare "The array contains bytes in the right encoding" $
-          (== (Right t :: Either E.UnicodeException ST.Text))
+        declare "The array contains bytes in the right encoding"
+          $ (== (Right t :: Either E.UnicodeException ST.Text))
             . U.unsafeDupablePerformIO
             . try
             . evaluate
@@ -37,7 +37,7 @@ instance Validity ST.Text where
             . SBB.toLazyByteString
             . mconcat
             . map validityWording
-            $ A.toList arr off len
+          $ A.toList arr off len
       ]
     where
 

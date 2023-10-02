@@ -1,11 +1,11 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.7.
+-- This file has been generated from package.yaml by hpack version 0.35.2.
 --
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-persistent
-version:        1.0.0.1
+version:        1.0.0.2
 synopsis:       GenValidity support for Persistent
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme

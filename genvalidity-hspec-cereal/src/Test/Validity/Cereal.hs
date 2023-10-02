@@ -62,24 +62,24 @@ serializeSpecOnGen gen genname s =
   parallel $ do
     let name = nameOf @a
     describe ("Serialize " ++ name ++ " (" ++ genname ++ ")") $ do
-      describe ("encode :: " ++ name ++ " -> Data.ByteString.ByteString") $
-        it
+      describe ("encode :: " ++ name ++ " -> Data.ByteString.ByteString")
+        $ it
           ( unwords
               [ "never fails to encode a",
                 "\"" ++ genname,
                 name ++ "\""
               ]
           )
-          $ neverFailsToEncodeOnGen gen s
-      describe ("decode :: " ++ name ++ " -> Data.ByteString.ByteString") $
-        it
+        $ neverFailsToEncodeOnGen gen s
+      describe ("decode :: " ++ name ++ " -> Data.ByteString.ByteString")
+        $ it
           ( unwords
               [ "ensures that encode and decode are inverses for",
                 "\"" ++ genname,
                 name ++ "\"" ++ "'s"
               ]
           )
-          $ encodeAndDecodeAreInversesOnGen gen s
+        $ encodeAndDecodeAreInversesOnGen gen s
 
 -- |
 --

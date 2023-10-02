@@ -42,7 +42,8 @@ antisymmetryOnGensWithEquality ::
   Property
 antisymmetryOnGensWithEquality func gen eq s =
   forAllShrink gen (shrinkT2 s) $
-    uncurry $ antisymmetricOnElemsWithEquality func eq
+    uncurry $
+      antisymmetricOnElemsWithEquality func eq
 
 antisymmetryOnGens ::
   (Show a, Eq a) =>

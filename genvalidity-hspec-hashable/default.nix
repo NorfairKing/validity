@@ -4,7 +4,7 @@
 }:
 mkDerivation {
   pname = "genvalidity-hspec-hashable";
-  version = "1.0.0.0";
+  version = "1.0.0.1";
   src = ./.;
   libraryHaskellDepends = [
     base genvalidity genvalidity-hspec genvalidity-property hashable
