@@ -33,14 +33,15 @@
     }:
     let
       system = "x86_64-linux";
+      overlays = [
+        self.overlays.${system}
+        (import (autodocodec + "/nix/overlay.nix"))
+        (import (safe-coloured-text + "/nix/overlay.nix"))
+        (import (sydtest + "/nix/overlay.nix"))
+      ];
       pkgsFor = nixpkgs: import nixpkgs {
         inherit system;
-        overlays = [
-          self.overlays.${system}
-          (import (autodocodec + "/nix/overlay.nix"))
-          (import (safe-coloured-text + "/nix/overlay.nix"))
-          (import (sydtest + "/nix/overlay.nix"))
-        ];
+        inherit overlays;
       };
       pkgs = pkgsFor nixpkgs;
     in
@@ -59,9 +60,7 @@
               nixpkgs-21_11;
           };
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs // {
-            horizon =
-              let hPackages = horizon.legacyPackages.${system}.extend (pkgs.callPackage ./nix/overrides.nix { });
-              in hPackages.validityRelease;
+            horizon = (horizon.legacyPackages.${system}.horizon-pkgs.extend (pkgs.lib.composeManyExtensions overlays)).haskellPackages.validityRelease;
           };
         in
         backwardCompatibilityChecks // {
