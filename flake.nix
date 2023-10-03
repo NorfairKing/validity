@@ -14,7 +14,7 @@
     autodocodec.flake = false;
     safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";
     safe-coloured-text.flake = false;
-    sydtest.url = "github:NorfairKing/sydtest";
+    sydtest.url = "github:NorfairKing/sydtest?ref=forward-compatibility";
     sydtest.flake = false;
   };
 
