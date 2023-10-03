@@ -60,4 +60,6 @@ in
       name = "validity-release";
       paths = attrValues self.validityPackages;
     };
+
+  primitive = doJailbreak super.primitive;
 } // validityPackages
