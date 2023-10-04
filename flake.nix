@@ -15,7 +15,9 @@
     autodocodec.flake = false;
     safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";
     safe-coloured-text.flake = false;
-    sydtest.url = "github:NorfairKing/sydtest?ref=forward-compatibility";
+    fast-myers-diff.url = "github:NorfairKing/fast-myers-diff";
+    fast-myers-diff.flake = false;
+    sydtest.url = "github:NorfairKing/sydtest";
     sydtest.flake = false;
   };
 
@@ -29,6 +31,7 @@
     , horizon-core
     , autodocodec
     , safe-coloured-text
+    , fast-myers-diff
     , sydtest
     }:
     let
@@ -37,6 +40,7 @@
         self.overlays.${system}
         (import (autodocodec + "/nix/overlay.nix"))
         (import (safe-coloured-text + "/nix/overlay.nix"))
+        (import (fast-myers-diff + "/nix/overlay.nix"))
         (import (sydtest + "/nix/overlay.nix"))
       ];
       pkgsFor = nixpkgs: import nixpkgs {
@@ -75,7 +79,7 @@
         in
         backwardCompatibilityChecks // {
           forwardCompatibility = horizonPkgs.haskellPackages.validityRelease;
-          release = pkgs.haskelLPackages.validityRelease;
+          release = pkgs.haskellPackages.validityRelease;
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
             hooks = {

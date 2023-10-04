@@ -16,6 +16,22 @@
         "type": "github"
       }
     },
+    "fast-myers-diff": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1691821895,
+        "narHash": "sha256-J0CR+S6GmOuWldi+VEs/wHDcvPRVxNJgNlyLLgcyfLc=",
+        "owner": "NorfairKing",
+        "repo": "fast-myers-diff",
+        "rev": "714007f4d677b8dc5d345eac076ad723e6f8b3a7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NorfairKing",
+        "repo": "fast-myers-diff",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -364,6 +380,7 @@
     "root": {
       "inputs": {
         "autodocodec": "autodocodec",
+        "fast-myers-diff": "fast-myers-diff",
         "horizon-core": "horizon-core",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-21_11": "nixpkgs-21_11",
@@ -393,16 +410,15 @@
     "sydtest": {
       "flake": false,
       "locked": {
-        "lastModified": 1696338621,
-        "narHash": "sha256-I1fkvmAO8NwVdzExCrRCoWIbbtauCK8oaaouUJZW87Q=",
+        "lastModified": 1696423243,
+        "narHash": "sha256-kE6AqHd6WOa7DRZxRePFxb650H3UMLxfSGzG8aErDR0=",
         "owner": "NorfairKing",
         "repo": "sydtest",
-        "rev": "42ab3d860578f2cb5dd024368298e27528a2c0e5",
+        "rev": "8c724fa5c9f31d5377f670fb24976c98ae3a50e3",
         "type": "github"
       },
       "original": {
         "owner": "NorfairKing",
-        "ref": "forward-compatibility",
         "repo": "sydtest",
         "type": "github"
       }
