@@ -50,13 +50,19 @@
       horizonPkgs = import nixpkgs {
         inherit system;
         overlays = [
-          (final: prev: {
-            haskellPackages = prev.haskellPackages.override (old: {
-              overrides = final.lib.composeExtensions (old.overrides or (_: _: { })) (self: super:
-                horizon-core.legacyPackages.${system} // super
-              );
-            });
-          })
+          (final: prev:
+            let
+              overrides = self: super: horizon-core.legacyPackages.${system} // super;
+              addOverrides = old: { overrides = final.lib.composeExtensions (old.overrides or (_: _: { })) overrides; };
+            in
+            {
+              haskell = prev.haskell // {
+                packages = builtins.mapAttrs
+                  (compiler: haskellPackages: haskellPackages.override addOverrides)
+                  prev.haskell.packages;
+              };
+              haskellPackages = prev.haskellPackages.override addOverrides;
+            })
         ] ++ overlays;
       };
       pkgs = pkgsFor nixpkgs;
@@ -78,7 +84,7 @@
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
         backwardCompatibilityChecks // {
-          forwardCompatibility = horizonPkgs.haskellPackages.validityRelease;
+          forwardCompatibility = horizonPkgs.haskell.packages.ghc962.validityRelease;
           release = pkgs.haskellPackages.validityRelease;
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
