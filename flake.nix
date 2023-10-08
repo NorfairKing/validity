@@ -5,6 +5,7 @@
     extra-trusted-public-keys = "validity.cachix.org-1:CqZp6vt9ir3yB5f8GAtfkJxPZG8hKC5fhIdaQsf7eZE=";
   };
   inputs = {
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs?ref=nixos-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-23.05";
     nixpkgs-22_11.url = "github:NixOS/nixpkgs?ref=nixos-22.11";
     nixpkgs-22_05.url = "github:NixOS/nixpkgs?ref=nixos-22.05";
@@ -23,6 +24,7 @@
 
   outputs =
     { self
+    , nixpkgs-unstable
     , nixpkgs
     , nixpkgs-22_11
     , nixpkgs-22_05
@@ -78,7 +80,9 @@
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
         backwardCompatibilityChecks // {
-          forwardCompatibility = horizonPkgs.haskellPackages.validityRelease;
+          forwardCompatibility = ((pkgsFor nixpkgs-unstable).haskell.packages.ghc962.extend (self: super: {
+            sydtest = pkgs.haskell.lib.dontCheck super.sydtest; # The golden tests don't pass because error messages change.
+          })).validityRelease;
           release = pkgs.haskellPackages.validityRelease;
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
