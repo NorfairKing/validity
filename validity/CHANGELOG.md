@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.0.2] - 2023-10-09
+
+### Added
+
+* `decorateString`
+
 ## [0.12.0.1] - 2022-04-26
 
 ### Added

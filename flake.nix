@@ -5,13 +5,12 @@
     extra-trusted-public-keys = "validity.cachix.org-1:CqZp6vt9ir3yB5f8GAtfkJxPZG8hKC5fhIdaQsf7eZE=";
   };
   inputs = {
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs?ref=nixos-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-23.05";
     nixpkgs-22_11.url = "github:NixOS/nixpkgs?ref=nixos-22.11";
     nixpkgs-22_05.url = "github:NixOS/nixpkgs?ref=nixos-22.05";
     nixpkgs-21_11.url = "github:NixOS/nixpkgs?ref=nixos-21.11";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    horizon-core.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-core";
+    horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance";
     autodocodec.url = "github:NorfairKing/autodocodec";
     autodocodec.flake = false;
     safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";
@@ -24,13 +23,12 @@
 
   outputs =
     { self
-    , nixpkgs-unstable
     , nixpkgs
     , nixpkgs-22_11
     , nixpkgs-22_05
     , nixpkgs-21_11
     , pre-commit-hooks
-    , horizon-core
+    , horizon-advance
     , autodocodec
     , safe-coloured-text
     , fast-myers-diff
@@ -38,39 +36,25 @@
     }:
     let
       system = "x86_64-linux";
-      overlays = [
-        self.overlays.${system}
-        (import (autodocodec + "/nix/overlay.nix"))
-        (import (safe-coloured-text + "/nix/overlay.nix"))
-        (import (fast-myers-diff + "/nix/overlay.nix"))
-        (import (sydtest + "/nix/overlay.nix"))
+      pkgs = import nixpkgs { inherit system; };
+      allOverrides = pkgs.lib.composeManyExtensions [
+        (pkgs.callPackage (fast-myers-diff + "/nix/overrides.nix") { })
+        (pkgs.callPackage (autodocodec + "/nix/overrides.nix") { })
+        (pkgs.callPackage (safe-coloured-text + "/nix/overrides.nix") { })
+        (pkgs.callPackage (sydtest + "/nix/overrides.nix") { })
+        self.overrides.${system}
       ];
-      pkgsFor = nixpkgs: import nixpkgs {
-        inherit system;
-        inherit overlays;
-      };
-      horizonPkgs = import nixpkgs {
-        inherit system;
-        overlays = [
-          (final: prev: {
-            haskellPackages = prev.haskellPackages.override (old: {
-              overrides = final.lib.composeExtensions (old.overrides or (_: _: { })) (self: super:
-                horizon-core.legacyPackages.${system} // super
-              );
-            });
-          })
-        ] ++ overlays;
-      };
-      pkgs = pkgsFor nixpkgs;
+      horizonPkgs = horizon-advance.legacyPackages.${system}.extend allOverrides;
+      haskellPackagesFor = nixpkgs: (import nixpkgs { inherit system; }).haskellPackages.extend allOverrides;
+      haskellPackages = haskellPackagesFor nixpkgs;
     in
     {
+      overrides.${system} = pkgs.callPackage ./nix/overrides.nix { };
       overlays.${system} = import ./nix/overlay.nix;
-      packages.${system} = pkgs.haskellPackages.validityPackages;
+      packages.${system} = haskellPackages.validityPackages;
       checks.${system} =
         let
-          backwardCompatibilityCheckFor = nixpkgs:
-            let pkgs' = pkgsFor nixpkgs;
-            in pkgs'.haskellPackages.validityRelease;
+          backwardCompatibilityCheckFor = nixpkgs: (haskellPackagesFor nixpkgs).validityRelease;
           allNixpkgs = {
             inherit
               nixpkgs-22_11
@@ -80,10 +64,8 @@
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
         backwardCompatibilityChecks // {
-          forwardCompatibility = ((pkgsFor nixpkgs-unstable).haskell.packages.ghc962.extend (self: super: {
-            sydtest = pkgs.haskell.lib.dontCheck super.sydtest; # The golden tests don't pass because error messages change.
-          })).validityRelease;
-          release = pkgs.haskellPackages.validityRelease;
+          forwardCompatibility = horizonPkgs.validityRelease;
+          release = haskellPackages.validityRelease;
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
@@ -96,7 +78,7 @@
             };
           };
         };
-      devShells.${system}.default = pkgs.haskellPackages.shellFor {
+      devShells.${system}.default = haskellPackages.shellFor {
         name = "validity-shell";
         packages = p: builtins.attrValues p.validityPackages;
         withHoogle = true;
