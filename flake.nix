@@ -97,5 +97,9 @@
           ]);
         shellHook = self.checks.${system}.pre-commit.shellHook;
       };
+      nix-ci.cachix = {
+        name = "validity";
+        public-key = "validity.cachix.org-1:CqZp6vt9ir3yB5f8GAtfkJxPZG8hKC5fhIdaQsf7eZE=";
+      };
     };
 }
