@@ -29,7 +29,7 @@
 --    Other type class invariants can be declared in the @Validity@ instance as
 --    well.
 --
---    For example: 'Fixed a' is only valid if 'a' has an 'HasResolution' instance,
+--    For example: @Fixed a@ is only valid if @a@ has an @HasResolution@ instance,
 --    so the correct validity instance is @HasResolution a => Validity (Fixed a)@.
 module Data.Validity
   ( Validity (..),
