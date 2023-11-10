@@ -8,33 +8,28 @@
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 
 -- |
+--    @Validity@ enables the declaration and testing of invariants.
 --
---    @Validity@ is used to specify additional invariants upon values that are not
---    enforced by the type system.
+--    Example: implementing the Prime type for prime integers.
 --
---    Let's take an example.
---    Suppose we were to implement a type @Prime@ that represents prime integers.
+--    Implementation #1: Enforcing the prime invariant with Naturals and storing
+--    only the index, would require the calculation of all primes up to that
+--    stored index.
 --
---    If you were to completely enforce the invariant that the represented number is
---    a prime, then we could use 'Natural' and only store the index of the
---    given prime in the infinite sequence of prime numbers.
---    This is very safe but also very expensive if we ever want to use the number,
---    because we would have to calculcate all the prime numbers until that index.
+--    Implementation #2: Using @newtype Prime = Prime Int@ places the burden of
+--    proof on programmers to implement and use the checking primes custom code.
 --
---    Instead we choose to implement @Prime@ by a @newtype Prime = Prime Int@.
---    Now we have to maintain the invariant that the @Int@ that we use to represent
---    the prime is in fact positive and a prime.
---
---    The @Validity@ typeclass allows us to specify this invariant (and enables
---    testing via the @genvalidity@ libraries:
+--    Implementation #3: @Validity@ type class allows to use the library checker,
+--    and so specify and test invariant (via the @genvalidity@ libraries:
 --    https://hackage.haskell.org/package/genvalidity ):
 --
 --    > instance Validity Prime where
 --    >     validate (Prime n) = check (isPrime n) "The 'Int' is prime."
 --
---    If certain typeclass invariants exist, you can make these explicit in the
---    validity instance as well.
---    For example, 'Fixed a' is only valid if 'a' has an 'HasResolution' instance,
+--    Other type class invariants can be declared in the @Validity@ instance as
+--    well.
+--
+--    For example: 'Fixed a' is only valid if 'a' has an 'HasResolution' instance,
 --    so the correct validity instance is @HasResolution a => Validity (Fixed a)@.
 module Data.Validity
   ( Validity (..),
