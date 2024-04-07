@@ -1,5 +1,5 @@
 { mkDerivation, base, genvalidity, genvalidity-sydtest, lib
-, microlens, QuickCheck, sydtest, sydtest-discover, validity
+, microlens, QuickCheck, sydtest, sydtest-discover
 }:
 mkDerivation {
   pname = "genvalidity-sydtest-lens";
@@ -9,7 +9,7 @@ mkDerivation {
     base genvalidity genvalidity-sydtest microlens QuickCheck sydtest
   ];
   testHaskellDepends = [
-    base genvalidity genvalidity-sydtest microlens sydtest validity
+    base genvalidity-sydtest microlens sydtest
   ];
   testToolDepends = [ sydtest-discover ];
   homepage = "http://cs-syd.eu";

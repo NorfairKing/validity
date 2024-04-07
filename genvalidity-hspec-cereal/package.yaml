@@ -15,7 +15,6 @@ extra-source-files:
 
 dependencies:
 - base >=4.9 && <=5
-- cereal
 - hspec
 
 library:
@@ -38,8 +37,5 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - QuickCheck
     - genvalidity
     - genvalidity-hspec-cereal
-    - genvalidity-property
-    - validity >=0.9

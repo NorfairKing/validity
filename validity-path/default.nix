@@ -7,7 +7,7 @@ mkDerivation {
   src = ./.;
   libraryHaskellDepends = [ base filepath path validity ];
   testHaskellDepends = [
-    base filepath genvalidity-hspec hspec path validity
+    base filepath genvalidity-hspec hspec path
   ];
   homepage = "https://github.com/NorfairKing/validity#readme";
   description = "Validity instances for Path";

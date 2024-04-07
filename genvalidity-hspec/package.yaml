@@ -27,8 +27,6 @@ extra-source-files:
 
 dependencies:
 - base >=4.9 && <5
-- QuickCheck
-- hspec-core >=2.5.0
 
 library:
   source-dirs: src
@@ -40,7 +38,8 @@ library:
   - genvalidity-property >=0.5
   - hspec
   - transformers
-  - validity >=0.5
+  - QuickCheck
+  - hspec-core >=2.5.0
 
 tests:
   genvalidity-hspec-test:

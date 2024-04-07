@@ -22,7 +22,6 @@ library:
   - -Wall
   - -fwarn-redundant-constraints
   dependencies:
-  - validity >=0.9
   - genvalidity >= 1.0
   - QuickCheck
   - hspec >=2.1

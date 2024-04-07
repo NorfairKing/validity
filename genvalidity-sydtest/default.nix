@@ -1,13 +1,11 @@
-{ mkDerivation, base, genvalidity, lib, pretty-show, QuickCheck
-, sydtest, sydtest-discover, validity
+{ mkDerivation, base, genvalidity, lib, QuickCheck, sydtest
+, sydtest-discover
 }:
 mkDerivation {
   pname = "genvalidity-sydtest";
   version = "1.0.0.0";
   src = ./.;
-  libraryHaskellDepends = [
-    base genvalidity pretty-show QuickCheck sydtest validity
-  ];
+  libraryHaskellDepends = [ base genvalidity QuickCheck sydtest ];
   testHaskellDepends = [ base genvalidity QuickCheck sydtest ];
   testToolDepends = [ sydtest-discover ];
   homepage = "https://github.com/NorfairKing/validity#readme";

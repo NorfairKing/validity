@@ -16,15 +16,14 @@ extra-source-files:
 dependencies:
 - base >=4.9 && <5
 - hashable >=1.2
-- QuickCheck
 
 library:
   source-dirs: src
   dependencies:
-  - validity >=0.5
   - genvalidity-sydtest
   - genvalidity >=1.0
   - sydtest
+  - QuickCheck
 
 tests:
   genvalidity-sydtest-hashable-test:
@@ -37,9 +36,6 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - validity >=0.9
     - genvalidity
-    - genvalidity-sydtest
     - genvalidity-sydtest-hashable
-    - hashable
     - sydtest

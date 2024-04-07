@@ -8,9 +8,7 @@ mkDerivation {
   libraryHaskellDepends = [
     base criterion deepseq genvalidity QuickCheck vector
   ];
-  benchmarkHaskellDepends = [
-    base criterion genvalidity QuickCheck
-  ];
+  benchmarkHaskellDepends = [ base criterion ];
   homepage = "https://github.com/NorfairKing/validity#readme";
   description = "Criterion benchmarks for generators";
   license = lib.licenses.mit;

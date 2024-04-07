@@ -58,7 +58,6 @@ library
     , genvalidity >=1.0
     , hspec >=2.1
     , pretty-show
-    , validity >=0.9
   default-language: Haskell2010
 
 test-suite genvalidity-property-test

@@ -98,7 +98,7 @@ nameOf = show . typeRep
 
 data MyType
   = MyType Double Ordering
-  deriving (Show, Eq, Generic, Typeable)
+  deriving (Show, Eq, Generic)
 
 instance Validity MyType
 

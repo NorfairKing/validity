@@ -10,7 +10,7 @@ mkDerivation {
   ];
   testHaskellDepends = [ base genvalidity-hspec hspec path ];
   benchmarkHaskellDepends = [
-    base criterion genvalidity genvalidity-criterion path QuickCheck
+    base criterion genvalidity-criterion path
   ];
   homepage = "https://github.com/NorfairKing/validity#readme";
   description = "GenValidity support for Path";

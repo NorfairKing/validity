@@ -12,7 +12,6 @@ dependencies:
 - base >=4.7 && <5
 - validity >=0.5
 - unordered-containers >=0.2.7
-- hashable
 
 library:
   source-dirs: src

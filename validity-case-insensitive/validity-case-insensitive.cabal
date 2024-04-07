@@ -44,6 +44,5 @@ test-suite validity-case-insensitive-test
     , case-insensitive
     , genvalidity-hspec
     , hspec
-    , validity >=0.9.0.2
     , validity-case-insensitive
   default-language: Haskell2010

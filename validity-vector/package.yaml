@@ -12,7 +12,6 @@ dependencies:
 - base >=4.7 && <5
 - validity >=0.5
 - vector
-- hashable
 
 library:
   source-dirs: src

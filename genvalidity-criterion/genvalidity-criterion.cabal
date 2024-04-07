@@ -49,9 +49,7 @@ benchmark genvalidity-criterion-bench
       bench/
   ghc-options: -Wall
   build-depends:
-      QuickCheck
-    , base <5
+      base <5
     , criterion
-    , genvalidity
     , genvalidity-criterion
   default-language: Haskell2010

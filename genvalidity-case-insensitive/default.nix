@@ -1,5 +1,5 @@
 { mkDerivation, base, case-insensitive, criterion, genvalidity
-, genvalidity-criterion, genvalidity-hspec, hspec, lib, QuickCheck
+, genvalidity-criterion, genvalidity-hspec, hspec, lib
 , validity-case-insensitive
 }:
 mkDerivation {
@@ -13,8 +13,7 @@ mkDerivation {
     base case-insensitive genvalidity-hspec hspec
   ];
   benchmarkHaskellDepends = [
-    base case-insensitive criterion genvalidity genvalidity-criterion
-    QuickCheck
+    base case-insensitive criterion genvalidity-criterion
   ];
   homepage = "https://github.com/NorfairKing/validity#readme";
   description = "GenValidity support for case-insensitive";

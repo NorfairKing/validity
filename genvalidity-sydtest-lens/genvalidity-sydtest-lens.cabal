@@ -55,10 +55,8 @@ test-suite genvalidity-sydtest-optics-test
       sydtest-discover:sydtest-discover
   build-depends:
       base
-    , genvalidity
     , genvalidity-sydtest
     , genvalidity-sydtest-lens
     , microlens
     , sydtest
-    , validity >=0.9
   default-language: Haskell2010

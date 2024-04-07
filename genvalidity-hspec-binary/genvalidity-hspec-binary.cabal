@@ -54,10 +54,7 @@ test-suite genvalidity-hspec-binary-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       base >=4.9 && <=5
-    , binary
     , genvalidity
     , genvalidity-hspec-binary
-    , genvalidity-property
     , hspec
-    , validity >=0.9
   default-language: Haskell2010

@@ -16,13 +16,13 @@ extra-source-files:
 dependencies:
 - base >=4.9 && <=5
 - hspec
-- binary
 
 library:
   source-dirs: src/
   ghc-options: -Wall
   dependencies:
   - QuickCheck
+  - binary
   - deepseq
   - genvalidity >= 1.0
   - genvalidity-hspec >=0.6
@@ -37,7 +37,5 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - validity >=0.9
     - genvalidity
-    - genvalidity-property
     - genvalidity-hspec-binary

@@ -16,14 +16,13 @@ extra-source-files:
 dependencies:
 - base >=4.9 && <5
 - hashable >=1.2
-- QuickCheck
 
 library:
   source-dirs: src
   dependencies:
-  - validity >=0.5
-  - genvalidity-hspec >=0.6
+  - QuickCheck
   - genvalidity >=1.0
+  - genvalidity-hspec >=0.6
   - genvalidity-property >=0.2
   - hspec
 
@@ -37,11 +36,8 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - validity >=0.9
     - genvalidity
-    - genvalidity-property
     - genvalidity-hspec
     - genvalidity-hspec-hashable
     - hashable
     - hspec
-    - hspec-core

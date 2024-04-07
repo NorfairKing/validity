@@ -50,6 +50,5 @@ test-suite validity-path-test
     , genvalidity-hspec
     , hspec
     , path >=0.5
-    , validity >=0.9.0.2
     , validity-path
   default-language: Haskell2010

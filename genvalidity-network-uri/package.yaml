@@ -11,14 +11,13 @@ github: NorfairKing/validity
 dependencies:
 - base >=4.7 && <5
 - network-uri
-- QuickCheck
 
 library:
   source-dirs: src
   dependencies:
+  - QuickCheck
   - genvalidity >=1.0
   - iproute
-  - validity >=0.5
   - validity-network-uri
 
 tests:
@@ -32,9 +31,9 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - genvalidity
-    - genvalidity-sydtest
+    - QuickCheck
     - genvalidity-network-uri
+    - genvalidity-sydtest
     - sydtest
     - validity-network-uri
 
@@ -45,8 +44,6 @@ benchmarks:
     ghc-options:
     - -Wall
     dependencies:
-    - QuickCheck
     - criterion
-    - genvalidity
     - genvalidity-criterion >=1.1.0.0
     - genvalidity-network-uri

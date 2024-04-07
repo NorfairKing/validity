@@ -65,7 +65,7 @@ extra-deps:
     - sydtest-discover
 
 ghc-options:
-  "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
+  "$locals": -Weverything -Wno-all-missed-specialisations -Wno-implicit-prelude -Wno-missing-safe-haskell-mode -Wno-prepositive-qualified-module -Wno-safe -Wno-unsafe -Wno-missing-import-lists -Wno-missing-kind-signatures -Wno-missing-deriving-strategies -Wno-monomorphism-restriction -Wno-missing-export-lists -Wno-missing-local-signatures
 
 system-ghc: true
 nix:
