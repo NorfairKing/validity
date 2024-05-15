@@ -31,7 +31,7 @@ transitiveOnElems ::
 transitiveOnElems func a b c = (func a b && func b c) ===> func a c
 
 transitivityOnGens ::
-  Show a => (a -> a -> Bool) -> Gen (a, a, a) -> (a -> [a]) -> Property
+  (Show a) => (a -> a -> Bool) -> Gen (a, a, a) -> (a -> [a]) -> Property
 transitivityOnGens func gen s =
   forAllShrink gen (shrinkT3 s) $ \(a, b, c) -> transitiveOnElems func a b c
 

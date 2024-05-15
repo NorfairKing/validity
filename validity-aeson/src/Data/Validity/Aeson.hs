@@ -34,7 +34,7 @@ instance Validity Value where
   validate Null = valid
 
 -- | Modify a parser to fail on invalid results.
-parseJSONValid :: Validity a => Parser a -> Parser a
+parseJSONValid :: (Validity a) => Parser a -> Parser a
 parseJSONValid p = do
   r <- p
   case prettyValidate r of
@@ -47,5 +47,5 @@ parseJSONValid p = do
 --
 -- > parseJSON = parseJSONValidWith . withObject "MyThing" $ \o ->
 -- >   MyThing <$> ...
-parseJSONValidWith :: Validity a => (value -> Parser a) -> (value -> Parser a)
+parseJSONValidWith :: (Validity a) => (value -> Parser a) -> (value -> Parser a)
 parseJSONValidWith func v = parseJSONValid $ func v

@@ -31,14 +31,14 @@ genValidBench ::
 genValidBench = genBench (unwords ["genValid", nameOf @a]) (genValid @a)
 
 -- | Benchmarks a generator with some default sizes
-genBench :: NFData a => String -> Gen a -> Benchmark
+genBench :: (NFData a) => String -> Gen a -> Benchmark
 genBench name gen =
   bgroup name $
     let bi i = genBenchSized ("size " <> show i) i gen
      in [bi 15, bi 30]
 
 -- | Benchmarks a generator with a given name and size
-genBenchSized :: NFData a => String -> Int -> Gen a -> Benchmark
+genBenchSized :: (NFData a) => String -> Int -> Gen a -> Benchmark
 genBenchSized name size gen =
   let MkGen genFunc = V.replicateM 100 gen
    in bench name $ nf (\seed -> genFunc seed size) (mkQCGen 42)
@@ -63,7 +63,7 @@ shrinkBenchN n name shrinker =
   withArgs n $ \args -> shrinkBenchVector args name shrinker
 
 -- | Benchmark for the time it takes to shrink to the first ten shrunk versions using a given shrinking function and a given vector of values
-shrinkBenchVector :: forall a. NFData a => Vector a -> String -> (a -> [a]) -> Benchmark
+shrinkBenchVector :: forall a. (NFData a) => Vector a -> String -> (a -> [a]) -> Benchmark
 shrinkBenchVector args name shrinker =
   bench
     name
@@ -80,7 +80,7 @@ generateDeterministically (MkGen f) = f seed size
 
 nameOf ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 nameOf =
   let s = show $ typeRep (Proxy @a)

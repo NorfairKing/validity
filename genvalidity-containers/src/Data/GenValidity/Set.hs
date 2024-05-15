@@ -24,10 +24,10 @@ instance (Ord v, GenValid v) => GenValid (Set v) where
   genValid = genSetOf genValid
   shrinkValid = shrinkSetOf shrinkValid
 
-genSetOf :: Ord v => Gen v -> Gen (Set v)
+genSetOf :: (Ord v) => Gen v -> Gen (Set v)
 genSetOf g = S.fromList <$> genListOf g
 
-shrinkSetOf :: Ord v => (v -> [v]) -> Set v -> [Set v]
+shrinkSetOf :: (Ord v) => (v -> [v]) -> Set v -> [Set v]
 shrinkSetOf shrinker = fmap S.fromList . shrinkList shrinker . S.toList
 
 genValidSeperateFor :: (GenValid b, Eq b) => [a] -> Gen [(b, a)]
@@ -36,15 +36,15 @@ genValidSeperateFor = genSeperateFor genValid
 genValidSeperateForNE :: (GenValid b, Eq b) => NonEmpty a -> Gen (NonEmpty (b, a))
 genValidSeperateForNE = genSeperateForNE genValid
 
-genSeperate :: Ord a => Gen a -> Gen [a]
+genSeperate :: (Ord a) => Gen a -> Gen [a]
 genSeperate g = nubOrd <$> genListOf g
 
 -- TODO these two can likely be optimised
-genSeperateFor :: Eq b => Gen b -> [a] -> Gen [(b, a)]
+genSeperateFor :: (Eq b) => Gen b -> [a] -> Gen [(b, a)]
 genSeperateFor _ [] = pure []
 genSeperateFor g (a : as) = NE.toList <$> genSeperateForNE g (a :| as)
 
-genSeperateForNE :: Eq b => Gen b -> NonEmpty a -> Gen (NonEmpty (b, a))
+genSeperateForNE :: (Eq b) => Gen b -> NonEmpty a -> Gen (NonEmpty (b, a))
 genSeperateForNE g (a :| as) = do
   restTups <- genSeperateFor g as
   b <- g `suchThat` (`notElem` map fst restTups)

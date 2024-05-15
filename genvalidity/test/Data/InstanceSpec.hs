@@ -140,7 +140,7 @@ genValidTest proxy = do
 
 nameOf ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   Proxy a ->
   String
 nameOf = show . typeRep

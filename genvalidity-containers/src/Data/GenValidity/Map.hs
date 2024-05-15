@@ -16,8 +16,8 @@ instance (Show k, Ord k, GenValid k, GenValid v) => GenValid (Map k v) where
   genValid = genMapOf genValid
   shrinkValid = shrinkMapOf shrinkValid
 
-genMapOf :: Ord k => Gen (k, v) -> Gen (Map k v)
+genMapOf :: (Ord k) => Gen (k, v) -> Gen (Map k v)
 genMapOf g = M.fromList <$> genListOf g
 
-shrinkMapOf :: Ord k => ((k, v) -> [(k, v)]) -> Map k v -> [Map k v]
+shrinkMapOf :: (Ord k) => ((k, v) -> [(k, v)]) -> Map k v -> [Map k v]
 shrinkMapOf shrinker = fmap M.fromList . shrinkList shrinker . M.toList

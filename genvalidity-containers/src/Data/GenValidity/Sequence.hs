@@ -13,7 +13,7 @@ import qualified Data.Sequence as S
 import Data.Validity.Sequence ()
 import Test.QuickCheck
 
-instance GenValid v => GenValid (Seq v) where
+instance (GenValid v) => GenValid (Seq v) where
   genValid = genSeqOf genValid
   shrinkValid = shrinkSeqOf shrinkValid
 

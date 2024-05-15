@@ -34,7 +34,7 @@ antisymmetricOnElemsWithEquality func eq a b =
   (func a b && func b a) ===> (a `eq` b)
 
 antisymmetryOnGensWithEquality ::
-  Show a =>
+  (Show a) =>
   (a -> a -> Bool) ->
   Gen (a, a) ->
   (a -> a -> Bool) ->

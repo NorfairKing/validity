@@ -23,13 +23,13 @@ import Test.Syd.Validity.Utils
 
 memptyTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 memptyTypeStr = unwords ["mempty", "::", nameOf @a]
 
 mappendTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 mappendTypeStr = unwords ["mappend", "::", an, "->", an, "->", an]
   where
@@ -37,7 +37,7 @@ mappendTypeStr = unwords ["mappend", "::", an, "->", an, "->", an]
 
 mconcatTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 mconcatTypeStr = unwords ["mconcat", "::", "[" ++ an ++ "]", "->", an]
   where

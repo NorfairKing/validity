@@ -8,5 +8,5 @@ import Database.Persist
 instance Validity (Key a) where
   validate = trivialValidation
 
-instance Validity a => Validity (Entity a) where
+instance (Validity a) => Validity (Entity a) where
   validate e = mconcat [delve "entityKey" $ entityKey e, delve "entityVal" $ entityVal e]

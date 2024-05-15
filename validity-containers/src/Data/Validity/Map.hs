@@ -20,7 +20,7 @@ instance (Show k, Ord k, Validity k, Validity v) => Validity (Map k v) where
             \k v -> mconcat [delve "The key" k, delve "The value" v]
       ]
 
-decorateMap :: Show k => Map k v -> (k -> v -> Validation) -> Validation
+decorateMap :: (Show k) => Map k v -> (k -> v -> Validation) -> Validation
 decorateMap m func = M.foldMapWithKey go m
   where
     go k v = decorate ("The key/value at key " ++ show k) $ func k v

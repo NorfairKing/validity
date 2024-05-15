@@ -20,7 +20,7 @@ checkable gen =
         Left e -> deepseq e True
         Right v_ -> deepseq v_ True
 
-showable :: Show t => Gen t -> SpecWith ()
+showable :: (Show t) => Gen t -> SpecWith ()
 showable gen =
   it "generates bytestrings that can be shown" $
     forAll gen $

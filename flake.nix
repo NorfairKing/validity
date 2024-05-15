@@ -11,7 +11,7 @@
     nixpkgs-22_05.url = "github:NixOS/nixpkgs?ref=nixos-22.05";
     nixpkgs-21_11.url = "github:NixOS/nixpkgs?ref=nixos-21.11";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance";
+    horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance.git";
     autodocodec.url = "github:NorfairKing/autodocodec";
     autodocodec.flake = false;
     safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";

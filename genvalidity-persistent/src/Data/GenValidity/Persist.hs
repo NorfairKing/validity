@@ -16,7 +16,7 @@ import Database.Persist
 import Database.Persist.Sql
 import Test.QuickCheck
 
-instance ToBackendKey SqlBackend record => GenValid (Key record) where
+instance (ToBackendKey SqlBackend record) => GenValid (Key record) where
   genValid = toSqlKey <$> genValid
   shrinkValid = fmap toSqlKey . shrinkValid . fromSqlKey
 

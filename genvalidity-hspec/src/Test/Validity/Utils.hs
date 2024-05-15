@@ -33,7 +33,7 @@ import Test.Validity.Property.Utils
 
 nameOf ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 nameOf =
   let s = show $ typeRep (Proxy @a)
@@ -43,14 +43,14 @@ nameOf =
 
 genDescr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String ->
   String
 genDescr genname = unwords ["\"" ++ genname, "::", nameOf @a ++ "\""]
 
 binRelStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String ->
   String
 binRelStr op = unwords ["(" ++ op ++ ")", "::", name, "->", name, "->", "Bool"]
