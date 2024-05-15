@@ -58,5 +58,6 @@ in
   validityRelease = symlinkJoin {
     name = "validity-release";
     paths = attrValues self.validityPackages;
+    passthru = self.validityPackages;
   };
 } // validityPackages

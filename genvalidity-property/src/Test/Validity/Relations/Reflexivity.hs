@@ -28,7 +28,7 @@ reflexiveOnElem ::
 reflexiveOnElem func a = func a a
 
 reflexivityOnGen ::
-  Show a => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
+  (Show a) => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
 reflexivityOnGen func gen s = forAllShrink gen s $ reflexiveOnElem func
 
 -- |

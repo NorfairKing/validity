@@ -258,11 +258,11 @@ declare = flip check
 -- >         [ annotate a "The first element of the tuple"
 -- >         , annotate b "The second element of the tuple"
 -- >         ]
-annotate :: Validity a => a -> String -> Validation
+annotate :: (Validity a) => a -> String -> Validation
 annotate = annotateValidation . validate
 
 -- | 'annotate', but with the arguments flipped.
-delve :: Validity a => String -> a -> Validation
+delve :: (Validity a) => String -> a -> Validation
 delve = flip annotate
 
 -- | Decorate a validation with a location
@@ -377,13 +377,13 @@ instance
 -- This means that the empty list is considered valid.
 -- If the empty list should not be considered valid as part of your custom data
 -- type, make sure to write a custom @Validity instance@
-instance Validity a => Validity [a] where
+instance (Validity a) => Validity [a] where
   validate = flip decorateList validate
 
 -- | A nonempty list is valid if all the elements are valid.
 --
 -- See the instance for 'Validity [a]' for more information.
-instance Validity a => Validity (NonEmpty a) where
+instance (Validity a) => Validity (NonEmpty a) where
   validate (e :| es) =
     mconcat
       [ annotate e "The first element of the nonempty list",
@@ -394,7 +394,7 @@ instance Validity a => Validity (NonEmpty a) where
 -- It makes sense to assume that 'Nothing' is valid.
 -- If Nothing wasn't valid, you wouldn't have used a Maybe
 -- in the datastructure.
-instance Validity a => Validity (Maybe a) where
+instance (Validity a) => Validity (Maybe a) where
   validate Nothing = mempty
   validate (Just a) = annotate a "The 'Just'"
 
@@ -516,26 +516,26 @@ instance Validity Float where
 instance Validity Double where
   validate = trivialValidation
 
-validateNotNaN :: RealFloat a => a -> Validation
+validateNotNaN :: (RealFloat a) => a -> Validation
 validateNotNaN d = declare "The RealFloat is not NaN." $ not (isNaN d)
 
-validateNotInfinite :: RealFloat a => a -> Validation
+validateNotInfinite :: (RealFloat a) => a -> Validation
 validateNotInfinite d = declare "The RealFloat is not infinite." $ not (isInfinite d)
 
-validateRatioNotNaN :: Integral a => Ratio a -> Validation
+validateRatioNotNaN :: (Integral a) => Ratio a -> Validation
 validateRatioNotNaN r = declare "The Ratio is not NaN." $
   case r of
     (0 :% 0) -> False
     _ -> True
 
-validateRatioNotInfinite :: Integral a => Ratio a -> Validation
+validateRatioNotInfinite :: (Integral a) => Ratio a -> Validation
 validateRatioNotInfinite r = declare "The Ratio is not infinite." $
   case r of
     (1 :% 0) -> False
     ((-1) :% 0) -> False
     _ -> True
 
-validateRatioNormalised :: Integral a => Ratio a -> Validation
+validateRatioNormalised :: (Integral a) => Ratio a -> Validation
 validateRatioNormalised (n :% d) = declare "The Ratio is normalised." $
   case d of
     0 -> False
@@ -573,7 +573,7 @@ instance (Validity a, Ord a, Num a, Integral a) => Validity (Ratio a) where
       ]
 
 -- | Valid according to the contained 'Integer'.
-instance HasResolution a => Validity (Fixed a) where
+instance (HasResolution a) => Validity (Fixed a) where
   validate (MkFixed i) = validate i
 
 annotateValidation :: Validation -> String -> Validation
@@ -610,17 +610,17 @@ instance (Validity a) => GValidity (K1 R a) where
   gValidate (K1 x) = validate x
 
 -- | Check whether a value is valid.
-isValid :: Validity a => a -> Bool
+isValid :: (Validity a) => a -> Bool
 isValid = isRight . checkValidity
 
 -- | Check whether a value is not valid.
 --
 -- > isInvalid = not . isValid
-isInvalid :: Validity a => a -> Bool
+isInvalid :: (Validity a) => a -> Bool
 isInvalid = not . isValid
 
 -- | Construct a valid element from an unchecked element
-constructValid :: Validity a => a -> Maybe a
+constructValid :: (Validity a) => a -> Maybe a
 constructValid p =
   if isValid p
     then Just p
@@ -640,7 +640,7 @@ constructValidUnsafe p =
 --
 -- Note: You may want to use 'prettyValidation' instead, if you want to
 -- display these 'ValidationChain's to a user.
-checkValidity :: Validity a => a -> Either [ValidationChain] a
+checkValidity :: (Validity a) => a -> Either [ValidationChain] a
 checkValidity a =
   case validate a of
     Validation [] -> Right a
@@ -657,7 +657,7 @@ validationIsValid v = case v of
 -- This function will return a nice error if the value is invalid.
 -- It will return the original value in 'Right' if it was valid,
 -- as evidence that it has been validated.
-prettyValidate :: Validity a => a -> Either String a
+prettyValidate :: (Validity a) => a -> Either String a
 prettyValidate a = case prettyValidation $ validate a of
   Just e -> Left e
   Nothing -> Right a

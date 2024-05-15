@@ -16,5 +16,5 @@ instance (Ord v, Validity v) => Validity (Set v) where
         annotate (S.toList s) "Set elements"
       ]
 
-distinctOrd :: Ord a => [a] -> Bool
+distinctOrd :: (Ord a) => [a] -> Bool
 distinctOrd ls = nubOrd ls == ls

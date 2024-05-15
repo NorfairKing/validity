@@ -30,7 +30,7 @@ symmetricOnElems ::
 symmetricOnElems func a b = func a b <==> func b a
 
 symmetryOnGens ::
-  Show a => (a -> a -> Bool) -> Gen (a, a) -> (a -> [a]) -> Property
+  (Show a) => (a -> a -> Bool) -> Gen (a, a) -> (a -> [a]) -> Property
 symmetryOnGens func gen s =
   forAllShrink gen (shrinkT2 s) $ uncurry $ symmetricOnElems func
 

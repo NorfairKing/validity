@@ -41,7 +41,7 @@ leftIdentityOnElemWithEquality ::
 leftIdentityOnElemWithEquality op eq b a = (b `op` a) `eq` a
 
 leftIdentityOnGenWithEquality ::
-  Show a =>
+  (Show a) =>
   -- | A binary operation
   (b -> a -> a) ->
   -- | An equality
@@ -98,7 +98,7 @@ rightIdentityOnElemWithEquality ::
 rightIdentityOnElemWithEquality op eq b a = (a `op` b) `eq` a
 
 rightIdentityOnGenWithEquality ::
-  Show a =>
+  (Show a) =>
   -- | A binary operation
   (a -> b -> a) ->
   -- | An equality

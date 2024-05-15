@@ -31,25 +31,25 @@ import Test.Validity.Utils
 
 leTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 leTypeStr = binRelStr @a "<="
 
 geTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 geTypeStr = binRelStr @a ">="
 
 ltTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 ltTypeStr = binRelStr @a "<"
 
 gtTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 gtTypeStr = binRelStr @a ">"
 

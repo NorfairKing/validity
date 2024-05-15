@@ -71,7 +71,7 @@ shrinkingStaysValidWithLimit gen s l =
 -- prop> shrinkingPreserves (pure 5 :: Gen Int) (:[]) (== 5)
 shrinkingPreserves ::
   forall a.
-  Show a =>
+  (Show a) =>
   Gen a ->
   (a -> [a]) ->
   (a -> Bool) ->
@@ -83,7 +83,7 @@ shrinkingPreserves gen s p = forAll gen $ \d -> not (p d) || all p (s d)
 -- prop> shrinkingPreservesWithLimit (pure 4) (:[]) 100 (== 4)
 shrinkingPreservesWithLimit ::
   forall a.
-  Show a =>
+  (Show a) =>
   Gen a ->
   (a -> [a]) ->
   Int ->

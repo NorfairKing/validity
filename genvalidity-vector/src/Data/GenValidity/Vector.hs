@@ -7,7 +7,7 @@ import Data.Validity.Vector ()
 import qualified Data.Vector as V
 import qualified Data.Vector.Storable as SV
 
-instance GenValid v => GenValid (V.Vector v) where
+instance (GenValid v) => GenValid (V.Vector v) where
   genValid = V.fromList <$> genValid
   shrinkValid = fmap V.fromList . shrinkValid . V.toList
 

@@ -23,13 +23,13 @@ import Test.Validity.Utils
 
 eqTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 eqTypeStr = binRelStr @a "=="
 
 neqTypeStr ::
   forall a.
-  Typeable a =>
+  (Typeable a) =>
   String
 neqTypeStr = binRelStr @a "/="
 

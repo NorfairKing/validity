@@ -28,7 +28,7 @@ antireflexiveOnElem ::
 antireflexiveOnElem func a = not $ func a a
 
 antireflexivityOnGen ::
-  Show a => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
+  (Show a) => (a -> a -> Bool) -> Gen a -> (a -> [a]) -> Property
 antireflexivityOnGen func gen s = forAllShrink gen s $ antireflexiveOnElem func
 
 -- |
