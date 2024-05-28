@@ -123,7 +123,7 @@ import Test.QuickCheck hiding (Fixed)
 -- > instance Arbitrary A where
 -- >   arbitrary = genValid
 -- >   shrink = shrinkValid
-class Validity a => GenValid a where
+class (Validity a) => GenValid a where
   -- | Generate a valid datum, this should cover all possible valid values in
   -- the type
   --
@@ -208,15 +208,15 @@ instance
       | (a', (b', (c', (d', e')))) <- shrinkValid (a, (b, (c, (d, e))))
     ]
 
-instance GenValid a => GenValid (Maybe a) where
+instance (GenValid a) => GenValid (Maybe a) where
   genValid = genMaybe genValid
   shrinkValid = shrinkMaybe shrinkValid
 
-instance GenValid a => GenValid (NonEmpty a) where
+instance (GenValid a) => GenValid (NonEmpty a) where
   genValid = genNonEmptyOf genValid
   shrinkValid = shrinkNonEmpty shrinkValid
 
-instance GenValid a => GenValid [a] where
+instance (GenValid a) => GenValid [a] where
   genValid = genListOf genValid
   shrinkValid = shrinkList shrinkValid
 
@@ -328,7 +328,7 @@ instance (Integral a, Num a, Ord a, GenValid a) => GenValid (Ratio a) where
     guard $ isValid candidate
     pure $ n' % d'
 
-instance HasResolution a => GenValid (Fixed a) where
+instance (HasResolution a) => GenValid (Fixed a) where
   genValid = MkFixed <$> genValid
   shrinkValid (MkFixed i) = MkFixed <$> shrinkValid i
 
@@ -408,10 +408,10 @@ instance (GValidRecursivelyShrink f, GValidRecursivelyShrink g) => GValidRecursi
   gValidRecursivelyShrink (L1 x) = map L1 (gValidRecursivelyShrink x)
   gValidRecursivelyShrink (R1 x) = map R1 (gValidRecursivelyShrink x)
 
-instance GValidRecursivelyShrink f => GValidRecursivelyShrink (M1 i c f) where
+instance (GValidRecursivelyShrink f) => GValidRecursivelyShrink (M1 i c f) where
   gValidRecursivelyShrink (M1 x) = map M1 (gValidRecursivelyShrink x)
 
-instance GenValid a => GValidRecursivelyShrink (K1 i a) where
+instance (GenValid a) => GValidRecursivelyShrink (K1 i a) where
   gValidRecursivelyShrink (K1 x) = map K1 (shrinkValid x)
 
 instance GValidRecursivelyShrink U1 where
@@ -441,7 +441,7 @@ instance (GValidSubtermsIncl f a, GValidSubtermsIncl g a) => GValidSubterms (f :
   gValidSubterms (L1 x) = gValidSubtermsIncl x
   gValidSubterms (R1 x) = gValidSubtermsIncl x
 
-instance GValidSubterms f a => GValidSubterms (M1 i c f) a where
+instance (GValidSubterms f a) => GValidSubterms (M1 i c f) a where
   gValidSubterms (M1 x) = gValidSubterms x
 
 instance GValidSubterms (K1 i a) b where
@@ -463,7 +463,7 @@ instance (GValidSubtermsIncl f a, GValidSubtermsIncl g a) => GValidSubtermsIncl 
   gValidSubtermsIncl (L1 x) = gValidSubtermsIncl x
   gValidSubtermsIncl (R1 x) = gValidSubtermsIncl x
 
-instance GValidSubtermsIncl f a => GValidSubtermsIncl (M1 i c f) a where
+instance (GValidSubtermsIncl f a) => GValidSubtermsIncl (M1 i c f) a where
   gValidSubtermsIncl (M1 x) = gValidSubtermsIncl x
 
 -- This is the important case: We've found a term of the same type.

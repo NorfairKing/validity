@@ -14,7 +14,7 @@ import GHC.Exts as GHC (IsList (..))
 --
 -- TODO make a more comprehensive instance that looks at implementation and
 -- the underlying 'Array'
-instance Validity a => Validity (V.Vector a) where
+instance (Validity a) => Validity (V.Vector a) where
   validate hs = annotate (V.toList hs) "Vector elements"
 
 instance (MUV.Unbox e, Validity e) => Validity (UV.Vector e) where

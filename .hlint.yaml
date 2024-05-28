@@ -1,3 +1,4 @@
+- ignore: { name: "Use for_" }
 - ignore: { name: "Use forM_" }
 - ignore: { name: "Redundant bracket" }
 - ignore: { name: "Use <$>" }

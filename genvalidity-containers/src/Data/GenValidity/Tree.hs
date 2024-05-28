@@ -9,7 +9,7 @@ import Data.Tree
 import Data.Validity.Tree ()
 import Test.QuickCheck
 
-instance GenValid a => GenValid (Tree a) where
+instance (GenValid a) => GenValid (Tree a) where
   genValid = genTreeOf genValid
   shrinkValid = shrinkTreeOf shrinkValid
 
