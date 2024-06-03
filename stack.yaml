@@ -1,4 +1,4 @@
-resolver: lts-21.22
+resolver: lts-22.22
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
@@ -59,7 +59,7 @@ extra-deps:
     - safe-coloured-text-terminfo
 
 - github: NorfairKing/sydtest
-  commit: dcd230e48f164594a473925fa0dbbaf956eb6848
+  commit: 074ace83d237dd602fbd006626a3958407a57fed
   subdirs:
     - sydtest
     - sydtest-discover
