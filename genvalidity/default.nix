@@ -3,7 +3,7 @@
 }:
 mkDerivation {
   pname = "genvalidity";
-  version = "1.1.0.0";
+  version = "1.1.1.0";
   src = ./.;
   libraryHaskellDepends = [ base QuickCheck random validity ];
   testHaskellDepends = [ base hspec hspec-core QuickCheck ];

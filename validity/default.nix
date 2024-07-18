@@ -1,7 +1,7 @@
 { mkDerivation, base, hspec, lib }:
 mkDerivation {
   pname = "validity";
-  version = "0.12.0.2";
+  version = "0.12.1.0";
   src = ./.;
   libraryHaskellDepends = [ base ];
   testHaskellDepends = [ base hspec ];

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.1.0 - 2024-07-18]
+
+### Added
+
+* `Validity` instances for various newtypes in base
+
 ## [0.12.0.2] - 2023-10-09
 
 ### Added
