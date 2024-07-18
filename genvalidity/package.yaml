@@ -52,7 +52,7 @@ library:
   ghc-options: -Wno-redundant-constraints
   source-dirs: src
   dependencies:
-  - validity >=0.12
+  - validity >=0.12.1
   - QuickCheck >=2.13
   - random >=1.1
 

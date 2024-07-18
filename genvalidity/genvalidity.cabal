@@ -58,7 +58,7 @@ library
       QuickCheck >=2.13
     , base >=4.13 && <5
     , random >=1.1
-    , validity >=0.12
+    , validity >=0.12.1
   default-language: Haskell2010
 
 test-suite genvalidity-test
