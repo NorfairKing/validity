@@ -1,9 +1,12 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MagicHash #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeOperators #-}
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 
@@ -106,6 +109,11 @@ import GHC.Exts (Char (..), isTrue#, ord#, (<=#), (>=#))
 #else
 import GHC.Exts (Char (..), isTrue#, leWord#, ord#, (<=#), (>=#))
 #endif
+import Data.Functor.Const (Const (Const))
+import Data.Functor.Identity (Identity (Identity))
+import Data.Monoid (Alt, Dual)
+import qualified Data.Monoid as Monoid
+import qualified Data.Semigroup as Semigroup
 import GHC.Generics
 import GHC.Int (Int16 (..), Int32 (..), Int8 (..))
 import GHC.Natural
@@ -515,6 +523,30 @@ instance Validity Float where
 -- | Trivially valid:
 instance Validity Double where
   validate = trivialValidation
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Identity a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity (f a)) => Validity (Alt f a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Dual a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Semigroup.First a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Semigroup.Last a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Monoid.First a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Monoid.Last a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Const a b)
 
 validateNotNaN :: (RealFloat a) => a -> Validation
 validateNotNaN d = declare "The RealFloat is not NaN." $ not (isNaN d)

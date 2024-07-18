@@ -1,7 +1,10 @@
 {-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeOperators #-}
 {-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 
@@ -84,10 +87,15 @@ where
 import Control.Monad (guard)
 import Data.Char (chr)
 import Data.Fixed (Fixed (..), HasResolution)
+import Data.Functor.Const (Const (Const))
+import Data.Functor.Identity (Identity (Identity))
 import Data.GenValidity.Utils
 import Data.Int (Int16, Int32, Int64, Int8)
 import Data.List.NonEmpty (NonEmpty)
+import Data.Monoid (Alt, Dual)
+import qualified Data.Monoid as Monoid
 import Data.Ratio ((%))
+import qualified Data.Semigroup as Semigroup
 import Data.Validity
 import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics
@@ -370,6 +378,22 @@ instance (GGenValid a) => GGenValid (M1 i c a) where
 
 instance (GenValid a) => GGenValid (K1 i a) where
   gGenValid = K1 <$> genValid
+
+deriving newtype instance (GenValid a) => GenValid (Identity a)
+
+deriving newtype instance (GenValid (f a)) => GenValid (Alt f a)
+
+deriving newtype instance (GenValid a) => GenValid (Dual a)
+
+deriving newtype instance (GenValid a) => GenValid (Semigroup.First a)
+
+deriving newtype instance (GenValid a) => GenValid (Semigroup.Last a)
+
+deriving newtype instance (GenValid a) => GenValid (Monoid.First a)
+
+deriving newtype instance (GenValid a) => GenValid (Monoid.Last a)
+
+deriving newtype instance (GenValid a) => GenValid (Const a b)
 
 -- | Shrink a term to any of its immediate valid subterms,
 -- and also recursively shrink all subterms, and then filtering out the results that are not valid.

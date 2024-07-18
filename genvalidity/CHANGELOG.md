@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0.1]
+
+### Added
+
+* `GenValid` instances for various newtypes in base
+
 ## [1.1.0.0] - 2022-08-30
 
 ### Added
