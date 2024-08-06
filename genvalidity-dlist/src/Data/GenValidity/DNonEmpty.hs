@@ -8,5 +8,5 @@ import Data.GenValidity (GenValid (..))
 import Data.Validity.DNonEmpty ()
 
 instance (GenValid a) => GenValid (DNonEmpty a) where
-  genValid = DNonEmpty.fromList <$> genValid
+  genValid = DNonEmpty.fromNonEmpty <$> genValid
   shrinkValid = fmap DNonEmpty.fromNonEmpty . shrinkValid . DNonEmpty.toNonEmpty

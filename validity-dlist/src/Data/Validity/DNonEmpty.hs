@@ -8,4 +8,4 @@ import Data.Validity (Validity (..))
 
 -- | A 'DNonEmpty' of things is valid if a 'NonEmpty' of the same things is valid
 instance (Validity v) => Validity (DNonEmpty v) where
-  validate = validate . DNonEmpty.toList
+  validate = validate . DNonEmpty.toNonEmpty
