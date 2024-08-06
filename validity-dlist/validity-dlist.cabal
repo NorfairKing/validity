@@ -1,0 +1,38 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           validity-dlist
+version:        0.1.0.0
+synopsis:       Validity instances for containers
+category:       Validity
+homepage:       https://github.com/NorfairKing/validity#readme
+bug-reports:    https://github.com/NorfairKing/validity/issues
+author:         Tom Sydney Kerckhove, Clinton Mead
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright: (c) 2016-2024 Tom Sydney Kerckhove, Clinton Mead
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/validity
+
+library
+  exposed-modules:
+      Data.Validity.DList
+      Data.Validity.DNonEmpty
+  other-modules:
+      Paths_validity_dlist
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , dlist
+    , validity >=0.5
+  default-language: Haskell2010

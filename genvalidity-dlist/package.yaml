@@ -1,0 +1,23 @@
+name: genvalidity-dlist
+version: '0.1.0.0'
+synopsis: GenValidity support for dlist
+category: Testing
+author: Tom Sydney Kerckhove, Clinton Mead
+maintainer: syd@cs-syd.eu
+copyright: ! 'Copyright: (c) 2016-2024 Tom Sydney Kerckhove, Clinton Mead'
+license: MIT
+github: NorfairKing/validity
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
+
+dependencies:
+- base >=4.9 && <=5
+- dlist
+
+library:
+  source-dirs: src
+  dependencies:
+  - genvalidity >=1.0
+  - validity-dlist
