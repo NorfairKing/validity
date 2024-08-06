@@ -17,6 +17,8 @@ description:    For more info, see <https://github.com/NorfairKing/validity the 
                 .
                 * <https://hackage.haskell.org/package/validity-containers validity-containers>
                 .
+                * <https://hackage.haskell.org/package/validity-dlist validity-dlist>
+                .
                 * <https://hackage.haskell.org/package/validity-path validity-path>
                 .
                 * <https://hackage.haskell.org/package/validity-scientific validity-scientific>
