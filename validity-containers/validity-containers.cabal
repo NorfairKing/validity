@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Data.Validity.Containers
+      Data.Validity.IntMap
       Data.Validity.Map
       Data.Validity.Sequence
       Data.Validity.Set

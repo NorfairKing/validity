@@ -27,6 +27,7 @@ source-repository head
 library
   exposed-modules:
       Data.GenValidity.Containers
+      Data.GenValidity.IntMap
       Data.GenValidity.Map
       Data.GenValidity.Sequence
       Data.GenValidity.Set
@@ -48,6 +49,7 @@ test-suite genvalidity-containers-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Data.GenValidity.Containers.IntMapSpec
       Data.GenValidity.Containers.MapSpec
       Data.GenValidity.Containers.SeqSpec
       Data.GenValidity.Containers.SetSpec

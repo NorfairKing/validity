@@ -3,12 +3,14 @@
 
 module Data.Validity.Containers
   ( module Data.Validity.Map,
+    module Data.Validity.IntMap,
     module Data.Validity.Sequence,
     module Data.Validity.Set,
     module Data.Validity.Tree,
   )
 where
 
+import Data.Validity.IntMap
 import Data.Validity.Map
 import Data.Validity.Sequence
 import Data.Validity.Set
