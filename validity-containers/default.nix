@@ -1,7 +1,7 @@
 { mkDerivation, base, containers, lib, validity }:
 mkDerivation {
   pname = "validity-containers";
-  version = "0.5.0.4";
+  version = "0.5.0.5";
   src = ./.;
   libraryHaskellDepends = [ base containers validity ];
   homepage = "https://github.com/NorfairKing/validity#readme";

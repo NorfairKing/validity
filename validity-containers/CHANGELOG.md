@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0.5] - 2024-09-19
+
+### Added
+
+* `Validity v => Validity (IntMap v)`
+
 ## [0.5.0.4] - 2020-06-17
 
 ### Added

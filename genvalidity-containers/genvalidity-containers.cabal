@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-containers
-version:        1.0.0.1
+version:        1.0.0.2
 synopsis:       GenValidity support for containers
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme
@@ -27,6 +27,7 @@ source-repository head
 library
   exposed-modules:
       Data.GenValidity.Containers
+      Data.GenValidity.IntMap
       Data.GenValidity.Map
       Data.GenValidity.Sequence
       Data.GenValidity.Set
@@ -48,6 +49,7 @@ test-suite genvalidity-containers-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Data.GenValidity.Containers.IntMapSpec
       Data.GenValidity.Containers.MapSpec
       Data.GenValidity.Containers.SeqSpec
       Data.GenValidity.Containers.SetSpec
