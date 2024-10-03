@@ -7,7 +7,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
     nixpkgs-23_11.url = "github:NixOS/nixpkgs?ref=nixos-23.11";
-    nixpkgs-23_05.url = "github:NixOS/nixpkgs?ref=nixos-23.05";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance.git";
     autodocodec.url = "github:NorfairKing/autodocodec";
@@ -18,19 +17,21 @@
     fast-myers-diff.flake = false;
     sydtest.url = "github:NorfairKing/sydtest";
     sydtest.flake = false;
+    opt-env-conf.url = "github:NorfairKing/opt-env-conf";
+    opt-env-conf.flake = false;
   };
 
   outputs =
     { self
     , nixpkgs
     , nixpkgs-23_11
-    , nixpkgs-23_05
     , pre-commit-hooks
     , horizon-advance
     , autodocodec
     , safe-coloured-text
     , fast-myers-diff
     , sydtest
+    , opt-env-conf
     }:
     let
       system = "x86_64-linux";
@@ -40,6 +41,7 @@
         (pkgs.callPackage (autodocodec + "/nix/overrides.nix") { })
         (pkgs.callPackage (safe-coloured-text + "/nix/overrides.nix") { })
         (pkgs.callPackage (sydtest + "/nix/overrides.nix") { })
+        (pkgs.callPackage (opt-env-conf + "/nix/overrides.nix") { })
         self.overrides.${system}
       ];
       horizonPkgs = horizon-advance.legacyPackages.${system}.extend allOverrides;
@@ -55,8 +57,7 @@
           backwardCompatibilityCheckFor = nixpkgs: (haskellPackagesFor nixpkgs).validityRelease;
           allNixpkgs = {
             inherit
-              nixpkgs-23_11
-              nixpkgs-23_05;
+              nixpkgs-23_11;
           };
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
