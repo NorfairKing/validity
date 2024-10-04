@@ -394,6 +394,22 @@
         "type": "github"
       }
     },
+    "opt-env-conf": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1727914383,
+        "narHash": "sha256-HA2UL0LCxlL5xib141Fupi0kkAiJJX0+KF4AgoIuR+Q=",
+        "owner": "NorfairKing",
+        "repo": "opt-env-conf",
+        "rev": "44c868aea2703dddba3d43e23f79bcdb3297eb50",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NorfairKing",
+        "repo": "opt-env-conf",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -423,6 +439,7 @@
         "nixpkgs": "nixpkgs_5",
         "nixpkgs-23_05": "nixpkgs-23_05",
         "nixpkgs-23_11": "nixpkgs-23_11",
+        "opt-env-conf": "opt-env-conf",
         "pre-commit-hooks": "pre-commit-hooks",
         "safe-coloured-text": "safe-coloured-text",
         "sydtest": "sydtest"
