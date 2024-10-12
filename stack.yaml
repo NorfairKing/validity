@@ -47,21 +47,32 @@ packages:
 - 'validity-vector'
 
 extra-deps:
+- github: NorfairKing/fast-myers-diff
+  commit: d7c1a675af3889698b987485a630f96a993226fa
+  subdirs:
+    - fast-myers-diff
+- github: NorfairKing/opt-env-conf
+  commit: 44c868aea2703dddba3d43e23f79bcdb3297eb50
+  subdirs:
+    - opt-env-conf
+    - opt-env-conf-test
 - github: NorfairKing/autodocodec
-  commit: 5f23727689555789389ae4fbf41f674d43325814
+  commit: be4aba9ef133520a8a4087aa26915aaabf1376a7
   subdirs:
     - autodocodec
+    - autodocodec-nix
     - autodocodec-schema
     - autodocodec-yaml
 
 - github: NorfairKing/safe-coloured-text
-  commit: b4fd34585472a8b5aaec942bb1bd0748fa3d5aa0
+  commit: 046f10147a058c00c2706d98c341219e3cbc7669
   subdirs:
     - safe-coloured-text
+    - safe-coloured-text-layout
     - safe-coloured-text-terminfo
 
 - github: NorfairKing/sydtest
-  commit: 074ace83d237dd602fbd006626a3958407a57fed
+  commit: aab13681d89f0875411f2ac2b8d7dd7822869b5f
   subdirs:
     - sydtest
     - sydtest-discover
