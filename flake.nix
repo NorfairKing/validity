@@ -15,7 +15,7 @@
     safe-coloured-text.flake = false;
     fast-myers-diff.url = "github:NorfairKing/fast-myers-diff";
     fast-myers-diff.flake = false;
-    sydtest.url = "github:NorfairKing/sydtest";
+    sydtest.url = "github:NorfairKing/sydtest/upgrade";
     sydtest.flake = false;
     opt-env-conf.url = "github:NorfairKing/opt-env-conf";
     opt-env-conf.flake = false;
