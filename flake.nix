@@ -5,7 +5,8 @@
     extra-trusted-public-keys = "validity.cachix.org-1:CqZp6vt9ir3yB5f8GAtfkJxPZG8hKC5fhIdaQsf7eZE=";
   };
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.11";
+    nixpkgs-24_05.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
     nixpkgs-23_11.url = "github:NixOS/nixpkgs?ref=nixos-23.11";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance.git";
@@ -24,6 +25,7 @@
   outputs =
     { self
     , nixpkgs
+    , nixpkgs-24_05
     , nixpkgs-23_11
     , pre-commit-hooks
     , horizon-advance
@@ -57,7 +59,8 @@
           backwardCompatibilityCheckFor = nixpkgs: (haskellPackagesFor nixpkgs).validityRelease;
           allNixpkgs = {
             inherit
-              nixpkgs-23_11;
+              nixpkgs-23_11
+              nixpkgs-24_05;
           };
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
