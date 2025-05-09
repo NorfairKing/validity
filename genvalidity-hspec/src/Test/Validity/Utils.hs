@@ -76,7 +76,7 @@ mapSpecTree' f (SpecM specs) = SpecM (mapWriterT (fmap (second (fmap (map f)))) 
 #else
 mapSpecTree' f (SpecM specs) = SpecM (mapWriterT (fmap (second (map f))) specs)
 #endif
-
+{- ORMOLU_DISABLE -}
 -- | Asserts that a given 'Spec' tree fails _somewhere_.
 --
 -- It also shows the given string when reporting that the tree unexpectedly
@@ -92,6 +92,9 @@ failsBecause s = mapSpecTree' go
             itemLocation = Nothing,
             itemIsFocused = False,
             itemIsParallelizable = Nothing,
+#if MIN_VERSION_hspec(2,11,10)
+            itemAnnotations = mempty,
+#endif
             itemExample =
               \_ _ _ -> do
                 let conf =
@@ -101,6 +104,7 @@ failsBecause s = mapSpecTree' go
                       summaryExamples r > 0 && summaryFailures r > 0
                 pure $ produceResult succesful
           }
+{- ORMOLU_ENABLE -}
 
 produceResult :: Bool -> Test.Hspec.Core.Spec.Result
 produceResult succesful =

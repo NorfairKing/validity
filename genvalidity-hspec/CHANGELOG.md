@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0.4] - 2022-10-04
+
+### Changed
+
+* Compatibility with `hspec >= 2.11.10`.
+
 ## [1.0.0.3] - 2022-10-04
 
 ### Changed
