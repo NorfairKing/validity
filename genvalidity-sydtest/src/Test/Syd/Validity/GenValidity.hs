@@ -30,9 +30,9 @@ import Test.Syd.Validity.Utils
 --
 -- > genValidSpec @Int
 genValidSpec ::
-  forall a.
+  forall a outers.
   (Typeable a, Show a, GenValid a) =>
-  Spec
+  TestDef outers ()
 genValidSpec =
   parallel $ do
     let name = nameOf @a

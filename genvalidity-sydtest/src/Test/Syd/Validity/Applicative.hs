@@ -92,14 +92,14 @@ seqlTypeStr =
 --
 -- > applicativeSpecOnArbitrary @[]
 applicativeSpec ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   ( Eq (f Int),
     Show (f Int),
     Applicative f,
     Typeable f,
     GenValid (f Int)
   ) =>
-  Spec
+  TestDef outers ()
 applicativeSpec = applicativeSpecWithInts @f genValid
 
 -- | Standard test spec for properties of Applicative instances for values generated with Arbitrary instances
@@ -108,16 +108,16 @@ applicativeSpec = applicativeSpecWithInts @f genValid
 --
 -- > applicativeSpecOnArbitrary @[]
 applicativeSpecOnArbitrary ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Eq (f Int), Show (f Int), Applicative f, Typeable f, Arbitrary (f Int)) =>
-  Spec
+  TestDef outers ()
 applicativeSpecOnArbitrary = applicativeSpecWithInts @f arbitrary
 
 applicativeSpecWithInts ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Show (f Int), Eq (f Int), Applicative f, Typeable f) =>
   Gen (f Int) ->
-  Spec
+  TestDef outers ()
 applicativeSpecWithInts gen =
   applicativeSpecOnGens
     @f
@@ -157,7 +157,7 @@ applicativeSpecWithInts gen =
 -- >     (pure <$> (flip (++) <$> genValid))
 -- >     "appends in a Just"
 applicativeSpecOnGens ::
-  forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type).
+  forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type) outers.
   ( Show a,
     Show (f a),
     Eq (f a),
@@ -183,7 +183,7 @@ applicativeSpecOnGens ::
   String ->
   Gen (f (b -> c)) ->
   String ->
-  Spec
+  TestDef outers ()
 applicativeSpecOnGens gena genaname gen genname genb genbname genfa genfaname genffa genffaname genffb genffbname =
   parallel $
     describe ("Applicative " ++ nameOf @f) $ do

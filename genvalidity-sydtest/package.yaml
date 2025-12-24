@@ -1,5 +1,5 @@
 name: genvalidity-sydtest
-version: '1.0.0.0'
+version: '1.0.1.0'
 synopsis: Standard properties for functions on `Validity` types for the sydtest framework
 category: Testing
 author: Tom Sydney Kerckhove

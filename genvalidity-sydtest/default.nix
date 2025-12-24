@@ -3,7 +3,7 @@
 }:
 mkDerivation {
   pname = "genvalidity-sydtest";
-  version = "1.0.0.0";
+  version = "1.0.1.0";
   src = ./.;
   libraryHaskellDepends = [
     base genvalidity pretty-show QuickCheck sydtest validity

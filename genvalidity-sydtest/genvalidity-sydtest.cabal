@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-sydtest
-version:        1.0.0.0
+version:        1.0.1.0
 synopsis:       Standard properties for functions on `Validity` types for the sydtest framework
 category:       Testing
 homepage:       https://github.com/NorfairKing/validity#readme
