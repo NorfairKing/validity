@@ -30,7 +30,7 @@ import Test.Syd.Validity.Utils
 --
 -- > genValidSpec @Int
 genValidSpec ::
-  forall a outers .
+  forall a outers.
   (Typeable a, Show a, GenValid a) =>
   TestDef outers ()
 genValidSpec =

@@ -73,9 +73,9 @@ bindTypeStr =
 --
 -- > monadSpec @[]
 monadSpec ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Eq (f Int), Show (f Int), Monad f, Typeable f, GenValid (f Int)) =>
-  Spec
+  TestDef outers ()
 monadSpec = monadSpecWithInts @f genValid
 
 -- | Standard test spec for properties of Monad instances for values generated with Arbitrary instances
@@ -84,16 +84,16 @@ monadSpec = monadSpecWithInts @f genValid
 --
 -- > monadSpecOnArbitrary @[]
 monadSpecOnArbitrary ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Eq (f Int), Show (f Int), Monad f, Typeable f, Arbitrary (f Int)) =>
-  Spec
+  TestDef outers ()
 monadSpecOnArbitrary = monadSpecWithInts @f arbitrary
 
 monadSpecWithInts ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Eq (f Int), Show (f Int), Monad f, Typeable f) =>
   Gen (f Int) ->
-  Spec
+  TestDef outers ()
 monadSpecWithInts gen =
   monadSpecOnGens
     @f
@@ -141,7 +141,7 @@ monadSpecWithInts gen =
 -- >     (pure $ pure (+ 1))
 -- >     "increment in list"
 monadSpecOnGens ::
-  forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type).
+  forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type) outers.
   ( Show a,
     Show (f a),
     Show (f b),
@@ -169,7 +169,7 @@ monadSpecOnGens ::
   String ->
   Gen (f (a -> b)) ->
   String ->
-  Spec
+  TestDef outers ()
 monadSpecOnGens gena genaname gen genname genb genbname geng gengname genbf genbfname gencf gencfname genfab genfabname =
   parallel $
     describe ("Monad " ++ nameOf @f) $ do

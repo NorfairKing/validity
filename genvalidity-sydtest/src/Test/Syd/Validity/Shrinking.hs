@@ -29,9 +29,9 @@ import Test.Syd.Validity.Shrinking.Property
 import Test.Syd.Validity.Utils
 
 shrinkValidSpec ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, GenValid a) =>
-  Spec
+  TestDef outers ()
 shrinkValidSpec =
   describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $ do
     it "preserves validity" $
@@ -41,10 +41,10 @@ shrinkValidSpec =
       shrinkValidDoesNotShrinkToItself @a
 
 shrinkValidSpecWithLimit ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, GenValid a) =>
   Int ->
-  Spec
+  TestDef outers ()
 shrinkValidSpecWithLimit l =
   describe ("shrinkValid :: " ++ nameOf @(a -> [a])) $ do
     it (unwords ["preserves validity for the first", show l, "elements"]) $

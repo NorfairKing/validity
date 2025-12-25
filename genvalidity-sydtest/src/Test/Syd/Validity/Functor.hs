@@ -56,9 +56,9 @@ flTypeStr =
 --
 -- > functorSpecOnArbitrary @[]
 functorSpec ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Eq (f Int), Show (f Int), Functor f, Typeable f, GenValid (f Int)) =>
-  Spec
+  TestDef outers ()
 functorSpec = functorSpecWithInts @f genValid
 
 -- | Standard test spec for properties of Functor instances for values generated with Arbitrary instances
@@ -67,16 +67,16 @@ functorSpec = functorSpecWithInts @f genValid
 --
 -- > functorSpecOnArbitrary @[]
 functorSpecOnArbitrary ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Eq (f Int), Show (f Int), Functor f, Typeable f, Arbitrary (f Int)) =>
-  Spec
+  TestDef outers ()
 functorSpecOnArbitrary = functorSpecWithInts @f arbitrary
 
 functorSpecWithInts ::
-  forall (f :: Type -> Type).
+  forall (f :: Type -> Type) outers.
   (Eq (f Int), Show (f Int), Functor f, Typeable f) =>
   Gen (f Int) ->
-  Spec
+  TestDef outers ()
 functorSpecWithInts gen =
   functorSpecOnGens
     @f
@@ -102,7 +102,7 @@ functorSpecWithInts gen =
 -- >     ((+) <$> genValid) "additions"
 -- >     ((*) <$> genValid) "multiplications"
 functorSpecOnGens ::
-  forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type).
+  forall (f :: Type -> Type) (a :: Type) (b :: Type) (c :: Type) outers.
   ( Show a,
     Show (f a),
     Show (f c),
@@ -122,7 +122,7 @@ functorSpecOnGens ::
   String ->
   Gen (a -> b) ->
   String ->
-  Spec
+  TestDef outers ()
 functorSpecOnGens gena genaname gen genname genf genfname geng gengname =
   parallel $
     describe ("Functor " ++ nameOf @f) $ do

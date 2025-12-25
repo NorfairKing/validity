@@ -26,9 +26,9 @@ import Test.Syd.Validity.Utils
 --
 -- > arbitrarySpec @Int
 arbitrarySpec ::
-  forall a.
+  forall a outers.
   (Typeable a, Show a, Validity a, Arbitrary a) =>
-  Spec
+  TestDef outers ()
 arbitrarySpec = do
   let name = nameOf @a
   describe ("Arbitrary " ++ name) $
