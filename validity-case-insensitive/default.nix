@@ -7,7 +7,7 @@ mkDerivation {
   src = ./.;
   libraryHaskellDepends = [ base case-insensitive validity ];
   testHaskellDepends = [
-    base case-insensitive genvalidity-hspec hspec validity
+    base case-insensitive genvalidity-hspec hspec
   ];
   homepage = "https://github.com/NorfairKing/validity#readme";
   description = "Validity instances for case-insensitive";

@@ -1,8 +1,7 @@
 { mkDerivation, aeson, base, criterion, deepseq, genvalidity
 , genvalidity-criterion, genvalidity-hspec, genvalidity-scientific
 , genvalidity-text, genvalidity-unordered-containers
-, genvalidity-vector, hspec, lib, QuickCheck, validity
-, validity-aeson
+, genvalidity-vector, hspec, lib, QuickCheck, validity-aeson
 }:
 mkDerivation {
   pname = "genvalidity-aeson";
@@ -11,10 +10,10 @@ mkDerivation {
   libraryHaskellDepends = [
     aeson base genvalidity genvalidity-scientific genvalidity-text
     genvalidity-unordered-containers genvalidity-vector QuickCheck
-    validity validity-aeson
+    validity-aeson
   ];
   testHaskellDepends = [
-    aeson base deepseq genvalidity genvalidity-hspec hspec
+    aeson base deepseq genvalidity-hspec hspec
   ];
   benchmarkHaskellDepends = [
     aeson base criterion genvalidity-criterion

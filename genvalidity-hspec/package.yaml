@@ -27,8 +27,6 @@ extra-source-files:
 
 dependencies:
 - base >=4.9 && <5
-- QuickCheck
-- hspec-core >=2.5.0
 
 library:
   source-dirs: src
@@ -36,11 +34,12 @@ library:
   - -Wall
   - -fwarn-redundant-constraints
   dependencies:
+  - QuickCheck
   - genvalidity >=1.0
   - genvalidity-property >=0.5
   - hspec
+  - hspec-core >=2.5.0
   - transformers
-  - validity >=0.5
 
 tests:
   genvalidity-hspec-test:

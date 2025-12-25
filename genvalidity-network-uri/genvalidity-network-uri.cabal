@@ -33,7 +33,6 @@ library
     , genvalidity >=1.0
     , iproute
     , network-uri
-    , validity >=0.5
     , validity-network-uri
   default-language: Haskell2010
 
@@ -51,7 +50,6 @@ test-suite genvalidity-network-uri-test
   build-depends:
       QuickCheck
     , base >=4.7 && <5
-    , genvalidity
     , genvalidity-network-uri
     , genvalidity-sydtest
     , network-uri
@@ -68,10 +66,8 @@ benchmark genvalidity-network-uri-bench
       bench/
   ghc-options: -Wall
   build-depends:
-      QuickCheck
-    , base >=4.7 && <5
+      base >=4.7 && <5
     , criterion
-    , genvalidity
     , genvalidity-criterion >=1.1.0.0
     , genvalidity-network-uri
     , network-uri

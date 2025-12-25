@@ -15,15 +15,13 @@ extra-source-files:
 dependencies:
 - base >=4.7 && <5
 - text
-- QuickCheck
 
 library:
   source-dirs: src
   dependencies:
-  - array
+  - QuickCheck
   - genvalidity >=1.0
   - random
-  - validity >=0.5
   - validity-text >=0.3
 
 tests:
@@ -36,8 +34,8 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
+    - QuickCheck
     - hspec
-    - genvalidity
     - genvalidity-text
     - genvalidity-hspec
 
@@ -48,7 +46,6 @@ benchmarks:
     ghc-options:
     - -Wall
     dependencies:
-    - QuickCheck
     - criterion
     - genvalidity
     - genvalidity-criterion >=1.1.0.0

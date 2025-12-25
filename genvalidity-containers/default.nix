@@ -1,17 +1,17 @@
 { mkDerivation, base, containers, criterion, genvalidity
-, genvalidity-criterion, genvalidity-hspec, genvalidity-property
-, hspec, lib, QuickCheck, validity, validity-containers
+, genvalidity-criterion, genvalidity-hspec, hspec, lib, QuickCheck
+, validity-containers
 }:
 mkDerivation {
   pname = "genvalidity-containers";
   version = "1.0.0.2";
   src = ./.;
   libraryHaskellDepends = [
-    base containers genvalidity QuickCheck validity validity-containers
+    base containers genvalidity QuickCheck validity-containers
   ];
   testHaskellDepends = [
-    base containers genvalidity genvalidity-hspec genvalidity-property
-    hspec QuickCheck validity validity-containers
+    base containers genvalidity genvalidity-hspec hspec QuickCheck
+    validity-containers
   ];
   benchmarkHaskellDepends = [
     base containers criterion genvalidity genvalidity-criterion

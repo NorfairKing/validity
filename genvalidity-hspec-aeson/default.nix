@@ -1,19 +1,17 @@
-{ mkDerivation, aeson, base, bytestring, deepseq, genvalidity
-, genvalidity-aeson, genvalidity-hspec, genvalidity-property
-, genvalidity-text, hspec, lib, QuickCheck, text, validity
+{ mkDerivation, aeson, base, deepseq, genvalidity
+, genvalidity-aeson, genvalidity-hspec, genvalidity-text, hspec
+, lib, QuickCheck, text
 }:
 mkDerivation {
   pname = "genvalidity-hspec-aeson";
   version = "1.0.0.0";
   src = ./.;
   libraryHaskellDepends = [
-    aeson base bytestring deepseq genvalidity genvalidity-hspec hspec
-    QuickCheck
+    aeson base deepseq genvalidity genvalidity-hspec hspec QuickCheck
   ];
   testHaskellDepends = [
-    aeson base genvalidity genvalidity-aeson genvalidity-hspec
-    genvalidity-property genvalidity-text hspec QuickCheck text
-    validity
+    aeson base genvalidity genvalidity-aeson genvalidity-text hspec
+    text
   ];
   homepage = "http://cs-syd.eu";
   description = "Standard spec's for aeson-related instances";

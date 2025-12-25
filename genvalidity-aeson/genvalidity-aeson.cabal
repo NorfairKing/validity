@@ -40,7 +40,6 @@ library
     , genvalidity-text >=0.5
     , genvalidity-unordered-containers >=0.2
     , genvalidity-vector >=0.2
-    , validity >=0.5
     , validity-aeson >=0.2
   default-language: Haskell2010
 
@@ -57,7 +56,6 @@ test-suite genvalidity-aeson-test
       aeson >=1.4.0.0
     , base >=4.10 && <5
     , deepseq
-    , genvalidity
     , genvalidity-aeson
     , genvalidity-hspec
     , hspec

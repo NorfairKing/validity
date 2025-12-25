@@ -1,6 +1,5 @@
 { mkDerivation, base, genvalidity, genvalidity-hspec
-, genvalidity-property, hashable, hspec, hspec-core, lib
-, QuickCheck, validity
+, genvalidity-property, hashable, hspec, lib, QuickCheck
 }:
 mkDerivation {
   pname = "genvalidity-hspec-hashable";
@@ -8,11 +7,10 @@ mkDerivation {
   src = ./.;
   libraryHaskellDepends = [
     base genvalidity genvalidity-hspec genvalidity-property hashable
-    hspec QuickCheck validity
+    hspec QuickCheck
   ];
   testHaskellDepends = [
-    base genvalidity genvalidity-hspec genvalidity-property hashable
-    hspec hspec-core QuickCheck validity
+    base genvalidity genvalidity-hspec hashable hspec
   ];
   homepage = "https://github.com/NorfairKing/validity#readme";
   description = "Standard spec's for Hashable instances";

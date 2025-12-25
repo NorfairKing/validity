@@ -21,7 +21,6 @@ library:
   dependencies:
   - QuickCheck
   - genvalidity >=1.0
-  - validity >=0.5
   - validity-containers >=0.3
   - containers >=0.6.0.1
 
@@ -39,9 +38,7 @@ tests:
     - genvalidity
     - genvalidity-containers
     - genvalidity-hspec
-    - genvalidity-property
     - hspec
-    - validity >=0.9
     - validity-containers
 
 benchmarks:

@@ -46,6 +46,9 @@ packages:
 - 'validity-uuid'
 - 'validity-vector'
 
+ghc-options:
+  "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef -Wunused-packages
+
 extra-deps:
 - github: NorfairKing/fast-myers-diff
   commit: d7c1a675af3889698b987485a630f96a993226fa
@@ -76,9 +79,6 @@ extra-deps:
   subdirs:
     - sydtest
     - sydtest-discover
-
-ghc-options:
-  "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
 
 system-ghc: true
 nix:

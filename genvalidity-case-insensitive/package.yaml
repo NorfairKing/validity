@@ -10,12 +10,12 @@ extra-source-files:
 
 dependencies:
 - base >=4.7 && <5
-- case-insensitive
 
 library:
   source-dirs: src
   dependencies:
   - validity-case-insensitive
+  - case-insensitive
   - genvalidity >=1.0
 
 tests:
@@ -28,9 +28,10 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
+    - case-insensitive
     - genvalidity-case-insensitive
-    - hspec
     - genvalidity-hspec
+    - hspec
 
 benchmarks:
   genvalidity-case-insensitive-bench:
@@ -42,8 +43,7 @@ benchmarks:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
+    - case-insensitive
+    - criterion
     - genvalidity-case-insensitive
     - genvalidity-criterion >=1.1.0.0
-    - criterion
-    - QuickCheck
-    - genvalidity

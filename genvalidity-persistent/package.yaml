@@ -20,7 +20,6 @@ library:
   source-dirs: src
   dependencies:
   - QuickCheck
-  - containers
   - genvalidity >=1.0
   - genvalidity-containers
   - validity-containers
@@ -37,11 +36,9 @@ tests:
     - -Wall
     dependencies:
     - QuickCheck
-    - genvalidity
     - genvalidity-hspec
     - genvalidity-persistent
     - hspec
-    - persistent-template
     - validity-containers
 
 benchmarks:
@@ -59,4 +56,3 @@ benchmarks:
     - genvalidity
     - genvalidity-criterion
     - genvalidity-persistent
-    - persistent-template

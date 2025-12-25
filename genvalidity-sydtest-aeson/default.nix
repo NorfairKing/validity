@@ -1,18 +1,18 @@
-{ mkDerivation, aeson, base, bytestring, deepseq, genvalidity
+{ mkDerivation, aeson, base, deepseq, genvalidity
 , genvalidity-aeson, genvalidity-sydtest, genvalidity-text, lib
-, QuickCheck, sydtest, sydtest-discover, text, validity
+, QuickCheck, sydtest, sydtest-discover, text
 }:
 mkDerivation {
   pname = "genvalidity-sydtest-aeson";
   version = "1.0.0.0";
   src = ./.;
   libraryHaskellDepends = [
-    aeson base bytestring deepseq genvalidity genvalidity-sydtest
-    QuickCheck sydtest
+    aeson base deepseq genvalidity genvalidity-sydtest QuickCheck
+    sydtest
   ];
   testHaskellDepends = [
-    aeson base genvalidity genvalidity-aeson genvalidity-sydtest
-    genvalidity-text QuickCheck sydtest text validity
+    aeson base genvalidity genvalidity-aeson genvalidity-text sydtest
+    text
   ];
   testToolDepends = [ sydtest-discover ];
   homepage = "http://cs-syd.eu";

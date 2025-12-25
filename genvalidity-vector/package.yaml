@@ -19,9 +19,7 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-  - QuickCheck
   - genvalidity >=1.0
-  - validity >=0.5
   - validity-vector >=0.1
 
 tests:
@@ -34,7 +32,6 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - genvalidity
     - genvalidity-hspec
     - genvalidity-vector
     - hspec

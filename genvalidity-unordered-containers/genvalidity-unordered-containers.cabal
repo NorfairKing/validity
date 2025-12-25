@@ -34,12 +34,10 @@ library
   hs-source-dirs:
       src
   build-depends:
-      QuickCheck
-    , base <5
+      base <5
     , genvalidity >=1.0
     , hashable
     , unordered-containers
-    , validity >=0.5
     , validity-unordered-containers >=0.1
   default-language: Haskell2010
 
@@ -54,10 +52,8 @@ test-suite genvalidity-unordered-containers-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       base <5
-    , genvalidity
     , genvalidity-hspec
     , genvalidity-unordered-containers
     , hspec
     , unordered-containers
-    , validity >=0.9
   default-language: Haskell2010

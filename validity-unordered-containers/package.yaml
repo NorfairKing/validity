@@ -8,11 +8,10 @@ copyright: ! 'Copyright: (c) 2016-2021 Tom Sydney Kerckhove'
 license: MIT
 github: NorfairKing/validity
 
-dependencies:
-- base >=4.7 && <5
-- validity >=0.5
-- unordered-containers >=0.2.7
-- hashable
 
 library:
   source-dirs: src
+  dependencies:
+  - base >=4.7 && <5
+  - validity >=0.5
+  - unordered-containers >=0.2.7

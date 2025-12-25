@@ -15,8 +15,6 @@ extra-source-files:
 
 dependencies:
 - base >=4.9 && <=5
-- hspec
-- persistent
 
 library:
   source-dirs: src/
@@ -26,6 +24,8 @@ library:
   - genvalidity >=1.0
   - genvalidity-hspec >=0.6
   - text
+  - hspec
+  - persistent
 
 tests:
   genvalidity-hspec-persistent-test:
@@ -37,11 +37,6 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - QuickCheck
     - genvalidity
-    - genvalidity-hspec
     - genvalidity-hspec-persistent
-    - genvalidity-property
-    - genvalidity-text
-    - text
-    - validity >=0.9
+    - hspec

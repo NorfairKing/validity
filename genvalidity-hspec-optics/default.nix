@@ -1,5 +1,5 @@
-{ mkDerivation, base, genvalidity, genvalidity-hspec
-, genvalidity-property, hspec, lib, microlens, QuickCheck, validity
+{ mkDerivation, base, genvalidity, genvalidity-hspec, hspec, lib
+, microlens, QuickCheck
 }:
 mkDerivation {
   pname = "genvalidity-hspec-optics";
@@ -8,10 +8,7 @@ mkDerivation {
   libraryHaskellDepends = [
     base genvalidity genvalidity-hspec hspec microlens QuickCheck
   ];
-  testHaskellDepends = [
-    base genvalidity genvalidity-hspec genvalidity-property hspec
-    microlens validity
-  ];
+  testHaskellDepends = [ base genvalidity-hspec hspec microlens ];
   homepage = "http://cs-syd.eu";
   description = "Standard spec's for lens";
   license = lib.licenses.mit;

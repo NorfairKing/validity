@@ -1,6 +1,5 @@
-{ mkDerivation, base, genvalidity, genvalidity-sydtest
-, genvalidity-text, lib, persistent, QuickCheck, sydtest
-, sydtest-discover, text, validity
+{ mkDerivation, base, genvalidity, genvalidity-sydtest, lib
+, persistent, QuickCheck, sydtest, sydtest-discover, text
 }:
 mkDerivation {
   pname = "genvalidity-sydtest-persistent";
@@ -10,10 +9,7 @@ mkDerivation {
     base genvalidity genvalidity-sydtest persistent QuickCheck sydtest
     text
   ];
-  testHaskellDepends = [
-    base genvalidity genvalidity-sydtest genvalidity-text persistent
-    QuickCheck sydtest text validity
-  ];
+  testHaskellDepends = [ base genvalidity sydtest ];
   testToolDepends = [ sydtest-discover ];
   homepage = "http://cs-syd.eu";
   description = "Standard spec's for persistent-related instances for sydtest";

@@ -15,12 +15,11 @@ extra-source-files:
 dependencies:
 - base >=4.7 && <5
 - bytestring
-- QuickCheck
 
 library:
   source-dirs: src
   dependencies:
-  - validity >=0.5
+  - QuickCheck
   - validity-bytestring >=0.4
   - genvalidity >=1.0
   - random
@@ -35,11 +34,10 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
+    - QuickCheck
     - deepseq
-    - validity >=0.9
     - genvalidity
     - genvalidity-bytestring
-    - genvalidity-hspec
     - hspec
 
 benchmarks:
@@ -49,8 +47,6 @@ benchmarks:
     ghc-options:
     - -Wall
     dependencies:
-    - QuickCheck
     - criterion
-    - genvalidity
     - genvalidity-criterion >=1.1.0.0
     - genvalidity-bytestring

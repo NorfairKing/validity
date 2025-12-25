@@ -30,7 +30,6 @@ library
       src
   build-depends:
       base >=4.7 && <5
-    , hashable
     , validity >=0.5
     , vector
   default-language: Haskell2010

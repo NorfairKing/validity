@@ -7,11 +7,12 @@ github: NorfairKing/validity
 
 dependencies:
 - base >=4.7 && <5
-- validity >=0.9.0.2
 - case-insensitive
 
 library:
   source-dirs: src
+  dependencies:
+  - validity >=0.9.0.2
 
 tests:
   validity-case-insensitive-test:

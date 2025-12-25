@@ -1,5 +1,5 @@
 { mkDerivation, base, genvalidity, genvalidity-sydtest, hashable
-, lib, QuickCheck, sydtest, sydtest-discover, validity
+, lib, QuickCheck, sydtest, sydtest-discover
 }:
 mkDerivation {
   pname = "genvalidity-sydtest-hashable";
@@ -7,12 +7,8 @@ mkDerivation {
   src = ./.;
   libraryHaskellDepends = [
     base genvalidity genvalidity-sydtest hashable QuickCheck sydtest
-    validity
   ];
-  testHaskellDepends = [
-    base genvalidity genvalidity-sydtest hashable QuickCheck sydtest
-    validity
-  ];
+  testHaskellDepends = [ base genvalidity hashable sydtest ];
   testToolDepends = [ sydtest-discover ];
   homepage = "https://github.com/NorfairKing/validity#readme";
   description = "Standard spec's for Hashable instances for sydtest";

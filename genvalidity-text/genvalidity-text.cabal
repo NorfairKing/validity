@@ -33,12 +33,10 @@ library
       src
   build-depends:
       QuickCheck
-    , array
     , base >=4.7 && <5
     , genvalidity >=1.0
     , random
     , text
-    , validity >=0.5
     , validity-text >=0.3
   default-language: Haskell2010
 
@@ -54,7 +52,6 @@ test-suite genvalidity-text-test
   build-depends:
       QuickCheck
     , base >=4.7 && <5
-    , genvalidity
     , genvalidity-hspec
     , genvalidity-text
     , hspec
@@ -70,8 +67,7 @@ benchmark genvalidity-text-bench
       bench/
   ghc-options: -Wall
   build-depends:
-      QuickCheck
-    , base >=4.7 && <5
+      base >=4.7 && <5
     , criterion
     , genvalidity
     , genvalidity-criterion >=1.1.0.0

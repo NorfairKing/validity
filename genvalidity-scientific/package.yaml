@@ -14,14 +14,12 @@ extra-source-files:
 
 dependencies:
 - base >=4.7 && <5
-- QuickCheck
-- scientific
 
 library:
   source-dirs: src
   dependencies:
   - genvalidity >=1.0
-  - validity >=0.5
+  - scientific
   - validity-scientific >=0.2
 
 tests:
@@ -34,7 +32,7 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - genvalidity
     - genvalidity-hspec
     - genvalidity-scientific
     - hspec
+    - scientific

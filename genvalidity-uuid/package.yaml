@@ -14,14 +14,12 @@ extra-source-files:
 
 dependencies:
 - base >=4.7 && <5
-- QuickCheck
-- uuid
 
 library:
   source-dirs: src
   dependencies:
   - genvalidity >= 1.0
-  - validity >=0.5
+  - uuid
   - validity-uuid >=0.0
 
 tests:
@@ -35,11 +33,12 @@ tests:
     - -Wall
     - -fno-warn-name-shadowing
     dependencies:
+    - QuickCheck
     - base
     - genvalidity
-    - genvalidity-hspec
     - genvalidity-uuid
     - hspec
+    - uuid
 
 benchmarks:
   genvalidity-uuid-bench:
@@ -48,9 +47,8 @@ benchmarks:
     ghc-options:
     - -Wall
     dependencies:
-    - QuickCheck
     - criterion
-    - genvalidity
     - genvalidity-criterion >= 1.0.0.1
     - genvalidity-uuid
+    - uuid
 

@@ -25,7 +25,6 @@ library:
   - genvalidity-text >=0.5
   - genvalidity-unordered-containers >=0.2
   - genvalidity-vector >=0.2
-  - validity >=0.5
   - validity-aeson >=0.2
 
 tests:
@@ -38,7 +37,6 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - genvalidity
     - genvalidity-hspec
     - genvalidity-aeson
     - hspec

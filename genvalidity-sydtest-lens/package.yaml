@@ -40,7 +40,5 @@ tests:
     dependencies:
     - microlens
     - base
-    - validity >=0.9
-    - genvalidity
     - genvalidity-sydtest
     - genvalidity-sydtest-lens

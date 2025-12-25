@@ -16,7 +16,6 @@ extra-source-files:
 dependencies:
 - base >=4.9 && <=5
 - sydtest
-- persistent
 
 library:
   source-dirs: src/
@@ -25,6 +24,7 @@ library:
   - QuickCheck
   - genvalidity >= 1.0
   - genvalidity-sydtest
+  - persistent
   - text
 
 tests:
@@ -38,10 +38,5 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - QuickCheck
     - genvalidity
-    - genvalidity-sydtest
     - genvalidity-sydtest-persistent
-    - genvalidity-text
-    - text
-    - validity >=0.9

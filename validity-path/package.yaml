@@ -10,12 +10,13 @@ github: NorfairKing/validity
 
 dependencies:
 - base >=4.7 && <5
-- validity >=0.9.0.2
 - path >=0.5
 - filepath >=1.3
 
 library:
   source-dirs: src
+  dependencies:
+  - validity >=0.9.0.2
 
 tests:
   validity-path-test:

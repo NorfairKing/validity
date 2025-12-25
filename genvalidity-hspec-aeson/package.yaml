@@ -26,7 +26,6 @@ library:
   - aeson
   - QuickCheck
   - deepseq
-  - bytestring
 
 tests:
   genvalidity-hspec-aeson-test:
@@ -38,13 +37,9 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     dependencies:
-    - QuickCheck
     - aeson
     - genvalidity
     - genvalidity-aeson
-    - genvalidity-hspec
     - genvalidity-hspec-aeson
-    - genvalidity-property
     - genvalidity-text
     - text
-    - validity >=0.9

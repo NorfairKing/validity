@@ -36,7 +36,6 @@ library
       QuickCheck
     , aeson
     , base >=4.9 && <=5
-    , bytestring
     , deepseq
     , genvalidity >=1.0
     , genvalidity-hspec >=0.6
@@ -53,16 +52,12 @@ test-suite genvalidity-hspec-aeson-test
       test/
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
-      QuickCheck
-    , aeson
+      aeson
     , base >=4.9 && <=5
     , genvalidity
     , genvalidity-aeson
-    , genvalidity-hspec
     , genvalidity-hspec-aeson
-    , genvalidity-property
     , genvalidity-text
     , hspec
     , text
-    , validity >=0.9
   default-language: Haskell2010

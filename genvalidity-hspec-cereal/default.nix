@@ -1,6 +1,5 @@
 { mkDerivation, base, cereal, deepseq, genvalidity
-, genvalidity-hspec, genvalidity-property, hspec, lib, QuickCheck
-, validity
+, genvalidity-hspec, hspec, lib, QuickCheck
 }:
 mkDerivation {
   pname = "genvalidity-hspec-cereal";
@@ -9,10 +8,7 @@ mkDerivation {
   libraryHaskellDepends = [
     base cereal deepseq genvalidity genvalidity-hspec hspec QuickCheck
   ];
-  testHaskellDepends = [
-    base cereal genvalidity genvalidity-property hspec QuickCheck
-    validity
-  ];
+  testHaskellDepends = [ base genvalidity hspec ];
   homepage = "http://cs-syd.eu";
   description = "Standard spec's for cereal-related instances";
   license = lib.licenses.mit;

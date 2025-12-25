@@ -36,7 +36,6 @@ library
       QuickCheck
     , aeson
     , base >=4.9 && <=5
-    , bytestring
     , deepseq
     , genvalidity >=1.0
     , genvalidity-sydtest
@@ -55,15 +54,12 @@ test-suite genvalidity-sydtest-aeson-test
   build-tool-depends:
       sydtest-discover:sydtest-discover
   build-depends:
-      QuickCheck
-    , aeson
+      aeson
     , base >=4.9 && <=5
     , genvalidity
     , genvalidity-aeson
-    , genvalidity-sydtest
     , genvalidity-sydtest-aeson
     , genvalidity-text
     , sydtest
     , text
-    , validity >=0.9
   default-language: Haskell2010

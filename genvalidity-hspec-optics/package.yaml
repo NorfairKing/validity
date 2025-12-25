@@ -39,8 +39,5 @@ tests:
     dependencies:
     - microlens
     - base
-    - validity >=0.9
-    - genvalidity
-    - genvalidity-property
     - genvalidity-hspec
     - genvalidity-hspec-optics
