@@ -1,5 +1,5 @@
 name: genvalidity-sydtest-aeson
-version: '1.0.0.0'
+version: '1.0.0.1'
 synopsis: Standard spec's for aeson-related instances in sydtest
 category: Testing
 author: Tom Sydney Kerckhove

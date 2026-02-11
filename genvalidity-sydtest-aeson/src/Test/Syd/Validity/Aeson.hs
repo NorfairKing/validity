@@ -30,9 +30,9 @@ import Test.Syd.Validity.Utils
 --
 -- > jsonSpec @Int
 jsonSpec ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, GenValid a, FromJSON a, ToJSON a) =>
-  Spec
+  TestDef outers ()
 jsonSpec = jsonSpecOnGen (genValid @a) "valid" shrinkValid
 
 -- | Standard test spec for properties of JSON-related functions for arbitrary values
@@ -41,9 +41,9 @@ jsonSpec = jsonSpecOnGen (genValid @a) "valid" shrinkValid
 --
 -- > jsonSpecOnArbitrary @Int
 jsonSpecOnArbitrary ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, Arbitrary a, FromJSON a, ToJSON a) =>
-  Spec
+  TestDef outers ()
 jsonSpecOnArbitrary = jsonSpecOnGen (arbitrary @a) "arbitrary" shrink
 
 -- | Standard test spec for properties of JSON-related functions for a given generator (and a name for that generator).
@@ -52,12 +52,12 @@ jsonSpecOnArbitrary = jsonSpecOnGen (arbitrary @a) "arbitrary" shrink
 --
 -- > jsonSpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
 jsonSpecOnGen ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, FromJSON a, ToJSON a) =>
   Gen a ->
   String ->
   (a -> [a]) ->
-  Spec
+  TestDef outers ()
 jsonSpecOnGen gen genname s =
   parallel $ do
     let name = nameOf @a
