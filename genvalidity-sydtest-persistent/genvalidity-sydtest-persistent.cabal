@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           genvalidity-sydtest-persistent
-version:        1.0.0.0
+version:        1.0.0.1
 synopsis:       Standard spec's for persistent-related instances for sydtest
 category:       Testing
 homepage:       http://cs-syd.eu

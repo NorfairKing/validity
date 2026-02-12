@@ -27,9 +27,9 @@ import Test.Syd.Validity.Utils
 --
 -- > persistSpec @Int
 persistSpec ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, GenValid a, PersistField a) =>
-  Spec
+  TestDef outers ()
 persistSpec = persistSpecOnGen (genValid @a) "valid" shrinkValid
 
 -- | Standard test spec for properties of persistent-related functions for arbitrary values
@@ -38,9 +38,9 @@ persistSpec = persistSpecOnGen (genValid @a) "valid" shrinkValid
 --
 -- > persistSpecOnArbitrary @Int
 persistSpecOnArbitrary ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, Arbitrary a, PersistField a) =>
-  Spec
+  TestDef outers ()
 persistSpecOnArbitrary = persistSpecOnGen (arbitrary @a) "arbitrary" shrink
 
 -- | Standard test spec for properties of persistent-related functions for a given generator (and a name for that generator).
@@ -49,12 +49,12 @@ persistSpecOnArbitrary = persistSpecOnGen (arbitrary @a) "arbitrary" shrink
 --
 -- > persistSpecOnGen (genListOf $ pure 'a') "sequence of 'a's"
 persistSpecOnGen ::
-  forall a.
+  forall a outers.
   (Show a, Eq a, Typeable a, PersistField a) =>
   Gen a ->
   String ->
   (a -> [a]) ->
-  Spec
+  TestDef outers ()
 persistSpecOnGen gen genname s =
   parallel $ do
     let name = nameOf @a
