@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Data.GenValidity.ByteString where
@@ -28,7 +29,7 @@ genStrictByteStringBy (MkGen word8Func) = do
   MkGen $ \qcgen size ->
     let go :: QCGen -> Maybe (Word8, QCGen)
         go qcg =
-          let (qc1, qc2) = Random.split qcg
+          let (qc1, qc2) = splitQCGen qcg
            in Just (word8Func qc1 size, qc2)
      in fst $ SB.unfoldrN len go qcgen
 
@@ -51,3 +52,11 @@ genLazyByteStringByStrictByteString gen =
 instance GenValid Short.ShortByteString where
   genValid = Short.pack <$> genValid
   shrinkValid = fmap Short.pack . shrinkValid . Short.unpack
+
+#if MIN_VERSION_random(1,3,0)
+splitQCGen :: QCGen -> (QCGen, QCGen)
+splitQCGen = Random.splitGen
+#else
+splitQCGen :: QCGen -> (QCGen, QCGen)
+splitQCGen = Random.split
+#endif

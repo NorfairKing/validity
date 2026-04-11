@@ -213,7 +213,7 @@ instance
       return (a, b, c, d, e)
   shrinkValid (a, b, c, d, e) =
     [ (a', b', c', d', e')
-      | (a', (b', (c', (d', e')))) <- shrinkValid (a, (b, (c, (d, e))))
+    | (a', (b', (c', (d', e')))) <- shrinkValid (a, (b, (c, (d, e))))
     ]
 
 instance (GenValid a) => GenValid (Maybe a) where

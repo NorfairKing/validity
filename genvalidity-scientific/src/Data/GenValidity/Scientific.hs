@@ -14,5 +14,5 @@ instance GenValid Scientific where
       nub $
         filter (/= s) $
           [ scientific c e
-            | (c, e) <- shrinkValid (coefficient s, base10Exponent s)
+          | (c, e) <- shrinkValid (coefficient s, base10Exponent s)
           ]

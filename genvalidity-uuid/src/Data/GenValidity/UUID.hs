@@ -15,5 +15,5 @@ instance GenValid UUID where
       <*> genValid
   shrinkValid u =
     [ fromWords w1 w2 w3 w4
-      | (w1, w2, w3, w4) <- shrinkValid $ toWords u
+    | (w1, w2, w3, w4) <- shrinkValid $ toWords u
     ]
