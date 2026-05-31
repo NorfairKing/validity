@@ -1,4 +1,4 @@
-resolver: lts-24.16
+resolver: lts-24.38
 packages:
 - 'genvalidity'
 - 'genvalidity-aeson'
