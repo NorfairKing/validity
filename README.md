@@ -1,5 +1,7 @@
 # Validity and validity-based testing
 
+[![NixCI](https://staging.nix-ci.com/badge/gh:NorfairKing:validity)](https://staging.nix-ci.com/gh:NorfairKing:validity)
+
 ## Why?
 
 > to make writing correct software cheaper.
