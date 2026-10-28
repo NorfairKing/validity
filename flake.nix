@@ -9,7 +9,6 @@
     nixpkgs-25_11.url = "github:NixOS/nixpkgs?ref=nixos-25.11";
     nixpkgs-25_05.url = "github:NixOS/nixpkgs?ref=nixos-25.05";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance.git";
     autodocodec.url = "github:NorfairKing/autodocodec";
     autodocodec.flake = false;
     safe-coloured-text.url = "github:NorfairKing/safe-coloured-text";
@@ -28,7 +27,6 @@
     , nixpkgs-25_11
     , nixpkgs-25_05
     , pre-commit-hooks
-    , horizon-advance
     , autodocodec
     , safe-coloured-text
     , fast-myers-diff
@@ -38,16 +36,16 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-      allOverrides = pkgs.lib.composeManyExtensions [
-        (pkgs.callPackage (fast-myers-diff + "/nix/overrides.nix") { })
-        (pkgs.callPackage (autodocodec + "/nix/overrides.nix") { })
-        (pkgs.callPackage (safe-coloured-text + "/nix/overrides.nix") { })
-        (pkgs.callPackage (sydtest + "/nix/overrides.nix") { })
-        (pkgs.callPackage (opt-env-conf + "/nix/overrides.nix") { })
-        self.overrides.${system}
-      ];
-      horizonPkgs = horizon-advance.legacyPackages.${system}.extend allOverrides;
-      haskellPackagesFor = nixpkgs: (import nixpkgs { inherit system; }).haskellPackages.extend allOverrides;
+      haskellPackagesFor = nixpkgs: (import nixpkgs { inherit system; }).haskellPackages.extend (
+        pkgs.lib.composeManyExtensions [
+          (pkgs.callPackage (fast-myers-diff + "/nix/overrides.nix") { })
+          (pkgs.callPackage (autodocodec + "/nix/overrides.nix") { })
+          (pkgs.callPackage (safe-coloured-text + "/nix/overrides.nix") { })
+          (pkgs.callPackage (sydtest + "/nix/overrides.nix") { })
+          (pkgs.callPackage (opt-env-conf + "/nix/overrides.nix") { })
+          self.overrides.${system}
+        ]
+      );
       haskellPackages = haskellPackagesFor nixpkgs;
     in
     {
@@ -65,7 +63,6 @@
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
         backwardCompatibilityChecks // {
-          forwardCompatibility = horizonPkgs.validityRelease;
           release = haskellPackages.validityRelease;
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
