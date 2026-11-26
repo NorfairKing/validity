@@ -19,6 +19,7 @@
     sydtest.flake = false;
     opt-env-conf.url = "github:NorfairKing/opt-env-conf";
     opt-env-conf.flake = false;
+    release-to-hackage.url = "github:NorfairKing/release-to-hackage";
   };
 
   outputs =
@@ -32,6 +33,7 @@
     , fast-myers-diff
     , sydtest
     , opt-env-conf
+    , release-to-hackage
     }:
     let
       system = "x86_64-linux";
@@ -51,7 +53,14 @@
     {
       overrides.${system} = pkgs.callPackage ./nix/overrides.nix { };
       overlays.${system} = import ./nix/overlay.nix;
-      packages.${system} = haskellPackages.validityPackages;
+      packages.${system} = haskellPackages.validityPackages // {
+        # Hackage upload, run from master by nix-ci.nix.  Building it builds
+        # every package's sdist, so a broken sdist fails CI on any branch,
+        # long before a release would trip over it.
+        release-to-hackage = release-to-hackage.lib.${system}.makeHackageRelease {
+          packages = haskellPackages.validityPackages;
+        };
+      };
       checks.${system} =
         let
           backwardCompatibilityCheckFor = nixpkgs: (haskellPackagesFor nixpkgs).validityRelease;
@@ -87,10 +96,6 @@
           cabal-install
         ]) ++ self.checks.${system}.pre-commit.enabledPackages;
         shellHook = self.checks.${system}.pre-commit.shellHook;
-      };
-      nix-ci.cachix = {
-        name = "validity";
-        public-key = "validity.cachix.org-1:CqZp6vt9ir3yB5f8GAtfkJxPZG8hKC5fhIdaQsf7eZE=";
       };
     };
 }
