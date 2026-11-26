@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2.0] - 2026-11-26
+
+### Added
+
+* `GenValid` instances for `Min` and `Max` from `Data.Semigroup`
+
 ## [1.1.1.0] - 2024-07-18
 
 ### Added

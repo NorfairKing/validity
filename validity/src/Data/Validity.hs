@@ -540,6 +540,12 @@ deriving newtype instance (Validity a) => Validity (Semigroup.First a)
 deriving newtype instance (Validity a) => Validity (Semigroup.Last a)
 
 -- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Semigroup.Min a)
+
+-- | Valid values the same as it's base type:
+deriving newtype instance (Validity a) => Validity (Semigroup.Max a)
+
+-- | Valid values the same as it's base type:
 deriving newtype instance (Validity a) => Validity (Monoid.First a)
 
 -- | Valid values the same as it's base type:

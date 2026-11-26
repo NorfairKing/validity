@@ -389,6 +389,10 @@ deriving newtype instance (GenValid a) => GenValid (Semigroup.First a)
 
 deriving newtype instance (GenValid a) => GenValid (Semigroup.Last a)
 
+deriving newtype instance (GenValid a) => GenValid (Semigroup.Min a)
+
+deriving newtype instance (GenValid a) => GenValid (Semigroup.Max a)
+
 deriving newtype instance (GenValid a) => GenValid (Monoid.First a)
 
 deriving newtype instance (GenValid a) => GenValid (Monoid.Last a)

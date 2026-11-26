@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.2.0 - 2026-11-26]
+
+### Added
+
+* `Validity` instances for `Min` and `Max` from `Data.Semigroup`
+
 ## [0.12.1.0 - 2024-07-18]
 
 ### Added
